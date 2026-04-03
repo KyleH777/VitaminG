@@ -123,20 +123,57 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUND-01 to FOUND-07 | Phase 1 | Pending |
-| GOAL-01 to GOAL-07 | Phase 2 | Pending |
-| STATS-01 to STATS-06 | Phase 3 | Pending |
-| NOTIF-01 to NOTIF-07 | Phase 3 | Pending |
-| SYNC-01 to SYNC-03 | Phase 4 | Pending |
-| WIDGET-01 to WIDGET-05 | Phase 4 | Pending |
-| ONBOARD-01 to ONBOARD-04 | Phase 5 | Pending |
-| UI-01 to UI-06 | Phases 2-5 | Pending |
+| FOUND-01 | Phase 1 | Pending |
+| FOUND-02 | Phase 1 | Pending |
+| FOUND-03 | Phase 1 | Pending |
+| FOUND-04 | Phase 1 | Pending |
+| FOUND-05 | Phase 1 | Pending |
+| FOUND-06 | Phase 1 | Pending |
+| FOUND-07 | Phase 1 | Pending |
+| GOAL-01 | Phase 2 | Pending |
+| GOAL-02 | Phase 2 | Pending |
+| GOAL-03 | Phase 2 | Pending |
+| GOAL-04 | Phase 2 | Pending |
+| GOAL-05 | Phase 2 | Pending |
+| GOAL-06 | Phase 2 | Pending |
+| GOAL-07 | Phase 2 | Pending |
+| UI-01 | Phase 2 | Pending |
+| UI-02 | Phase 2 | Pending |
+| UI-03 | Phase 2 | Pending |
+| STATS-01 | Phase 3 | Pending |
+| STATS-02 | Phase 3 | Pending |
+| STATS-03 | Phase 3 | Pending |
+| STATS-04 | Phase 3 | Pending |
+| STATS-05 | Phase 3 | Pending |
+| STATS-06 | Phase 3 | Pending |
+| NOTIF-02 | Phase 3 | Pending |
+| NOTIF-03 | Phase 3 | Pending |
+| NOTIF-04 | Phase 3 | Pending |
+| NOTIF-05 | Phase 3 | Pending |
+| NOTIF-06 | Phase 3 | Pending |
+| NOTIF-07 | Phase 3 | Pending |
+| SYNC-01 | Phase 4 | Pending |
+| SYNC-02 | Phase 4 | Pending |
+| WIDGET-01 | Phase 4 | Pending |
+| WIDGET-02 | Phase 4 | Pending |
+| WIDGET-03 | Phase 4 | Pending |
+| WIDGET-04 | Phase 4 | Pending |
+| WIDGET-05 | Phase 4 | Pending |
+| NOTIF-01 | Phase 5 | Pending |
+| ONBOARD-01 | Phase 5 | Pending |
+| ONBOARD-02 | Phase 5 | Pending |
+| ONBOARD-03 | Phase 5 | Pending |
+| ONBOARD-04 | Phase 5 | Pending |
+| UI-04 | Phase 5 | Pending |
+| UI-05 | Phase 5 | Pending |
+| UI-06 | Phase 5 | Pending |
+| SYNC-03 | Phase 6 | Pending |
 
 **Coverage:**
-- v1 requirements: 44 total
-- Mapped to phases: 44
+- v1 requirements: 45 total
+- Mapped to phases: 45
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-04-03*
-*Last updated: 2026-04-03 after initialization*
+*Last updated: 2026-04-03 — traceability updated after roadmap creation (6 phases)*
