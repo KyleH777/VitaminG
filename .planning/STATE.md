@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 03-01 — StreakEngine + TabView
-last_updated: "2026-04-04T22:47:40.443Z"
+status: verifying
+stopped_at: Completed 03-03-PLAN.md
+last_updated: "2026-04-04T22:59:20.899Z"
 last_activity: 2026-04-04
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 10
-  completed_plans: 7
-  percent: 70
+  completed_plans: 8
+  percent: 80
 ---
 
 # Project State
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-04-03)
 
 Phase: 02 (core-goal-ui) — EXECUTING
 Plan: 3 of 3
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-04-04
 
 Progress: [░░░░░░░░░░] 0%
@@ -57,6 +57,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-foundation P03 | 10 | 3 tasks | 2 files |
 | Phase 02-core-goal-ui P03 | 15 | 1 tasks | 3 files |
 | Phase 03 P01 | 22 | 2 tasks | 6 files |
+| Phase 03 P03 | 6 | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -82,6 +83,9 @@ Recent decisions affecting current work:
 - [Phase 03]: StreakEngine is a standalone struct (no SwiftData/SwiftUI dependency) matching GoalSorter pattern
 - [Phase 03]: targetEnvironment(simulator) guards skip App Group + CloudKit on simulator — prevents test runner crash
 - [Phase 03]: Stats tab is placeholder NavigationStack in ContentView — real StatsView added in Plan 02
+- [Phase 03]: NotificationScheduler singleton with pure makeContent function for unit-testable notification content without mocking UNUserNotificationCenter
+- [Phase 03]: AppRouter and NotificationDelegate stored as App struct properties to prevent delegate deallocation and ensure stable closure capture
+- [Phase 03]: Settings exposed as third tab rather than toolbar button — non-invasive to GoalListView toolbar; SettingsView also wired as .settings AppRoute destination
 
 ### Pending Todos
 
@@ -95,6 +99,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-04T22:47:40.441Z
-Stopped at: Completed 03-01 — StreakEngine + TabView
+Last session: 2026-04-04T22:59:20.896Z
+Stopped at: Completed 03-03-PLAN.md
 Resume file: None

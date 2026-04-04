@@ -39,12 +39,12 @@
 ### Notifications
 
 - [ ] **NOTIF-01**: App requests notification permission during onboarding (not on cold launch without context)
-- [ ] **NOTIF-02**: Daily morning notification fires at user-selected time (default: 8:00 AM)
-- [ ] **NOTIF-03**: Notification body surfaces the user's active goal titles (up to top 3) — not a generic message
-- [ ] **NOTIF-04**: Notification scheduling uses `UNCalendarNotificationTrigger` with `repeats: true` — no background fetch required
-- [ ] **NOTIF-05**: Notification rotation stays within iOS 64-request limit — scheduling logic caps pre-scheduled notifications
-- [ ] **NOTIF-06**: User can change notification time in Settings — reschedules existing notifications
-- [ ] **NOTIF-07**: Tapping notification deep-links to the goal list
+- [x] **NOTIF-02**: Daily morning notification fires at user-selected time (default: 8:00 AM)
+- [x] **NOTIF-03**: Notification body surfaces the user's active goal titles (up to top 3) — not a generic message
+- [x] **NOTIF-04**: Notification scheduling uses `UNCalendarNotificationTrigger` with `repeats: true` — no background fetch required
+- [x] **NOTIF-05**: Notification rotation stays within iOS 64-request limit — scheduling logic caps pre-scheduled notifications
+- [x] **NOTIF-06**: User can change notification time in Settings — reschedules existing notifications
+- [x] **NOTIF-07**: Tapping notification deep-links to the goal list
 
 ### iCloud Sync
 
@@ -146,12 +146,12 @@
 | STATS-04 | Phase 3 | Pending |
 | STATS-05 | Phase 3 | Pending |
 | STATS-06 | Phase 3 | Complete |
-| NOTIF-02 | Phase 3 | Pending |
-| NOTIF-03 | Phase 3 | Pending |
-| NOTIF-04 | Phase 3 | Pending |
-| NOTIF-05 | Phase 3 | Pending |
-| NOTIF-06 | Phase 3 | Pending |
-| NOTIF-07 | Phase 3 | Pending |
+| NOTIF-02 | Phase 3 | Complete |
+| NOTIF-03 | Phase 3 | Complete |
+| NOTIF-04 | Phase 3 | Complete |
+| NOTIF-05 | Phase 3 | Complete |
+| NOTIF-06 | Phase 3 | Complete |
+| NOTIF-07 | Phase 3 | Complete |
 | SYNC-01 | Phase 4 | Pending |
 | SYNC-02 | Phase 4 | Pending |
 | WIDGET-01 | Phase 4 | Pending |
