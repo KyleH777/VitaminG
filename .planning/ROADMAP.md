@@ -34,7 +34,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 - [x] 01-01-PLAN.md — VersionedSchema models, ModelContainerFactory, app entry point, entitlements, widget stub
 - [x] 01-02-PLAN.md — AppRouter navigation scaffold, GoalViewModel refinement, ContentView stub
-- [ ] 01-03-PLAN.md — Unit tests (GoalViewModel + SchemaV1) and Xcode build verification
+- [x] 01-03-PLAN.md — Unit tests (GoalViewModel + SchemaV1) and Xcode build verification
 
 ### Phase 2: Core Goal UI
 **Goal**: Users can fully manage their goals across all four tiers — creating, editing, completing, re-activating, deleting, and viewing inspiration — with a visually distinct UI per tier
