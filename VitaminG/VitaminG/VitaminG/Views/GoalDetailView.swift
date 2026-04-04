@@ -39,7 +39,7 @@ struct GoalDetailView: View {
             }
         }
         .sheet(isPresented: $showingEditGoal) {
-            AddGoalView(viewModel: viewModel)
+            AddGoalView(viewModel: viewModel, editingGoal: goal)
         }
         .confirmationDialog(
             "Delete this goal?",

@@ -5,8 +5,14 @@ import SwiftData
 
 struct AddGoalView: View {
     @Bindable var viewModel: GoalViewModel
+    let editingGoal: Goal?
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+
+    init(viewModel: GoalViewModel, editingGoal: Goal? = nil) {
+        self.viewModel = viewModel
+        self.editingGoal = editingGoal
+    }
 
     var body: some View {
         NavigationStack {
@@ -34,15 +40,9 @@ struct AddGoalView: View {
                         .foregroundStyle(.secondary)
                 }
 
-                // MARK: Tier
+                // MARK: Tier (2x2 card grid per D-11)
                 Section {
-                    Picker("Tier", selection: $viewModel.draftTier) {
-                        ForEach(GoalTier.ordered) { tier in
-                            Label(tier.displayName, systemImage: tier.icon)
-                                .tag(tier)
-                        }
-                    }
-                    .pickerStyle(.navigationLink)
+                    TierPickerView(selectedTier: $viewModel.draftTier)
                 } header: {
                     Text("Tier")
                 } footer: {
@@ -90,7 +90,7 @@ struct AddGoalView: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            .navigationTitle("New Goal")
+            .navigationTitle(editingGoal == nil ? "New Goal" : "Edit Goal")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -116,6 +116,19 @@ struct AddGoalView: View {
             } message: { error in
                 Text(error.localizedDescription)
             }
+            .onAppear {
+                if let goal = editingGoal {
+                    viewModel.draftTitle       = goal.title ?? ""
+                    viewModel.draftDescription = goal.goalDescription ?? ""
+                    viewModel.draftTier        = goal.tier
+                    viewModel.draftInspiration = goal.associatedInspiration ?? ""
+                }
+            }
+            .onDisappear {
+                // Safety net: reset draft on dismiss to prevent pollution across create/edit flows
+                // (T-02-05 mitigation, Pitfall 3 from RESEARCH.md)
+                viewModel.resetDraft()
+            }
         }
     }
 
@@ -123,7 +136,11 @@ struct AddGoalView: View {
 
     private func saveGoal() {
         do {
-            try viewModel.addGoal(context: modelContext)
+            if let goal = editingGoal {
+                try viewModel.updateGoal(goal, context: modelContext)
+            } else {
+                try viewModel.addGoal(context: modelContext)
+            }
             dismiss()
         } catch let error as GoalValidationError {
             viewModel.validationError = error

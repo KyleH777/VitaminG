@@ -42,6 +42,16 @@ enum GoalTier: String, Codable, CaseIterable, Identifiable {
         }
     }
 
+    /// Short subtitle for TierPickerView card (D-11, UI-SPEC Section 4).
+    var description: String {
+        switch self {
+        case .immediate: return "Today or this week"
+        case .shortTerm: return "Next 1–3 months"
+        case .longTerm:  return "6 months to a year"
+        case .lifeGoal:  return "The big picture"
+        }
+    }
+
     /// Ordered from most immediate to most aspirational.
     static var ordered: [GoalTier] { [.immediate, .shortTerm, .longTerm, .lifeGoal] }
 }
