@@ -30,7 +30,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. The `ModelContainer` is configured with both `groupContainer: .identifier(...)` and `cloudKitDatabase: .automatic` and the app launches without errors on a physical device
   3. `Goal` and `CompletionEvent` models use `VersionedSchema` (SchemaV1) and all properties are optional or defaulted — confirmed by passing CloudKit schema initialization in `#if DEBUG`
   4. A ViewModel can perform a validated create operation and be rejected when title exceeds 100 characters, description exceeds 500 characters, or associatedInspiration exceeds 300 characters
-**Plans**: TBD
+**Plans:** 3 plans
+Plans:
+- [ ] 01-01-PLAN.md — VersionedSchema models, ModelContainerFactory, app entry point, entitlements, widget stub
+- [ ] 01-02-PLAN.md — AppRouter navigation scaffold, GoalViewModel refinement, ContentView stub
+- [ ] 01-03-PLAN.md — Unit tests (GoalViewModel + SchemaV1) and Xcode build verification
 
 ### Phase 2: Core Goal UI
 **Goal**: Users can fully manage their goals across all four tiers — creating, editing, completing, re-activating, deleting, and viewing inspiration — with a visually distinct UI per tier
@@ -94,11 +98,11 @@ Decimal phases appear between their surrounding integers in numeric order.
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 0/3 | Planning complete | - |
 | 2. Core Goal UI | 0/TBD | Not started | - |
 | 3. Streaks, Stats & Notifications | 0/TBD | Not started | - |
 | 4. iCloud Sync & Widgets | 0/TBD | Not started | - |
