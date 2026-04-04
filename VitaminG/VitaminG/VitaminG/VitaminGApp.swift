@@ -9,7 +9,7 @@ struct VitaminGApp: App {
         do {
             container = try ModelContainerFactory.makeContainer()
 
-            #if DEBUG
+            #if DEBUG && !targetEnvironment(simulator)
             ModelContainerFactory.initializeCloudKitSchema(container: container)
             #endif
         } catch {

@@ -11,12 +11,21 @@ enum ModelContainerFactory {
     static func makeContainer(inMemory: Bool = false) throws -> ModelContainer {
         let schema = Schema(SchemaV1.models, version: SchemaV1.versionIdentifier)
 
+        // On Simulator, App Group entitlements are not provisioned, so skip group container
+        // and CloudKit to avoid a fatal assertion crash at launch (affects both app and test runner).
+        #if targetEnvironment(simulator)
+        let config = ModelConfiguration(
+            schema: schema,
+            isStoredInMemoryOnly: inMemory
+        )
+        #else
         let config = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: inMemory,
             groupContainer: inMemory ? .none : .identifier("group.com.kyleharrington.VitaminG"),
             cloudKitDatabase: inMemory ? .none : .automatic
         )
+        #endif
 
         return try ModelContainer(for: schema, configurations: config)
     }
