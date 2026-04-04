@@ -451,17 +451,11 @@ func updateGoal(_ goal: Goal, context: ModelContext) throws {
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Goal model Hashable in AppRoute**
-   - What we know: `@Model` classes conform to `PersistentModel`, which synthesizes `Hashable` via object identity / `ModelIdentifier`
-   - What's unclear: Whether the compiler infers this without an explicit conformance declaration at the `AppRoute` enum site — needs compilation verification
-   - Recommendation: Build the AppRoute case, compile, and verify. If the compiler complains, add `extension Goal: Hashable {}` which simply confirms the already-synthesized conformance without overriding it.
+1. **Goal model Hashable in AppRoute** — RESOLVED: Plan 02-01 Task 1 handles this — do NOT add manual Hashable conformance; if compiler warns, add `extension Goal: Hashable {}` to confirm already-synthesized conformance without overriding it.
 
-2. **Sort section structure for completion-status sort (D-08)**
-   - What we know: D-08 says active goals first grouped by tier, then completed goals below
-   - What's unclear: Whether this means (a) two top-level sections ("Active" / "Completed") or (b) tier sections that sort active-first within each tier
-   - Recommendation: Interpret D-08 as two top-level sections when in completion-status sort mode: an "Active" section (with goals in tier order within it) and a "Completed" section. This gives the clearest visual separation. Planner should note this as a minor decision to confirm.
+2. **Sort section structure for completion-status sort (D-08)** — RESOLVED: Plan 02-03 implements two top-level sections ("Active" / "Completed") when in completion-status sort mode, with goals in tier order within each section.
 
 ---
 
