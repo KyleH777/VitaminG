@@ -46,8 +46,11 @@ Plans:
   3. User can edit any goal field, delete a goal after a confirmation prompt, and sort the list by tier, creation date, or completion status
   4. User can tap a completion toggle on any goal — a `CompletionEvent` record is created with timestamp and tier — and the goal shows a distinct visual state for completed vs. active
   5. Completed goals remain visible and can be re-activated; the goal detail view prominently displays the `associatedInspiration` field
-**Plans**: TBD
-**UI hint**: yes
+**Plans:** 3 plans
+Plans:
+- [ ] 02-01-PLAN.md — AppRoute.goalDetail, ContentView wiring, GoalDetailView with quote card and delete action
+- [ ] 02-02-PLAN.md — updateGoal(), TierPickerView 2x2 grid, AddGoalView edit mode, celebratory completion visual
+- [ ] 02-03-PLAN.md — Sort toolbar, SortOption enum, GoalSorter, two-section completion-status layout, human verify
 
 ### Phase 3: Streaks, Stats & Notifications
 **Goal**: Users see their completion history as meaningful streaks and statistics, and receive a personalized daily notification containing their actual active goal titles
@@ -102,8 +105,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 2/3 | In Progress|  |
-| 2. Core Goal UI | 0/TBD | Not started | - |
+| 1. Foundation | 3/3 | Complete |  |
+| 2. Core Goal UI | 0/3 | Not started | - |
 | 3. Streaks, Stats & Notifications | 0/TBD | Not started | - |
 | 4. iCloud Sync & Widgets | 0/TBD | Not started | - |
 | 5. Onboarding & Polish | 0/TBD | Not started | - |
