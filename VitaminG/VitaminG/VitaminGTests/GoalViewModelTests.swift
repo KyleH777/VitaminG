@@ -200,4 +200,138 @@ final class GoalViewModelTests: XCTestCase {
         goals = try context.fetch(FetchDescriptor<Goal>())
         XCTAssertEqual(goals.count, 0)
     }
+
+    // MARK: - updateGoal: Valid Input Persists Changes
+
+    func test_updateGoal_validInput_persistsChanges() throws {
+        // Arrange — insert a goal
+        sut.draftTitle = "Original"
+        sut.draftTier = .immediate
+        try sut.addGoal(context: context)
+        let descriptor = FetchDescriptor<Goal>()
+        let goals = try context.fetch(descriptor)
+        XCTAssertEqual(goals.count, 1)
+        let goal = goals[0]
+
+        // Act — update via draft
+        sut.draftTitle = "Updated Title"
+        sut.draftDescription = "New description"
+        sut.draftTier = .lifeGoal
+        sut.draftInspiration = "New inspiration"
+        try sut.updateGoal(goal, context: context)
+
+        // Assert
+        XCTAssertEqual(goal.title, "Updated Title")
+        XCTAssertEqual(goal.goalDescription, "New description")
+        XCTAssertEqual(goal.tier, .lifeGoal)
+        XCTAssertEqual(goal.associatedInspiration, "New inspiration")
+        XCTAssertEqual(sut.draftTitle, "") // draft reset
+    }
+
+    // MARK: - updateGoal: Empty Title Throws
+
+    func test_updateGoal_emptyTitle_throwsValidationError() throws {
+        sut.draftTitle = "Original"
+        sut.draftTier = .immediate
+        try sut.addGoal(context: context)
+
+        let goals = try context.fetch(FetchDescriptor<Goal>())
+        guard let goal = goals.first else {
+            XCTFail("Expected a goal to exist")
+            return
+        }
+
+        sut.draftTitle = ""
+        XCTAssertThrowsError(try sut.updateGoal(goal, context: context)) { error in
+            XCTAssertEqual(error as? GoalValidationError, .titleEmpty)
+        }
+    }
+
+    // MARK: - updateGoal: Too Long Title Throws
+
+    func test_updateGoal_tooLongTitle_throwsValidationError() throws {
+        sut.draftTitle = "Original"
+        sut.draftTier = .immediate
+        try sut.addGoal(context: context)
+
+        let goals = try context.fetch(FetchDescriptor<Goal>())
+        guard let goal = goals.first else {
+            XCTFail("Expected a goal to exist")
+            return
+        }
+
+        sut.draftTitle = String(repeating: "a", count: 101)
+        XCTAssertThrowsError(try sut.updateGoal(goal, context: context)) { error in
+            XCTAssertEqual(error as? GoalValidationError, .titleTooLong(GoalViewModel.maxTitleLength))
+        }
+    }
+
+    // MARK: - updateGoal: Empty Description Clears Field
+
+    func test_updateGoal_clearsGoalDescription_whenDraftIsEmpty() throws {
+        sut.draftTitle = "Goal with description"
+        sut.draftDescription = "Initial description"
+        sut.draftTier = .shortTerm
+        try sut.addGoal(context: context)
+
+        let goals = try context.fetch(FetchDescriptor<Goal>())
+        guard let goal = goals.first else {
+            XCTFail("Expected a goal to exist")
+            return
+        }
+
+        sut.draftTitle = "Goal with description"
+        sut.draftDescription = ""
+        sut.draftTier = .shortTerm
+        try sut.updateGoal(goal, context: context)
+
+        XCTAssertNil(goal.goalDescription)
+    }
+
+    // MARK: - updateGoal: Resets Draft After Success
+
+    func test_updateGoal_resetsDraftAfterSuccess() throws {
+        sut.draftTitle = "Original"
+        sut.draftTier = .immediate
+        try sut.addGoal(context: context)
+
+        let goals = try context.fetch(FetchDescriptor<Goal>())
+        guard let goal = goals.first else {
+            XCTFail("Expected a goal to exist")
+            return
+        }
+
+        sut.draftTitle = "Updated"
+        sut.draftDescription = "Some description"
+        sut.draftTier = .longTerm
+        sut.draftInspiration = "Some inspiration"
+        try sut.updateGoal(goal, context: context)
+
+        XCTAssertEqual(sut.draftTitle, "")
+        XCTAssertEqual(sut.draftDescription, "")
+        XCTAssertEqual(sut.draftTier, .immediate)
+        XCTAssertEqual(sut.draftInspiration, "")
+    }
+
+    // MARK: - toggleCompletion: Reactivates
+
+    func test_toggleCompletion_reactivates() throws {
+        sut.draftTitle = "Goal to reactivate"
+        sut.draftTier = .immediate
+        try sut.addGoal(context: context)
+
+        let goals = try context.fetch(FetchDescriptor<Goal>())
+        guard let goal = goals.first else {
+            XCTFail("Expected a goal to exist")
+            return
+        }
+
+        // Toggle to completed
+        sut.toggleCompletion(goal: goal, context: context)
+        XCTAssertTrue(goal.isCompleted)
+
+        // Toggle back to active
+        sut.toggleCompletion(goal: goal, context: context)
+        XCTAssertFalse(goal.isCompleted)
+    }
 }
