@@ -5,7 +5,7 @@ import SwiftData
 
 struct GoalListView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \Goal.createdAt) private var goals: [Goal]
+    @Query(sort: \Goal.creationDate) private var goals: [Goal]
 
     @State private var viewModel = GoalViewModel()
     @State private var showingAddGoal = false
@@ -71,8 +71,10 @@ struct GoalListView: View {
                 if !tieredGoals.isEmpty {
                     TierSectionView(tier: tier) {
                         ForEach(tieredGoals) { goal in
-                            GoalRowView(goal: goal) {
-                                viewModel.toggleCompletion(goal: goal, context: modelContext)
+                            NavigationLink(value: AppRoute.goalDetail(goal)) {
+                                GoalRowView(goal: goal) {
+                                    viewModel.toggleCompletion(goal: goal, context: modelContext)
+                                }
                             }
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                 Button(role: .destructive) {

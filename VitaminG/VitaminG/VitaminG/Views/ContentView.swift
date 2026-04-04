@@ -9,9 +9,11 @@ struct ContentView: View {
         @Bindable var router = router
         NavigationStack(path: $router.path) {
             GoalListView()
-                .navigationDestination(for: AppRoute.self) { _ in
-                    // Phase 2 will add destination views here
-                    EmptyView()
+                .navigationDestination(for: AppRoute.self) { route in
+                    switch route {
+                    case .goalDetail(let goal):
+                        GoalDetailView(goal: goal)
+                    }
                 }
         }
     }

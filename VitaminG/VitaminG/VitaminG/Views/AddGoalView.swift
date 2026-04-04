@@ -152,9 +152,9 @@ private struct CharacterCountView: View {
                 .font(.caption2)
                 .monospacedDigit()
                 .foregroundStyle(
-                    isAtLimit   ? .red :
-                    isNearLimit ? .orange :
-                                  .tertiary
+                    isAtLimit   ? Color.red :
+                    isNearLimit ? Color.orange :
+                                  Color.secondary.opacity(0.5)
                 )
                 .animation(.easeInOut, value: current)
         }
