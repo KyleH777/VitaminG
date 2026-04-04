@@ -1,6 +1,5 @@
 import SwiftUI
 import SwiftData
-import UIKit
 
 // MARK: - GoalListView
 
@@ -83,7 +82,7 @@ struct GoalListView: View {
                             .listRowBackground(
                                 goal.completed
                                     ? Color(red: 0.063, green: 0.725, blue: 0.506).opacity(0.08)
-                                    : Color(.secondarySystemGroupedBackground)
+                                    : Color.clear
                             )
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                 Button(role: .destructive) {
@@ -131,6 +130,7 @@ private struct GoalRowView: View {
     let goal: Goal
     let onToggle: () -> Void
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var bounceScale: CGFloat = 1.0
 
     private let completionGreen = Color(red: 0.063, green: 0.725, blue: 0.506)
@@ -141,7 +141,7 @@ private struct GoalRowView: View {
             Button(action: onToggle) {
                 Image(systemName: goal.completed ? "checkmark.circle.fill" : "circle")
                     .font(.title3)
-                    .foregroundStyle(goal.completed ? completionGreen : Color(.tertiaryLabel))
+                    .foregroundStyle(goal.completed ? completionGreen : Color.secondary)
                     .contentTransition(.symbolEffect(.replace))
                     .symbolEffect(.bounce, value: goal.completed)
             }
@@ -180,7 +180,7 @@ private struct GoalRowView: View {
         .contentShape(Rectangle())
         .scaleEffect(bounceScale)
         .onChange(of: goal.completed) { _, _ in
-            guard !UIAccessibility.isReduceMotionEnabled else { return }
+            guard !reduceMotion else { return }
             withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
                 bounceScale = 1.02
             }
@@ -273,6 +273,6 @@ struct EmptyStateView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.systemGroupedBackground))
+        .background(Color(red: 0.949, green: 0.949, blue: 0.969))
     }
 }

@@ -26,7 +26,7 @@ struct GoalDetailView: View {
             }
             .padding(.bottom, 32)
         }
-        .background(Color(.systemGroupedBackground))
+        .background(Color(red: 0.949, green: 0.949, blue: 0.969))
         .navigationTitle(goal.title ?? "Goal")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -93,7 +93,7 @@ struct GoalDetailView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(.secondarySystemGroupedBackground))
+        .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .padding(.horizontal)
         .padding(.top, 16)
@@ -146,7 +146,7 @@ struct GoalDetailView: View {
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color(.secondarySystemGroupedBackground))
+            .background(Color.white)
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .padding(.horizontal)
         }

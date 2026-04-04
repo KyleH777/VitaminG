@@ -52,7 +52,7 @@ private struct TierCardView: View {
         .frame(maxWidth: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(isSelected ? tier.color.opacity(0.12) : Color(.secondarySystemGroupedBackground))
+                .fill(isSelected ? tier.color.opacity(0.12) : Color.white)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12)
