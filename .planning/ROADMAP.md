@@ -13,7 +13,7 @@ Vitamin G ships in six phases that follow a strict dependency order. Phase 1 loc
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [ ] **Phase 1: Foundation** - App Group, SwiftData models with VersionedSchema, CloudKit-ready ModelContainer, MVVM scaffold, and input validation
-- [ ] **Phase 2: Core Goal UI** - Four-tier goal CRUD views, visual tier identity, goal detail with associatedInspiration, completion toggle
+- [x] **Phase 2: Core Goal UI** - Four-tier goal CRUD views, visual tier identity, goal detail with associatedInspiration, completion toggle (completed 2026-04-04)
 - [ ] **Phase 3: Streaks, Stats & Notifications** - CompletionEvent-based streak computation, stats heatmap screen, personalized daily push notifications
 - [ ] **Phase 4: iCloud Sync & Widgets** - CloudKit transparent sync, systemMedium home screen widget, accessoryRectangular lock screen widget
 - [ ] **Phase 5: Onboarding & Polish** - First-launch onboarding, empty states, Light/Dark Mode, Dynamic Type, VoiceOver, App Store-quality UI
@@ -46,11 +46,11 @@ Plans:
   3. User can edit any goal field, delete a goal after a confirmation prompt, and sort the list by tier, creation date, or completion status
   4. User can tap a completion toggle on any goal — a `CompletionEvent` record is created with timestamp and tier — and the goal shows a distinct visual state for completed vs. active
   5. Completed goals remain visible and can be re-activated; the goal detail view prominently displays the `associatedInspiration` field
-**Plans:** 3 plans
+**Plans:** 3/3 plans complete
 Plans:
-- [ ] 02-01-PLAN.md — AppRoute.goalDetail, ContentView wiring, GoalDetailView with quote card and delete action
-- [ ] 02-02-PLAN.md — updateGoal(), TierPickerView 2x2 grid, AddGoalView edit mode, celebratory completion visual
-- [ ] 02-03-PLAN.md — Sort toolbar, SortOption enum, GoalSorter, two-section completion-status layout, human verify
+- [x] 02-01-PLAN.md — AppRoute.goalDetail, ContentView wiring, GoalDetailView with quote card and delete action
+- [x] 02-02-PLAN.md — updateGoal(), TierPickerView 2x2 grid, AddGoalView edit mode, celebratory completion visual
+- [x] 02-03-PLAN.md — Sort toolbar, SortOption enum, GoalSorter, two-section completion-status layout, human verify
 
 ### Phase 3: Streaks, Stats & Notifications
 **Goal**: Users see their completion history as meaningful streaks and statistics, and receive a personalized daily notification containing their actual active goal titles
@@ -106,7 +106,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete |  |
-| 2. Core Goal UI | 0/3 | Not started | - |
+| 2. Core Goal UI | 3/3 | Complete   | 2026-04-04 |
 | 3. Streaks, Stats & Notifications | 0/TBD | Not started | - |
 | 4. iCloud Sync & Widgets | 0/TBD | Not started | - |
 | 5. Onboarding & Polish | 0/TBD | Not started | - |

@@ -25,7 +25,7 @@
 - [ ] **GOAL-04**: User can delete a goal (with confirmation)
 - [ ] **GOAL-05**: User can mark a goal as complete — creates a `CompletionEvent` record with timestamp and tier
 - [ ] **GOAL-06**: Completed goals remain visible (with visual distinction) and can be re-activated
-- [ ] **GOAL-07**: Goal list is sortable by tier, by creation date, and by completion status
+- [x] **GOAL-07**: Goal list is sortable by tier, by creation date, and by completion status
 
 ### Streaks & Statistics
 
@@ -70,7 +70,7 @@
 ### UI & Design
 
 - [ ] **UI-01**: Each tier has a distinct visual identity (color, icon, weight) — not just a label
-- [ ] **UI-02**: App tone is warm and reflective, not productivity-aggressive — copy and design enforce this
+- [x] **UI-02**: App tone is warm and reflective, not productivity-aggressive — copy and design enforce this
 - [ ] **UI-03**: `associatedInspiration` field is prominently displayed on goal detail view
 - [ ] **UI-04**: App Store-quality polish: no placeholder UI, no debug elements, smooth transitions
 - [ ] **UI-05**: Supports both Light and Dark Mode
@@ -136,9 +136,9 @@
 | GOAL-04 | Phase 2 | Pending |
 | GOAL-05 | Phase 2 | Pending |
 | GOAL-06 | Phase 2 | Pending |
-| GOAL-07 | Phase 2 | Pending |
+| GOAL-07 | Phase 2 | Complete |
 | UI-01 | Phase 2 | Pending |
-| UI-02 | Phase 2 | Pending |
+| UI-02 | Phase 2 | Complete |
 | UI-03 | Phase 2 | Pending |
 | STATS-01 | Phase 3 | Pending |
 | STATS-02 | Phase 3 | Pending |
