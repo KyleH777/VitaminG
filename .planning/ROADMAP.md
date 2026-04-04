@@ -62,7 +62,12 @@ Plans:
   3. A daily notification fires at the user's selected time (default 8:00 AM) and its body contains the user's actual active goal titles (up to top 3) — not a generic message
   4. Notification scheduling uses `UNCalendarNotificationTrigger` with `repeats: true` and stays within the iOS 64-request limit
   5. Tapping a notification opens the app directly to the goal list; the user can change notification time in Settings and existing notifications are rescheduled immediately
-**Plans**: TBD
+**Plans:** 4 plans
+Plans:
+- [ ] 03-01-PLAN.md — StreakEngine TDD (per-tier + global streaks), AppRoute expansion, TabView restructure
+- [ ] 03-02-PLAN.md — StatsViewModel, StatsView with streak cards, HeatmapView, ContentView Stats tab wiring
+- [ ] 03-03-PLAN.md — NotificationScheduler, NotificationDelegate, SettingsView, VitaminGApp + GoalViewModel wiring
+- [ ] 03-04-PLAN.md — Full test suite run and human visual verification of all Phase 3 features
 
 ### Phase 4: iCloud Sync & Widgets
 **Goal**: Goal data syncs transparently across the user's devices and appears on the home screen and lock screen via read-only widgets that share the same App Group store
@@ -107,7 +112,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete |  |
 | 2. Core Goal UI | 3/3 | Complete   | 2026-04-04 |
-| 3. Streaks, Stats & Notifications | 0/TBD | Not started | - |
+| 3. Streaks, Stats & Notifications | 0/4 | Planned | - |
 | 4. iCloud Sync & Widgets | 0/TBD | Not started | - |
 | 5. Onboarding & Polish | 0/TBD | Not started | - |
 | 6. Distribution | 0/TBD | Not started | - |
