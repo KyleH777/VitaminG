@@ -5,22 +5,27 @@ import SwiftData
 
 struct GoalListView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \Goal.creationDate) private var goals: [Goal]
+    @Query private var goals: [Goal]   // no sort descriptor — dynamic sort via computed property
 
     @State private var viewModel = GoalViewModel()
     @State private var showingAddGoal = false
     @State private var goalToDelete: Goal?
     @State private var showingDeleteConfirmation = false
+    @State private var sortOption: SortOption = .byTier
 
     // MARK: Derived
 
     private var hasAnyGoals: Bool { !goals.isEmpty }
 
-    /// Active goals sorted before completed goals within each tier section (D-09).
+    /// All goals sorted by the current SortOption.
+    private var sortedGoals: [Goal] {
+        GoalSorter.sort(goals, by: sortOption)
+    }
+
+    /// Goals for a tier section, sourced from sortedGoals.
+    /// GoalSorter.byTier already orders active before completed within tier (D-09).
     private func goals(for tier: GoalTier) -> [Goal] {
-        goals
-            .filter { $0.tier == tier }
-            .sorted { !$0.completed && $1.completed }
+        sortedGoals.filter { $0.tier == tier }
     }
 
     // MARK: Body
@@ -43,6 +48,18 @@ struct GoalListView: View {
                     showingAddGoal = true
                 } label: {
                     Label("Add Goal", systemImage: "plus")
+                }
+            }
+            ToolbarItem(placement: .secondaryAction) {
+                Menu {
+                    Picker("Sort", selection: $sortOption) {
+                        ForEach(SortOption.allCases, id: \.self) { option in
+                            Label(option.displayName, systemImage: option.systemImage)
+                                .tag(option)
+                        }
+                    }
+                } label: {
+                    Label("Sort", systemImage: "line.3.horizontal.decrease.circle")
                 }
             }
         }
@@ -69,28 +86,32 @@ struct GoalListView: View {
 
     private var goalList: some View {
         List {
-            ForEach(GoalTier.ordered, id: \.self) { tier in
-                let tieredGoals = goals(for: tier)
-                if !tieredGoals.isEmpty {
-                    TierSectionView(tier: tier) {
-                        ForEach(tieredGoals) { goal in
-                            NavigationLink(value: AppRoute.goalDetail(goal)) {
-                                GoalRowView(goal: goal) {
-                                    viewModel.toggleCompletion(goal: goal, context: modelContext)
-                                }
-                            }
-                            .listRowBackground(
-                                goal.completed
-                                    ? Color(red: 0.063, green: 0.725, blue: 0.506).opacity(0.08)
-                                    : Color.clear
-                            )
-                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                Button(role: .destructive) {
-                                    goalToDelete = goal
-                                    showingDeleteConfirmation = true
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
-                                }
+            if sortOption == .byCompletionStatus {
+                // D-08: Two sections — Active (tier-ordered within) + Completed (flat)
+                let active    = sortedGoals.filter { !$0.completed }
+                let completed = sortedGoals.filter { $0.completed }
+                if !active.isEmpty {
+                    Section("Active") {
+                        ForEach(active) { goal in
+                            goalRow(for: goal)
+                        }
+                    }
+                }
+                if !completed.isEmpty {
+                    Section("Completed") {
+                        ForEach(completed) { goal in
+                            goalRow(for: goal)
+                        }
+                    }
+                }
+            } else {
+                // Tier sections (byTier default + byCreationDate)
+                ForEach(GoalTier.ordered, id: \.self) { tier in
+                    let tieredGoals = goals(for: tier)
+                    if !tieredGoals.isEmpty {
+                        TierSectionView(tier: tier) {
+                            ForEach(tieredGoals) { goal in
+                                goalRow(for: goal)
                             }
                         }
                     }
@@ -98,7 +119,32 @@ struct GoalListView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .animation(.easeOut(duration: 0.25), value: sortOption)
         .animation(.easeOut(duration: 0.15), value: goals.count)
+    }
+
+    // MARK: Goal Row Helper
+
+    @ViewBuilder
+    private func goalRow(for goal: Goal) -> some View {
+        NavigationLink(value: AppRoute.goalDetail(goal)) {
+            GoalRowView(goal: goal) {
+                viewModel.toggleCompletion(goal: goal, context: modelContext)
+            }
+        }
+        .listRowBackground(
+            goal.completed
+                ? Color(red: 0.063, green: 0.725, blue: 0.506).opacity(0.08)
+                : Color(.secondarySystemGroupedBackground)
+        )
+        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+            Button(role: .destructive) {
+                goalToDelete = goal
+                showingDeleteConfirmation = true
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+        }
     }
 }
 
