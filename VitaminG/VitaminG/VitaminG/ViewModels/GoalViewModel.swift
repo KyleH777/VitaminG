@@ -105,6 +105,7 @@ final class GoalViewModel {
         )
         context.insert(goal)
         resetDraft()
+        rescheduleNotification(context: context)
     }
 
     func toggleCompletion(goal: Goal, context: ModelContext) {
@@ -113,6 +114,7 @@ final class GoalViewModel {
             let event = CompletionEvent(goal: goal)
             context.insert(event)
         }
+        rescheduleNotification(context: context)
     }
 
     func updateGoal(_ goal: Goal, context: ModelContext) throws {
@@ -125,10 +127,24 @@ final class GoalViewModel {
         goal.tierRawValue          = draftTier.rawValue
         goal.associatedInspiration = cleanInspiration.isEmpty ? nil : cleanInspiration
         resetDraft()
+        rescheduleNotification(context: context)
     }
 
     func delete(goal: Goal, context: ModelContext) {
         context.delete(goal)
+        rescheduleNotification(context: context)
+    }
+
+    // MARK: - Notification Rescheduling
+
+    /// Reschedules the daily notification with current active goals (NOTIF-03).
+    /// Called after every goal mutation to keep the notification body current (T-03-10).
+    func rescheduleNotification(context: ModelContext) {
+        let descriptor = FetchDescriptor<Goal>(predicate: #Predicate { !$0.isCompleted })
+        let activeGoals = (try? context.fetch(descriptor)) ?? []
+        Task {
+            await NotificationScheduler.shared.reschedule(activeGoals: activeGoals)
+        }
     }
 
     // MARK: - Helpers

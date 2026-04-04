@@ -1,8 +1,8 @@
 import SwiftUI
 
-/// Root view of the app. Hosts a TabView with Goals and Stats tabs.
-/// Phase 3: TabView replaces single NavigationStack. Goals tab preserves existing
-/// AppRouter-bound NavigationStack. Stats tab wired to real StatsView (Plan 02).
+/// Root view of the app. Hosts a TabView with Goals, Stats, and Settings tabs.
+/// Phase 3: TabView with Goals tab (AppRouter-bound), Stats tab (StatsView from Plan 02),
+/// and Settings tab (SettingsView from Plan 03).
 struct ContentView: View {
     @Environment(AppRouter.self) private var router
 
@@ -19,6 +19,14 @@ struct ContentView: View {
             .tabItem {
                 Label("Stats", systemImage: "chart.bar.fill")
             }
+
+            // Settings tab — Plan 03
+            NavigationStack {
+                SettingsView()
+            }
+            .tabItem {
+                Label("Settings", systemImage: "gear")
+            }
         }
     }
 
@@ -33,7 +41,7 @@ struct ContentView: View {
                     case .stats:
                         StatsView()
                     case .settings:
-                        Text("Settings") // Replaced in Plan 03
+                        SettingsView()
                     }
                 }
         }
