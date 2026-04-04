@@ -32,8 +32,8 @@
 - [x] **STATS-01**: App tracks a streak per tier — consecutive days with at least one completion event in that tier
 - [x] **STATS-02**: App tracks a global streak — consecutive days with at least one completion event in any tier (motivational fallback)
 - [x] **STATS-03**: Streak computation uses `Calendar.current` date arithmetic, not raw `TimeInterval` — DST-safe
-- [ ] **STATS-04**: Stats screen shows: current streak per tier, global streak, completion rate per tier, total goals per tier
-- [ ] **STATS-05**: Stats screen shows a calendar/heatmap view — GitHub-style grid of completion activity
+- [x] **STATS-04**: Stats screen shows: current streak per tier, global streak, completion rate per tier, total goals per tier
+- [x] **STATS-05**: Stats screen shows a calendar/heatmap view — GitHub-style grid of completion activity
 - [x] **STATS-06**: All streak and stats computations are derived from `CompletionEvent` records, not `isCompleted` boolean
 
 ### Notifications
@@ -143,8 +143,8 @@
 | STATS-01 | Phase 3 | Complete |
 | STATS-02 | Phase 3 | Complete |
 | STATS-03 | Phase 3 | Complete |
-| STATS-04 | Phase 3 | Pending |
-| STATS-05 | Phase 3 | Pending |
+| STATS-04 | Phase 3 | Complete |
+| STATS-05 | Phase 3 | Complete |
 | STATS-06 | Phase 3 | Complete |
 | NOTIF-02 | Phase 3 | Complete |
 | NOTIF-03 | Phase 3 | Complete |

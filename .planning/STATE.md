@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verifying
-stopped_at: Completed 03-03-PLAN.md
-last_updated: "2026-04-04T22:59:20.899Z"
+stopped_at: Completed 03-02-PLAN.md
+last_updated: "2026-04-04T23:15:04.493Z"
 last_activity: 2026-04-04
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 10
-  completed_plans: 8
-  percent: 80
+  completed_plans: 9
+  percent: 90
 ---
 
 # Project State
@@ -58,6 +58,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 02-core-goal-ui P03 | 15 | 1 tasks | 3 files |
 | Phase 03 P01 | 22 | 2 tasks | 6 files |
 | Phase 03 P03 | 6 | 2 tasks | 7 files |
+| Phase 03-streaks-stats-notifications P02 | 15 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -86,6 +87,8 @@ Recent decisions affecting current work:
 - [Phase 03]: NotificationScheduler singleton with pure makeContent function for unit-testable notification content without mocking UNUserNotificationCenter
 - [Phase 03]: AppRouter and NotificationDelegate stored as App struct properties to prevent delegate deallocation and ensure stable closure capture
 - [Phase 03]: Settings exposed as third tab rather than toolbar button — non-invasive to GoalListView toolbar; SettingsView also wired as .settings AppRoute destination
+- [Phase 03-streaks-stats-notifications]: StatsViewModel uses manual refresh(events:goals:) to stay free of SwiftUI/SwiftData dependency, consistent with GoalViewModel pattern
+- [Phase 03-streaks-stats-notifications]: HeatmapView is a pure [Date: Int] consumer — pre-building in ViewModel enables O(1) per-cell rendering (T-03-06)
 
 ### Pending Todos
 
@@ -99,6 +102,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-04T22:59:20.896Z
-Stopped at: Completed 03-03-PLAN.md
+Last session: 2026-04-04T23:15:04.490Z
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None
