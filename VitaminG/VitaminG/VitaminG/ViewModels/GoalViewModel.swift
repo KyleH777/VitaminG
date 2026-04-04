@@ -115,6 +115,18 @@ final class GoalViewModel {
         }
     }
 
+    func updateGoal(_ goal: Goal, context: ModelContext) throws {
+        let cleanTitle       = sanitize(draftTitle)
+        let cleanDescription = sanitize(draftDescription)
+        let cleanInspiration = sanitize(draftInspiration)
+        try validate(title: cleanTitle, description: cleanDescription, inspiration: cleanInspiration)
+        goal.title                 = cleanTitle
+        goal.goalDescription       = cleanDescription.isEmpty ? nil : cleanDescription
+        goal.tierRawValue          = draftTier.rawValue
+        goal.associatedInspiration = cleanInspiration.isEmpty ? nil : cleanInspiration
+        resetDraft()
+    }
+
     func delete(goal: Goal, context: ModelContext) {
         context.delete(goal)
     }
