@@ -12,7 +12,11 @@ Every morning, the user is reminded of their goals — making progress feel inev
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] Four-tier goal system: Immediate, Short-Term, Long-Term, Life Goal — *Validated in Phase 1: Foundation*
+- [x] Goal model: id, title, goalDescription, tier, isCompleted, creationDate, associatedInspiration — *Validated in Phase 1: Foundation*
+- [x] Secure input validation on all String fields (100/500/300 char limits, sanitization) — *Validated in Phase 1: Foundation*
+- [x] MVVM architecture with SwiftData persistence (SchemaV1 VersionedSchema, ModelContainerFactory) — *Validated in Phase 1: Foundation*
+- [x] App Group + CloudKit-ready ModelContainer shared between app and widget targets — *Validated in Phase 1: Foundation*
 
 ### Active
 
@@ -78,4 +82,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-03 after initialization*
+*Last updated: 2026-04-04 after Phase 1: Foundation complete*
