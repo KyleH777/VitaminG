@@ -10,11 +10,11 @@
 ### Foundation (Architecture & Data Model)
 
 - [x] **FOUND-01**: App uses MVVM architecture — zero business logic in Views, all state in `@Observable` ViewModels
-- [ ] **FOUND-02**: SwiftData `Goal` model with `id` (UUID), `title` (String?), `description` (String?), `tier` (String? enum: immediate/shortTerm/longTerm/lifeGoal), `isCompleted` (Bool), `creationDate` (Date?), `associatedInspiration` (String?) — all optional for CloudKit compatibility
-- [ ] **FOUND-03**: `Goal` model uses `VersionedSchema` from day one — no unversioned schema ships
-- [ ] **FOUND-04**: `CompletionEvent` model for streak history: `id` (UUID), `goalID` (UUID), `tier` (String?), `completedAt` (Date?) — CloudKit-compatible
-- [ ] **FOUND-05**: App Group entitlement configured (`group.com.[BUNDLEID].vitamingapp`) so widget and main app share the same SwiftData store
-- [ ] **FOUND-06**: `ModelContainer` uses `groupContainer: .identifier(...)` + `cloudKitDatabase: .automatic` from Phase 1
+- [x] **FOUND-02**: SwiftData `Goal` model with `id` (UUID), `title` (String?), `description` (String?), `tier` (String? enum: immediate/shortTerm/longTerm/lifeGoal), `isCompleted` (Bool), `creationDate` (Date?), `associatedInspiration` (String?) — all optional for CloudKit compatibility
+- [x] **FOUND-03**: `Goal` model uses `VersionedSchema` from day one — no unversioned schema ships
+- [x] **FOUND-04**: `CompletionEvent` model for streak history: `id` (UUID), `goalID` (UUID), `tier` (String?), `completedAt` (Date?) — CloudKit-compatible
+- [x] **FOUND-05**: App Group entitlement configured (`group.com.[BUNDLEID].vitamingapp`) so widget and main app share the same SwiftData store
+- [x] **FOUND-06**: `ModelContainer` uses `groupContainer: .identifier(...)` + `cloudKitDatabase: .automatic` from Phase 1
 - [x] **FOUND-07**: All String inputs validated at model layer: title max 100 chars, description max 500 chars, associatedInspiration max 300 chars — enforced before SwiftData insert
 
 ### Goal Management
@@ -124,11 +124,11 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | FOUND-01 | Phase 1 | Complete |
-| FOUND-02 | Phase 1 | Pending |
-| FOUND-03 | Phase 1 | Pending |
-| FOUND-04 | Phase 1 | Pending |
-| FOUND-05 | Phase 1 | Pending |
-| FOUND-06 | Phase 1 | Pending |
+| FOUND-02 | Phase 1 | Complete |
+| FOUND-03 | Phase 1 | Complete |
+| FOUND-04 | Phase 1 | Complete |
+| FOUND-05 | Phase 1 | Complete |
+| FOUND-06 | Phase 1 | Complete |
 | FOUND-07 | Phase 1 | Complete |
 | GOAL-01 | Phase 2 | Pending |
 | GOAL-02 | Phase 2 | Pending |

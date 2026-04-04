@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-foundation/01-02-PLAN.md
-last_updated: "2026-04-04T12:42:54.544Z"
+stopped_at: Completed 01-foundation-01-01-PLAN.md
+last_updated: "2026-04-04T12:44:13.817Z"
 last_activity: 2026-04-04
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-03)
 ## Current Position
 
 Phase: 01 (foundation) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-04-04
 
@@ -53,6 +53,7 @@ Progress: [░░░░░░░░░░] 0%
 
 *Updated after each plan completion*
 | Phase 01-foundation P02 | 8 | 2 tasks | 5 files |
+| Phase 01-foundation P01 | 5 | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -67,6 +68,9 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: AppRoute is a Hashable stub in Phase 1 — Phase 2 adds cases as views are built per D-08
 - [Phase 01-foundation]: GoalValidationError conforms to Equatable for test assertion capability
 - [Phase 01-foundation]: AppRouter injected at WindowGroup level so all descendant views can access it without coupling
+- [Phase 01-foundation]: SchemaV1 VersionedSchema declared from first commit — cannot be retrofitted once user data exists
+- [Phase 01-foundation]: App Group group.com.kyleharrington.VitaminG on both targets — retrofitting changes store path and loses user data
+- [Phase 01-foundation]: All Goal/CompletionEvent properties optional or defaulted — required for CloudKit sync compatibility
 
 ### Pending Todos
 
@@ -80,6 +84,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-04T12:42:54.542Z
-Stopped at: Completed 01-foundation/01-02-PLAN.md
+Last session: 2026-04-04T12:44:13.814Z
+Stopped at: Completed 01-foundation-01-01-PLAN.md
 Resume file: None
