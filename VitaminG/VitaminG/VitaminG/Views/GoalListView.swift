@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 // MARK: - GoalListView
 
@@ -16,8 +17,11 @@ struct GoalListView: View {
 
     private var hasAnyGoals: Bool { !goals.isEmpty }
 
+    /// Active goals sorted before completed goals within each tier section (D-09).
     private func goals(for tier: GoalTier) -> [Goal] {
-        goals.filter { $0.tier == tier }
+        goals
+            .filter { $0.tier == tier }
+            .sorted { !$0.completed && $1.completed }
     }
 
     // MARK: Body
@@ -76,6 +80,11 @@ struct GoalListView: View {
                                     viewModel.toggleCompletion(goal: goal, context: modelContext)
                                 }
                             }
+                            .listRowBackground(
+                                goal.completed
+                                    ? Color(red: 0.063, green: 0.725, blue: 0.506).opacity(0.08)
+                                    : Color(.secondarySystemGroupedBackground)
+                            )
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                 Button(role: .destructive) {
                                     goalToDelete = goal
@@ -90,7 +99,7 @@ struct GoalListView: View {
             }
         }
         .listStyle(.insetGrouped)
-        .animation(.easeInOut, value: goals.count)
+        .animation(.easeOut(duration: 0.15), value: goals.count)
     }
 }
 
@@ -122,23 +131,33 @@ private struct GoalRowView: View {
     let goal: Goal
     let onToggle: () -> Void
 
+    @State private var bounceScale: CGFloat = 1.0
+
+    private let completionGreen = Color(red: 0.063, green: 0.725, blue: 0.506)
+
     var body: some View {
         HStack(spacing: 14) {
-            // Completion toggle
+            // Completion toggle — bounce effect on state change (D-10)
             Button(action: onToggle) {
                 Image(systemName: goal.completed ? "checkmark.circle.fill" : "circle")
                     .font(.title3)
-                    .foregroundStyle(goal.completed ? goal.tier.color : .secondary)
+                    .foregroundStyle(goal.completed ? completionGreen : Color(.tertiaryLabel))
                     .contentTransition(.symbolEffect(.replace))
+                    .symbolEffect(.bounce, value: goal.completed)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(goal.completed ? "Mark incomplete" : "Mark complete")
+            .frame(minWidth: 44, minHeight: 44)
+            .accessibilityLabel(goal.completed
+                ? "Mark \(goal.title ?? "goal") as active"
+                : "Mark \(goal.title ?? "goal") as complete")
 
             VStack(alignment: .leading, spacing: 3) {
+                // Title: completionGreen with thin strikethrough when complete (D-10, UI-SPEC)
                 Text(goal.title ?? "")
-                    .font(.body.weight(goal.tier.typographicWeight))
-                    .foregroundStyle(goal.completed ? .secondary : .primary)
-                    .strikethrough(goal.completed, color: .secondary)
+                    .font(.system(size: 16, weight: goal.tier.typographicWeight, design: .rounded))
+                    .foregroundStyle(goal.completed ? completionGreen : Color.primary)
+                    .strikethrough(goal.completed, pattern: .solid,
+                                   color: completionGreen.opacity(0.5))
 
                 if let desc = goal.goalDescription, !desc.isEmpty {
                     Text(desc)
@@ -150,13 +169,27 @@ private struct GoalRowView: View {
 
             Spacer()
 
-            // Tier accent pip
+            // Tier accent pip — completionGreen when complete
             RoundedRectangle(cornerRadius: 3)
-                .fill(goal.tier.color.opacity(goal.completed ? 0.3 : 0.8))
+                .fill(goal.completed
+                    ? completionGreen.opacity(0.8)
+                    : goal.tier.color.opacity(0.8))
                 .frame(width: 4, height: 36)
         }
         .padding(.vertical, 4)
         .contentShape(Rectangle())
+        .scaleEffect(bounceScale)
+        .onChange(of: goal.completed) { _, _ in
+            guard !UIAccessibility.isReduceMotionEnabled else { return }
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
+                bounceScale = 1.02
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                    bounceScale = 1.0
+                }
+            }
+        }
     }
 }
 
