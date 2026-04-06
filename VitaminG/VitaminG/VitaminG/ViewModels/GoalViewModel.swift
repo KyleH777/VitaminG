@@ -49,8 +49,9 @@ final class GoalViewModel {
 
     /// Strips control characters, normalises whitespace, and trims leading/trailing whitespace.
     func sanitize(_ raw: String) -> String {
+        let blocked = CharacterSet.controlCharacters.union(.illegalCharacters).subtracting(.newlines)
         let stripped = raw.unicodeScalars
-            .filter { !CharacterSet.controlCharacters.union(.illegalCharacters).contains($0) }
+            .filter { !blocked.contains($0) }
             .reduce(into: "") { $0.unicodeScalars.append($1) }
 
         // Collapse internal runs of whitespace (spaces + tabs) to a single space,
