@@ -5,6 +5,8 @@ status: draft
 shadcn_initialized: false
 preset: none
 created: 2026-04-06
+revised: 2026-04-06
+revision_reason: "Fix Dimension 4 Typography BLOCK (5 sizes -> 4, weight budget clarification) and Dimension 5 Spacing BLOCK (6pt non-multiple -> 8pt, 20pt documented as inherited exception)"
 ---
 
 # Phase 4 — UI Design Contract
@@ -58,7 +60,15 @@ These values are locked. Phase 4 inherits them. Do not re-specify unless overrid
 
 Source: `Goal.swift` — `GoalTier.color` and `GoalTier.icon`
 
-### Tier Typographic Weight Map
+### Tier Typographic Weight Map (Locked Inherited Constraint)
+
+> **Exempt from Phase 4 typography weight budget.** This weight map is a locked design token
+> established in Phases 1–3 and wired directly into the `GoalTier.typographicWeight` computed
+> property. It drives all goal title rendering throughout the app and cannot be changed without
+> breaking cross-phase visual consistency. It is documented here as an inherited constraint,
+> not a new declaration.
+>
+> Source: `Goal.swift` lines 36–41 — `GoalTier.typographicWeight`
 
 | Tier | Font.Weight |
 |------|-------------|
@@ -66,8 +76,6 @@ Source: `Goal.swift` — `GoalTier.color` and `GoalTier.icon`
 | Short-Term | `.medium` |
 | Long-Term | `.regular` |
 | Life Goal | `.bold` |
-
-Source: `Goal.swift` — `GoalTier.typographicWeight`
 
 ### Semantic Colors (App-Wide)
 
@@ -99,23 +107,29 @@ SwiftUI padding values — all multiples of 4.
 | xs | 4pt | Icon-to-text gaps within a row |
 | sm | 8pt | Spacing between icon and label in tier headers |
 | md | 16pt | Default horizontal padding, inter-section gaps |
-| lg | 20pt | VStack spacing in scroll content areas |
+| lg | 20pt | VStack spacing in scroll content areas — **locked inherited exception** (see note below) |
 | xl | 24pt | Section separation in Forms |
 | 2xl | 32pt | Horizontal padding for centered copy blocks |
 | 3xl | 48pt | Not used in widget surfaces |
+
+> **`lg` (20pt) inherited exception note:** 20pt is not in the standard set {4, 8, 16, 24, 32, 48, 64}.
+> It is retained as a locked inherited exception because it already appears in the shipped codebase
+> at `StatsView.swift:25` (`.padding(.vertical, 20)`). Removing it would require refactoring
+> existing shipped views, which is out of scope for Phase 4. New Phase 4 declarations must use
+> standard multiples only; 20pt may only appear when matching the existing StatsView pattern.
 
 **Widget-specific spacing:**
 
 | Context | Value | Rationale |
 |---------|-------|-----------|
 | Widget outer padding | 12pt (via `.containerBackground`) | WidgetKit renders `.containerBackground` padding automatically on iOS 17; do not add extra padding |
-| Tier row internal padding | `.vertical` 6pt | Fits 4 rows + footer in systemMedium height without clipping |
+| Tier row internal padding | `.vertical` 8pt | Standard 8pt multiple; fits 4 rows + footer in systemMedium height. Replaces the previous 6pt (non-standard) declaration. |
 | Icon-to-title gap in tier row | 8pt | Consistent with TierSectionView header in GoalListView |
 | Footer divider top margin | 8pt | Visual separation from last tier row |
 
 Exceptions: `.containerBackground(for: .widget)` is mandatory on all widget views (iOS 17 requirement per CLAUDE.md). Do not add `.padding()` outside `.containerBackground` — it causes double-margin artifacts.
 
-Source: CLAUDE.md (`.containerBackground` note), codebase inspection of existing views
+Source: CLAUDE.md (`.containerBackground` note), codebase inspection of existing views, `StatsView.swift:25`
 
 ---
 
@@ -123,14 +137,23 @@ Source: CLAUDE.md (`.containerBackground` note), codebase inspection of existing
 
 All sizes in SwiftUI points (1pt = 1px on non-retina reference; system scales with Dynamic Type).
 
+**Phase 4 active weight budget (new declarations only): `.regular` (secondary/label text) + `.bold` (emphasis, streak counts)**
+
+The inherited tier typographic weight map (`.semibold`, `.medium`, `.regular`, `.bold` from `GoalTier.typographicWeight`) is exempt from this budget — it is an inherited locked constraint, not a new Phase 4 declaration. See the Tier Typographic Weight Map section above.
+
 | Role | SwiftUI Style | Weight | Line Height | Usage |
 |------|---------------|--------|-------------|-------|
-| Widget tier title | `.subheadline` (15pt) | tier's `typographicWeight` | 1.2 | Goal title in each tier row of GoalSummaryWidget |
-| Widget empty prompt | `.caption` (12pt) | `.regular` | 1.3 | "No [Tier] goals yet" in empty tier rows |
-| Widget streak display | `.headline` (17pt) | `.bold` | 1.0 | Streak count number in footer and StreakWidget |
-| Widget streak label | `.caption` (12pt) | `.regular` | 1.2 | "day streak" suffix, tier icon labels |
+| Widget tier title | `.subheadline` (15pt) | tier's `typographicWeight` (inherited) | 1.2 | Goal title in each tier row of GoalSummaryWidget |
+| Widget empty prompt / secondary labels | `.caption` (12pt) | `.regular` | 1.3 | "No [Tier] goals yet" in empty tier rows; "day streak" suffix; tier icon labels |
+| Widget streak / lock screen streak count | `.title2` (22pt) | `.bold` | 1.0 | Streak count number in StreakWidget (lock screen, State A). Preferred over 17pt `.headline` for lock screen readability. |
 | Settings streak number | `.largeTitle` (34pt) | `.bold` | 1.0 | The prominent streak count in SettingsView (D-02) |
-| Settings streak label | `.subheadline` (15pt) | `.regular` | 1.3 | "day streak" label below the number |
+
+> **Typography size reduction note (revision):** The previous contract declared five sizes
+> (`.caption` 12pt, `.subheadline` 15pt, `.headline` 17pt, `.title2` 22pt, `.largeTitle` 34pt).
+> `.headline` (17pt) has been removed. The streak count in StreakWidget now uses `.title2` (22pt),
+> which is more readable at lock screen size and serves the same mid-tier heading role.
+> Final scale: 4 sizes maximum — `.caption` (12pt), `.subheadline` (15pt), `.title2` (22pt),
+> `.largeTitle` (34pt).
 
 **Constraints:**
 - Widget title text: `.lineLimit(1)` with `.truncationMode(.tail)` — widget surfaces cannot scroll
@@ -171,7 +194,7 @@ Source: CLAUDE.md (`.containerBackground` required on iOS 17), Goal.swift (tier 
 
 ```
 GoalSummaryWidget
-└── VStack(spacing: 6) [containerBackground]
+└── VStack(spacing: 8) [containerBackground]
     ├── ForEach GoalTier.ordered
     │   └── TierRowView (per tier)
     │       ├── HStack(spacing: 8)
@@ -188,7 +211,7 @@ GoalSummaryWidget
 
 **TierRowView visual spec:**
 - Row background: `tier.color.opacity(0.10)` applied via `.background(RoundedRectangle(cornerRadius: 8))`
-- Row padding: `.horizontal` 8pt, `.vertical` 6pt
+- Row padding: `.horizontal` 8pt, `.vertical` 8pt
 - Icon size: `.caption` font (12pt) — keeps icon compact alongside title text
 - Goal title: `.subheadline` at `tier.typographicWeight`, `.lineLimit(1)`, `.truncationMode(.tail)`
 - Icon color: `tier.color` at full opacity
@@ -213,14 +236,14 @@ VStack(alignment: .leading, spacing: 2)
 ├── HStack(spacing: 4)
 │   ├── Image("flame.fill") [.widgetAccentable()]
 │   └── Text("\(streak)") [.title2, .bold, .monospacedDigit()]
-└── Text("day streak") [.caption, .secondary]
+└── Text("day streak") [.caption, .regular]
 ```
 
 **State B — streak == 0:**
 ```
 VStack(alignment: .leading, spacing: 2)
 ├── Text(topImmediateGoalTitle) [.subheadline, .semibold, .lineLimit(2)]
-└── Text("Immediate goal") [.caption, .secondary]
+└── Text("Immediate goal") [.caption, .regular]
 ```
 
 - Both states use `.containerBackground(for: .widget)` at the top level
@@ -306,7 +329,7 @@ Source: CONTEXT.md D-03 ("gentle prompt"), D-02 ("dopamine hit"), UI-02 (warm to
 | Settings streak number | `.accessibilityLabel("\(globalStreak) \(globalStreak == 1 ? "day" : "days") streak")` |
 | Widget empty tier rows | "No [Tier] goals yet" copy is self-descriptive; no additional label needed |
 
-Dynamic Type: Widget surfaces do not support Dynamic Type scaling in the same way as app views. Use fixed SwiftUI font styles (`.caption`, `.subheadline`, `.headline`) that the system scales appropriately within widget bounds.
+Dynamic Type: Widget surfaces do not support Dynamic Type scaling in the same way as app views. Use fixed SwiftUI font styles (`.caption`, `.subheadline`, `.title2`) that the system scales appropriately within widget bounds.
 
 ---
 
@@ -330,6 +353,8 @@ No third-party packages in scope. All UI is built with SwiftUI, WidgetKit, and S
 5. **Simulator guard required in widget:** The `#if targetEnvironment(simulator)` path in `ModelContainerFactory.makeContainer()` must be preserved when widget target uses this factory.
 6. **WidgetDataProvider follows GoalSorter/StreakEngine pattern:** Pure struct, no SwiftUI/SwiftData import, unit-testable without WidgetKit.
 7. **Settings streak reads from same data source as StatsView:** Use a `@Query` on `CompletionEvent` in `SettingsView` and compute global streak with `StreakEngine.currentStreak(from:)`.
+8. **Tier row vertical padding is 8pt:** Do not use 6pt — it is not a multiple of 4. Use `.padding(.vertical, 8)` on all TierRowView instances.
+9. **`.title2` for streak count in StreakWidget:** Do not use `.headline` (17pt) — it was removed from the type scale. Use `.title2` (22pt) for the lock screen streak number.
 
 ---
 
