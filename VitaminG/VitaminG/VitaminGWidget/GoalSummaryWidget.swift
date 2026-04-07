@@ -1,0 +1,130 @@
+import WidgetKit
+import SwiftUI
+import SwiftData
+
+// MARK: - GoalSummaryProvider
+
+struct GoalSummaryProvider: TimelineProvider {
+
+    func placeholder(in context: Context) -> GoalEntry {
+        // Widget gallery — static data only, no SwiftData fetch (Pitfall 4)
+        GoalEntry(date: .now, displayData: .placeholder)
+    }
+
+    func getSnapshot(in context: Context, completion: @escaping (GoalEntry) -> Void) {
+        // Widget gallery snapshot — static data only (Pitfall 4)
+        completion(GoalEntry(date: .now, displayData: .placeholder))
+    }
+
+    func getTimeline(in context: Context, completion: @escaping (Timeline<GoalEntry>) -> Void) {
+        do {
+            let container = try ModelContainerFactory.makeWidgetContainer()
+            let modelContext = ModelContext(container)
+
+            let goals = try modelContext.fetch(FetchDescriptor<Goal>())
+            let events = try modelContext.fetch(FetchDescriptor<CompletionEvent>())
+
+            let displayData = WidgetDataProvider.build(goals: goals, events: events)
+            let entry = GoalEntry(date: .now, displayData: displayData)
+
+            // Refresh once daily at next morning aligned with notification time (D-06, WIDGET-05)
+            let defaults = UserDefaults(suiteName: "group.com.kyleharrington.VitaminG")
+            let hour = defaults?.object(forKey: "notificationHour") as? Int ?? 8
+            let minute = defaults?.object(forKey: "notificationMinute") as? Int ?? 0
+            let nextRefresh = WidgetDataProvider.nextMorningRefreshDate(hour: hour, minute: minute)
+            let timeline = Timeline(entries: [entry], policy: .after(nextRefresh))
+            completion(timeline)
+        } catch {
+            // Fallback: empty data, retry in 1 hour
+            let entry = GoalEntry(date: .now, displayData: .empty)
+            let timeline = Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
+            completion(timeline)
+        }
+    }
+}
+
+// MARK: - GoalSummaryWidgetView
+
+struct GoalSummaryWidgetView: View {
+    let entry: GoalEntry
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(Array(entry.displayData.tierRows.enumerated()), id: \.offset) { _, row in
+                TierRowView(row: row)
+            }
+
+            // Footer: streak count when > 0, omitted when 0 (D-04)
+            if entry.displayData.globalStreak > 0 {
+                Divider()
+                    .padding(.top, 8)
+                HStack(spacing: 4) {
+                    Image(systemName: "flame.fill")
+                        .foregroundStyle(Color(red: 0.98, green: 0.55, blue: 0.27))
+                        .font(.caption)
+                    Text("\(entry.displayData.globalStreak) day streak")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                }
+                .padding(.top, 4)
+            }
+        }
+        .padding(12)
+        .containerBackground(.fill.tertiary, for: .widget)
+    }
+}
+
+// MARK: - TierRowView
+
+private struct TierRowView: View {
+    let row: WidgetDisplayData.TierRow
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            // Tier icon + name header
+            HStack(spacing: 8) {
+                Image(systemName: row.tier.icon)
+                    .font(.caption)
+                    .foregroundStyle(row.tier.color)
+                Text(row.tier.displayName)
+                    .font(.caption)
+                    .foregroundStyle(row.tier.color)
+                Spacer()
+            }
+
+            // Goal title or empty prompt
+            if let title = row.topGoalTitle {
+                Text(title)
+                    .font(.subheadline)
+                    .fontWeight(row.tier.typographicWeight)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+            } else {
+                Text("No \(row.tier.displayName) goals yet")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(row.tier.color.opacity(0.10))
+        )
+    }
+}
+
+// MARK: - GoalSummaryWidget
+
+struct GoalSummaryWidget: Widget {
+    let kind = "GoalSummaryWidget"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: GoalSummaryProvider()) { entry in
+            GoalSummaryWidgetView(entry: entry)
+        }
+        .configurationDisplayName("Goals")
+        .description("See your top goal for each tier at a glance.")
+        .supportedFamilies([.systemMedium])
+    }
+}
