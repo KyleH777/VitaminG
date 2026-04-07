@@ -29,6 +29,29 @@ enum ModelContainerFactory {
 
         return try ModelContainer(for: schema, configurations: config)
     }
+
+    /// Widget-safe ModelContainer: reads from App Group store but does NOT own CloudKit sync.
+    /// Widget process has no iCloud entitlement — using .automatic would crash on device.
+    /// Pitfall 2 from RESEARCH.md: widget must use cloudKitDatabase: .none.
+    static func makeWidgetContainer() throws -> ModelContainer {
+        let schema = Schema(SchemaV1.models, version: SchemaV1.versionIdentifier)
+
+        #if targetEnvironment(simulator)
+        let config = ModelConfiguration(
+            schema: schema,
+            isStoredInMemoryOnly: false
+        )
+        #else
+        let config = ModelConfiguration(
+            schema: schema,
+            isStoredInMemoryOnly: false,
+            groupContainer: .identifier("group.com.kyleharrington.VitaminG"),
+            cloudKitDatabase: .none
+        )
+        #endif
+
+        return try ModelContainer(for: schema, configurations: config)
+    }
 }
 
 // MARK: - CloudKit Schema Initialization (DEBUG only)
