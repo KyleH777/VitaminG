@@ -78,7 +78,10 @@ Plans:
   2. The home screen `systemMedium` widget displays the user's top active goals across tiers and updates at least once per day
   3. The lock screen `accessoryRectangular` widget displays the current global streak or top active goal title
   4. Both widgets read from the shared App Group SwiftData store and perform no write operations — all data is read-only from the widget process
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 04-01-PLAN.md — Main app widget wiring (WidgetCenter reload, Settings streak row, App Group UserDefaults, makeWidgetContainer, Wave 0 test stubs)
+- [ ] 04-02-PLAN.md — Widget data layer + full widget implementation (WidgetDataProvider, GoalSummaryWidget, StreakWidget, test upgrades)
 **UI hint**: yes
 
 ### Phase 5: Onboarding & Polish
@@ -113,6 +116,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 1. Foundation | 3/3 | Complete |  |
 | 2. Core Goal UI | 3/3 | Complete   | 2026-04-04 |
 | 3. Streaks, Stats & Notifications | 3/4 | In Progress|  |
-| 4. iCloud Sync & Widgets | 0/TBD | Not started | - |
+| 4. iCloud Sync & Widgets | 0/2 | Not started | - |
 | 5. Onboarding & Polish | 0/TBD | Not started | - |
 | 6. Distribution | 0/TBD | Not started | - |
