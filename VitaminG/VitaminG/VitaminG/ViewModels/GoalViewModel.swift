@@ -1,6 +1,7 @@
 import SwiftData
 import SwiftUI
 import Observation
+import WidgetKit
 
 // MARK: - Validation
 
@@ -107,6 +108,7 @@ final class GoalViewModel {
         context.insert(goal)
         resetDraft()
         rescheduleNotification(context: context)
+        reloadWidgetTimelines()
     }
 
     func toggleCompletion(goal: Goal, context: ModelContext) {
@@ -116,6 +118,7 @@ final class GoalViewModel {
             context.insert(event)
         }
         rescheduleNotification(context: context)
+        reloadWidgetTimelines()
     }
 
     func updateGoal(_ goal: Goal, context: ModelContext) throws {
@@ -129,11 +132,21 @@ final class GoalViewModel {
         goal.associatedInspiration = cleanInspiration.isEmpty ? nil : cleanInspiration
         resetDraft()
         rescheduleNotification(context: context)
+        reloadWidgetTimelines()
     }
 
     func delete(goal: Goal, context: ModelContext) {
         context.delete(goal)
         rescheduleNotification(context: context)
+        reloadWidgetTimelines()
+    }
+
+    // MARK: - Widget Reload
+
+    /// Signals WidgetKit to refresh all widget timelines (D-06, WIDGET-05).
+    /// Called after every goal mutation so widgets reflect current data.
+    private func reloadWidgetTimelines() {
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     // MARK: - Notification Rescheduling
