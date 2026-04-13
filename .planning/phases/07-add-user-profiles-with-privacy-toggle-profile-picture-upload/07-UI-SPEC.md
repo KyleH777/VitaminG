@@ -1,7 +1,8 @@
 ---
 phase: 7
 slug: add-user-profiles-with-privacy-toggle-profile-picture-upload
-status: draft
+status: approved
+reviewed_at: 2026-04-13
 shadcn_initialized: false
 preset: none
 created: 2026-04-13
@@ -60,15 +61,14 @@ All fonts use `.system(design: .rounded)`. No other font family is used in this 
 
 | Role | Size | Weight | Line Height | SwiftUI Expression | Usage |
 |------|------|--------|-------------|-------------------|-------|
-| Caption | 12pt | `.regular` | 1.4 | `.system(size: 12, weight: .regular, design: .rounded)` | Metadata labels, dates, secondary notes |
-| Label | 13pt | `.semibold` | 1.3 | `.system(size: 13, weight: .semibold, design: .rounded)` | Section headers, "Notes" label, "Public Goals" section header |
-| Body | 16pt | `.regular` / `.semibold` | 1.5 | `.system(size: 16, weight: .regular, design: .rounded)` | Display name, goal titles in public preview list |
-| Subhead | 18pt | `.semibold` | 1.3 | `.system(size: 18, weight: .semibold, design: .rounded)` | Privacy toggle label, Share Profile button label |
+| Caption | 12pt | `.regular` / `.semibold` | 1.4 | `.system(size: 12, weight: .regular, design: .rounded)` | Metadata labels, dates, secondary notes, section headers (at `.semibold`) |
+| Body | 16pt | `.regular` / `.semibold` | 1.5 | `.system(size: 16, weight: .regular, design: .rounded)` | Display name, goal titles in public preview list, privacy toggle label, Share Profile button label (at `.semibold`) |
 | Title | 22pt | `.semibold` | 1.2 | `.system(size: 22, weight: .semibold, design: .rounded)` | Display name (primary, centered in profile header) |
-| Avatar Initials | 34pt | `.semibold` | 1.0 | `.system(size: 34, weight: .semibold, design: .rounded)` | Initials rendered inside the 88pt avatar circle |
 
 Weights permitted in this phase: `.regular` (400) and `.semibold` (600).
 `.medium` and `.bold` must not be introduced in new views — maintain existing app weight range.
+
+Note: Avatar initials are rendered at 34pt semibold rounded inside the AvatarView component only. This size is not a named typography table entry — it is a component-specific constant (`AvatarView` frame: 88pt circle, initials: `.system(size: 34, weight: .semibold, design: .rounded)`, color: `Color.white`). See AvatarView component spec below.
 
 Source: Codebase audit — GoalDetailView uses 12/16/22pt, GoalListView uses 16pt body, AddGoalView uses form patterns. Avatar initials size derived from 88pt circle with standard 38% text ratio.
 
@@ -165,7 +165,7 @@ Background: `Color(UIColor.systemGroupedBackground)` — matches StatsView.
 
 - Frame: 88 × 88pt circle (`Circle().frame(width: 88, height: 88)`)
 - Fill: assigned avatar color slot (`avatarColor`)
-- Text: up to 2 characters from initials, 34pt semibold rounded, `Color.white`
+- Text: up to 2 characters from initials, `.system(size: 34, weight: .semibold, design: .rounded)`, `Color.white`
 - Shadow: `.shadow(color: .black.opacity(0.10), radius: 8, y: 4)`
 - Accessibility: `.accessibilityLabel("Profile avatar for \(displayName)")`
 - No tap gesture in Phase 7 (photo upload deferred)
@@ -184,7 +184,7 @@ Background: `Color(UIColor.systemGroupedBackground)` — matches StatsView.
 - Content: `NavigationStack` > `Form` with one `Section` containing a `TextField`
 - TextField placeholder: "Your name"
 - Max chars: 50 (enforced via `.onChange` — same CharacterCountView pattern)
-- Toolbar: "Cancel" (cancellationAction) + "Save" (confirmationAction, `.semibold`, disabled when empty)
+- Toolbar: "Discard Changes" (cancellationAction) + "Update Name" (confirmationAction, `.semibold`, disabled when empty)
 - Validation: display name cannot be blank. Error: inline `.alert` with message "Name cannot be empty."
 
 #### `PrivacyToggleRow` (inline in ProfileView, inside a card)
@@ -200,7 +200,7 @@ Background: `Color(UIColor.systemGroupedBackground)` — matches StatsView.
 
 #### `PublicGoalsSection` (inline in ProfileView)
 
-- Header: "Public Goals" (13pt semibold, `.secondary`)
+- Header: "Public Goals" (12pt semibold, `.secondary`)
 - Content: `LazyVStack` of `PublicGoalRow` views, one per `isPublic == true` goal
 - Empty state (when no public goals): see Copywriting Contract below
 - `PublicGoalRow`: HStack — tier color pip (4×36pt, cornerRadius 3) + goal title (16pt regular rounded) + tier icon SF Symbol (12pt, tier.color)
@@ -269,8 +269,8 @@ Added to existing `GoalDetailView` as a new section between the header section a
 ### Display Name Edit
 
 - Pencil button taps → sheet presents with current name pre-filled
-- Save: validates non-empty, trims whitespace, persists to SwiftData
-- Cancel: dismisses without saving
+- Save ("Update Name"): validates non-empty, trims whitespace, persists to SwiftData
+- Cancel ("Discard Changes"): dismisses without saving
 - Character limit enforced live: same CharacterCountView pattern at 50 chars
 
 ### Public Goal Toggle (GoalDetailView)
@@ -298,8 +298,8 @@ All copy uses sentence case (not Title Case) except proper nouns and button labe
 | Primary CTA | "Share Profile" |
 | Display name placeholder | "Your name" |
 | Display name empty error | "Name cannot be empty. Add your name so others can recognize you." |
-| Display name save button | "Save" |
-| Display name cancel button | "Cancel" |
+| Display name save button | "Update Name" |
+| Display name cancel button | "Discard Changes" |
 | Privacy toggle label | "Public Profile" |
 | Privacy toggle footer | "When public, anyone with your share link can view your goals that you've marked as public." |
 | Public goals section header | "Public Goals" |
@@ -309,7 +309,7 @@ All copy uses sentence case (not Title Case) except proper nouns and button labe
 | Share button accessibility hint (disabled) | "Set your profile to public to enable sharing." |
 | CloudKit write failure alert title | "Couldn't share your profile." |
 | CloudKit write failure alert body | "Check your internet connection and try again." |
-| CloudKit failure alert button | "OK" |
+| CloudKit failure alert button | "Got It" |
 | Goal public toggle label | "Share this goal" |
 | Goal public toggle subtext | "Public goals appear on your profile when your profile is set to public." |
 | Profile first-visit onboarding footer (Section footer) | "Your profile is private by default. Only you can see it." |
