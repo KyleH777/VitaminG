@@ -90,7 +90,5 @@ enum SchemaV1: VersionedSchema {
 }
 
 // MARK: - Typealiases
-
-/// Convenience typealiases so call sites don't need to qualify SchemaV1 everywhere.
-typealias Goal = SchemaV1.Goal
-typealias CompletionEvent = SchemaV1.CompletionEvent
+// NOTE: Typealiases for Goal and CompletionEvent are declared in SchemaV2.swift,
+// pointing to the V2 types. SchemaV1 is frozen and must not be modified (D-15).

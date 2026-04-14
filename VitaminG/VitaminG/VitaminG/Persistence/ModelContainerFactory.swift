@@ -9,7 +9,7 @@ import SwiftData
 /// Testing: in-memory store with no App Group or CloudKit binding.
 enum ModelContainerFactory {
     static func makeContainer(inMemory: Bool = false) throws -> ModelContainer {
-        let schema = Schema(SchemaV1.models, version: SchemaV1.versionIdentifier)
+        let schema = Schema(SchemaV2.models, version: SchemaV2.versionIdentifier)
 
         // On Simulator, App Group entitlements are not provisioned, so skip group container
         // and CloudKit to avoid a fatal assertion crash at launch (affects both app and test runner).
@@ -27,14 +27,15 @@ enum ModelContainerFactory {
         )
         #endif
 
-        return try ModelContainer(for: schema, configurations: config)
+        return try ModelContainer(for: schema, migrationPlan: VitaminGMigrationPlan.self, configurations: config)
     }
 
     /// Widget-safe ModelContainer: reads from App Group store but does NOT own CloudKit sync.
     /// Widget process has no iCloud entitlement — using .automatic would crash on device.
     /// Pitfall 2 from RESEARCH.md: widget must use cloudKitDatabase: .none.
+    /// Must use same schema + migration plan as makeContainer to avoid store mismatch crash (T-07-02).
     static func makeWidgetContainer() throws -> ModelContainer {
-        let schema = Schema(SchemaV1.models, version: SchemaV1.versionIdentifier)
+        let schema = Schema(SchemaV2.models, version: SchemaV2.versionIdentifier)
 
         #if targetEnvironment(simulator)
         let config = ModelConfiguration(
@@ -50,7 +51,7 @@ enum ModelContainerFactory {
         )
         #endif
 
-        return try ModelContainer(for: schema, configurations: config)
+        return try ModelContainer(for: schema, migrationPlan: VitaminGMigrationPlan.self, configurations: config)
     }
 }
 
@@ -80,7 +81,7 @@ extension ModelContainerFactory {
             desc.shouldAddStoreAsynchronously = false  // Required — schema init must be synchronous
 
             if let mom = NSManagedObjectModel.makeManagedObjectModel(
-                for: [Goal.self, CompletionEvent.self]
+                for: [Goal.self, CompletionEvent.self, UserProfile.self]
             ) {
                 let ckContainer = NSPersistentCloudKitContainer(
                     name: "VitaminG",
