@@ -106,10 +106,29 @@ Plans:
   3. App Store listing has complete metadata: screenshots for all required device sizes, description, keywords, and privacy manifest (PrivacyInfo.xcprivacy) covering all required-reason APIs used
 **Plans**: TBD
 
+### Phase 7: Add user profiles with privacy toggle, profile picture upload, and AI-generated character avatar
+**Goal:** Users have a personal profile with display name, warm-colored initials avatar, privacy toggle (public/private), per-goal public/private controls, and a shareable deep link for public profiles via CloudKit public database
+**Depends on:** Phase 6
+**Requirements**: PROF-01, PROF-02, PROF-03, PROF-04, PROF-05, PROF-06, PROF-07, PROF-08, PROF-09, PROF-10
+**Success Criteria** (what must be TRUE):
+  1. SchemaV2 migration adds UserProfile model and Goal.isPublic without data loss on existing records
+  2. Profile tab (4th tab) shows avatar, display name, privacy toggle, public goals preview, and share button
+  3. Toggling profile to Public saves a PublicProfile record to CloudKit public database; toggling Private deletes it
+  4. Share Profile button generates a vitaming://profile/<recordID> deep link and presents system share sheet
+  5. GoalDetailView has a working "Share this goal" toggle that persists isPublic on the Goal
+  6. AvatarView renders initials + warm color (or photo when photoData is available in future)
+**Plans:** 4 plans
+
+Plans:
+- [ ] 07-01-PLAN.md — SchemaV2 migration: UserProfile model, Goal.isPublic, VitaminGMigrationPlan, ModelContainerFactory update
+- [ ] 07-02-PLAN.md — Profile UI: ProfileViewModel, ProfileView (4th tab), ProfileEditSheet, GoalDetailView public toggle
+- [ ] 07-03-PLAN.md — CloudKit public sharing: ProfileSharingService, DeepLinkBuilder, Info.plist URL scheme, ShareLink wiring
+- [ ] 07-04-PLAN.md — AvatarView component: reusable initials+color avatar with photo fallback, integrated into ProfileView and ProfileEditSheet
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -119,3 +138,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 4. iCloud Sync & Widgets | 0/2 | Not started | - |
 | 5. Onboarding & Polish | 0/TBD | Not started | - |
 | 6. Distribution | 0/TBD | Not started | - |
+| 7. User Profiles | 0/4 | Not started | - |
