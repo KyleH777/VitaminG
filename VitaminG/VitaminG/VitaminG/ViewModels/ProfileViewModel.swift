@@ -7,6 +7,7 @@ import SwiftUI
 /// Manages the single UserProfile per device/iCloud account.
 /// Follows the GoalViewModel pattern: @Observable, business logic only, no SwiftUI view code.
 /// Plan 07-02: Profile CRUD, avatar color assignment, display name validation, privacy toggle.
+/// Plan 07-03: CloudKit public database write/delete wired to toggleProfilePublic; shareURL uses DeepLinkBuilder.
 @Observable
 final class ProfileViewModel {
 
@@ -37,7 +38,7 @@ final class ProfileViewModel {
     var showingValidationAlert: Bool = false
     var validationErrorMessage: String = ""
 
-    /// Set when a CloudKit public database write fails (Plan 03 wires the actual write).
+    /// Set when a CloudKit public database write fails (T-07-11).
     var cloudKitError: String?
     var showingCloudKitError: Bool = false
 
@@ -85,10 +86,10 @@ final class ProfileViewModel {
         return Color(hex: hex)
     }
 
-    /// Share URL for this profile. Returns nil until Plan 03 populates cloudKitPublicRecordID.
+    /// Share URL for this profile using DeepLinkBuilder.
+    /// Returns nil until profile is public AND cloudKitPublicRecordID is set (D-06, D-07).
     var shareURL: URL? {
-        guard let recordID = profile?.cloudKitPublicRecordID else { return nil }
-        return URL(string: "vitaming://profile/\(recordID)")
+        DeepLinkBuilder.profileURL(recordID: profile?.cloudKitPublicRecordID)
     }
 
     // MARK: - Display Name Validation
@@ -113,16 +114,68 @@ final class ProfileViewModel {
 
         profile?.displayName = capped
         try? context.save()
+
+        // Sync updated display name to CloudKit public record if profile is public
+        updatePublicRecordIfNeeded(context: context)
+
         return true
     }
 
     // MARK: - Privacy Toggle
 
-    /// Toggles profile-level isPublic and persists.
-    /// CloudKit public DB write is handled in Plan 03. For now, local persistence only (D-04 — D-06).
+    /// Toggles profile-level isPublic and triggers CloudKit public DB write or delete.
+    /// Going public: saves PublicProfile record to CloudKit public DB, stores recordID locally.
+    /// Going private: deletes CloudKit public record (prevents orphaned accessible data), clears recordID.
+    /// Per D-04 – D-06, T-07-11: on publish failure, shows alert but keeps toggle ON (optimistic UI).
     func toggleProfilePublic(context: ModelContext) {
-        profile?.isPublic.toggle()
+        guard let profile else { return }
+        let newValue = !profile.isPublic
+        profile.isPublic = newValue
         try? context.save()
+
+        if newValue {
+            // Going public — write to CloudKit public database
+            Task { @MainActor in
+                do {
+                    let recordID = try await ProfileSharingService.publishProfile(
+                        displayName: profile.displayName,
+                        avatarColorHex: profile.avatarColorHex,
+                        existingRecordID: profile.cloudKitPublicRecordID
+                    )
+                    profile.cloudKitPublicRecordID = recordID
+                    try? context.save()
+                } catch {
+                    // CloudKit write failed — show alert but keep toggle ON (optimistic UI per T-07-11)
+                    cloudKitError = error.localizedDescription
+                    showingCloudKitError = true
+                }
+            }
+        } else {
+            // Going private — delete CloudKit public record to prevent orphaned accessible data (D-06)
+            if let recordID = profile.cloudKitPublicRecordID {
+                Task {
+                    try? await ProfileSharingService.unpublishProfile(recordID: recordID)
+                }
+                // Clear recordID immediately so share link disappears (optimistic local update)
+                profile.cloudKitPublicRecordID = nil
+                try? context.save()
+            }
+        }
+    }
+
+    // MARK: - CloudKit Sync
+
+    /// Syncs updated displayName or avatarColorHex to the CloudKit public record when profile is public.
+    /// Called after validateAndSaveDisplayName succeeds. Silently ignores failures (best-effort sync).
+    func updatePublicRecordIfNeeded(context: ModelContext) {
+        guard let profile, profile.isPublic, profile.cloudKitPublicRecordID != nil else { return }
+        Task {
+            _ = try? await ProfileSharingService.publishProfile(
+                displayName: profile.displayName,
+                avatarColorHex: profile.avatarColorHex,
+                existingRecordID: profile.cloudKitPublicRecordID
+            )
+        }
     }
 
     // MARK: - Input Sanitization (mirrors GoalViewModel.sanitize — T-07-04, T-07-07)

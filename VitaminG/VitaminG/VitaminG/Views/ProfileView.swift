@@ -180,29 +180,35 @@ struct ProfileView: View {
     // MARK: - Share Profile Button
 
     private var shareProfileButton: some View {
-        Button {
-            // Share action placeholder — Plan 03 wires up viewModel.shareURL
-            // For now, the button exists but only becomes active when isPublic == true
+        Group {
             if let url = viewModel.shareURL {
-                // Plan 03: present UIActivityViewController with url
-                _ = url
+                ShareLink(
+                    item: url,
+                    subject: Text("Vitamin G Profile"),
+                    message: Text("Check out my goals on Vitamin G!")
+                ) {
+                    Label("Share Profile", systemImage: "square.and.arrow.up")
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(Color(red: 0.98, green: 0.55, blue: 0.27))
+                .padding(.horizontal, 16)
+            } else {
+                Button {
+                    // No action — URL not yet available (profile private or CloudKit record pending)
+                } label: {
+                    Label("Share Profile", systemImage: "square.and.arrow.up")
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(Color(red: 0.98, green: 0.55, blue: 0.27))
+                .disabled(true)
+                .padding(.horizontal, 16)
+                .accessibilityHint("Set your profile to public to enable sharing")
             }
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: "square.and.arrow.up")
-                Text("Share Profile")
-                    .font(.system(.body, design: .rounded).weight(.semibold))
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
         }
-        .buttonStyle(.borderedProminent)
-        .tint(Color(red: 0.98, green: 0.55, blue: 0.27))
-        .disabled(viewModel.profile?.isPublic != true)
-        .accessibilityHint(
-            viewModel.profile?.isPublic != true
-                ? "Set your profile to public to enable sharing"
-                : ""
-        )
+        .animation(.easeInOut(duration: 0.2), value: viewModel.shareURL != nil)
     }
 }
