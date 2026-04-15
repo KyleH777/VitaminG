@@ -16,6 +16,19 @@ struct ProfileEditSheet: View {
         NavigationStack {
             Form {
                 Section {
+                    HStack {
+                        Spacer()
+                        AvatarView(
+                            displayName: viewModel.draftDisplayName.isEmpty ? viewModel.profile?.displayName : viewModel.draftDisplayName,
+                            avatarColorHex: viewModel.profile?.avatarColorHex,
+                            photoData: viewModel.profile?.photoData,
+                            size: 64
+                        )
+                        Spacer()
+                    }
+                    .listRowBackground(Color.clear)
+                }
+                Section {
                     VStack(alignment: .leading, spacing: 4) {
                         TextField("Your name", text: $viewModel.draftDisplayName)
                             .font(.system(size: 16, weight: .regular, design: .rounded))

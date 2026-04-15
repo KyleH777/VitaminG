@@ -47,17 +47,12 @@ struct ProfileView: View {
     // MARK: - Avatar Section
 
     private var avatarSection: some View {
-        ZStack {
-            Circle()
-                .fill(viewModel.avatarColor)
-                .frame(width: 88, height: 88)
-                .shadow(color: .black.opacity(0.10), radius: 8, y: 4)
-
-            Text(viewModel.initials)
-                .font(.system(size: 34, weight: .semibold, design: .rounded))
-                .foregroundStyle(.white)
-        }
-        .accessibilityLabel("Profile avatar for \(viewModel.profile?.displayName ?? "you")")
+        AvatarView(
+            displayName: viewModel.profile?.displayName,
+            avatarColorHex: viewModel.profile?.avatarColorHex,
+            photoData: viewModel.profile?.photoData,
+            size: 88
+        )
     }
 
     // MARK: - Display Name Row
