@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 04 complete — pending device verification
-stopped_at: Phase 04 plans 01 and 02 complete, build verified
-last_updated: "2026-04-07T17:00:00.000Z"
-last_activity: 2026-04-07 -- Phase 04 execution complete (2/2 plans)
+status: executing
+stopped_at: Phase 7 UI-SPEC approved
+last_updated: "2026-04-15T02:58:53.974Z"
+last_activity: 2026-04-14 -- Phase 07 Plan 07-03 complete — CloudKit sharing + deep links
 progress:
-  total_phases: 6
+  total_phases: 7
   completed_phases: 4
-  total_plans: 12
-  completed_plans: 12
-  percent: 100
+  total_plans: 16
+  completed_plans: 15
+  percent: 94
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-03)
 
 **Core value:** Every morning, the user is reminded of their goals — making progress feel inevitable, not accidental.
-**Current focus:** Phase 04 — icloud-sync-widgets
+**Current focus:** Phase 07 — add-user-profiles-with-privacy-toggle-profile-picture-upload
 
 ## Current Position
 
-Phase: 04 (icloud-sync-widgets) — EXECUTING
-Plan: 1 of 2
-Status: Executing Phase 04
-Last activity: 2026-04-07 -- Phase 04 execution started
+Phase: 07 (add-user-profiles-with-privacy-toggle-profile-picture-upload) — EXECUTING
+Plan: 3 of 4 complete
+Status: Executing Phase 07 — Wave 3 done, Wave 4 pending
+Last activity: 2026-04-14 -- Plan 07-03 complete — CloudKit sharing + deep links wired
 
 Progress: [████████████████████] 100% (Phase 03)
 
@@ -61,6 +61,10 @@ Progress: [████████████████████] 100% (P
 | Phase 03-streaks-stats-notifications P02 | 15 | 2 tasks | 4 files |
 
 ## Accumulated Context
+
+### Roadmap Evolution
+
+- Phase 7 added: Add user profiles with privacy toggle, profile picture upload, and AI-generated character avatar
 
 ### Decisions
 
@@ -102,6 +106,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-06T22:34:40.711Z
-Stopped at: Phase 4 UI-SPEC approved
-Resume file: .planning/phases/04-icloud-sync-widgets/04-UI-SPEC.md
+Last session: 2026-04-13T23:37:10.338Z
+Stopped at: Phase 7 UI-SPEC approved
+Resume file: .planning/phases/07-add-user-profiles-with-privacy-toggle-profile-picture-upload/07-UI-SPEC.md
