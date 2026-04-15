@@ -27,6 +27,14 @@ struct ContentView: View {
             .tabItem {
                 Label("Settings", systemImage: "gear")
             }
+
+            // Profile tab — Plan 07-02 (D-11)
+            NavigationStack {
+                ProfileView()
+            }
+            .tabItem {
+                Label("Profile", systemImage: "person.crop.circle.fill")
+            }
         }
     }
 
@@ -42,6 +50,8 @@ struct ContentView: View {
                         StatsView()
                     case .settings:
                         SettingsView()
+                    case .profile:
+                        ProfileView()
                     }
                 }
         }

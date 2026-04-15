@@ -20,6 +20,7 @@ struct GoalDetailView: View {
         ScrollView {
             VStack(spacing: 16) {
                 headerSection
+                publicToggleSection
                 quoteCardSection
                 notesSection
                 actionsSection
@@ -54,6 +55,35 @@ struct GoalDetailView: View {
         } message: {
             Text("This action cannot be undone.")
         }
+    }
+
+    // MARK: - Public Toggle Section
+
+    private var publicToggleSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("Share this goal")
+                    .font(.system(size: 16, weight: .regular, design: .rounded))
+                Spacer()
+                Toggle("", isOn: Binding(
+                    get: { goal.isPublic },
+                    set: { newValue in
+                        viewModel.updateGoalPublicStatus(goal: goal, isPublic: newValue, context: modelContext)
+                    }
+                ))
+                .labelsHidden()
+            }
+            Text("Public goals appear on your profile when your profile is set to public.")
+                .font(.system(size: 12, weight: .regular, design: .rounded))
+                .foregroundStyle(.secondary)
+        }
+        .padding(16)
+        .background(Color(.systemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(.horizontal, 16)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Share this goal")
+        .accessibilityValue(goal.isPublic ? "On" : "Off")
     }
 
     // MARK: - Header Section

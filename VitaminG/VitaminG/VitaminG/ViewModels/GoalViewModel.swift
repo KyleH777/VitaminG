@@ -141,6 +141,14 @@ final class GoalViewModel {
         reloadWidgetTimelines()
     }
 
+    /// Updates the per-goal public/private flag and persists (D-08, D-09, PROF-10).
+    /// Reloads widget timelines so the public goals count reflects on home screen widgets.
+    func updateGoalPublicStatus(goal: Goal, isPublic: Bool, context: ModelContext) {
+        goal.isPublic = isPublic
+        try? context.save()
+        WidgetCenter.shared.reloadAllTimelines()
+    }
+
     // MARK: - Widget Reload
 
     /// Signals WidgetKit to refresh all widget timelines (D-06, WIDGET-05).
