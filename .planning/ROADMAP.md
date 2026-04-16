@@ -93,12 +93,13 @@ Plans:
   2. Notification permission is requested during onboarding (after first goal is created) with a value-framing screen — not on cold app launch
   3. Every tier's empty state displays an actionable prompt to add a first goal — no blank or placeholder screens exist in the shipping build
   4. The app renders correctly in both Light and Dark Mode, all text scales properly with Dynamic Type at all size categories, and every interactive element has a VoiceOver label
-**Plans:** 4 plans
+**Plans:** 5 plans
 Plans:
 - [ ] 05-01-PLAN.md — Onboarding flow: OnboardingViewModel, 3-screen NavigationStack, NotificationPermissionSheet, VitaminGApp gate
 - [ ] 05-02-PLAN.md — Per-tier empty states: EmptyTierView component, GoalListView wiring
 - [ ] 05-03-PLAN.md — Light/Dark Mode + Dynamic Type: semantic colors, font migration across 5 views
 - [ ] 05-04-PLAN.md — VoiceOver labels, touch targets, app icon wiring, placeholder audit, test stubs
+- [ ] 05-05-PLAN.md — Gap closure: TierCardView Dynamic Type font migration and Dark Mode color fix
 **UI hint**: yes
 
 ### Phase 6: Distribution
@@ -141,6 +142,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 2. Core Goal UI | 3/3 | Complete   | 2026-04-04 |
 | 3. Streaks, Stats & Notifications | 3/4 | In Progress|  |
 | 4. iCloud Sync & Widgets | 0/2 | Not started | - |
-| 5. Onboarding & Polish | 0/4 | Not started | - |
+| 5. Onboarding & Polish | 0/5 | Not started | - |
 | 6. Distribution | 0/TBD | Not started | - |
 | 7. User Profiles | 0/4 | Not started | - |
