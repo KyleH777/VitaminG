@@ -40,11 +40,19 @@ struct VitaminGApp: App {
         }
     }
 
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .modelContainer(container)
-                .environment(router)
+            Group {
+                if hasCompletedOnboarding {
+                    ContentView()
+                } else {
+                    OnboardingView()
+                }
+            }
+            .modelContainer(container)
+            .environment(router)
         }
     }
 }
