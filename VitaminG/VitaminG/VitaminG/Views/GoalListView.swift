@@ -108,8 +108,13 @@ struct GoalListView: View {
                 // Tier sections (byTier default + byCreationDate)
                 ForEach(GoalTier.ordered, id: \.self) { tier in
                     let tieredGoals = goals(for: tier)
-                    if !tieredGoals.isEmpty {
-                        TierSectionView(tier: tier) {
+                    TierSectionView(tier: tier) {
+                        if tieredGoals.isEmpty {
+                            EmptyTierView(tier: tier) {
+                                viewModel.draftTier = tier
+                                showingAddGoal = true
+                            }
+                        } else {
                             ForEach(tieredGoals) { goal in
                                 goalRow(for: goal)
                             }
