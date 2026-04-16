@@ -205,7 +205,7 @@ private struct GoalRowView: View {
             VStack(alignment: .leading, spacing: 3) {
                 // Title: completionGreen with thin strikethrough when complete (D-10, UI-SPEC)
                 Text(goal.title ?? "")
-                    .font(.system(size: 16, weight: goal.tier.typographicWeight, design: .rounded))
+                    .font(.body.weight(goal.tier.typographicWeight)).fontDesign(.rounded)
                     .foregroundStyle(goal.completed ? completionGreen : Color.primary)
                     .strikethrough(goal.completed, pattern: .solid,
                                    color: completionGreen.opacity(0.5))
@@ -327,6 +327,6 @@ struct EmptyStateView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(red: 0.949, green: 0.949, blue: 0.969))
+        .background(Color(.systemGroupedBackground))
     }
 }

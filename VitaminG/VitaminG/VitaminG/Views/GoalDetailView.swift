@@ -27,7 +27,7 @@ struct GoalDetailView: View {
             }
             .padding(.bottom, 32)
         }
-        .background(Color(red: 0.949, green: 0.949, blue: 0.969))
+        .background(Color(.systemGroupedBackground))
         .navigationTitle(goal.title ?? "Goal")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -63,7 +63,7 @@ struct GoalDetailView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("Share this goal")
-                    .font(.system(size: 16, weight: .regular, design: .rounded))
+                    .font(.body).fontDesign(.rounded)
                 Spacer()
                 Toggle("", isOn: Binding(
                     get: { goal.isPublic },
@@ -74,7 +74,7 @@ struct GoalDetailView: View {
                 .labelsHidden()
             }
             Text("Public goals appear on your profile when your profile is set to public.")
-                .font(.system(size: 12, weight: .regular, design: .rounded))
+                .font(.caption).fontDesign(.rounded)
                 .foregroundStyle(.secondary)
         }
         .padding(16)
@@ -92,7 +92,7 @@ struct GoalDetailView: View {
         VStack(alignment: .leading, spacing: 8) {
             // Tier pill badge
             Label(goal.tier.displayName, systemImage: goal.tier.icon)
-                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .font(.caption.weight(.semibold)).fontDesign(.rounded)
                 .foregroundStyle(goal.tier.color)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 5)
@@ -100,13 +100,13 @@ struct GoalDetailView: View {
 
             // Goal title
             Text(goal.title ?? "Untitled")
-                .font(.system(size: 22, weight: .semibold, design: .rounded))
+                .font(.title2.weight(.semibold)).fontDesign(.rounded)
                 .foregroundStyle(.primary)
 
             // Creation date
             if let date = goal.creationDate {
                 Text("Added \(date.formatted(date: .abbreviated, time: .omitted))")
-                    .font(.system(size: 12, weight: .regular, design: .rounded))
+                    .font(.caption).fontDesign(.rounded)
                     .foregroundStyle(.secondary)
             }
 
@@ -117,7 +117,7 @@ struct GoalDetailView: View {
                    .first,
                let completedAt = lastEvent.completedAt {
                 Text("Completed \(completedAt.formatted(date: .abbreviated, time: .omitted))")
-                    .font(.system(size: 12, weight: .regular, design: .rounded))
+                    .font(.caption).fontDesign(.rounded)
                     .foregroundStyle(Color(red: 0.063, green: 0.725, blue: 0.506))
             }
         }
@@ -136,11 +136,11 @@ struct GoalDetailView: View {
         if let inspiration = goal.associatedInspiration, !inspiration.isEmpty {
             VStack(alignment: .leading, spacing: 10) {
                 Image(systemName: "quote.opening")
-                    .font(.system(size: 20))
+                    .font(.title3)
                     .foregroundStyle(goal.tier.color)
 
                 Text(inspiration)
-                    .font(.system(size: 18, weight: .regular, design: .rounded).italic())
+                    .font(.body.italic()).fontDesign(.rounded)
                     .foregroundStyle(goal.tier.color.opacity(0.85))
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
@@ -168,10 +168,10 @@ struct GoalDetailView: View {
         if let desc = goal.goalDescription, !desc.isEmpty {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Notes")
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .font(.footnote.weight(.semibold)).fontDesign(.rounded)
                     .foregroundStyle(.secondary)
                 Text(desc)
-                    .font(.system(size: 16, weight: .regular, design: .rounded))
+                    .font(.body).fontDesign(.rounded)
                     .foregroundStyle(.primary)
             }
             .padding()
