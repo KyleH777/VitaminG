@@ -10,6 +10,7 @@ import Foundation
 /// STATS-04: Shows per-tier streaks, global streak, per-tier completion rates, and goal counts.
 /// T-03-05: buildHeatmapData guards nil completedAt with `guard let`.
 /// T-03-06: Data pre-built as [Date: Int] dictionary for O(1) per cell lookup in HeatmapView.
+@MainActor
 @Observable
 final class StatsViewModel {
 

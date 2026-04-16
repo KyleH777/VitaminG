@@ -2,6 +2,24 @@ import WidgetKit
 import SwiftUI
 import SwiftData
 
+// MARK: - Shared Widget Container
+
+/// Cached ModelContainer for the widget extension process.
+/// Creating a ModelContainer is expensive — reuse a single instance across all timeline refreshes.
+/// Both GoalSummaryProvider and StreakProvider share this to avoid redundant allocations.
+enum WidgetContainerCache {
+    private static var _container: ModelContainer?
+
+    static var shared: ModelContainer {
+        get throws {
+            if let existing = _container { return existing }
+            let container = try ModelContainerFactory.makeWidgetContainer()
+            _container = container
+            return container
+        }
+    }
+}
+
 // MARK: - GoalSummaryProvider
 
 struct GoalSummaryProvider: TimelineProvider {
@@ -18,7 +36,7 @@ struct GoalSummaryProvider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<GoalEntry>) -> Void) {
         do {
-            let container = try ModelContainerFactory.makeWidgetContainer()
+            let container = try WidgetContainerCache.shared
             let modelContext = ModelContext(container)
 
             let goals = try modelContext.fetch(FetchDescriptor<Goal>())
@@ -28,10 +46,10 @@ struct GoalSummaryProvider: TimelineProvider {
             let entry = GoalEntry(date: .now, displayData: displayData)
 
             // Refresh once daily at next morning aligned with notification time (D-06, WIDGET-05)
-            let defaults = UserDefaults(suiteName: "group.com.kyleharrington.VitaminG")
-            let hour = defaults?.object(forKey: "notificationHour") as? Int ?? 8
-            let minute = defaults?.object(forKey: "notificationMinute") as? Int ?? 0
-            let nextRefresh = WidgetDataProvider.nextMorningRefreshDate(hour: hour, minute: minute)
+            let nextRefresh = WidgetDataProvider.nextMorningRefreshDate(
+                hour: NotificationPreferences.sharedHour(),
+                minute: NotificationPreferences.sharedMinute()
+            )
             let timeline = Timeline(entries: [entry], policy: .after(nextRefresh))
             completion(timeline)
         } catch {

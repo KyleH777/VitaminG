@@ -183,12 +183,13 @@ private struct CharacterCountView: View {
 private struct TierFooterView: View {
     let tier: GoalTier
 
+    /// Motivational footer text aligned with GoalTier.description time horizons.
     var description: String {
         switch tier {
-        case .immediate: return "Quick wins this week — build momentum."
-        case .shortTerm: return "Goals for the next few weeks to months."
-        case .longTerm:  return "Multi-year milestones that shape your direction."
-        case .lifeGoal:  return "The things you want to have done with your life."
+        case .immediate: return "Quick wins today or this week — build momentum."
+        case .shortTerm: return "Goals for the next 1–3 months."
+        case .longTerm:  return "Milestones for 6 months to a year that shape your direction."
+        case .lifeGoal:  return "The big picture — things you want to have done with your life."
         }
     }
 

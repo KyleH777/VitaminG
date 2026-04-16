@@ -1,11 +1,17 @@
 import SwiftUI
 import SwiftData
+import UserNotifications
 
 // MARK: - SettingsView
 
 /// Notification settings screen allowing the user to change the daily reminder time (NOTIF-06).
 /// Time change triggers immediate reschedule of the notification (NOTIF-06, NOTIF-02).
 /// Uses @Query to fetch active goals so the rescheduled notification body stays current (NOTIF-03).
+///
+/// Authorization flow:
+/// - .notDetermined → "Enable Notifications" button that triggers system permission dialog.
+/// - .denied        → "Open Settings" button that deep-links to the system Settings app.
+/// - .authorized    → DatePicker active; shows "Enabled" status row.
 struct SettingsView: View {
 
     @Query(filter: #Predicate<Goal> { $0.isCompleted == false })
@@ -18,28 +24,17 @@ struct SettingsView: View {
     }
 
     @State private var notificationTime: Date = {
-        let hour: Int
-        let minute: Int
-
-        if UserDefaults.standard.object(forKey: "notificationHour") != nil {
-            hour = UserDefaults.standard.integer(forKey: "notificationHour")
-        } else {
-            hour = 8 // Default: 8:00 AM (NOTIF-02)
-        }
-
-        if UserDefaults.standard.object(forKey: "notificationMinute") != nil {
-            minute = UserDefaults.standard.integer(forKey: "notificationMinute")
-        } else {
-            minute = 0 // Default: :00 (NOTIF-02)
-        }
-
         var components = DateComponents()
-        components.hour = hour
-        components.minute = minute
+        components.hour = NotificationPreferences.hour
+        components.minute = NotificationPreferences.minute
         return Calendar.current.date(from: components) ?? Date()
     }()
 
-    @State private var authorizationStatus: String = "Checking..."
+    /// Full authorization status so the UI can distinguish notDetermined / denied / authorized.
+    @State private var authStatus: UNAuthorizationStatus = .notDetermined
+
+    /// SwiftUI environment URL opener — avoids importing UIKit for openSettingsURLString.
+    @Environment(\.openURL) private var openURL
 
     var body: some View {
         Form {
@@ -83,29 +78,20 @@ struct SettingsView: View {
                     selection: $notificationTime,
                     displayedComponents: .hourAndMinute
                 )
+                .disabled(!isAuthorized)
                 .onChange(of: notificationTime) { _, newValue in
                     let components = Calendar.current.dateComponents([.hour, .minute], from: newValue)
-                    let hour = components.hour ?? 8
-                    let minute = components.minute ?? 0
-                    // Persist user preference (NOTIF-06)
-                    UserDefaults.standard.set(hour, forKey: "notificationHour")
-                    UserDefaults.standard.set(minute, forKey: "notificationMinute")
-                    // Also write to App Group suite so widget can read notification time (D-06, Pitfall 3)
-                    let sharedDefaults = UserDefaults(suiteName: "group.com.kyleharrington.VitaminG")
-                    sharedDefaults?.set(hour, forKey: "notificationHour")
-                    sharedDefaults?.set(minute, forKey: "notificationMinute")
+                    let hour = components.hour ?? NotificationPreferences.defaultHour
+                    let minute = components.minute ?? NotificationPreferences.defaultMinute
+                    // Persist to both standard and App Group UserDefaults (NOTIF-06, D-06)
+                    NotificationPreferences.save(hour: hour, minute: minute)
                     // Reschedule immediately with updated time (NOTIF-06, NOTIF-03)
                     Task {
                         await NotificationScheduler.shared.reschedule(activeGoals: Array(activeGoals))
                     }
                 }
 
-                HStack {
-                    Text("Status")
-                    Spacer()
-                    Text(authorizationStatus)
-                        .foregroundStyle(.secondary)
-                }
+                authorizationRow
             }
 
             Section {
@@ -118,13 +104,68 @@ struct SettingsView: View {
         .onAppear {
             // Sync notification time to App Group UserDefaults for widget access (D-06, Pitfall 3)
             let components = Calendar.current.dateComponents([.hour, .minute], from: notificationTime)
-            let sharedDefaults = UserDefaults(suiteName: "group.com.kyleharrington.VitaminG")
-            sharedDefaults?.set(components.hour ?? 8, forKey: "notificationHour")
-            sharedDefaults?.set(components.minute ?? 0, forKey: "notificationMinute")
+            NotificationPreferences.save(
+                hour: components.hour ?? NotificationPreferences.defaultHour,
+                minute: components.minute ?? NotificationPreferences.defaultMinute
+            )
         }
         .task {
-            let authorized = await NotificationScheduler.shared.isAuthorized()
-            authorizationStatus = authorized ? "Enabled" : "Disabled in System Settings"
+            await refreshAuthStatus()
         }
+    }
+
+    // MARK: - Authorization Row
+
+    /// Renders the appropriate status row based on the current UNAuthorizationStatus.
+    @ViewBuilder
+    private var authorizationRow: some View {
+        switch authStatus {
+        case .notDetermined:
+            Button("Enable Notifications") {
+                Task {
+                    let granted = await NotificationScheduler.shared.requestAuthorization()
+                    authStatus = granted ? .authorized : .denied
+                    if granted {
+                        await NotificationScheduler.shared.reschedule(activeGoals: Array(activeGoals))
+                    }
+                }
+            }
+        case .denied:
+            HStack {
+                Text("Notifications Disabled")
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Button("Open Settings") {
+                    // UIApplication.openSettingsURLString = "app-settings:"
+                    if let url = URL(string: "app-settings:") {
+                        openURL(url)
+                    }
+                }
+                .font(.callout)
+                .foregroundStyle(.orange)
+            }
+        default:
+            // .authorized, .provisional, .ephemeral
+            HStack {
+                Text("Status")
+                Spacer()
+                Text("Enabled")
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    // MARK: - Helpers
+
+    private var isAuthorized: Bool {
+        switch authStatus {
+        case .authorized, .provisional, .ephemeral: return true
+        default: return false
+        }
+    }
+
+    /// Fetches the current authorization status from the system and updates `authStatus`.
+    private func refreshAuthStatus() async {
+        authStatus = await NotificationScheduler.shared.authorizationStatus()
     }
 }

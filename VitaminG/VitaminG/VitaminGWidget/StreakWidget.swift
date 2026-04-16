@@ -16,7 +16,7 @@ struct StreakProvider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<GoalEntry>) -> Void) {
         do {
-            let container = try ModelContainerFactory.makeWidgetContainer()
+            let container = try WidgetContainerCache.shared
             let modelContext = ModelContext(container)
 
             let goals = try modelContext.fetch(FetchDescriptor<Goal>())
@@ -25,10 +25,10 @@ struct StreakProvider: TimelineProvider {
             let displayData = WidgetDataProvider.build(goals: goals, events: events)
             let entry = GoalEntry(date: .now, displayData: displayData)
 
-            let defaults = UserDefaults(suiteName: "group.com.kyleharrington.VitaminG")
-            let hour = defaults?.object(forKey: "notificationHour") as? Int ?? 8
-            let minute = defaults?.object(forKey: "notificationMinute") as? Int ?? 0
-            let nextRefresh = WidgetDataProvider.nextMorningRefreshDate(hour: hour, minute: minute)
+            let nextRefresh = WidgetDataProvider.nextMorningRefreshDate(
+                hour: NotificationPreferences.sharedHour(),
+                minute: NotificationPreferences.sharedMinute()
+            )
             let timeline = Timeline(entries: [entry], policy: .after(nextRefresh))
             completion(timeline)
         } catch {

@@ -230,7 +230,10 @@ private struct GoalRowView: View {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
                 bounceScale = 1.02
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            // Return to normal scale after a brief pause using Task.sleep
+            // instead of DispatchQueue.main.asyncAfter for modern concurrency.
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(150))
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                     bounceScale = 1.0
                 }

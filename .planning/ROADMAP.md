@@ -120,10 +120,10 @@ Plans:
 **Plans:** 4 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — SchemaV2 migration: UserProfile model, Goal.isPublic, VitaminGMigrationPlan, ModelContainerFactory update
-- [ ] 07-02-PLAN.md — Profile UI: ProfileViewModel, ProfileView (4th tab), ProfileEditSheet, GoalDetailView public toggle
-- [ ] 07-03-PLAN.md — CloudKit public sharing: ProfileSharingService, DeepLinkBuilder, Info.plist URL scheme, ShareLink wiring
-- [ ] 07-04-PLAN.md — AvatarView component: reusable initials+color avatar with photo fallback, integrated into ProfileView and ProfileEditSheet
+- [x] 07-01-PLAN.md — SchemaV2 migration: UserProfile model, Goal.isPublic, VitaminGMigrationPlan, ModelContainerFactory update
+- [x] 07-02-PLAN.md — Profile UI: ProfileViewModel, ProfileView (4th tab), ProfileEditSheet, GoalDetailView public toggle
+- [x] 07-03-PLAN.md — CloudKit public sharing: ProfileSharingService, DeepLinkBuilder, Info.plist URL scheme, ShareLink wiring
+- [x] 07-04-PLAN.md — AvatarView component: reusable initials+color avatar with photo fallback, integrated into ProfileView and ProfileEditSheet
 
 ## Progress
 

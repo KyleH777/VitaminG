@@ -15,32 +15,30 @@ struct ProfileView: View {
     @Query(filter: #Predicate<Goal> { $0.isPublic == true }) private var publicGoals: [Goal]
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 24) {
-                    avatarSection
-                    displayNameRow
-                    privacyToggleSection
-                    publicGoalsSection
-                    shareProfileButton
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 32)
-                .padding(.bottom, 32)
+        ScrollView {
+            VStack(spacing: 24) {
+                avatarSection
+                displayNameRow
+                privacyToggleSection
+                publicGoalsSection
+                shareProfileButton
             }
-            .background(Color(UIColor.systemGroupedBackground))
-            .navigationTitle("My Profile")
-            .onAppear {
-                viewModel.loadOrCreateProfile(context: modelContext)
-            }
-            .sheet(isPresented: $viewModel.showingEditSheet) {
-                ProfileEditSheet(viewModel: viewModel)
-            }
-            .alert("Couldn't share your profile.", isPresented: $viewModel.showingCloudKitError) {
-                Button("Got It", role: .cancel) {}
-            } message: {
-                Text("Check your internet connection and try again.")
-            }
+            .padding(.horizontal, 16)
+            .padding(.top, 32)
+            .padding(.bottom, 32)
+        }
+        .background(Color(UIColor.systemGroupedBackground))
+        .navigationTitle("My Profile")
+        .onAppear {
+            viewModel.loadOrCreateProfile(context: modelContext)
+        }
+        .sheet(isPresented: $viewModel.showingEditSheet) {
+            ProfileEditSheet(viewModel: viewModel)
+        }
+        .alert("Couldn't share your profile.", isPresented: $viewModel.showingCloudKitError) {
+            Button("Got It", role: .cancel) {}
+        } message: {
+            Text("Check your internet connection and try again.")
         }
     }
 

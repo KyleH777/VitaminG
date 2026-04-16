@@ -27,6 +27,7 @@ enum GoalValidationError: LocalizedError, Equatable {
 
 // MARK: - GoalViewModel
 
+@MainActor
 @Observable
 final class GoalViewModel {
 
@@ -48,25 +49,9 @@ final class GoalViewModel {
 
     // MARK: - Input Sanitization
 
-    /// Strips control characters, normalises whitespace, and trims leading/trailing whitespace.
+    /// Delegates to the shared InputSanitizer utility.
     func sanitize(_ raw: String) -> String {
-        let blocked = CharacterSet.controlCharacters.union(.illegalCharacters).subtracting(.newlines)
-        let stripped = raw.unicodeScalars
-            .filter { !blocked.contains($0) }
-            .reduce(into: "") { $0.unicodeScalars.append($1) }
-
-        // Collapse internal runs of whitespace (spaces + tabs) to a single space,
-        // but preserve intentional newlines in multi-line fields.
-        let lines = stripped.components(separatedBy: .newlines)
-        let cleaned = lines
-            .map { line in
-                line.components(separatedBy: .whitespaces)
-                    .filter { !$0.isEmpty }
-                    .joined(separator: " ")
-            }
-            .joined(separator: "\n")
-
-        return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
+        InputSanitizer.sanitize(raw)
     }
 
     // MARK: - Validation

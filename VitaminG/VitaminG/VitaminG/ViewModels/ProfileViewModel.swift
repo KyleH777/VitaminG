@@ -8,6 +8,7 @@ import SwiftUI
 /// Follows the GoalViewModel pattern: @Observable, business logic only, no SwiftUI view code.
 /// Plan 07-02: Profile CRUD, avatar color assignment, display name validation, privacy toggle.
 /// Plan 07-03: CloudKit public database write/delete wired to toggleProfilePublic; shareURL uses DeepLinkBuilder.
+@MainActor
 @Observable
 final class ProfileViewModel {
 
@@ -46,7 +47,6 @@ final class ProfileViewModel {
 
     /// Fetches the singleton UserProfile or creates one on first visit (D-14).
     /// Assigns a random avatar color from the palette and persists it (D-02).
-    /// Thread: must be called on the main actor (ModelContext is main-actor-bound).
     func loadOrCreateProfile(context: ModelContext) {
         var descriptor = FetchDescriptor<UserProfile>()
         descriptor.fetchLimit = 1  // T-07-06: prevent unbounded query
@@ -96,7 +96,6 @@ final class ProfileViewModel {
 
     /// Sanitizes and validates draftDisplayName, then saves to SwiftData.
     /// Returns true on success; sets showingValidationAlert on failure.
-    /// Follows GoalViewModel.sanitize() pattern exactly (T-07-04).
     @discardableResult
     func validateAndSaveDisplayName(context: ModelContext) -> Bool {
         let sanitized = sanitize(draftDisplayName)
@@ -178,26 +177,11 @@ final class ProfileViewModel {
         }
     }
 
-    // MARK: - Input Sanitization (mirrors GoalViewModel.sanitize — T-07-04, T-07-07)
+    // MARK: - Input Sanitization
 
-    /// Strips control characters and HTML/script-injection characters,
-    /// normalises whitespace, and trims leading/trailing whitespace.
+    /// Delegates to the shared InputSanitizer utility with public-safe character stripping.
+    /// Profile display names may be publicly visible, so HTML/script characters are also stripped.
     func sanitize(_ raw: String) -> String {
-        var blocked = CharacterSet.controlCharacters.union(.illegalCharacters).subtracting(.newlines)
-        blocked.insert(charactersIn: "<>\"'")
-        let stripped = raw.unicodeScalars
-            .filter { !blocked.contains($0) }
-            .reduce(into: "") { $0.unicodeScalars.append($1) }
-
-        let lines = stripped.components(separatedBy: .newlines)
-        let cleaned = lines
-            .map { line in
-                line.components(separatedBy: .whitespaces)
-                    .filter { !$0.isEmpty }
-                    .joined(separator: " ")
-            }
-            .joined(separator: "\n")
-
-        return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
+        InputSanitizer.sanitizeForPublic(raw)
     }
 }

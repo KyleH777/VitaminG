@@ -73,24 +73,13 @@ final class NotificationScheduler {
     }
 
     /// Reschedules with the user's stored time preference (NOTIF-06).
-    /// Reads hour and minute from UserDefaults; defaults to 8:00 AM when no preference is stored.
+    /// Reads hour and minute from NotificationPreferences; defaults to 8:00 AM when no preference is stored.
     func reschedule(activeGoals: [Goal]) async {
-        let effectiveHour: Int
-        let effectiveMinute: Int
-
-        if UserDefaults.standard.object(forKey: "notificationHour") != nil {
-            effectiveHour = UserDefaults.standard.integer(forKey: "notificationHour")
-        } else {
-            effectiveHour = 8 // Default: 8:00 AM (NOTIF-02)
-        }
-
-        if UserDefaults.standard.object(forKey: "notificationMinute") != nil {
-            effectiveMinute = UserDefaults.standard.integer(forKey: "notificationMinute")
-        } else {
-            effectiveMinute = 0 // Default: :00 (NOTIF-02)
-        }
-
-        await schedule(hour: effectiveHour, minute: effectiveMinute, activeGoals: activeGoals)
+        await schedule(
+            hour: NotificationPreferences.hour,
+            minute: NotificationPreferences.minute,
+            activeGoals: activeGoals
+        )
     }
 
     // MARK: - Authorization
@@ -99,5 +88,25 @@ final class NotificationScheduler {
     func isAuthorized() async -> Bool {
         let settings = await UNUserNotificationCenter.current().notificationSettings()
         return settings.authorizationStatus == .authorized
+    }
+
+    /// Returns the raw UNAuthorizationStatus so callers can distinguish
+    /// .notDetermined / .denied / .authorized without a separate request.
+    func authorizationStatus() async -> UNAuthorizationStatus {
+        await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
+    }
+
+    /// Requests notification authorization (alert, sound, badge).
+    /// The system permission dialog is shown only the first time — subsequent calls
+    /// when already determined return the stored value silently.
+    /// - Returns: `true` if the user granted permission, `false` otherwise.
+    @discardableResult
+    func requestAuthorization() async -> Bool {
+        do {
+            return try await UNUserNotificationCenter.current()
+                .requestAuthorization(options: [.alert, .sound, .badge])
+        } catch {
+            return false
+        }
     }
 }

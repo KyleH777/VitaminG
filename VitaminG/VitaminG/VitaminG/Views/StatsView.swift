@@ -24,7 +24,7 @@ struct StatsView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 20)
         }
-        .background(Color(.systemGroupedBackground))
+        .background(Color(UIColor.systemGroupedBackground))
         .navigationTitle("Stats")
         .navigationBarTitleDisplayMode(.large)
         .onAppear {
@@ -113,7 +113,7 @@ struct StatsView: View {
 
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(.secondarySystemGroupedBackground))
+                    .fill(Color(UIColor.secondarySystemGroupedBackground))
 
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Past 90 Days")
@@ -144,7 +144,7 @@ private struct TierStatCard: View {
     var body: some View {
         ZStack(alignment: .leading) {
             RoundedRectangle(cornerRadius: 14)
-                .fill(Color(.secondarySystemGroupedBackground))
+                .fill(Color(UIColor.secondarySystemGroupedBackground))
 
             // Tier color accent bar on leading edge
             HStack(spacing: 0) {
@@ -169,7 +169,7 @@ private struct TierStatCard: View {
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundStyle(.primary)
 
-                    Text(streak == 1 ? "day streak" : "day streak")
+                    Text("day streak")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
 
