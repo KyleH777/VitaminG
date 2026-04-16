@@ -59,11 +59,11 @@ struct ProfileView: View {
         HStack(spacing: 8) {
             if let name = viewModel.profile?.displayName, !name.isEmpty {
                 Text(name)
-                    .font(.system(size: 22, weight: .semibold, design: .rounded))
+                    .font(.title2.weight(.semibold)).fontDesign(.rounded)
                     .foregroundStyle(.primary)
             } else {
                 Text("Add your name")
-                    .font(.system(size: 22, weight: .semibold, design: .rounded))
+                    .font(.title2.weight(.semibold)).fontDesign(.rounded)
                     .foregroundStyle(.secondary)
             }
 
@@ -72,7 +72,7 @@ struct ProfileView: View {
                 viewModel.showingEditSheet = true
             } label: {
                 Image(systemName: "pencil.circle.fill")
-                    .font(.system(size: 22))
+                    .font(.title2)
                     .foregroundStyle(Color(red: 0.98, green: 0.55, blue: 0.27))
             }
             .accessibilityLabel("Edit display name")
@@ -92,7 +92,7 @@ struct ProfileView: View {
                         set: { _ in viewModel.toggleProfilePublic(context: modelContext) }
                     )
                 )
-                .font(.system(size: 16, weight: .regular, design: .rounded))
+                .font(.body).fontDesign(.rounded)
                 .accessibilityLabel("Public profile")
                 .accessibilityValue(viewModel.profile?.isPublic == true ? "On" : "Off")
             }
@@ -105,7 +105,7 @@ struct ProfileView: View {
                     ? "When public, anyone with your share link can view your goals that you've marked as public."
                     : "Your profile is private by default. Only you can see it."
             )
-            .font(.system(size: 12, weight: .regular, design: .rounded))
+            .font(.caption).fontDesign(.rounded)
             .foregroundStyle(.secondary)
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
@@ -119,7 +119,7 @@ struct ProfileView: View {
     private var publicGoalsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Public Goals")
-                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .font(.caption.weight(.semibold)).fontDesign(.rounded)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 4)
@@ -128,10 +128,10 @@ struct ProfileView: View {
                 // Empty state (per UI-SPEC copywriting and specifics)
                 VStack(spacing: 8) {
                     Text("Your goals are private.")
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .font(.body.weight(.semibold)).fontDesign(.rounded)
                         .foregroundStyle(.primary)
                     Text("Mark any goal public from its detail screen to share it on your profile.")
-                        .font(.system(size: 14, weight: .regular, design: .rounded))
+                        .font(.subheadline).fontDesign(.rounded)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                 }
@@ -149,14 +149,14 @@ struct ProfileView: View {
                                 .frame(width: 4, height: 36)
 
                             Text(goal.title ?? "Untitled")
-                                .font(.system(size: 16, weight: .regular, design: .rounded))
+                                .font(.body).fontDesign(.rounded)
                                 .foregroundStyle(.primary)
                                 .lineLimit(2)
 
                             Spacer()
 
                             Image(systemName: goal.tier.icon)
-                                .font(.system(size: 12))
+                                .font(.caption)
                                 .foregroundStyle(goal.tier.color)
                         }
                         .padding(.horizontal, 16)
@@ -181,7 +181,7 @@ struct ProfileView: View {
                     message: Text("Check out my goals on Vitamin G!")
                 ) {
                     Label("Share Profile", systemImage: "square.and.arrow.up")
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .font(.body.weight(.semibold)).fontDesign(.rounded)
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
@@ -192,7 +192,7 @@ struct ProfileView: View {
                     // No action — URL not yet available (profile private or CloudKit record pending)
                 } label: {
                     Label("Share Profile", systemImage: "square.and.arrow.up")
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .font(.body.weight(.semibold)).fontDesign(.rounded)
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)

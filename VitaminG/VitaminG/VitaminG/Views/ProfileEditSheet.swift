@@ -31,7 +31,7 @@ struct ProfileEditSheet: View {
                 Section {
                     VStack(alignment: .leading, spacing: 4) {
                         TextField("Your name", text: $viewModel.draftDisplayName)
-                            .font(.system(size: 16, weight: .regular, design: .rounded))
+                            .font(.body).fontDesign(.rounded)
                             .onChange(of: viewModel.draftDisplayName) { _, newValue in
                                 // Enforce 50-char max inline (T-07-04)
                                 if newValue.count > ProfileViewModel.maxDisplayNameLength {
@@ -44,7 +44,7 @@ struct ProfileEditSheet: View {
                         HStack {
                             Spacer()
                             Text("\(viewModel.draftDisplayName.count)/\(ProfileViewModel.maxDisplayNameLength)")
-                                .font(.system(size: 12, weight: .regular, design: .rounded))
+                                .font(.caption).fontDesign(.rounded)
                                 .foregroundStyle(.secondary)
                         }
                     }
@@ -52,7 +52,7 @@ struct ProfileEditSheet: View {
                     Text("Display Name")
                 } footer: {
                     Text("This name appears on your profile and is visible to anyone you share your profile with.")
-                        .font(.system(size: 12, weight: .regular, design: .rounded))
+                        .font(.caption).fontDesign(.rounded)
                 }
             }
             .navigationTitle("Edit Profile")

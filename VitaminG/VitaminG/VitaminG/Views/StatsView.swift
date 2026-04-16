@@ -64,6 +64,7 @@ struct StatsView: View {
                         .foregroundStyle(.white.opacity(0.9))
                 }
 
+                // D-09 exception: display-proportional numeral in fixed-size card (analogous to AvatarView initials)
                 Text("\(viewModel.globalStreak)")
                     .font(.system(size: 48, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
@@ -165,6 +166,7 @@ private struct TierStatCard: View {
                             .lineLimit(1)
                     }
 
+                    // D-09 exception: display-proportional numeral in fixed-size card (analogous to AvatarView initials)
                     Text("\(streak)")
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundStyle(.primary)
