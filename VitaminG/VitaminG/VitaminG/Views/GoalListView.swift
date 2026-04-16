@@ -61,6 +61,7 @@ struct GoalListView: View {
                 } label: {
                     Label("Sort", systemImage: "line.3.horizontal.decrease.circle")
                 }
+                .accessibilityLabel("Sort goals")
             }
         }
         .sheet(isPresented: $showingAddGoal) {
