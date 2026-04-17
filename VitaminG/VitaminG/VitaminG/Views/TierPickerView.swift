@@ -33,16 +33,16 @@ private struct TierCardView: View {
     var body: some View {
         VStack(spacing: 8) {
             Image(systemName: tier.icon)
-                .font(.system(size: 28))
+                .font(.system(size: 28)) // D-09 exception: layout-fixed decorative SF Symbol in constrained 2x2 grid cell
                 .foregroundStyle(tier.color)
                 .frame(height: 34)
 
             Text(tier.displayName)
-                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                .font(.subheadline.weight(.semibold)).fontDesign(.rounded)
                 .foregroundStyle(.primary)
 
             Text(tier.description)
-                .font(.system(size: 12, weight: .regular, design: .rounded))
+                .font(.caption).fontDesign(.rounded)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
@@ -52,7 +52,7 @@ private struct TierCardView: View {
         .frame(maxWidth: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(isSelected ? tier.color.opacity(0.12) : Color.white)
+                .fill(isSelected ? tier.color.opacity(0.12) : Color(.secondarySystemGroupedBackground))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12)
