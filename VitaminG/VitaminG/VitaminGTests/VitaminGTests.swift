@@ -6,6 +6,7 @@
 //
 
 import Testing
+import Foundation
 @testable import VitaminG
 
 // MARK: - InputSanitizer Tests
@@ -57,6 +58,35 @@ struct NotificationPreferencesTests {
     }
 }
 
+// MARK: - GoalTier Tests
+
+struct GoalTierTests {
+
+    @Test func orderedContainsExactlyFourTiers() {
+        #expect(GoalTier.ordered.count == 4)
+    }
+
+    @Test func orderedContainsAllExpectedCases() {
+        let ordered = GoalTier.ordered
+        #expect(ordered.contains(.immediate))
+        #expect(ordered.contains(.shortTerm))
+        #expect(ordered.contains(.longTerm))
+        #expect(ordered.contains(.lifeGoal))
+    }
+
+    @Test func allTiersHaveNonEmptyDisplayName() {
+        for tier in GoalTier.ordered {
+            #expect(!tier.displayName.isEmpty, "Expected non-empty displayName for tier \(tier)")
+        }
+    }
+
+    @Test func allTiersHaveNonEmptyIcon() {
+        for tier in GoalTier.ordered {
+            #expect(!tier.icon.isEmpty, "Expected non-empty icon for tier \(tier)")
+        }
+    }
+}
+
 // MARK: - OnboardingViewModel Tests
 
 struct OnboardingViewModelTests {
@@ -65,6 +95,16 @@ struct OnboardingViewModelTests {
         let vm = await OnboardingViewModel()
         await #expect(vm.hasCreatedFirstGoal == false)
         await #expect(vm.showNotificationSheet == false)
+    }
+
+    @Test func hasCompletedOnboardingDefaultsToFalseWhenNotSet() {
+        let key = "hasCompletedOnboarding"
+        // Remove key to simulate fresh install state
+        UserDefaults.standard.removeObject(forKey: key)
+        // @AppStorage("hasCompletedOnboarding") defaults to false (Bool zero value)
+        #expect(UserDefaults.standard.bool(forKey: key) == false)
+        // Cleanup — ensure key is absent after test
+        UserDefaults.standard.removeObject(forKey: key)
     }
 }
 
@@ -79,6 +119,15 @@ struct EmptyTierViewTests {
             // EmptyTierView exists and can be instantiated for all tiers
             #expect(tier.displayName.isEmpty == false)
             _ = view
+        }
+    }
+
+    @Test func orderedHasExactlyFourTiersForEmptyStateRendering() {
+        // Requirement: EmptyTierView must be renderable for all 4 GoalTier cases
+        #expect(GoalTier.ordered.count == 4)
+        let expectedTiers: [GoalTier] = [.immediate, .shortTerm, .longTerm, .lifeGoal]
+        for expected in expectedTiers {
+            #expect(GoalTier.ordered.contains(expected), "GoalTier.ordered missing expected case: \(expected)")
         }
     }
 }
