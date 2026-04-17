@@ -145,7 +145,12 @@ Plans:
   3. VERIFICATION.md exists for Phase 7 and PROF-01–05, PROF-08–10 show Satisfied
   4. PROF-01–10 are listed in REQUIREMENTS.md v1 section and traceability table
   5. All stale REQUIREMENTS.md checkboxes (Phase 4 SYNC/WIDGET, Phase 5 NOTIF/ONBOARD) updated to reflect current state
-**Plans:** TBD
+**Plans:** 4 plans
+Plans:
+- [ ] 08-01-PLAN.md — Phase 2 VERIFICATION.md (GOAL-01–06, UI-01, UI-03)
+- [ ] 08-02-PLAN.md — Phase 3 VERIFICATION.md (STATS-01–06, NOTIF-02–07)
+- [ ] 08-03-PLAN.md — Phase 7 VERIFICATION.md (PROF-01–05, PROF-08–10; gaps: PROF-06, PROF-07)
+- [ ] 08-04-PLAN.md — REQUIREMENTS.md checkbox and traceability table updates
 
 ### Phase 9: TierPickerView Accessibility Fix
 **Goal:** Fix the two confirmed accessibility failures in TierCardView — Dark Mode (Color.white) and Dynamic Type (hardcoded font sizes) — so UI-05 and UI-06 pass verification
@@ -184,6 +189,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 5. Onboarding & Polish | 0/5 | Not started | - |
 | 6. Distribution | 0/TBD | Not started | - |
 | 7. User Profiles | 0/4 | Not started | - |
-| 8. Verification Sprint | 0/TBD | Not started | - |
+| 8. Verification Sprint | 0/4 | Not started | - |
 | 9. TierPickerView Accessibility Fix | 0/TBD | Not started | - |
 | 10. Profile Deep Link Handler | 0/TBD | Not started | - |
