@@ -18,6 +18,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 4: iCloud Sync & Widgets** - CloudKit transparent sync, systemMedium home screen widget, accessoryRectangular lock screen widget
 - [ ] **Phase 5: Onboarding & Polish** - First-launch onboarding, empty states, Light/Dark Mode, Dynamic Type, VoiceOver, App Store-quality UI
 - [ ] **Phase 6: Distribution** - App Store assets, CloudKit schema promotion to Production, TestFlight, App Store submission
+- [ ] **Phase 8: Verification Sprint** - Generate VERIFICATION.md for phases 2, 3, and 7; register PROF-01–10 in REQUIREMENTS.md; update stale checkboxes
+- [ ] **Phase 9: TierPickerView Accessibility Fix** - Fix Color.white Dark Mode failure (UI-05) and hardcoded Dynamic Type font sizes (UI-06) in TierCardView
+- [ ] **Phase 10: Profile Deep Link Handler** - Add vitaming:// onOpenURL handler to VitaminGApp; wire AppRouter profile navigation for PROF-06 and PROF-07
 
 ## Phase Details
 
@@ -131,6 +134,42 @@ Plans:
 - [x] 07-03-PLAN.md — CloudKit public sharing: ProfileSharingService, DeepLinkBuilder, Info.plist URL scheme, ShareLink wiring
 - [x] 07-04-PLAN.md — AvatarView component: reusable initials+color avatar with photo fallback, integrated into ProfileView and ProfileEditSheet
 
+### Phase 8: Verification Sprint
+**Goal:** Formally verify completed phases 2, 3, and 7 so their requirements count as satisfied; register PROF-01–10 in REQUIREMENTS.md; update all stale checkboxes
+**Depends on:** Phase 7
+**Requirements:** GOAL-01, GOAL-02, GOAL-03, GOAL-04, GOAL-05, GOAL-06, UI-01, UI-03, STATS-01, STATS-02, STATS-03, STATS-04, STATS-05, STATS-06, NOTIF-02, NOTIF-03, NOTIF-04, NOTIF-05, NOTIF-06, NOTIF-07, PROF-01, PROF-02, PROF-03, PROF-04, PROF-05, PROF-08, PROF-09, PROF-10
+**Gap Closure:** Closes gaps from v1.0 audit — missing VERIFICATION.md for phases 2, 3, 7; orphaned PROF-01–10; stale REQUIREMENTS.md checkboxes
+**Success Criteria** (what must be TRUE):
+  1. VERIFICATION.md exists for Phase 2 and all GOAL-01–06, UI-01, UI-03 show Satisfied
+  2. VERIFICATION.md exists for Phase 3 and all STATS-01–06, NOTIF-02–07 show Satisfied
+  3. VERIFICATION.md exists for Phase 7 and PROF-01–05, PROF-08–10 show Satisfied
+  4. PROF-01–10 are listed in REQUIREMENTS.md v1 section and traceability table
+  5. All stale REQUIREMENTS.md checkboxes (Phase 4 SYNC/WIDGET, Phase 5 NOTIF/ONBOARD) updated to reflect current state
+**Plans:** TBD
+
+### Phase 9: TierPickerView Accessibility Fix
+**Goal:** Fix the two confirmed accessibility failures in TierCardView — Dark Mode (Color.white) and Dynamic Type (hardcoded font sizes) — so UI-05 and UI-06 pass verification
+**Depends on:** Phase 8
+**Requirements:** UI-05, UI-06
+**Gap Closure:** Closes UI-05 (confirmed FAILED in Phase 5 VERIFICATION.md) and UI-06 (PARTIAL — hardcoded font sizes)
+**Success Criteria** (what must be TRUE):
+  1. TierCardView unselected fill uses `.systemBackground` or semantic adaptive color — no `Color.white` hardcode
+  2. TierCardView displayName label uses `.subheadline` text style (Dynamic Type-scaled)
+  3. TierCardView description label uses `.caption` text style (Dynamic Type-scaled)
+  4. Dark Mode visual check: TierPickerView renders without harsh white rectangles in dark system appearance
+**Plans:** TBD
+
+### Phase 10: Profile Deep Link Handler
+**Goal:** Implement the missing vitaming:// deep link receive path so incoming profile links resolve to the correct profile view instead of being silently dropped
+**Depends on:** Phase 8
+**Requirements:** PROF-06, PROF-07
+**Gap Closure:** Closes PROF-06 and PROF-07 integration gaps and the "Incoming profile deep link" broken flow from the v1.0 audit
+**Success Criteria** (what must be TRUE):
+  1. VitaminGApp.body has `.onOpenURL { url in ... }` handler that parses `vitaming://profile/<recordID>`
+  2. Handler resolves the recordID and calls `AppRouter.navigate(to: .profile)` with the correct profile
+  3. Tapping a shared vitaming:// profile link opens the app directly to that user's profile
+**Plans:** TBD
+
 ## Progress
 
 **Execution Order:**
@@ -145,3 +184,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 5. Onboarding & Polish | 0/5 | Not started | - |
 | 6. Distribution | 0/TBD | Not started | - |
 | 7. User Profiles | 0/4 | Not started | - |
+| 8. Verification Sprint | 0/TBD | Not started | - |
+| 9. TierPickerView Accessibility Fix | 0/TBD | Not started | - |
+| 10. Profile Deep Link Handler | 0/TBD | Not started | - |

@@ -76,6 +76,19 @@
 - [ ] **UI-05**: Supports both Light and Dark Mode
 - [ ] **UI-06**: Accessibility: Dynamic Type support, VoiceOver labels on all interactive elements
 
+### User Profiles
+
+- [ ] **PROF-01**: SchemaV2 migration adds `UserProfile` model and `Goal.isPublic` field without data loss on existing records
+- [ ] **PROF-02**: Profile tab (4th tab) shows avatar, display name, privacy toggle, public goals preview, and share button
+- [ ] **PROF-03**: Toggling profile to Public saves a `PublicProfile` record to CloudKit public database
+- [ ] **PROF-04**: Toggling profile to Private deletes the `PublicProfile` record from CloudKit public database
+- [ ] **PROF-05**: Share Profile button generates a `vitaming://profile/<recordID>` deep link and presents system share sheet
+- [ ] **PROF-06**: App handles incoming `vitaming://profile/<recordID>` deep links via `.onOpenURL` handler in `VitaminGApp`
+- [ ] **PROF-07**: Programmatic navigation to a specific profile via deep link resolves and navigates correctly
+- [ ] **PROF-08**: GoalDetailView has a "Share this goal" toggle that persists `isPublic` on the `Goal` model
+- [ ] **PROF-09**: `AvatarView` renders warm-colored initials avatar; supports photo fallback when `photoData` is available
+- [ ] **PROF-10**: CloudKit public database stores and retrieves `PublicProfile` records correctly
+
 ---
 
 ## v2 Requirements
@@ -168,10 +181,20 @@
 | UI-05 | Phase 5 | Pending |
 | UI-06 | Phase 5 | Pending |
 | SYNC-03 | Phase 6 | Pending |
+| PROF-01 | Phase 7 | Pending |
+| PROF-02 | Phase 7 | Pending |
+| PROF-03 | Phase 7 | Pending |
+| PROF-04 | Phase 7 | Pending |
+| PROF-05 | Phase 7 | Pending |
+| PROF-06 | Phase 10 | Pending |
+| PROF-07 | Phase 10 | Pending |
+| PROF-08 | Phase 7 | Pending |
+| PROF-09 | Phase 7 | Pending |
+| PROF-10 | Phase 7 | Pending |
 
 **Coverage:**
-- v1 requirements: 45 total
-- Mapped to phases: 45
+- v1 requirements: 55 total (45 original + 10 user profile requirements added 2026-04-17)
+- Mapped to phases: 55
 - Unmapped: 0
 
 ---
