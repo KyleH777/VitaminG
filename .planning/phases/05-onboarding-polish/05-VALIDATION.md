@@ -81,6 +81,15 @@ audited: 2026-04-16
 | Manual-only gaps | 6 behaviors across UI-04, UI-05, UI-06, ONBOARD-03, NOTIF-01, ONBOARD-02 behavioral |
 | Escalated | 0 |
 
+## Validation Audit 2026-04-16 (re-audit)
+
+| Metric | Count |
+|--------|-------|
+| Gaps found | 0 |
+| Resolved | 0 |
+| Escalated | 0 |
+| Note | All 15 automated tests verified green on iPhone 17 simulator (iOS 26.4). Tests reside in VitaminGTests.swift (GoalTierTests, OnboardingViewModelTests, EmptyTierViewTests structs). No new automatable gaps found. Manual-only coverage remains maximal. |
+
 ---
 
 ## Validation Sign-Off
