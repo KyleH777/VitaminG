@@ -73,8 +73,8 @@
 - [x] **UI-02**: App tone is warm and reflective, not productivity-aggressive — copy and design enforce this
 - [x] **UI-03**: `associatedInspiration` field is prominently displayed on goal detail view
 - [ ] **UI-04**: App Store-quality polish: no placeholder UI, no debug elements, smooth transitions
-- [ ] **UI-05**: Supports both Light and Dark Mode
-- [ ] **UI-06**: Accessibility: Dynamic Type support, VoiceOver labels on all interactive elements
+- [x] **UI-05**: Supports both Light and Dark Mode
+- [x] **UI-06**: Accessibility: Dynamic Type support, VoiceOver labels on all interactive elements
 
 ### User Profiles
 
@@ -178,8 +178,8 @@
 | ONBOARD-03 | Phase 5 | Pending |
 | ONBOARD-04 | Phase 5 | Pending |
 | UI-04 | Phase 5 | Pending |
-| UI-05 | Phase 5 | Pending |
-| UI-06 | Phase 5 | Pending |
+| UI-05 | Phase 9 | Complete |
+| UI-06 | Phase 9 | Complete |
 | SYNC-03 | Phase 6 | Pending |
 | PROF-01 | Phase 7 | Complete |
 | PROF-02 | Phase 7 | Complete |
@@ -199,4 +199,4 @@
 
 ---
 *Requirements defined: 2026-04-03*
-*Last updated: 2026-04-17 — Phase 2 (GOAL-01–06, UI-01, UI-03), Phase 3 (STATS-01–06, NOTIF-02–07), and Phase 7 (PROF-01–05, PROF-08–10) requirements marked Complete after verification sprint*
+*Last updated: 2026-04-17 — Phase 2 (GOAL-01–06, UI-01, UI-03), Phase 3 (STATS-01–06, NOTIF-02–07), and Phase 7 (PROF-01–05, PROF-08–10) requirements marked Complete after verification sprint; Phase 9 (UI-05, UI-06) requirements marked Complete after TierCardView accessibility fix verification*
