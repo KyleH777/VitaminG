@@ -150,7 +150,7 @@ Plans:
 - [x] 08-01-PLAN.md — Phase 2 VERIFICATION.md (GOAL-01–06, UI-01, UI-03)
 - [x] 08-02-PLAN.md — Phase 3 VERIFICATION.md (STATS-01–06, NOTIF-02–07)
 - [x] 08-03-PLAN.md — Phase 7 VERIFICATION.md (PROF-01–05, PROF-08–10; gaps: PROF-06, PROF-07)
-- [ ] 08-04-PLAN.md — REQUIREMENTS.md checkbox and traceability table updates
+- [x] 08-04-PLAN.md — REQUIREMENTS.md checkbox and traceability table updates
 
 ### Phase 9: TierPickerView Accessibility Fix
 **Goal:** Fix the two confirmed accessibility failures in TierCardView — Dark Mode (Color.white) and Dynamic Type (hardcoded font sizes) — so UI-05 and UI-06 pass verification
