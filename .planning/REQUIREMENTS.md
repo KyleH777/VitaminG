@@ -19,12 +19,12 @@
 
 ### Goal Management
 
-- [ ] **GOAL-01**: User can create a goal by entering title, description (optional), tier selection, and associatedInspiration (optional)
-- [ ] **GOAL-02**: User can view all goals grouped and visually distinguished by tier
-- [ ] **GOAL-03**: User can edit any goal field after creation
-- [ ] **GOAL-04**: User can delete a goal (with confirmation)
-- [ ] **GOAL-05**: User can mark a goal as complete — creates a `CompletionEvent` record with timestamp and tier
-- [ ] **GOAL-06**: Completed goals remain visible (with visual distinction) and can be re-activated
+- [x] **GOAL-01**: User can create a goal by entering title, description (optional), tier selection, and associatedInspiration (optional)
+- [x] **GOAL-02**: User can view all goals grouped and visually distinguished by tier
+- [x] **GOAL-03**: User can edit any goal field after creation
+- [x] **GOAL-04**: User can delete a goal (with confirmation)
+- [x] **GOAL-05**: User can mark a goal as complete — creates a `CompletionEvent` record with timestamp and tier
+- [x] **GOAL-06**: Completed goals remain visible (with visual distinction) and can be re-activated
 - [x] **GOAL-07**: Goal list is sortable by tier, by creation date, and by completion status
 
 ### Streaks & Statistics
@@ -69,25 +69,25 @@
 
 ### UI & Design
 
-- [ ] **UI-01**: Each tier has a distinct visual identity (color, icon, weight) — not just a label
+- [x] **UI-01**: Each tier has a distinct visual identity (color, icon, weight) — not just a label
 - [x] **UI-02**: App tone is warm and reflective, not productivity-aggressive — copy and design enforce this
-- [ ] **UI-03**: `associatedInspiration` field is prominently displayed on goal detail view
+- [x] **UI-03**: `associatedInspiration` field is prominently displayed on goal detail view
 - [ ] **UI-04**: App Store-quality polish: no placeholder UI, no debug elements, smooth transitions
 - [ ] **UI-05**: Supports both Light and Dark Mode
 - [ ] **UI-06**: Accessibility: Dynamic Type support, VoiceOver labels on all interactive elements
 
 ### User Profiles
 
-- [ ] **PROF-01**: SchemaV2 migration adds `UserProfile` model and `Goal.isPublic` field without data loss on existing records
-- [ ] **PROF-02**: Profile tab (4th tab) shows avatar, display name, privacy toggle, public goals preview, and share button
-- [ ] **PROF-03**: Toggling profile to Public saves a `PublicProfile` record to CloudKit public database
-- [ ] **PROF-04**: Toggling profile to Private deletes the `PublicProfile` record from CloudKit public database
-- [ ] **PROF-05**: Share Profile button generates a `vitaming://profile/<recordID>` deep link and presents system share sheet
+- [x] **PROF-01**: SchemaV2 migration adds `UserProfile` model and `Goal.isPublic` field without data loss on existing records
+- [x] **PROF-02**: Profile tab (4th tab) shows avatar, display name, privacy toggle, public goals preview, and share button
+- [x] **PROF-03**: Toggling profile to Public saves a `PublicProfile` record to CloudKit public database
+- [x] **PROF-04**: Toggling profile to Private deletes the `PublicProfile` record from CloudKit public database
+- [x] **PROF-05**: Share Profile button generates a `vitaming://profile/<recordID>` deep link and presents system share sheet
 - [ ] **PROF-06**: App handles incoming `vitaming://profile/<recordID>` deep links via `.onOpenURL` handler in `VitaminGApp`
 - [ ] **PROF-07**: Programmatic navigation to a specific profile via deep link resolves and navigates correctly
-- [ ] **PROF-08**: GoalDetailView has a "Share this goal" toggle that persists `isPublic` on the `Goal` model
-- [ ] **PROF-09**: `AvatarView` renders warm-colored initials avatar; supports photo fallback when `photoData` is available
-- [ ] **PROF-10**: CloudKit public database stores and retrieves `PublicProfile` records correctly
+- [x] **PROF-08**: GoalDetailView has a "Share this goal" toggle that persists `isPublic` on the `Goal` model
+- [x] **PROF-09**: `AvatarView` renders warm-colored initials avatar; supports photo fallback when `photoData` is available
+- [x] **PROF-10**: CloudKit public database stores and retrieves `PublicProfile` records correctly
 
 ---
 
@@ -143,16 +143,16 @@
 | FOUND-05 | Phase 1 | Complete |
 | FOUND-06 | Phase 1 | Complete |
 | FOUND-07 | Phase 1 | Complete |
-| GOAL-01 | Phase 2 | Pending |
-| GOAL-02 | Phase 2 | Pending |
-| GOAL-03 | Phase 2 | Pending |
-| GOAL-04 | Phase 2 | Pending |
-| GOAL-05 | Phase 2 | Pending |
-| GOAL-06 | Phase 2 | Pending |
+| GOAL-01 | Phase 2 | Complete |
+| GOAL-02 | Phase 2 | Complete |
+| GOAL-03 | Phase 2 | Complete |
+| GOAL-04 | Phase 2 | Complete |
+| GOAL-05 | Phase 2 | Complete |
+| GOAL-06 | Phase 2 | Complete |
 | GOAL-07 | Phase 2 | Complete |
-| UI-01 | Phase 2 | Pending |
+| UI-01 | Phase 2 | Complete |
 | UI-02 | Phase 2 | Complete |
-| UI-03 | Phase 2 | Pending |
+| UI-03 | Phase 2 | Complete |
 | STATS-01 | Phase 3 | Complete |
 | STATS-02 | Phase 3 | Complete |
 | STATS-03 | Phase 3 | Complete |
@@ -181,16 +181,16 @@
 | UI-05 | Phase 5 | Pending |
 | UI-06 | Phase 5 | Pending |
 | SYNC-03 | Phase 6 | Pending |
-| PROF-01 | Phase 7 | Pending |
-| PROF-02 | Phase 7 | Pending |
-| PROF-03 | Phase 7 | Pending |
-| PROF-04 | Phase 7 | Pending |
-| PROF-05 | Phase 7 | Pending |
+| PROF-01 | Phase 7 | Complete |
+| PROF-02 | Phase 7 | Complete |
+| PROF-03 | Phase 7 | Complete |
+| PROF-04 | Phase 7 | Complete |
+| PROF-05 | Phase 7 | Complete |
 | PROF-06 | Phase 10 | Pending |
 | PROF-07 | Phase 10 | Pending |
-| PROF-08 | Phase 7 | Pending |
-| PROF-09 | Phase 7 | Pending |
-| PROF-10 | Phase 7 | Pending |
+| PROF-08 | Phase 7 | Complete |
+| PROF-09 | Phase 7 | Complete |
+| PROF-10 | Phase 7 | Complete |
 
 **Coverage:**
 - v1 requirements: 55 total (45 original + 10 user profile requirements added 2026-04-17)
@@ -199,4 +199,4 @@
 
 ---
 *Requirements defined: 2026-04-03*
-*Last updated: 2026-04-03 — traceability updated after roadmap creation (6 phases)*
+*Last updated: 2026-04-17 — Phase 2 (GOAL-01–06, UI-01, UI-03), Phase 3 (STATS-01–06, NOTIF-02–07), and Phase 7 (PROF-01–05, PROF-08–10) requirements marked Complete after verification sprint*
