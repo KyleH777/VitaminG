@@ -164,7 +164,7 @@ Plans:
   4. Dark Mode visual check: TierPickerView renders without harsh white rectangles in dark system appearance
 **Plans:** 1 plan
 Plans:
-- [x] 09-01-PLAN.md — Verify TierCardView fix and update REQUIREMENTS.md
+- [ ] 09-01-PLAN.md — Verify TierCardView fix and update REQUIREMENTS.md
 
 ### Phase 10: Profile Deep Link Handler
 **Goal:** Implement the missing vitaming:// deep link receive path so incoming profile links resolve to the correct profile view instead of being silently dropped
