@@ -162,7 +162,9 @@ Plans:
   2. TierCardView displayName label uses `.subheadline` text style (Dynamic Type-scaled)
   3. TierCardView description label uses `.caption` text style (Dynamic Type-scaled)
   4. Dark Mode visual check: TierPickerView renders without harsh white rectangles in dark system appearance
-**Plans:** TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 09-01-PLAN.md — Verify TierCardView fix and update REQUIREMENTS.md
 
 ### Phase 10: Profile Deep Link Handler
 **Goal:** Implement the missing vitaming:// deep link receive path so incoming profile links resolve to the correct profile view instead of being silently dropped
@@ -190,5 +192,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 6. Distribution | 0/TBD | Not started | - |
 | 7. User Profiles | 0/4 | Not started | - |
 | 8. Verification Sprint | 0/4 | Not started | - |
-| 9. TierPickerView Accessibility Fix | 0/TBD | Not started | - |
+| 9. TierPickerView Accessibility Fix | 0/1 | Not started | - |
 | 10. Profile Deep Link Handler | 0/TBD | Not started | - |
