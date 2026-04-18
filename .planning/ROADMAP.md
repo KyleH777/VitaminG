@@ -147,9 +147,9 @@ Plans:
   5. All stale REQUIREMENTS.md checkboxes (Phase 4 SYNC/WIDGET, Phase 5 NOTIF/ONBOARD) updated to reflect current state
 **Plans:** 4 plans
 Plans:
-- [ ] 08-01-PLAN.md — Phase 2 VERIFICATION.md (GOAL-01–06, UI-01, UI-03)
-- [ ] 08-02-PLAN.md — Phase 3 VERIFICATION.md (STATS-01–06, NOTIF-02–07)
-- [ ] 08-03-PLAN.md — Phase 7 VERIFICATION.md (PROF-01–05, PROF-08–10; gaps: PROF-06, PROF-07)
+- [x] 08-01-PLAN.md — Phase 2 VERIFICATION.md (GOAL-01–06, UI-01, UI-03)
+- [x] 08-02-PLAN.md — Phase 3 VERIFICATION.md (STATS-01–06, NOTIF-02–07)
+- [x] 08-03-PLAN.md — Phase 7 VERIFICATION.md (PROF-01–05, PROF-08–10; gaps: PROF-06, PROF-07)
 - [ ] 08-04-PLAN.md — REQUIREMENTS.md checkbox and traceability table updates
 
 ### Phase 9: TierPickerView Accessibility Fix
