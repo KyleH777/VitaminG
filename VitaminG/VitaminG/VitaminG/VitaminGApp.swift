@@ -53,6 +53,12 @@ struct VitaminGApp: App {
             }
             .modelContainer(container)
             .environment(router)
+            .onOpenURL { url in
+                // D-08, D-09: Parse vitaming://profile/<recordID>
+                if let recordID = DeepLinkParser.recordID(from: url) {
+                    router.pendingPublicProfileRecordID = recordID
+                }
+            }
         }
     }
 }

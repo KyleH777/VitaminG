@@ -7,6 +7,7 @@ struct ContentView: View {
     @Environment(AppRouter.self) private var router
 
     var body: some View {
+        @Bindable var router = router
         TabView {
             goalsTab
                 .tabItem {
@@ -35,6 +36,12 @@ struct ContentView: View {
             .tabItem {
                 Label("Profile", systemImage: "person.crop.circle.fill")
             }
+        }
+        .sheet(item: Binding(
+            get: { router.pendingPublicProfileRecordID.map { ProfileDeepLinkItem(id: $0) } },
+            set: { _ in router.pendingPublicProfileRecordID = nil }
+        )) { item in
+            PublicProfileView(recordID: item.id)
         }
     }
 
