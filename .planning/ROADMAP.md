@@ -175,7 +175,10 @@ Plans:
   1. VitaminGApp.body has `.onOpenURL { url in ... }` handler that parses `vitaming://profile/<recordID>`
   2. Handler resolves the recordID and calls `AppRouter.navigate(to: .profile)` with the correct profile
   3. Tapping a shared vitaming:// profile link opens the app directly to that user's profile
-**Plans:** TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 10-01-PLAN.md — DeepLinkParser, AppRoute.publicProfile, AppRouter.pendingPublicProfileRecordID, ProfileSharingService.fetchProfile, test stubs
+- [ ] 10-02-PLAN.md — PublicProfileViewModel, PublicProfileView, VitaminGApp .onOpenURL, ContentView sheet binding, human verify
 
 ## Progress
 
@@ -193,4 +196,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 7. User Profiles | 0/4 | Not started | - |
 | 8. Verification Sprint | 0/4 | Not started | - |
 | 9. TierPickerView Accessibility Fix | 0/1 | Not started | - |
-| 10. Profile Deep Link Handler | 0/TBD | Not started | - |
+| 10. Profile Deep Link Handler | 0/2 | Not started | - |
