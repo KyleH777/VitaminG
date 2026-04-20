@@ -52,6 +52,8 @@ struct ContentView: View {
                         SettingsView()
                     case .profile:
                         ProfileView()
+                    case .publicProfile:
+                        EmptyView()  // Never pushed onto NavigationStack; sheet path handles this route
                     }
                 }
         }

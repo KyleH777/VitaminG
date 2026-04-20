@@ -40,6 +40,19 @@ enum ProfileSharingService {
         return savedRecord.recordID.recordName
     }
 
+    /// Reads a PublicProfile record from CloudKit public database by recordID.
+    /// Returns only displayName and avatarColorHex — the two fields written by publishProfile.
+    /// Throws CKError on network failure or missing record; callers handle CKError.unknownItem.
+    static func fetchProfile(recordID: String) async throws -> (displayName: String?, avatarColorHex: String?) {
+        let container = CKContainer(identifier: containerID)
+        let publicDB = container.publicCloudDatabase
+        let ckRecordID = CKRecord.ID(recordName: recordID)
+        let record = try await publicDB.record(for: ckRecordID)
+        let displayName = record["displayName"] as? String
+        let avatarColorHex = record["avatarColorHex"] as? String
+        return (displayName: displayName, avatarColorHex: avatarColorHex)
+    }
+
     /// Deletes the PublicProfile record from CloudKit public database.
     /// Silently succeeds if record does not exist (already deleted).
     /// Per D-06: going private removes the public record to prevent orphaned accessible data.

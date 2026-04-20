@@ -9,4 +9,5 @@ enum AppRoute: Hashable {
     case stats      // Phase 3: stats screen
     case settings   // Phase 3: notification settings
     case profile    // Phase 7: profile tab deep link navigation
+    case publicProfile(recordID: String)   // Phase 10 — D-04, D-05; sheet-only, never pushed onto NavigationStack
 }
