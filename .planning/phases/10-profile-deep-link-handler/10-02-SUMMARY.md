@@ -43,7 +43,7 @@ decisions:
 metrics:
   duration: ~15 minutes
   completed: 2026-04-20
-  tasks_completed: 2
+  tasks_completed: 3
   files_created: 2
   files_modified: 3
 ---
@@ -58,7 +58,7 @@ metrics:
 |------|------|--------|-------|
 | 1 | Create PublicProfileViewModel with fetchOverride and populate tests | 9d967ba | PublicProfileViewModel.swift, PublicProfileViewModelTests.swift |
 | 2 | Create PublicProfileView and wire VitaminGApp + ContentView | a4f1b56 | PublicProfileView.swift, VitaminGApp.swift, ContentView.swift |
-| 3 | Verify deep link flow end-to-end on simulator | — | checkpoint:human-verify (pending) |
+| 3 | Verify deep link flow end-to-end on simulator | — | checkpoint:human-verify (APPROVED) |
 
 ## What Was Built
 
@@ -121,5 +121,16 @@ None. All three view states (loading/loaded/error) are fully implemented. The lo
 | PublicProfileView(recordID: item.id) in ContentView.swift | FOUND |
 | router.pendingPublicProfileRecordID = nil in ContentView.swift | FOUND |
 | Project builds with zero errors | PASSED |
+
+## Human Verification (Task 3)
+
+**Result: APPROVED** (2026-04-20)
+
+| Check | Result |
+|-------|--------|
+| Deep link from Safari opens sheet | CONFIRMED |
+| Error state ("This profile is no longer available.") with iCloud icon | CONFIRMED |
+| "Done" button is warm orange and dismisses sheet | CONFIRMED |
+| Malformed URLs are silently ignored | CONFIRMED |
 
 ## Self-Check: PASSED
