@@ -20,7 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 6: Distribution** - App Store assets, CloudKit schema promotion to Production, TestFlight, App Store submission
 - [ ] **Phase 8: Verification Sprint** - Generate VERIFICATION.md for phases 2, 3, and 7; register PROF-01–10 in REQUIREMENTS.md; update stale checkboxes
 - [ ] **Phase 9: TierPickerView Accessibility Fix** - Fix Color.white Dark Mode failure (UI-05) and hardcoded Dynamic Type font sizes (UI-06) in TierCardView
-- [ ] **Phase 10: Profile Deep Link Handler** - Add vitaming:// onOpenURL handler to VitaminGApp; wire AppRouter profile navigation for PROF-06 and PROF-07
+- [x] **Phase 10: Profile Deep Link Handler** - Add vitaming:// onOpenURL handler to VitaminGApp; wire AppRouter profile navigation for PROF-06 and PROF-07 (completed 2026-04-23)
 
 ## Phase Details
 
@@ -175,10 +175,10 @@ Plans:
   1. VitaminGApp.body has `.onOpenURL { url in ... }` handler that parses `vitaming://profile/<recordID>`
   2. Handler resolves the recordID and calls `AppRouter.navigate(to: .profile)` with the correct profile
   3. Tapping a shared vitaming:// profile link opens the app directly to that user's profile
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [x] 10-01-PLAN.md — DeepLinkParser, AppRoute.publicProfile, AppRouter.pendingPublicProfileRecordID, ProfileSharingService.fetchProfile, test stubs
-- [ ] 10-02-PLAN.md — PublicProfileViewModel, PublicProfileView, VitaminGApp .onOpenURL, ContentView sheet binding, human verify
+- [x] 10-02-PLAN.md — PublicProfileViewModel, PublicProfileView, VitaminGApp .onOpenURL, ContentView sheet binding, human verify
 
 ## Progress
 
@@ -196,4 +196,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 7. User Profiles | 0/4 | Not started | - |
 | 8. Verification Sprint | 0/4 | Not started | - |
 | 9. TierPickerView Accessibility Fix | 0/1 | Not started | - |
-| 10. Profile Deep Link Handler | 1/2 | In Progress|  |
+| 10. Profile Deep Link Handler | 2/2 | Complete   | 2026-04-23 |
