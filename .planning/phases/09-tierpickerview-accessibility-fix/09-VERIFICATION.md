@@ -1,7 +1,7 @@
 ---
 phase: 09-tierpickerview-accessibility-fix
 verified: 2026-04-18T00:00:00Z
-status: human_needed
+status: passed
 score: 4/4
 overrides_applied: 0
 gaps: []

@@ -16,10 +16,10 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Core Goal UI** - Four-tier goal CRUD views, visual tier identity, goal detail with associatedInspiration, completion toggle (completed 2026-04-04)
 - [x] **Phase 3: Streaks, Stats & Notifications** - CompletionEvent-based streak computation, stats heatmap screen, personalized daily push notifications (completed 2026-04-06)
 - [ ] **Phase 4: iCloud Sync & Widgets** - CloudKit transparent sync, systemMedium home screen widget, accessoryRectangular lock screen widget
-- [ ] **Phase 5: Onboarding & Polish** - First-launch onboarding, empty states, Light/Dark Mode, Dynamic Type, VoiceOver, App Store-quality UI
+- [x] **Phase 5: Onboarding & Polish** - First-launch onboarding, empty states, Light/Dark Mode, Dynamic Type, VoiceOver, App Store-quality UI (completed 2026-04-27)
 - [ ] **Phase 6: Distribution** - App Store assets, CloudKit schema promotion to Production, TestFlight, App Store submission
 - [ ] **Phase 8: Verification Sprint** - Generate VERIFICATION.md for phases 2, 3, and 7; register PROF-01–10 in REQUIREMENTS.md; update stale checkboxes
-- [ ] **Phase 9: TierPickerView Accessibility Fix** - Fix Color.white Dark Mode failure (UI-05) and hardcoded Dynamic Type font sizes (UI-06) in TierCardView
+- [x] **Phase 9: TierPickerView Accessibility Fix** - Fix Color.white Dark Mode failure (UI-05) and hardcoded Dynamic Type font sizes (UI-06) in TierCardView (completed 2026-04-27)
 - [x] **Phase 10: Profile Deep Link Handler** - Add vitaming:// onOpenURL handler to VitaminGApp; wire AppRouter profile navigation for PROF-06 and PROF-07 (completed 2026-04-23)
 
 ## Phase Details
