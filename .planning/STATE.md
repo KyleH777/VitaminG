@@ -108,5 +108,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-19T15:44:47.968Z
-Stopped at: Phase 10 UI-SPEC approved
-Resume file: .planning/phases/10-profile-deep-link-handler/10-UI-SPEC.md
+Stopped at: Phase 6 context gathered
+Resume file: .planning/phases/06-distribution/06-CONTEXT.md
