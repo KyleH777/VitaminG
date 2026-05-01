@@ -196,7 +196,12 @@ Plans:
   3. A notification variant fires at a configurable time with the prompt "What's your win today?" — distinct from the existing goal-reminder notification
   4. If the user already wrote today's entry, reopening the Daily Wins view shows the existing entry pre-filled for editing rather than a blank form
 **Effort:** Medium
-**Plans:** TBD
+**Plans:** 4 plans
+Plans:
+- [ ] 11-01-PLAN.md — SchemaV3 (DailyWin model), VitaminGMigrationPlan V2→V3, ModelContainerFactory update
+- [ ] 11-02-PLAN.md — DailyWinsViewModel (CRUD, one-per-day, validation), NotificationPreferences win keys, NotificationScheduler win reminder, AppRoute .wins
+- [ ] 11-03-PLAN.md — DailyWinsView (today editor + history), ContentView tab restructure (Goals·Stats·Wins·Profile), SettingsView Win Reminder, ProfileView Settings link, VitaminGApp launch scheduling
+- [ ] 11-04-PLAN.md — Build verification, unit tests, human visual verify (checkpoint)
 
 ### Phase 12: Goal Progress Visualization
 **Goal:** Every goal card shows a progress ring reflecting recent completion activity, GoalDetailView surfaces per-goal completion history, and micro-milestone celebrations fire at threshold completion counts to reinforce momentum
@@ -254,7 +259,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 8. Verification Sprint | 0/4 | Not started | - |
 | 9. TierPickerView Accessibility Fix | 0/1 | Not started | - |
 | 10. Profile Deep Link Handler | 2/2 | Complete   | 2026-04-23 |
-| 11. Gratitude / Daily Wins Module | 0/TBD | Not started | - |
+| 11. Gratitude / Daily Wins Module | 0/4 | Not started | - |
 | 12. Goal Progress Visualization | 0/TBD | Not started | - |
 | 13. Challenge Platform — Core Engine | 0/TBD | Not started | - |
 | 14. Challenge Platform — Community & Modules | 0/TBD | Not started | - |
