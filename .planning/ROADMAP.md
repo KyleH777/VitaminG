@@ -21,6 +21,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 8: Verification Sprint** - Generate VERIFICATION.md for phases 2, 3, and 7; register PROF-01–10 in REQUIREMENTS.md; update stale checkboxes
 - [x] **Phase 9: TierPickerView Accessibility Fix** - Fix Color.white Dark Mode failure (UI-05) and hardcoded Dynamic Type font sizes (UI-06) in TierCardView (completed 2026-04-27)
 - [x] **Phase 10: Profile Deep Link Handler** - Add vitaming:// onOpenURL handler to VitaminGApp; wire AppRouter profile navigation for PROF-06 and PROF-07 (completed 2026-04-23)
+- [ ] **Phase 13: Challenge Platform — Core Engine** - ChallengeTemplate/UserChallenge/CheckIn (SchemaV3), challenge engine, featured challenge seed data, discovery screen, check-in flows, streak/milestone system
+- [ ] **Phase 14: Challenge Platform — Community & Modules** - Community feed (CloudKit public DB), reactions, profanity filter, optional modules (5), custom challenge builder, full notification suite
 - [ ] **Phase 11: Gratitude / Daily Wins Module** - Daily text-entry log, date-keyed SwiftData model, history view, "What's your win today?" notification variant
 - [ ] **Phase 12: Goal Progress Visualization** - Progress rings on goal cards, per-goal completion history, micro-milestone celebrations, momentum score
 
@@ -208,6 +210,33 @@ Plans:
 **Effort:** Medium
 **Plans:** TBD
 
+### Phase 13: Challenge Platform — Core Engine
+**Goal:** A configurable challenge engine powers Featured and Custom Challenges — one template system drives all challenge types, check-ins, streak logic, milestone celebrations, and the discovery/check-in UI; no challenge type requires separate core logic
+**Depends on:** Phase 3 (notification infrastructure), Phase 7 (user profiles for attribution)
+**Requirements:** CHAL-01, CHAL-02, CHAL-03, CHAL-04, CHAL-05, CHAL-06, CHAL-07, CHAL-08, CHAL-09, CHAL-10, CHAL-11, CHAL-12
+**Success Criteria** (what must be TRUE):
+  1. `ChallengeTemplate` (SchemaV3) defines all challenge behavior via config — adding a new challenge type requires zero new core logic; the three featured challenges (90-Day Summer Body, Save $5,000, Dry Summer) are seeded using the template system, not hardcoded
+  2. `UserChallenge` and `CheckIn` models persist user state; one check-in per day per challenge enforced; missed check-in breaks streak; streak and longest-streak computed correctly across midnight and DST transitions
+  3. Challenge Discovery screen shows Featured Challenges (curated cards with community size), category browse, and "Build Your Own" CTA — all driven by template data
+  4. Daily check-in flow is driven by `check_in_type` from the template (boolean / numeric / multi-step) with no type-specific branching in the engine layer
+  5. Milestone array from template config triggers full-screen celebration (confetti + personalized message + badge saved to profile) at each configured trigger point
+  6. Evening check-in reminder notification fires per-challenge at user-set time if no check-in logged that day
+**Effort:** Large
+**Plans:** TBD
+
+### Phase 14: Challenge Platform — Community & Modules
+**Goal:** The Challenge Platform gains a scoped community feed with reactions and profanity filtering, all five optional modules (Spending Freeze, Craving Tools, Transformation Photos, Nutrition Log, Buddy Accountability), a Custom Challenge builder, and the full notification suite
+**Depends on:** Phase 13 (challenge engine)
+**Requirements:** CHAL-13, CHAL-14, CHAL-15, CHAL-16, CHAL-17, CHAL-18, CHAL-19, CHAL-20, CHAL-21, CHAL-22, CHAL-23, CHAL-24, CHAL-25
+**Success Criteria** (what must be TRUE):
+  1. Community feed is scoped per challenge category — posts (text + optional photo) appear only to users in the same category; reactions (👍 ❤️ only, no comments) persist in CloudKit public database; report button present on every post with no public count shown
+  2. Profanity filter runs on post submission — rejects and prompts the user to edit; never silently drops content
+  3. All five optional modules attach to any challenge template via config — Spending Freeze (daily toggle + freeze badge), Craving Tools (box breathing + motivational prompt + buddy ping), Transformation Photos (private dated photo log), Nutrition Log (daily meal note), Buddy Accountability (opt-in contact + push ping on request)
+  4. Custom Challenge builder lets users configure name, category, check-in type, goal type/value, duration, and privacy — produces a `ChallengeTemplate` instance using identical infrastructure as featured challenges
+  5. Full notification suite: streak-at-risk by 8pm, milestone reached, reaction received on your post, buddy accountability ping — all using existing `UNCalendarNotificationTrigger` infrastructure
+**Effort:** Large
+**Plans:** TBD
+
 ## Progress
 
 **Execution Order:**
@@ -227,3 +256,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 10. Profile Deep Link Handler | 2/2 | Complete   | 2026-04-23 |
 | 11. Gratitude / Daily Wins Module | 0/TBD | Not started | - |
 | 12. Goal Progress Visualization | 0/TBD | Not started | - |
+| 13. Challenge Platform — Core Engine | 0/TBD | Not started | - |
+| 14. Challenge Platform — Community & Modules | 0/TBD | Not started | - |

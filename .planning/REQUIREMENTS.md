@@ -89,6 +89,37 @@
 - [x] **PROF-09**: `AvatarView` renders warm-colored initials avatar; supports photo fallback when `photoData` is available
 - [x] **PROF-10**: CloudKit public database stores and retrieves `PublicProfile` records correctly
 
+### Challenge Platform — Core Engine
+
+- [ ] **CHAL-01**: `ChallengeTemplate` SwiftData model (SchemaV3) defines all challenge behavior via config: id, title, description, category, type (featured/custom), check_in_type (boolean/numeric/photo/multi-step), goal_type (streak/target/date-bound), duration, milestones array, accent color, icon, featured flag + active date range
+- [ ] **CHAL-02**: `UserChallenge` model links a user to a template with start date, target end date, current streak, longest streak, total check-ins, status (active/completed/abandoned), and milestone history
+- [ ] **CHAL-03**: `CheckIn` model stores challenge instance ID, date, type-specific payload (boolean/number/note/photo), and timestamp — one check-in per day per challenge enforced
+- [ ] **CHAL-04**: SchemaV3 migration adds ChallengeTemplate, UserChallenge, CheckIn without data loss on existing SchemaV2 records
+- [ ] **CHAL-05**: Challenge engine computes streak correctly across midnight and DST transitions; missed check-in breaks streak; longest streak tracked
+- [ ] **CHAL-06**: Three featured challenges seeded via template system: 90-Day Summer Body (fitness/multi-step), Save $5,000 (finance/numeric), Dry Summer (sobriety/boolean) — no hardcoded type-specific logic
+- [ ] **CHAL-07**: Adding a new challenge type requires zero new core engine logic — all behavior driven by template config
+- [ ] **CHAL-08**: Discovery screen shows Featured Challenges (curated cards with category, community size), category browse, and "Build Your Own" CTA
+- [ ] **CHAL-09**: Daily check-in flow adapts to check_in_type from template (boolean/numeric/multi-step) with no type-specific branching in engine layer
+- [ ] **CHAL-10**: Milestone array from template triggers full-screen celebration (confetti + personalized message + milestone badge saved to profile) at each configured trigger point
+- [ ] **CHAL-11**: Progress tracking: streak calendar chain view, progress bar toward goal value, prominent day counter for sobriety-type challenges
+- [ ] **CHAL-12**: Evening check-in reminder notification fires per-challenge at user-set time if no check-in logged that day
+
+### Challenge Platform — Community & Modules
+
+- [ ] **CHAL-13**: Community feed scoped per challenge category — posts (text + optional photo) visible only within the same category
+- [ ] **CHAL-14**: Post reactions: 👍 and ❤️ only — no comments, no other reaction types; reaction counts visible on post
+- [ ] **CHAL-15**: Report button present on every post; report count never shown publicly
+- [ ] **CHAL-16**: Profanity filter runs on post submission — rejects and prompts user to edit; never silently drops content
+- [ ] **CHAL-17**: Community posts and reactions persist in CloudKit public database
+- [ ] **CHAL-18**: Spending Freeze module — daily self-reported toggle, freeze badge on dashboard, daily reminder while active
+- [ ] **CHAL-19**: Craving Tools module — box breathing exercise (4-4-4-4 pattern), random motivational distraction prompt, buddy ping button
+- [ ] **CHAL-20**: Transformation Photos module — private dated photo log visible only to the user
+- [ ] **CHAL-21**: Nutrition Log module — simple daily meal note field per challenge
+- [ ] **CHAL-22**: Buddy Accountability module — user opts in a contact; buddy receives push ping on request
+- [ ] **CHAL-23**: Custom Challenge builder lets users configure name, category, check-in type, goal type/value, duration, and privacy — produces a ChallengeTemplate using identical infrastructure as featured challenges
+- [ ] **CHAL-24**: Notification suite: streak-at-risk (no check-in by 8pm), milestone reached, reaction received on post, buddy accountability ping
+- [ ] **CHAL-25**: Warm, encouraging empty state on community feed when sparse ("Be the first to share your progress"); no red failure states throughout challenge UI
+
 ### Gratitude / Daily Wins
 
 - [ ] **GRAT-01**: User can create a daily win or gratitude entry — free-text, date-keyed, one entry per calendar day
@@ -208,6 +239,31 @@
 | PROF-08 | Phase 7 | Complete |
 | PROF-09 | Phase 7 | Complete |
 | PROF-10 | Phase 7 | Complete |
+| CHAL-01 | Phase 13 | Pending |
+| CHAL-02 | Phase 13 | Pending |
+| CHAL-03 | Phase 13 | Pending |
+| CHAL-04 | Phase 13 | Pending |
+| CHAL-05 | Phase 13 | Pending |
+| CHAL-06 | Phase 13 | Pending |
+| CHAL-07 | Phase 13 | Pending |
+| CHAL-08 | Phase 13 | Pending |
+| CHAL-09 | Phase 13 | Pending |
+| CHAL-10 | Phase 13 | Pending |
+| CHAL-11 | Phase 13 | Pending |
+| CHAL-12 | Phase 13 | Pending |
+| CHAL-13 | Phase 14 | Pending |
+| CHAL-14 | Phase 14 | Pending |
+| CHAL-15 | Phase 14 | Pending |
+| CHAL-16 | Phase 14 | Pending |
+| CHAL-17 | Phase 14 | Pending |
+| CHAL-18 | Phase 14 | Pending |
+| CHAL-19 | Phase 14 | Pending |
+| CHAL-20 | Phase 14 | Pending |
+| CHAL-21 | Phase 14 | Pending |
+| CHAL-22 | Phase 14 | Pending |
+| CHAL-23 | Phase 14 | Pending |
+| CHAL-24 | Phase 14 | Pending |
+| CHAL-25 | Phase 14 | Pending |
 | GRAT-01 | Phase 11 | Pending |
 | GRAT-02 | Phase 11 | Pending |
 | GRAT-03 | Phase 11 | Pending |
@@ -221,7 +277,7 @@
 | PROG-05 | Phase 12 | Pending |
 
 **Coverage:**
-- v1 requirements: 66 total (55 previous + 6 gratitude requirements + 5 progress visualization requirements added 2026-05-01)
+- v1 requirements: 91 total (66 previous + 25 challenge platform requirements added 2026-05-01)
 - Mapped to phases: 66
 - Unmapped: 0
 
