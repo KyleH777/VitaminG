@@ -89,6 +89,23 @@
 - [x] **PROF-09**: `AvatarView` renders warm-colored initials avatar; supports photo fallback when `photoData` is available
 - [x] **PROF-10**: CloudKit public database stores and retrieves `PublicProfile` records correctly
 
+### Gratitude / Daily Wins
+
+- [ ] **GRAT-01**: User can create a daily win or gratitude entry — free-text, date-keyed, one entry per calendar day
+- [ ] **GRAT-02**: `DailyWin` SwiftData model persists entries with `id` (UUID), `date` (Date?), `text` (String?) — CloudKit-compatible (all optional)
+- [ ] **GRAT-03**: A dedicated Daily Wins surface shows today's entry editor and a scrollable history of past entries with their dates
+- [ ] **GRAT-04**: If today's entry already exists, opening the Daily Wins view pre-fills the editor — no duplicate entries per day
+- [ ] **GRAT-05**: A "What's your win today?" notification variant fires at a user-configurable time, distinct from the goal-reminder notification
+- [ ] **GRAT-06**: Daily Wins is accessible from a prominent surface (dedicated tab or home screen shortcut) within the app
+
+### Goal Progress Visualization
+
+- [ ] **PROG-01**: Each goal card displays a progress ring or activity bar derived from `CompletionEvent` records — fills proportionally to recent completion frequency
+- [ ] **PROG-02**: GoalDetailView shows per-goal history: total completion count, last completed date, and a mini activity indicator
+- [ ] **PROG-03**: Micro-milestone celebrations (confetti or animated badge) fire when a goal's cumulative completion count reaches thresholds: 5, 10, 25, 50
+- [ ] **PROG-04**: A momentum score (completions in last 7 days ÷ 7, clamped 0–1) is computed per goal and shown in GoalDetailView with a color indicator
+- [ ] **PROG-05**: All progress and momentum computations derive from existing `CompletionEvent` records — no new model required
+
 ---
 
 ## v2 Requirements
@@ -191,12 +208,23 @@
 | PROF-08 | Phase 7 | Complete |
 | PROF-09 | Phase 7 | Complete |
 | PROF-10 | Phase 7 | Complete |
+| GRAT-01 | Phase 11 | Pending |
+| GRAT-02 | Phase 11 | Pending |
+| GRAT-03 | Phase 11 | Pending |
+| GRAT-04 | Phase 11 | Pending |
+| GRAT-05 | Phase 11 | Pending |
+| GRAT-06 | Phase 11 | Pending |
+| PROG-01 | Phase 12 | Pending |
+| PROG-02 | Phase 12 | Pending |
+| PROG-03 | Phase 12 | Pending |
+| PROG-04 | Phase 12 | Pending |
+| PROG-05 | Phase 12 | Pending |
 
 **Coverage:**
-- v1 requirements: 55 total (45 original + 10 user profile requirements added 2026-04-17)
-- Mapped to phases: 55
+- v1 requirements: 66 total (55 previous + 6 gratitude requirements + 5 progress visualization requirements added 2026-05-01)
+- Mapped to phases: 66
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-04-03*
-*Last updated: 2026-04-17 — Phase 2 (GOAL-01–06, UI-01, UI-03), Phase 3 (STATS-01–06, NOTIF-02–07), and Phase 7 (PROF-01–05, PROF-08–10) requirements marked Complete after verification sprint; Phase 9 (UI-05, UI-06) requirements marked Complete after TierCardView accessibility fix verification*
+*Last updated: 2026-05-01 — GRAT-01–06 (Phase 11) and PROG-01–05 (Phase 12) added for new feature phases*

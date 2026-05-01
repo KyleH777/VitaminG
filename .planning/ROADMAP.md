@@ -21,6 +21,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 8: Verification Sprint** - Generate VERIFICATION.md for phases 2, 3, and 7; register PROF-01–10 in REQUIREMENTS.md; update stale checkboxes
 - [x] **Phase 9: TierPickerView Accessibility Fix** - Fix Color.white Dark Mode failure (UI-05) and hardcoded Dynamic Type font sizes (UI-06) in TierCardView (completed 2026-04-27)
 - [x] **Phase 10: Profile Deep Link Handler** - Add vitaming:// onOpenURL handler to VitaminGApp; wire AppRouter profile navigation for PROF-06 and PROF-07 (completed 2026-04-23)
+- [ ] **Phase 11: Gratitude / Daily Wins Module** - Daily text-entry log, date-keyed SwiftData model, history view, "What's your win today?" notification variant
+- [ ] **Phase 12: Goal Progress Visualization** - Progress rings on goal cards, per-goal completion history, micro-milestone celebrations, momentum score
 
 ## Phase Details
 
@@ -180,6 +182,30 @@ Plans:
 - [x] 10-01-PLAN.md — DeepLinkParser, AppRoute.publicProfile, AppRouter.pendingPublicProfileRecordID, ProfileSharingService.fetchProfile, test stubs
 - [x] 10-02-PLAN.md — PublicProfileViewModel, PublicProfileView, VitaminGApp .onOpenURL, ContentView sheet binding, human verify
 
+### Phase 11: Gratitude / Daily Wins Module
+**Goal:** Users can log daily wins and gratitude entries, view a history of past entries, and receive a "What's your win today?" push notification variant — completing the "Vitamin G for Gratitude" brand promise
+**Depends on:** Phase 3 (notifications infrastructure), Phase 5 (onboarding)
+**Requirements:** GRAT-01, GRAT-02, GRAT-03, GRAT-04, GRAT-05, GRAT-06
+**Success Criteria** (what must be TRUE):
+  1. A new `DailyWin` SwiftData model persists date-keyed gratitude entries — user can create, edit, and delete entries per calendar day
+  2. A dedicated Daily Wins surface (tab or sheet) displays today's entry editor and a scrollable history of past entries with their dates
+  3. A notification variant fires at a configurable time with the prompt "What's your win today?" — distinct from the existing goal-reminder notification
+  4. If the user already wrote today's entry, reopening the Daily Wins view shows the existing entry pre-filled for editing rather than a blank form
+**Effort:** Medium
+**Plans:** TBD
+
+### Phase 12: Goal Progress Visualization
+**Goal:** Every goal card shows a progress ring reflecting recent completion activity, GoalDetailView surfaces per-goal completion history, and micro-milestone celebrations fire at threshold completion counts to reinforce momentum
+**Depends on:** Phase 3 (CompletionEvent history per goal)
+**Requirements:** PROG-01, PROG-02, PROG-03, PROG-04, PROG-05
+**Success Criteria** (what must be TRUE):
+  1. Each goal card displays a progress ring or activity bar derived from `CompletionEvent` records — recent completions fill the ring; no completions leaves it empty
+  2. GoalDetailView shows a per-goal history list: total completion count, last completed date, and a sparkline or mini-heatmap of activity
+  3. Micro-milestone celebrations (confetti or animated badge) fire when a goal's completion count hits defined thresholds (5, 10, 25, 50)
+  4. A momentum score is computed per goal (e.g., completions in the last 7 days / 7) and shown in GoalDetailView — green for high, amber for low, gray for inactive
+**Effort:** Medium
+**Plans:** TBD
+
 ## Progress
 
 **Execution Order:**
@@ -197,3 +223,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 8. Verification Sprint | 0/4 | Not started | - |
 | 9. TierPickerView Accessibility Fix | 0/1 | Not started | - |
 | 10. Profile Deep Link Handler | 2/2 | Complete   | 2026-04-23 |
+| 11. Gratitude / Daily Wins Module | 0/TBD | Not started | - |
+| 12. Goal Progress Visualization | 0/TBD | Not started | - |
