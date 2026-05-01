@@ -51,18 +51,18 @@ Exceptions:
 
 ## Typography
 
-All font sizes are Dynamic Type semantic styles — no fixed `pt` sizes except in display-proportional numeral contexts (flagged below). Font design is `.rounded` on all user-facing labels.
+All font sizes are Dynamic Type semantic styles — no fixed `pt` sizes except in display-proportional numeral contexts (flagged below). Font design is `.rounded` on all user-facing labels. Maximum 4 declared levels.
 
 | Role | SwiftUI Style | Weight | Line Height | Usage |
 |------|--------------|--------|-------------|-------|
-| Navigation title | `.largeTitle` (automatic via `.navigationBarTitleDisplayMode(.large)`) | Bold (automatic) | System default | "Daily Wins" navigation title |
+| Navigation title | `.largeTitle` (automatic via `.navigationBarTitleDisplayMode(.large)`) | Bold (automatic) | System default | "Daily Wins" navigation title — rendered automatically by nav bar, not declared inline |
 | Section heading | `.title3.weight(.semibold)` | Semibold (600) | System default | Section labels: "Past Wins", today date header |
-| Body / entry text | `.body` | Regular (400) | 1.5 (system default) | Win entry text in cards, TextEditor content |
-| Secondary label | `.subheadline` | Regular (400) | System default | Date labels, secondary info rows |
-| Caption | `.caption` | Regular (400) | System default | Character count indicator ("0/500"), helper text, notification hint footer |
-| Caption 2 | `.caption2` | Regular (400) | System default | Metadata in compact contexts |
+| Body / entry text | `.body` | Regular (400) | 1.5 (system default) | Win entry text in cards, TextEditor content; date labels and secondary info rows use `.body.foregroundStyle(.secondary)` — color differentiates, not a separate size level |
+| Caption | `.caption` | Regular (400) | System default | Character count indicator ("0/500"), helper text, notification hint footer; compact metadata contexts use `.caption.foregroundStyle(.secondary)` — merged from former `.caption2` level |
 
-Weight palette: exactly 2 declared weights — **Regular (400)** for body/secondary/caption and **Semibold (600)** for section headings and the Save button label (`.font(.headline)` which renders as semibold).
+Weight palette: exactly 2 declared weights — **Regular (400)** for body/caption and **Semibold (600)** for section headings and the Save button label (`.font(.headline)` which renders as semibold).
+
+**Secondary differentiation rule:** Where a prior version declared `.subheadline` or `.caption2` as separate levels, use foreground style modifiers instead. Date labels and secondary info rows → `.body.foregroundStyle(.secondary)`. Compact metadata → `.caption.foregroundStyle(.secondary)`. This keeps the size palette at 4 levels while preserving visual hierarchy through color.
 
 Display-proportional exception: none in Phase 11 (no large numeral displays — wins are text entries, not counters).
 
@@ -71,6 +71,8 @@ Display-proportional exception: none in Phase 11 (no large numeral displays — 
 ## Color
 
 All semantic/adaptive colors use `Color(UIColor.systemGroupedBackground)` and `Color(.secondarySystemGroupedBackground)` — fully Light/Dark Mode adaptive per UI-05.
+
+**Primary focal point:** TextEditor + Save Win CTA block at top of List. This is the first element the eye should reach. History list is secondary.
 
 | Role | Light Mode Value | Usage | Source |
 |------|-----------------|-------|--------|
@@ -221,4 +223,5 @@ All design contract fields were pre-populated from upstream artifacts and codeba
 
 *Phase: 11 — Gratitude / Daily Wins Module*
 *UI-SPEC created: 2026-05-01*
+*UI-SPEC revised: 2026-05-01 — fixed Dimension 4 (reduced to 4 typography levels; merged .subheadline into .body.foregroundStyle(.secondary) and .caption2 into .caption.foregroundStyle(.secondary)); fixed Dimension 2 (added focal point declaration)*
 *Status: draft — awaiting gsd-ui-checker approval*
