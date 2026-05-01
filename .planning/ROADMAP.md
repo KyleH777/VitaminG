@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Streaks, Stats & Notifications** - CompletionEvent-based streak computation, stats heatmap screen, personalized daily push notifications (completed 2026-04-06)
 - [ ] **Phase 4: iCloud Sync & Widgets** - CloudKit transparent sync, systemMedium home screen widget, accessoryRectangular lock screen widget
 - [x] **Phase 5: Onboarding & Polish** - First-launch onboarding, empty states, Light/Dark Mode, Dynamic Type, VoiceOver, App Store-quality UI (completed 2026-04-27)
-- [ ] **Phase 6: Distribution** - App Store assets, CloudKit schema promotion to Production, TestFlight, App Store submission
+- [x] **Phase 6: Distribution** - App Store assets, CloudKit schema promotion to Production, TestFlight, App Store submission (completed 2026-05-01)
 - [ ] **Phase 8: Verification Sprint** - Generate VERIFICATION.md for phases 2, 3, and 7; register PROF-01–10 in REQUIREMENTS.md; update stale checkboxes
 - [x] **Phase 9: TierPickerView Accessibility Fix** - Fix Color.white Dark Mode failure (UI-05) and hardcoded Dynamic Type font sizes (UI-06) in TierCardView (completed 2026-04-27)
 - [x] **Phase 10: Profile Deep Link Handler** - Add vitaming:// onOpenURL handler to VitaminGApp; wire AppRouter profile navigation for PROF-06 and PROF-07 (completed 2026-04-23)
@@ -115,7 +115,9 @@ Plans:
   1. CloudKit schema is promoted from Development to Production in CloudKit Console before App Store submission — confirmed by a test device in production mode syncing correctly
   2. The app passes a TestFlight beta with no crash reports on core flows (create goal, complete goal, view stats, receive notification)
   3. App Store listing has complete metadata: screenshots for all required device sizes, description, keywords, and privacy manifest (PrivacyInfo.xcprivacy) covering all required-reason APIs used
-**Plans**: TBD
+**Plans:** 1/1 plans complete
+Plans:
+- [x] 06-01-PLAN.md — AppIcon alpha fix, PrivacyInfo.xcprivacy (main + widget), CloudKit Production promotion, TestFlight, App Store submission
 
 ### Phase 7: Add user profiles with privacy toggle, profile picture upload, and AI-generated character avatar
 **Goal:** Users have a personal profile with display name, warm-colored initials avatar, privacy toggle (public/private), per-goal public/private controls, and a shareable deep link for public profiles via CloudKit public database
@@ -218,7 +220,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 3. Streaks, Stats & Notifications | 3/4 | In Progress|  |
 | 4. iCloud Sync & Widgets | 0/2 | Not started | - |
 | 5. Onboarding & Polish | 0/5 | Not started | - |
-| 6. Distribution | 0/TBD | Not started | - |
+| 6. Distribution | 1/1 | Complete | 2026-05-01 |
 | 7. User Profiles | 0/4 | Not started | - |
 | 8. Verification Sprint | 0/4 | Not started | - |
 | 9. TierPickerView Accessibility Fix | 0/1 | Not started | - |

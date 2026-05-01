@@ -50,7 +50,7 @@
 
 - [ ] **SYNC-01**: All `Goal` and `CompletionEvent` data syncs across user's devices via CloudKit private database
 - [ ] **SYNC-02**: Sync works transparently — no manual sync button in v1
-- [ ] **SYNC-03**: CloudKit schema promoted to Production before App Store submission (deployment task)
+- [x] **SYNC-03**: CloudKit schema promoted to Production before App Store submission (deployment task)
 
 ### Widgets
 
@@ -197,7 +197,7 @@
 | UI-04 | Phase 5 | Pending |
 | UI-05 | Phase 9 | Complete |
 | UI-06 | Phase 9 | Complete |
-| SYNC-03 | Phase 6 | Pending |
+| SYNC-03 | Phase 6 | Complete |
 | PROF-01 | Phase 7 | Complete |
 | PROF-02 | Phase 7 | Complete |
 | PROF-03 | Phase 7 | Complete |
