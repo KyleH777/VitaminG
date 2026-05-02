@@ -124,29 +124,10 @@ enum SchemaV2: VersionedSchema {
 }
 
 // MARK: - Migration Plan
-
-/// Lightweight V1→V2 migration plan.
-/// Adding isPublic with a default value and adding a new model both qualify as lightweight.
-/// Source: developer.apple.com/documentation/swiftdata/modelcontainer/init(for:migrationplan:configurations:)
-enum VitaminGMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] {
-        [SchemaV1.self, SchemaV2.self, SchemaV3.self]
-    }
-
-    static var stages: [MigrationStage] {
-        [migrateV1toV2, migrateV2toV3]
-    }
-
-    static let migrateV1toV2 = MigrationStage.lightweight(
-        fromVersion: SchemaV1.self,
-        toVersion: SchemaV2.self
-    )
-
-    static let migrateV2toV3 = MigrationStage.lightweight(
-        fromVersion: SchemaV2.self,
-        toVersion: SchemaV3.self
-    )
-}
+//
+// WR-06: VitaminGMigrationPlan has moved to VitaminGMigrationPlan.swift so future
+// schema authors discover it adjacent to (and not buried inside) the version files.
+// When adding SchemaV4, update BOTH `schemas` and `stages` arrays in that file.
 
 // MARK: - Typealiases (V2)
 
