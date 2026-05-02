@@ -150,6 +150,12 @@ struct DailyWinsView: View {
         ) {
             Button("Delete", role: .destructive) {
                 if let win = winToDelete {
+                    // WR-02: If deleting today's entry, also clear the pre-filled
+                    // editor draft so a subsequent save does not silently re-insert
+                    // the deleted text.
+                    if Calendar.current.isDateInToday(win.date ?? .distantPast) {
+                        viewModel.draftText = ""
+                    }
                     viewModel.delete(win, context: modelContext)
                 }
             }
