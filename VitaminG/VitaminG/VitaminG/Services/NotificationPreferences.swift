@@ -83,4 +83,21 @@ enum NotificationPreferences {
         shared?.set(hour, forKey: winHourKey)
         shared?.set(minute, forKey: winMinuteKey)
     }
+
+    // MARK: - App Group Accessors (Win Reminder)
+
+    /// Reads the win reminder hour from the App Group suite (for widget use).
+    /// IN-02: Mirrors `sharedHour()` so a future widget reading win-reminder time
+    /// has a symmetric API and avoids copy-paste errors against the wrong key.
+    static func sharedWinHour() -> Int {
+        let shared = UserDefaults(suiteName: suiteName)
+        return shared?.object(forKey: winHourKey) as? Int ?? defaultWinHour
+    }
+
+    /// Reads the win reminder minute from the App Group suite (for widget use).
+    /// IN-02: Mirrors `sharedMinute()` for symmetry.
+    static func sharedWinMinute() -> Int {
+        let shared = UserDefaults(suiteName: suiteName)
+        return shared?.object(forKey: winMinuteKey) as? Int ?? defaultWinMinute
+    }
 }
