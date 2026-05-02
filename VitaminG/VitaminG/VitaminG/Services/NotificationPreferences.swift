@@ -49,4 +49,38 @@ enum NotificationPreferences {
         let shared = UserDefaults(suiteName: suiteName)
         return shared?.object(forKey: minuteKey) as? Int ?? defaultMinute
     }
+
+    // MARK: - Win Reminder (Phase 11, D-12)
+
+    static let winHourKey   = "winNotificationHour"
+    static let winMinuteKey = "winNotificationMinute"
+
+    /// Default win reminder at 8:00 PM (D-12) — distinct from 8:00 AM goal reminder.
+    static let defaultWinHour   = 20
+    static let defaultWinMinute = 0
+
+    /// Reads the stored win reminder hour, falling back to default (8 PM).
+    static var winHour: Int {
+        if UserDefaults.standard.object(forKey: winHourKey) != nil {
+            return UserDefaults.standard.integer(forKey: winHourKey)
+        }
+        return defaultWinHour
+    }
+
+    /// Reads the stored win reminder minute, falling back to default (:00).
+    static var winMinute: Int {
+        if UserDefaults.standard.object(forKey: winMinuteKey) != nil {
+            return UserDefaults.standard.integer(forKey: winMinuteKey)
+        }
+        return defaultWinMinute
+    }
+
+    /// Persists win reminder time to both standard and App Group UserDefaults.
+    static func saveWinTime(hour: Int, minute: Int) {
+        UserDefaults.standard.set(hour, forKey: winHourKey)
+        UserDefaults.standard.set(minute, forKey: winMinuteKey)
+        let shared = UserDefaults(suiteName: suiteName)
+        shared?.set(hour, forKey: winHourKey)
+        shared?.set(minute, forKey: winMinuteKey)
+    }
 }

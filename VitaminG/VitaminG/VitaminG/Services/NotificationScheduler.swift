@@ -109,4 +109,52 @@ final class NotificationScheduler {
             return false
         }
     }
+
+    // MARK: - Win Reminder (Phase 11, D-11, D-13)
+
+    /// Separate identifier for the "What's your win today?" notification (D-11).
+    /// Must differ from Self.identifier to allow both notifications to coexist.
+    static let winIdentifier = "com.kyleharrington.VitaminG.winReminder"
+
+    /// Builds static win notification content (D-13).
+    /// Title: "Vitamin G", Body: "What's your win today?", userInfo deepLink "wins".
+    func makeWinContent() -> UNMutableNotificationContent {
+        let content = UNMutableNotificationContent()
+        content.title = "Vitamin G"
+        content.body = "What's your win today?"
+        content.sound = .default
+        content.userInfo = ["deepLink": "wins"]
+        return content
+    }
+
+    /// Schedules the win reminder at the specified time.
+    /// Remove-before-add pattern ensures single notification within iOS 64-request cap.
+    /// Hour clamped to 0–23, minute to 0–59 (T-03-08 tamper mitigation).
+    func scheduleWinReminder(hour: Int, minute: Int) async {
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: [Self.winIdentifier])
+
+        let validHour   = max(0, min(23, hour))
+        let validMinute = max(0, min(59, minute))
+
+        var components = DateComponents()
+        components.hour   = validHour
+        components.minute = validMinute
+
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
+        let request = UNNotificationRequest(
+            identifier: Self.winIdentifier,
+            content: makeWinContent(),
+            trigger: trigger
+        )
+        try? await center.add(request)
+    }
+
+    /// Reschedules with the user's stored win reminder time preference (D-12).
+    func rescheduleWinReminder() async {
+        await scheduleWinReminder(
+            hour: NotificationPreferences.winHour,
+            minute: NotificationPreferences.winMinute
+        )
+    }
 }
