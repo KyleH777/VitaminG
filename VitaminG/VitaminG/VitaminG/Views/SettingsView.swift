@@ -122,7 +122,10 @@ struct SettingsView: View {
                     Task { await NotificationScheduler.shared.rescheduleWinReminder() }
                 }
 
-                authorizationRow
+                // WR-05: authorizationRow lives only in the Daily Reminder section above —
+                // it covers BOTH notifications since UNAuthorizationStatus is per-app, not
+                // per-notification-identifier. Duplicating it here meant two simultaneous
+                // "Enable Notifications" buttons could race the system permission dialog.
             }
 
             Section {
