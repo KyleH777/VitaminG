@@ -55,7 +55,14 @@ struct VitaminGApp: App {
             .environment(router)
             .task {
                 // Schedule win reminder on launch (Phase 11, D-12)
-                await NotificationScheduler.shared.rescheduleWinReminder()
+                // CR-01: Guard on authorization status — mirror SettingsView pattern.
+                // Calling UNUserNotificationCenter.add without permission is a no-op on the
+                // notification but the remove-before-add inside scheduleWinReminder still
+                // executes, which is wasted work and obscures intent.
+                let isGranted = await NotificationScheduler.shared.isAuthorized()
+                if isGranted {
+                    await NotificationScheduler.shared.rescheduleWinReminder()
+                }
             }
             .onOpenURL { url in
                 // D-08, D-09: Parse vitaming://profile/<recordID>
