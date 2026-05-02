@@ -30,6 +30,13 @@ struct SettingsView: View {
         return Calendar.current.date(from: components) ?? Date()
     }()
 
+    @State private var winNotificationTime: Date = {
+        var components = DateComponents()
+        components.hour = NotificationPreferences.winHour
+        components.minute = NotificationPreferences.winMinute
+        return Calendar.current.date(from: components) ?? Date()
+    }()
+
     /// Full authorization status so the UI can distinguish notDetermined / denied / authorized.
     @State private var authStatus: UNAuthorizationStatus = .notDetermined
 
@@ -97,6 +104,30 @@ struct SettingsView: View {
             Section {
                 Text("Your notification will include up to 3 of your active goal titles as a daily reminder.")
                     .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+
+            Section("Win Reminder") {
+                DatePicker(
+                    "Reminder Time",
+                    selection: $winNotificationTime,
+                    displayedComponents: .hourAndMinute
+                )
+                .disabled(!isAuthorized)
+                .onChange(of: winNotificationTime) { _, newValue in
+                    let components = Calendar.current.dateComponents([.hour, .minute], from: newValue)
+                    let hour = components.hour ?? NotificationPreferences.defaultWinHour
+                    let minute = components.minute ?? NotificationPreferences.defaultWinMinute
+                    NotificationPreferences.saveWinTime(hour: hour, minute: minute)
+                    Task { await NotificationScheduler.shared.rescheduleWinReminder() }
+                }
+
+                authorizationRow
+            }
+
+            Section {
+                Text("A daily reminder to reflect on your wins.")
+                    .font(.footnote).fontDesign(.rounded)
                     .foregroundStyle(.secondary)
             }
         }

@@ -1,8 +1,8 @@
 import SwiftUI
 
-/// Root view of the app. Hosts a TabView with Goals, Stats, and Settings tabs.
-/// Phase 3: TabView with Goals tab (AppRouter-bound), Stats tab (StatsView from Plan 02),
-/// and Settings tab (SettingsView from Plan 03).
+/// Root view of the app. Hosts a TabView with Goals, Stats, Wins, and Profile tabs.
+/// Phase 11: Settings tab replaced by Wins tab (DailyWinsView). Settings now accessible via ProfileView.
+/// Goals tab is AppRouter-bound; Stats tab shows StatsView; Wins tab shows DailyWinsView; Profile tab shows ProfileView.
 struct ContentView: View {
     @Environment(AppRouter.self) private var router
 
@@ -21,12 +21,12 @@ struct ContentView: View {
                 Label("Stats", systemImage: "chart.bar.fill")
             }
 
-            // Settings tab — Plan 03
+            // Wins tab — Phase 11 (D-01, D-02, GRAT-06)
             NavigationStack {
-                SettingsView()
+                DailyWinsView()
             }
             .tabItem {
-                Label("Settings", systemImage: "gear")
+                Label("Wins", systemImage: "book.pages")
             }
 
             // Profile tab — Plan 07-02 (D-11)

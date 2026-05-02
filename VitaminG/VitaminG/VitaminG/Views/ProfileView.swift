@@ -22,6 +22,27 @@ struct ProfileView: View {
                 privacyToggleSection
                 publicGoalsSection
                 shareProfileButton
+
+                // Settings access — relocated from Settings tab per Phase 11 D-01
+                NavigationLink(destination: SettingsView()) {
+                    HStack(spacing: 12) {
+                        Image(systemName: "gear")
+                            .font(.body)
+                            .foregroundStyle(Color(red: 0.98, green: 0.55, blue: 0.27))
+                            .frame(width: 28, height: 28)
+                        Text("Settings")
+                            .font(.body).fontDesign(.rounded)
+                            .foregroundStyle(.primary)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(16)
+                    .background(Color(.systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+                .accessibilityLabel("Open Settings")
             }
             .padding(.horizontal, 16)
             .padding(.top, 32)
