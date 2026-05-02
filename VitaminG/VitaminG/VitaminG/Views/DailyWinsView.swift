@@ -21,7 +21,10 @@ struct DailyWinsView: View {
     // History = all wins except today's entry (D-09 — today's editor shown separately)
     private var historyWins: [DailyWin] {
         allWins.filter { win in
-            guard let d = win.date else { return true }
+            // WR-04: Exclude nil-dated wins. A nil date is a corrupt/incomplete
+            // record that cannot be edited (todayEntry skips it) and would render
+            // an empty date label in the row — better to hide entirely.
+            guard let d = win.date else { return false }
             return !Calendar.current.isDateInToday(d)
         }
     }
