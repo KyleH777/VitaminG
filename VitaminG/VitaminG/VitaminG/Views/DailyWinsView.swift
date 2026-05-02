@@ -81,9 +81,13 @@ struct DailyWinsView: View {
 
                     // Save Win CTA — warm orange gradient capsule (UI-SPEC accent)
                     Button {
+                        // IN-03: Dismiss the keyboard BEFORE the save attempt so it
+                        // disappears regardless of validation outcome — placing
+                        // `editorFocused = false` after `try` would skip dismissal
+                        // when `saveEntry` throws (e.g. textEmpty / textTooLong).
+                        editorFocused = false
                         do {
                             try viewModel.saveEntry(context: modelContext)
-                            editorFocused = false
                         } catch {
                             // validationError is set inside saveEntry — UI picks it up
                         }
