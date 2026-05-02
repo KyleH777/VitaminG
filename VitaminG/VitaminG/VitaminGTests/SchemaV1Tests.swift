@@ -16,16 +16,17 @@ final class SchemaV1Tests: XCTestCase {
     }
 
     func test_schemaV1_modelsContainsGoal() {
+        // Goal (module-level typealias) now resolves to SchemaV2.Goal — check SchemaV1's nested type explicitly.
         XCTAssertTrue(
-            SchemaV1.models.contains(where: { $0 == Goal.self }),
-            "SchemaV1.models must include Goal.self"
+            SchemaV1.models.contains(where: { $0 == SchemaV1.Goal.self }),
+            "SchemaV1.models must include SchemaV1.Goal.self"
         )
     }
 
     func test_schemaV1_modelsContainsCompletionEvent() {
         XCTAssertTrue(
-            SchemaV1.models.contains(where: { $0 == CompletionEvent.self }),
-            "SchemaV1.models must include CompletionEvent.self"
+            SchemaV1.models.contains(where: { $0 == SchemaV1.CompletionEvent.self }),
+            "SchemaV1.models must include SchemaV1.CompletionEvent.self"
         )
     }
 

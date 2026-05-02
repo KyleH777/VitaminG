@@ -28,11 +28,11 @@ final class VitaminGUITests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
-        // Verify all four tabs are accessible
+        // Phase 11: Settings tab replaced by Wins tab; Settings is now accessible from ProfileView.
         let tabBar = app.tabBars
         XCTAssertTrue(tabBar.buttons["Goals"].exists)
         XCTAssertTrue(tabBar.buttons["Stats"].exists)
-        XCTAssertTrue(tabBar.buttons["Settings"].exists)
+        XCTAssertTrue(tabBar.buttons["Wins"].exists)
         XCTAssertTrue(tabBar.buttons["Profile"].exists)
     }
 }
