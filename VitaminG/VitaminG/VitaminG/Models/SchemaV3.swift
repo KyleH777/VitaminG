@@ -32,7 +32,9 @@ enum SchemaV3: VersionedSchema {
         var text: String?
 
         init(date: Date = Date(), text: String) {
-            self.id = UUID()
+            // IN-01: `id` is initialised by its property default (`= UUID()`); no
+            // need to reassign here. Property kept for CloudKit + parity with Goal /
+            // CompletionEvent — only the redundant init assignment is removed.
             self.date = date
             self.text = text
         }
