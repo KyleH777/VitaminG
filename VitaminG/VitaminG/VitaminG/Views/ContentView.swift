@@ -61,6 +61,8 @@ struct ContentView: View {
                         ProfileView()
                     case .publicProfile:
                         EmptyView()  // Never pushed onto NavigationStack; sheet path handles this route
+                    case .wins:
+                        DailyWinsView()  // Phase 11: wins deep-link destination
                     }
                 }
         }

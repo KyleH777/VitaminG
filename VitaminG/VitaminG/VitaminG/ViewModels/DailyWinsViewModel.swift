@@ -41,19 +41,20 @@ final class DailyWinsViewModel {
 
     /// Returns today's DailyWin if one exists, otherwise nil.
     /// Uses Calendar.current.startOfDay for DST-safe day boundaries (StreakEngine pattern).
+    /// Fetches all non-nil dates and filters in-memory to avoid #Predicate optional limitations.
     func todayEntry(context: ModelContext) -> DailyWin? {
         let today = Calendar.current.startOfDay(for: Date())
         guard let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today) else {
             return nil
         }
         let descriptor = FetchDescriptor<DailyWin>(
-            predicate: #Predicate { win in
-                (win.date ?? Date.distantPast) >= today &&
-                (win.date ?? Date.distantPast) < tomorrow
-            },
             sortBy: [SortDescriptor(\.date, order: .reverse)]
         )
-        return (try? context.fetch(descriptor))?.first
+        let all = (try? context.fetch(descriptor)) ?? []
+        return all.first { win in
+            guard let d = win.date else { return false }
+            return d >= today && d < tomorrow
+        }
     }
 
     // MARK: - CRUD
