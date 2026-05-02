@@ -14,8 +14,9 @@ enum SchemaV3: VersionedSchema {
     static var versionIdentifier = Schema.Version(3, 0, 0)
 
     static var models: [any PersistentModel.Type] {
-        // V2 models (via typealiases) + new DailyWin
-        [Goal.self, CompletionEvent.self, UserProfile.self, DailyWin.self]
+        // V2 models (unchanged) + DailyWin (new in V3)
+        [SchemaV2.Goal.self, SchemaV2.CompletionEvent.self,
+         SchemaV2.UserProfile.self, SchemaV3.DailyWin.self]
     }
 
     // MARK: - DailyWin (NEW in V3)
