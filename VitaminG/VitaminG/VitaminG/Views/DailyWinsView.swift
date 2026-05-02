@@ -60,11 +60,14 @@ struct DailyWinsView: View {
                     }
 
                     // Character count (D-04, UI-SPEC)
-                    Text("\(viewModel.draftText.count)/500")
+                    // WR-03: Use sanitized count so the displayed value matches what
+                    // saveEntry validates against (avoids "501/500" when whitespace
+                    // padding inflates the raw count).
+                    Text("\(viewModel.sanitizedCount)/500")
                         .font(.caption).fontDesign(.rounded)
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity, alignment: .trailing)
-                        .accessibilityLabel("\(viewModel.draftText.count) of 500 characters used")
+                        .accessibilityLabel("\(viewModel.sanitizedCount) of 500 characters used")
 
                     // Inline validation error
                     if let error = viewModel.validationError {

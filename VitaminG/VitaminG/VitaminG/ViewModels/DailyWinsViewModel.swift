@@ -37,6 +37,13 @@ final class DailyWinsViewModel {
     /// Inline validation error surfaced below the TextEditor.
     var validationError: DailyWinValidationError?
 
+    /// Sanitized character count for the current draft (WR-03).
+    /// Mirrors the count `saveEntry` validates against so the UI counter and
+    /// validation always agree (no "501/500" surprises from whitespace).
+    var sanitizedCount: Int {
+        InputSanitizer.sanitize(draftText).count
+    }
+
     // MARK: - One-per-day enforcement (D-05, GRAT-04)
 
     /// Returns today's DailyWin if one exists, otherwise nil.
