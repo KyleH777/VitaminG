@@ -69,7 +69,14 @@ final class NotificationScheduler {
             content: makeContent(activeGoals: activeGoals),
             trigger: trigger
         )
-        try? await center.add(request)
+        // WR-01: Surface center.add errors instead of swallowing with try?.
+        do {
+            try await center.add(request)
+        } catch {
+            #if DEBUG
+            print("[NotificationScheduler] Failed to add daily reminder request: \(error)")
+            #endif
+        }
     }
 
     /// Reschedules with the user's stored time preference (NOTIF-06).
@@ -147,7 +154,14 @@ final class NotificationScheduler {
             content: makeWinContent(),
             trigger: trigger
         )
-        try? await center.add(request)
+        // WR-01: Surface center.add errors instead of swallowing with try?.
+        do {
+            try await center.add(request)
+        } catch {
+            #if DEBUG
+            print("[NotificationScheduler] Failed to add win reminder request: \(error)")
+            #endif
+        }
     }
 
     /// Reschedules with the user's stored win reminder time preference (D-12).
