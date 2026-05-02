@@ -23,7 +23,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 10: Profile Deep Link Handler** - Add vitaming:// onOpenURL handler to VitaminGApp; wire AppRouter profile navigation for PROF-06 and PROF-07 (completed 2026-04-23)
 - [ ] **Phase 13: Challenge Platform — Core Engine** - ChallengeTemplate/UserChallenge/CheckIn (SchemaV3), challenge engine, featured challenge seed data, discovery screen, check-in flows, streak/milestone system
 - [ ] **Phase 14: Challenge Platform — Community & Modules** - Community feed (CloudKit public DB), reactions, profanity filter, optional modules (5), custom challenge builder, full notification suite
-- [ ] **Phase 11: Gratitude / Daily Wins Module** - Daily text-entry log, date-keyed SwiftData model, history view, "What's your win today?" notification variant
+- [x] **Phase 11: Gratitude / Daily Wins Module** - Daily text-entry log, date-keyed SwiftData model, history view, "What's your win today?" notification variant (completed 2026-05-01)
 - [ ] **Phase 12: Goal Progress Visualization** - Progress rings on goal cards, per-goal completion history, micro-milestone celebrations, momentum score
 
 ## Phase Details
@@ -198,10 +198,10 @@ Plans:
 **Effort:** Medium
 **Plans:** 4 plans
 Plans:
-- [ ] 11-01-PLAN.md — SchemaV3 (DailyWin model), VitaminGMigrationPlan V2→V3, ModelContainerFactory update
-- [ ] 11-02-PLAN.md — DailyWinsViewModel (CRUD, one-per-day, validation), NotificationPreferences win keys, NotificationScheduler win reminder, AppRoute .wins
-- [ ] 11-03-PLAN.md — DailyWinsView (today editor + history), ContentView tab restructure (Goals·Stats·Wins·Profile), SettingsView Win Reminder, ProfileView Settings link, VitaminGApp launch scheduling
-- [ ] 11-04-PLAN.md — Build verification, unit tests, human visual verify (checkpoint)
+- [x] 11-01-PLAN.md — SchemaV3 (DailyWin model), VitaminGMigrationPlan V2→V3, ModelContainerFactory update
+- [x] 11-02-PLAN.md — DailyWinsViewModel (CRUD, one-per-day, validation), NotificationPreferences win keys, NotificationScheduler win reminder, AppRoute .wins
+- [x] 11-03-PLAN.md — DailyWinsView (today editor + history), ContentView tab restructure (Goals·Stats·Wins·Profile), SettingsView Win Reminder, ProfileView Settings link, VitaminGApp launch scheduling
+- [x] 11-04-PLAN.md — Build verification, unit tests, human visual verify (checkpoint)
 
 ### Phase 12: Goal Progress Visualization
 **Goal:** Every goal card shows a progress ring reflecting recent completion activity, GoalDetailView surfaces per-goal completion history, and micro-milestone celebrations fire at threshold completion counts to reinforce momentum
