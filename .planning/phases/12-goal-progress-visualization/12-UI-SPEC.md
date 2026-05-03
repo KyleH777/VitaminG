@@ -60,7 +60,7 @@ All typography uses `.fontDesign(.rounded)` per project convention. Sizes below 
 | Body | `.body` | tier-driven (`typographicWeight`) or `.regular` | system default (~1.5) |
 | Label / Caption | `.caption` | `.regular` | system default |
 | Footnote label | `.footnote` | `.semibold` | system default |
-| Section heading (chart) | `.subheadline` | `.semibold` | system default (~1.2) |
+| Micro label | `.caption2` | system default | system default |
 
 **Phase-specific typography notes:**
 
@@ -163,9 +163,9 @@ The project uses semantic SwiftUI colors throughout. No hex constants are introd
 [Gap: 8pt]
 [Summary row: "Total completions"   [N — semibold]]
 [Summary row: "Last completed"      [date string or "Never" — semibold]]
-[Gap: 12pt]
+[Gap: 16pt]
 [Swift Charts BarChart — 80pt height]
-[Gap: 12pt]
+[Gap: 16pt]
 [Momentum row]
 ```
 
@@ -203,7 +203,7 @@ The project uses semantic SwiftUI colors throughout. No hex constants are introd
 
 **Layout:** `HStack(spacing: 8)` with:
 1. Color dot: `Circle().fill(momentumColor).frame(width: 10, height: 10)`
-2. `VStack(alignment: .leading, spacing: 2)`:
+2. `VStack(alignment: .leading, spacing: 4)`:
    - `Text("Momentum")` — `.body.fontDesign(.rounded)` weight `.regular`
    - `Text("completions in the last 7 days")` — `.caption.fontDesign(.rounded)` weight `.regular` `.secondary`
 3. `Spacer()`
