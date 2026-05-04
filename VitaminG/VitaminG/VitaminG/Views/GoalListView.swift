@@ -165,7 +165,7 @@ struct GoalListView: View {
         }
         .listRowBackground(
             goal.completed
-                ? Color(red: 0.063, green: 0.725, blue: 0.506).opacity(0.08)
+                ? Color.completionGreen.opacity(0.08)
                 : Color(.secondarySystemGroupedBackground)
         )
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
