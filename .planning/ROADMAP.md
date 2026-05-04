@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation** - App Group, SwiftData models with VersionedSchema, CloudKit-ready ModelContainer, MVVM scaffold, and input validation (completed 2026-04-04)
 - [x] **Phase 2: Core Goal UI** - Four-tier goal CRUD views, visual tier identity, goal detail with associatedInspiration, completion toggle (completed 2026-04-04)
 - [x] **Phase 3: Streaks, Stats & Notifications** - CompletionEvent-based streak computation, stats heatmap screen, personalized daily push notifications (completed 2026-04-06)
-- [ ] **Phase 4: iCloud Sync & Widgets** - CloudKit transparent sync, systemMedium home screen widget, accessoryRectangular lock screen widget
+- [x] **Phase 4: iCloud Sync & Widgets** - CloudKit transparent sync, systemMedium home screen widget, accessoryRectangular lock screen widget (code complete 2026-04-06; physical device UAT pending)
 - [x] **Phase 5: Onboarding & Polish** - First-launch onboarding, empty states, Light/Dark Mode, Dynamic Type, VoiceOver, App Store-quality UI (completed 2026-04-27)
 - [x] **Phase 6: Distribution** - App Store assets, CloudKit schema promotion to Production, TestFlight, App Store submission (completed 2026-05-01)
 - [x] **Phase 8: Verification Sprint** - Generate VERIFICATION.md for phases 2, 3, and 7; register PROF-01–10 in REQUIREMENTS.md; update stale checkboxes (completed 2026-04-27)
@@ -262,7 +262,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 1. Foundation | 3/3 | Complete | 2026-04-04 |
 | 2. Core Goal UI | 3/3 | Complete | 2026-04-04 |
 | 3. Streaks, Stats & Notifications | 4/4 | Complete | 2026-05-04 |
-| 4. iCloud Sync & Widgets | 0/2 | Not started | - |
+| 4. iCloud Sync & Widgets | 2/2 | UAT Pending | - |
 | 5. Onboarding & Polish | 5/5 | Complete | 2026-04-27 |
 | 6. Distribution | 1/1 | Complete | 2026-05-01 |
 | 7. User Profiles | 4/4 | Complete | 2026-04-23 |
