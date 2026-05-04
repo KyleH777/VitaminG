@@ -17,8 +17,7 @@ struct ProgressRingView: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    /// Identical hex to GoalListView.completionGreen (#10B981) — keep in sync.
-    private let completionGreen = Color(red: 0.063, green: 0.725, blue: 0.506)
+    private let completionGreen = Color.completionGreen
 
     private var strokeColor: Color {
         isCompleted ? completionGreen : tier.color
@@ -44,7 +43,7 @@ struct ProgressRingView: View {
         .accessibilityLabel(
             isCompleted
                 ? "Goal complete"
-                : "\(Int(progress * 100))% momentum this week"
+                : "\(Int((progress * 100).rounded()))% momentum this week"
         )
         .accessibilityAddTraits(.isStaticText)
     }

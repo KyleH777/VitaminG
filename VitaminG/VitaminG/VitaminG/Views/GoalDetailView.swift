@@ -17,6 +17,9 @@ struct GoalDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
 
+    // Live query so completions added during this session update the progress section immediately (CR-02).
+    @Query private var allEvents: [CompletionEvent]
+
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
@@ -120,7 +123,7 @@ struct GoalDetailView: View {
                let completedAt = lastEvent.completedAt {
                 Text("Completed \(completedAt.formatted(date: .abbreviated, time: .omitted))")
                     .font(.caption).fontDesign(.rounded)
-                    .foregroundStyle(Color(red: 0.063, green: 0.725, blue: 0.506))
+                    .foregroundStyle(Color.completionGreen)
             }
         }
         .padding()
@@ -186,9 +189,9 @@ struct GoalDetailView: View {
 
     // MARK: - Progress Section (PROG-02, PROG-04)
 
-    /// Cached events array for the current goal — read once per body refresh.
+    /// Live-queried events for this goal — guaranteed to reflect completions added during the session.
     private var goalEvents: [CompletionEvent] {
-        goal.completionEvents ?? []
+        allEvents.filter { $0.goal?.id == goal.id }
     }
 
     /// Total cumulative completion count for the goal.
@@ -314,7 +317,7 @@ struct GoalDetailView: View {
                 .padding(.vertical, 14)
             }
             .buttonStyle(.borderedProminent)
-            .tint(goal.completed ? goal.tier.color : Color(red: 0.063, green: 0.725, blue: 0.506))
+            .tint(goal.completed ? goal.tier.color : Color.completionGreen)
             .accessibilityLabel(
                 goal.completed
                     ? "Reactivate goal \(goal.title ?? "")"

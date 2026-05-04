@@ -176,6 +176,7 @@ final class GoalViewModel {
     /// Reschedules the daily notification with current active goals (NOTIF-03).
     /// Called after every goal mutation to keep the notification body current (T-03-10).
     func rescheduleNotification(context: ModelContext) {
+        // #Predicate requires stored-property key paths — use isCompleted, NOT the computed wrapper `completed`.
         let descriptor = FetchDescriptor<Goal>(predicate: #Predicate { !$0.isCompleted })
         let activeGoals = (try? context.fetch(descriptor)) ?? []
         Task {

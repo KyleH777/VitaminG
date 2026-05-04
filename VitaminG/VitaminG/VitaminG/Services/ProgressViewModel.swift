@@ -92,7 +92,9 @@ struct ProgressViewModel {
     ) -> Int? {
         for threshold in Self.milestoneThresholds {
             let key = "\(goalID.uuidString)-\(threshold)"
-            if count == threshold && !firedSet.contains(key) {
+            // Fire on the first count that meets or exceeds the threshold (not exact equality),
+            // so a batch import that skips count == threshold still triggers the celebration.
+            if count >= threshold && count - 1 < threshold && !firedSet.contains(key) {
                 return threshold
             }
         }

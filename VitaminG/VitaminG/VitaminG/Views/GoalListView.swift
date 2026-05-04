@@ -216,8 +216,11 @@ private struct GoalRowView: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var bounceScale: CGFloat = 1.0
+    @State private var bounceTask: Task<Void, Never>?
+    @State private var badgeTask: Task<Void, Never>?
 
-    private let completionGreen = Color(red: 0.063, green: 0.725, blue: 0.506)
+    private let completionGreen = Color.completionGreen
+    private let progressVM = ProgressViewModel()
 
     var body: some View {
         HStack(spacing: 14) {
@@ -255,7 +258,7 @@ private struct GoalRowView: View {
 
             // PROG-01 — circular progress ring replaces the prior tier pip (D-01)
             ProgressRingView(
-                progress: ProgressViewModel().ringProgress(for: goal, events: events),
+                progress: progressVM.ringProgress(for: goal, events: events),
                 tier: goal.tier,
                 isCompleted: goal.completed
             )
@@ -280,14 +283,18 @@ private struct GoalRowView: View {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
                 bounceScale = 1.02
             }
-            // Return to normal scale after a brief pause using Task.sleep
-            // instead of DispatchQueue.main.asyncAfter for modern concurrency.
-            Task { @MainActor in
+            bounceTask?.cancel()
+            bounceTask = Task { @MainActor in
                 try? await Task.sleep(for: .milliseconds(150))
+                guard !Task.isCancelled else { return }
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                     bounceScale = 1.0
                 }
             }
+        }
+        .onDisappear {
+            bounceTask?.cancel()
+            badgeTask?.cancel()
         }
         .onChange(of: milestoneThreshold) { _, newValue in
             guard newValue != nil else { return }
@@ -301,14 +308,17 @@ private struct GoalRowView: View {
         showMilestoneBadge = true
         UIAccessibility.post(notification: .announcement,
                              argument: "Milestone reached: \(threshold) completions!")
+        badgeTask?.cancel()
         if reduceMotion {
             // Static badge: instant in, hold 0.5s, fade 0.2s
             badgeOpacity = 1.0
             badgeScale = 1.0
-            Task { @MainActor in
+            badgeTask = Task { @MainActor in
                 try? await Task.sleep(for: .milliseconds(500))
+                guard !Task.isCancelled else { return }
                 withAnimation(.easeIn(duration: 0.2)) { badgeOpacity = 0 }
                 try? await Task.sleep(for: .milliseconds(200))
+                guard !Task.isCancelled else { return }
                 showMilestoneBadge = false
                 badgeScale = 0.5
             }
@@ -318,14 +328,17 @@ private struct GoalRowView: View {
                 badgeOpacity = 1.0
                 badgeScale = 1.2
             }
-            Task { @MainActor in
+            badgeTask = Task { @MainActor in
                 try? await Task.sleep(for: .milliseconds(200))
+                guard !Task.isCancelled else { return }
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                     badgeScale = 1.0
                 }
                 try? await Task.sleep(for: .milliseconds(1500))
+                guard !Task.isCancelled else { return }
                 withAnimation(.easeIn(duration: 0.3)) { badgeOpacity = 0 }
                 try? await Task.sleep(for: .milliseconds(300))
+                guard !Task.isCancelled else { return }
                 showMilestoneBadge = false
                 badgeScale = 0.5
             }
@@ -337,6 +350,8 @@ private struct GoalRowView: View {
 
 struct EmptyStateView: View {
     let onAddTapped: () -> Void
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(spacing: 32) {
@@ -371,7 +386,7 @@ struct EmptyStateView: View {
                             endPoint: .bottomTrailing
                         )
                     )
-                    .symbolEffect(.pulse)
+                    .symbolEffect(.pulse, isActive: !reduceMotion)
             }
 
             // Copy
