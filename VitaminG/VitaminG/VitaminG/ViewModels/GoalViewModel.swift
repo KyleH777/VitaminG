@@ -47,6 +47,21 @@ final class GoalViewModel {
     var validationError: GoalValidationError?
     var showingValidationAlert = false
 
+    // MARK: - Milestone Tracking (PROG-03, D-11, D-13)
+
+    /// Set when a completion event causes the cumulative count to hit a milestone
+    /// threshold (5, 10, 25, 50) for the first time this session. Consumed by
+    /// GoalListView via `.onChange(of: viewModel.pendingMilestone?.goalID)`.
+    /// View layer is responsible for clearing this after consumption.
+    var pendingMilestone: (goalID: UUID, threshold: Int)? = nil
+
+    /// In-memory dedup set keyed `"\(goalID.uuidString)-\(threshold)"` (D-13).
+    /// Does not persist across launches — re-fire on next launch is acceptable.
+    private var firedMilestones: Set<String> = []
+
+    /// Pure-Swift progress arithmetic delegate. Stateless; no allocation cost.
+    private let progressVM = ProgressViewModel()
+
     // MARK: - Input Sanitization
 
     /// Delegates to the shared InputSanitizer utility.
@@ -101,6 +116,20 @@ final class GoalViewModel {
         if goal.completed {
             let event = CompletionEvent(goal: goal)
             context.insert(event)
+
+            // PROG-03 — milestone threshold check after the new event is in the
+            // graph. SwiftData updates `goal.completionEvents` synchronously on
+            // @MainActor, so reading the count here reflects the inserted event.
+            let count = goal.completionEvents?.count ?? 0
+            if let threshold = progressVM.milestoneJustCrossed(
+                count: count,
+                firedSet: firedMilestones,
+                goalID: goal.id
+            ) {
+                let key = "\(goal.id.uuidString)-\(threshold)"
+                firedMilestones.insert(key)
+                pendingMilestone = (goalID: goal.id, threshold: threshold)
+            }
         }
         rescheduleNotification(context: context)
         reloadWidgetTimelines()
