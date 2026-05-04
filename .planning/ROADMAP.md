@@ -12,19 +12,19 @@ Vitamin G ships in six phases that follow a strict dependency order. Phase 1 loc
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - App Group, SwiftData models with VersionedSchema, CloudKit-ready ModelContainer, MVVM scaffold, and input validation
+- [x] **Phase 1: Foundation** - App Group, SwiftData models with VersionedSchema, CloudKit-ready ModelContainer, MVVM scaffold, and input validation (completed 2026-04-04)
 - [x] **Phase 2: Core Goal UI** - Four-tier goal CRUD views, visual tier identity, goal detail with associatedInspiration, completion toggle (completed 2026-04-04)
 - [x] **Phase 3: Streaks, Stats & Notifications** - CompletionEvent-based streak computation, stats heatmap screen, personalized daily push notifications (completed 2026-04-06)
 - [ ] **Phase 4: iCloud Sync & Widgets** - CloudKit transparent sync, systemMedium home screen widget, accessoryRectangular lock screen widget
 - [x] **Phase 5: Onboarding & Polish** - First-launch onboarding, empty states, Light/Dark Mode, Dynamic Type, VoiceOver, App Store-quality UI (completed 2026-04-27)
 - [x] **Phase 6: Distribution** - App Store assets, CloudKit schema promotion to Production, TestFlight, App Store submission (completed 2026-05-01)
-- [ ] **Phase 8: Verification Sprint** - Generate VERIFICATION.md for phases 2, 3, and 7; register PROF-01–10 in REQUIREMENTS.md; update stale checkboxes
+- [x] **Phase 8: Verification Sprint** - Generate VERIFICATION.md for phases 2, 3, and 7; register PROF-01–10 in REQUIREMENTS.md; update stale checkboxes (completed 2026-04-27)
 - [x] **Phase 9: TierPickerView Accessibility Fix** - Fix Color.white Dark Mode failure (UI-05) and hardcoded Dynamic Type font sizes (UI-06) in TierCardView (completed 2026-04-27)
 - [x] **Phase 10: Profile Deep Link Handler** - Add vitaming:// onOpenURL handler to VitaminGApp; wire AppRouter profile navigation for PROF-06 and PROF-07 (completed 2026-04-23)
 - [ ] **Phase 13: Challenge Platform — Core Engine** - ChallengeTemplate/UserChallenge/CheckIn (SchemaV3), challenge engine, featured challenge seed data, discovery screen, check-in flows, streak/milestone system
 - [ ] **Phase 14: Challenge Platform — Community & Modules** - Community feed (CloudKit public DB), reactions, profanity filter, optional modules (5), custom challenge builder, full notification suite
 - [x] **Phase 11: Gratitude / Daily Wins Module** - Daily text-entry log, date-keyed SwiftData model, history view, "What's your win today?" notification variant (completed 2026-05-01)
-- [ ] **Phase 12: Goal Progress Visualization** - Progress rings on goal cards, per-goal completion history, micro-milestone celebrations, momentum score
+- [x] **Phase 12: Goal Progress Visualization** - Progress rings on goal cards, per-goal completion history, micro-milestone celebrations, momentum score (completed 2026-05-04)
 
 ## Phase Details
 
@@ -69,12 +69,12 @@ Plans:
   3. A daily notification fires at the user's selected time (default 8:00 AM) and its body contains the user's actual active goal titles (up to top 3) — not a generic message
   4. Notification scheduling uses `UNCalendarNotificationTrigger` with `repeats: true` and stays within the iOS 64-request limit
   5. Tapping a notification opens the app directly to the goal list; the user can change notification time in Settings and existing notifications are rescheduled immediately
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans executed
 Plans:
 - [x] 03-01-PLAN.md — StreakEngine TDD (per-tier + global streaks), AppRoute expansion, TabView restructure
 - [x] 03-02-PLAN.md — StatsViewModel, StatsView with streak cards, HeatmapView, ContentView Stats tab wiring
 - [x] 03-03-PLAN.md — NotificationScheduler, NotificationDelegate, SettingsView, VitaminGApp + GoalViewModel wiring
-- [ ] 03-04-PLAN.md — Full test suite run and human visual verification of all Phase 3 features
+- [x] 03-04-PLAN.md — Full test suite run and human visual verification of all Phase 3 features
 
 ### Phase 4: iCloud Sync & Widgets
 **Goal**: Goal data syncs transparently across the user's devices and appears on the home screen and lock screen via read-only widgets that share the same App Group store
@@ -216,14 +216,14 @@ Plans:
 **Plans:** 6 plans
 Plans:
 **Wave 1**
-- [ ] 12-01-PLAN.md — Wave 0 RED-phase test stubs for ProgressViewModel (11 XCTSkip tests)
-- [ ] 12-02-PLAN.md — ProgressViewModel pure struct + ProgressRingView component; replace XCTSkip with real assertions (PROG-01, PROG-05)
-- [ ] 12-03-PLAN.md — GoalListView: @Query events, replace tier pip with ProgressRingView, milestone badge overlay (PROG-01, PROG-03)
-- [ ] 12-04-PLAN.md — GoalViewModel: pendingMilestone + firedMilestones + toggleCompletion milestone hook (PROG-03)
-- [ ] 12-05-PLAN.md — GoalDetailView: import Charts, progressSection card with bar chart + summary + momentum row (PROG-02, PROG-04)
+- [x] 12-01-PLAN.md — Wave 0 RED-phase test stubs for ProgressViewModel (11 XCTSkip tests)
+- [x] 12-02-PLAN.md — ProgressViewModel pure struct + ProgressRingView component; replace XCTSkip with real assertions (PROG-01, PROG-05)
+- [x] 12-03-PLAN.md — GoalListView: @Query events, replace tier pip with ProgressRingView, milestone badge overlay (PROG-01, PROG-03)
+- [x] 12-04-PLAN.md — GoalViewModel: pendingMilestone + firedMilestones + toggleCompletion milestone hook (PROG-03)
+- [x] 12-05-PLAN.md — GoalDetailView: import Charts, progressSection card with bar chart + summary + momentum row (PROG-02, PROG-04)
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 12-06-PLAN.md — Wave 2: full test suite + human visual verification + UAT.md (PROG-01..05)
+- [x] 12-06-PLAN.md — Wave 2: full test suite + human visual verification + UAT.md (PROG-01..05)
 
 ### Phase 13: Challenge Platform — Core Engine
 **Goal:** A configurable challenge engine powers Featured and Custom Challenges — one template system drives all challenge types, check-ins, streak logic, milestone celebrations, and the discovery/check-in UI; no challenge type requires separate core logic
@@ -259,17 +259,17 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 3/3 | Complete |  |
-| 2. Core Goal UI | 3/3 | Complete   | 2026-04-04 |
-| 3. Streaks, Stats & Notifications | 3/4 | In Progress|  |
+| 1. Foundation | 3/3 | Complete | 2026-04-04 |
+| 2. Core Goal UI | 3/3 | Complete | 2026-04-04 |
+| 3. Streaks, Stats & Notifications | 4/4 | Complete | 2026-05-04 |
 | 4. iCloud Sync & Widgets | 0/2 | Not started | - |
-| 5. Onboarding & Polish | 0/5 | Not started | - |
+| 5. Onboarding & Polish | 5/5 | Complete | 2026-04-27 |
 | 6. Distribution | 1/1 | Complete | 2026-05-01 |
-| 7. User Profiles | 0/4 | Not started | - |
-| 8. Verification Sprint | 0/4 | Not started | - |
-| 9. TierPickerView Accessibility Fix | 0/1 | Not started | - |
-| 10. Profile Deep Link Handler | 2/2 | Complete   | 2026-04-23 |
-| 11. Gratitude / Daily Wins Module | 0/4 | Not started | - |
-| 12. Goal Progress Visualization | 0/6 | Not started | - |
+| 7. User Profiles | 4/4 | Complete | 2026-04-23 |
+| 8. Verification Sprint | 4/4 | Complete | 2026-04-27 |
+| 9. TierPickerView Accessibility Fix | 1/1 | Complete | 2026-04-27 |
+| 10. Profile Deep Link Handler | 2/2 | Complete | 2026-04-23 |
+| 11. Gratitude / Daily Wins Module | 4/4 | Complete | 2026-05-01 |
+| 12. Goal Progress Visualization | 6/6 | Complete | 2026-05-04 |
 | 13. Challenge Platform — Core Engine | 0/TBD | Not started | - |
 | 14. Challenge Platform — Community & Modules | 0/TBD | Not started | - |
