@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import Charts
 
 // MARK: - GoalDetailView
 
@@ -22,6 +23,7 @@ struct GoalDetailView: View {
                 headerSection
                 publicToggleSection
                 quoteCardSection
+                progressSection
                 notesSection
                 actionsSection
             }
@@ -180,6 +182,119 @@ struct GoalDetailView: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .padding(.horizontal)
         }
+    }
+
+    // MARK: - Progress Section (PROG-02, PROG-04)
+
+    /// Cached events array for the current goal — read once per body refresh.
+    private var goalEvents: [CompletionEvent] {
+        goal.completionEvents ?? []
+    }
+
+    /// Total cumulative completion count for the goal.
+    private var totalCompletions: Int {
+        goalEvents.count
+    }
+
+    /// Most recent completion date, or nil if the goal has never been completed.
+    private var lastCompletedDate: Date? {
+        goalEvents.compactMap { $0.completedAt }.max()
+    }
+
+    /// Pure-Swift progress arithmetic delegate (no observable state required).
+    private var progressVM: ProgressViewModel {
+        ProgressViewModel()
+    }
+
+    @ViewBuilder
+    private var progressSection: some View {
+        let chartItems = progressVM.chartData(for: goal, events: goalEvents)
+        let score = progressVM.momentumScore(for: goal, events: goalEvents)
+        let momentumColor: Color = {
+            if score >= 0.5 { return .green }
+            if score >= 0.1 { return .orange }
+            return .secondary
+        }()
+        let momentumDescription: String = {
+            if score >= 0.5 { return "High" }
+            if score >= 0.1 { return "Medium" }
+            return "Inactive"
+        }()
+        let scoreString = String(format: "%.2f", score)
+        let last7Dates = Array(chartItems.suffix(7).map { $0.date })
+
+        VStack(alignment: .leading, spacing: 8) {
+            // Section header
+            Text("Progress History")
+                .font(.footnote.weight(.semibold)).fontDesign(.rounded)
+                .foregroundStyle(.secondary)
+
+            // Summary rows
+            HStack {
+                Text("Total completions")
+                    .font(.body).fontDesign(.rounded)
+                Spacer()
+                Text("\(totalCompletions)")
+                    .font(.body.weight(.semibold)).fontDesign(.rounded)
+            }
+
+            HStack {
+                Text("Last completed")
+                    .font(.body).fontDesign(.rounded)
+                Spacer()
+                Text(
+                    lastCompletedDate.map { $0.formatted(date: .abbreviated, time: .omitted) }
+                        ?? "Never"
+                )
+                .font(.body.weight(.semibold)).fontDesign(.rounded)
+            }
+
+            // 30-day bar chart (PROG-02, D-08, D-10)
+            Chart(chartItems) { item in
+                BarMark(
+                    x: .value("Day", item.date, unit: .day),
+                    y: .value("Count", item.count)
+                )
+                .foregroundStyle(goal.tier.color)
+            }
+            .frame(height: 80)
+            .chartYAxis(.hidden)
+            .chartXAxis {
+                AxisMarks(values: last7Dates) { _ in
+                    AxisValueLabel(format: .dateTime.weekday(.abbreviated))
+                }
+            }
+            .accessibilityLabel("30-day completion history bar chart")
+            .accessibilityValue("\(totalCompletions) completions in the last 30 days")
+            .padding(.top, 8)
+
+            // Momentum row (PROG-04, D-06, D-07)
+            HStack(spacing: 8) {
+                Circle()
+                    .fill(momentumColor)
+                    .frame(width: 10, height: 10)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Momentum")
+                        .font(.body).fontDesign(.rounded)
+                    Text("completions in the last 7 days")
+                        .font(.caption).fontDesign(.rounded)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                Text(scoreString)
+                    .font(.body.weight(.semibold)).fontDesign(.rounded)
+            }
+            .padding(.top, 8)
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(
+                "Momentum score \(scoreString). \(momentumDescription). Based on completions in the last 7 days."
+            )
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.systemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(.horizontal)
     }
 
     // MARK: - Actions Section
