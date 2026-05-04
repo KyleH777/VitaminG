@@ -213,7 +213,17 @@ Plans:
   3. Micro-milestone celebrations (confetti or animated badge) fire when a goal's completion count hits defined thresholds (5, 10, 25, 50)
   4. A momentum score is computed per goal (e.g., completions in the last 7 days / 7) and shown in GoalDetailView — green for high, amber for low, gray for inactive
 **Effort:** Medium
-**Plans:** TBD
+**Plans:** 6 plans
+Plans:
+**Wave 1**
+- [ ] 12-01-PLAN.md — Wave 0 RED-phase test stubs for ProgressViewModel (11 XCTSkip tests)
+- [ ] 12-02-PLAN.md — ProgressViewModel pure struct + ProgressRingView component; replace XCTSkip with real assertions (PROG-01, PROG-05)
+- [ ] 12-03-PLAN.md — GoalListView: @Query events, replace tier pip with ProgressRingView, milestone badge overlay (PROG-01, PROG-03)
+- [ ] 12-04-PLAN.md — GoalViewModel: pendingMilestone + firedMilestones + toggleCompletion milestone hook (PROG-03)
+- [ ] 12-05-PLAN.md — GoalDetailView: import Charts, progressSection card with bar chart + summary + momentum row (PROG-02, PROG-04)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 12-06-PLAN.md — Wave 2: full test suite + human visual verification + UAT.md (PROG-01..05)
 
 ### Phase 13: Challenge Platform — Core Engine
 **Goal:** A configurable challenge engine powers Featured and Custom Challenges — one template system drives all challenge types, check-ins, streak logic, milestone celebrations, and the discovery/check-in UI; no challenge type requires separate core logic
@@ -260,6 +270,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 9. TierPickerView Accessibility Fix | 0/1 | Not started | - |
 | 10. Profile Deep Link Handler | 2/2 | Complete   | 2026-04-23 |
 | 11. Gratitude / Daily Wins Module | 0/4 | Not started | - |
-| 12. Goal Progress Visualization | 0/TBD | Not started | - |
+| 12. Goal Progress Visualization | 0/6 | Not started | - |
 | 13. Challenge Platform — Core Engine | 0/TBD | Not started | - |
 | 14. Challenge Platform — Community & Modules | 0/TBD | Not started | - |

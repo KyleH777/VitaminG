@@ -721,22 +721,13 @@ Charts with 30 bars and only 7 labeled may display oddly on very narrow iPhone s
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Momentum score for completed goals**
-   - What we know: `ringProgress` is explicitly forced to 1.0 for completed goals (D-02). Momentum is described as "completions in last 7 days / 7" (D-04) without a completed-goal override.
-   - What's unclear: Should a goal completed long ago (but marked `isCompleted`) show green momentum even with zero recent completions?
-   - Recommendation: Use raw 7-day arithmetic for momentum (Assumption A1). This is more honest and avoids a misleading green dot on stale goals. Planner should note this distinction in the task.
+1. **Momentum score for completed goals** — RESOLVED: Plan02 implements raw 7-day arithmetic for `momentumScore` regardless of `isCompleted` (Assumption A1). A completed goal with no recent activity correctly shows gray momentum dot, not misleading green.
 
-2. **GoalRowView badge clipping**
-   - What we know: SwiftUI `List` rows clip content by default to the row bounds.
-   - What's unclear: Whether `zIndex` or `clipped(false)` is required — needs runtime test.
-   - Recommendation: Add `.zIndex(1)` to the overlay as a precaution; verify in Wave 1.
+2. **GoalRowView badge clipping** — RESOLVED: Plan03-Task2 adds `.zIndex(1)` to the milestone badge overlay as a precaution. Wave 2 (Plan06) includes a manual verification step to confirm badge renders above List row bounds on device.
 
-3. **GoalDetailView completionEvents access pattern**
-   - What we know: `goal.completionEvents` is available via the `@Relationship` declared in SchemaV2. `GoalDetailView` receives `let goal: Goal`.
-   - What's unclear: Whether SwiftData lazy-loads the relationship or requires an explicit fetch when the Goal is passed across NavigationLink.
-   - Recommendation: Use `goal.completionEvents ?? []` directly. If empty unexpectedly, add a `@Query` with a predicate on `goal.id` as a fallback. [ASSUMED: SwiftData eager-loads relationships for in-memory objects — behavior may differ for objects loaded across navigation boundaries]
+3. **GoalDetailView completionEvents access pattern** — RESOLVED: Plan05-Task1 uses `goal.completionEvents ?? []` directly from the existing `@Relationship`. If the relationship returns empty unexpectedly at runtime, Plan06 manual-verify step will catch it and the fallback `@Query` approach can be applied as a patch.
 
 ---
 
