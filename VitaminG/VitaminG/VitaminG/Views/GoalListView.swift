@@ -6,6 +6,7 @@ import SwiftData
 struct GoalListView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var goals: [Goal]   // no sort descriptor — dynamic sort via computed property
+    @Query private var events: [CompletionEvent]
 
     @State private var viewModel = GoalViewModel()
     @State private var showingAddGoal = false
@@ -134,9 +135,14 @@ struct GoalListView: View {
     @ViewBuilder
     private func goalRow(for goal: Goal) -> some View {
         NavigationLink(value: AppRoute.goalDetail(goal)) {
-            GoalRowView(goal: goal) {
-                viewModel.toggleCompletion(goal: goal, context: modelContext)
-            }
+            GoalRowView(
+                goal: goal,
+                events: events,
+                milestoneThreshold: nil,
+                onToggle: {
+                    viewModel.toggleCompletion(goal: goal, context: modelContext)
+                }
+            )
         }
         .listRowBackground(
             goal.completed
@@ -180,7 +186,14 @@ private struct TierSectionView<Content: View>: View {
 
 private struct GoalRowView: View {
     let goal: Goal
+    let events: [CompletionEvent]
+    let milestoneThreshold: Int?
     let onToggle: () -> Void
+
+    // MARK: - Milestone Badge State (PROG-03)
+    @State private var showMilestoneBadge = false
+    @State private var badgeOpacity: Double = 0
+    @State private var badgeScale: CGFloat = 0.5
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var bounceScale: CGFloat = 1.0
@@ -221,12 +234,12 @@ private struct GoalRowView: View {
 
             Spacer()
 
-            // Tier accent pip — completionGreen when complete
-            RoundedRectangle(cornerRadius: 3)
-                .fill(goal.completed
-                    ? completionGreen.opacity(0.8)
-                    : goal.tier.color.opacity(0.8))
-                .frame(width: 4, height: 36)
+            // PROG-01 — circular progress ring replaces the prior tier pip (D-01)
+            ProgressRingView(
+                progress: ProgressViewModel().ringProgress(for: goal, events: events),
+                tier: goal.tier,
+                isCompleted: goal.completed
+            )
         }
         .padding(.vertical, 4)
         .contentShape(Rectangle())
