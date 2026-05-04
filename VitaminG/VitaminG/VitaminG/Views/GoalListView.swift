@@ -13,6 +13,7 @@ struct GoalListView: View {
     @State private var goalToDelete: Goal?
     @State private var showingDeleteConfirmation = false
     @State private var sortOption: SortOption = .byTier
+    @State private var pendingMilestone: (goalID: UUID, threshold: Int)? = nil
 
     // MARK: Derived
 
@@ -128,17 +129,35 @@ struct GoalListView: View {
         .listStyle(.insetGrouped)
         .animation(.easeOut(duration: 0.25), value: sortOption)
         .animation(.easeOut(duration: 0.15), value: goals.count)
+        .onChange(of: viewModel.pendingMilestone?.goalID) { _, _ in
+            // Consume the milestone event from GoalViewModel and route it to the
+            // matching row via @State. The row observes its own milestoneThreshold
+            // parameter via .onChange(of:) and triggers the overlay.
+            if let milestone = viewModel.pendingMilestone {
+                pendingMilestone = milestone
+                viewModel.pendingMilestone = nil
+                // Auto-clear after the animation window so the same threshold can
+                // refire on a subsequent goal that hits the same count.
+                Task { @MainActor in
+                    try? await Task.sleep(for: .seconds(3))
+                    pendingMilestone = nil
+                }
+            }
+        }
     }
 
     // MARK: Goal Row Helper
 
     @ViewBuilder
     private func goalRow(for goal: Goal) -> some View {
+        let milestoneThreshold: Int? = (pendingMilestone?.goalID == goal.id)
+            ? pendingMilestone?.threshold
+            : nil
         NavigationLink(value: AppRoute.goalDetail(goal)) {
             GoalRowView(
                 goal: goal,
                 events: events,
-                milestoneThreshold: nil,
+                milestoneThreshold: milestoneThreshold,
                 onToggle: {
                     viewModel.toggleCompletion(goal: goal, context: modelContext)
                 }
@@ -243,6 +262,18 @@ private struct GoalRowView: View {
         }
         .padding(.vertical, 4)
         .contentShape(Rectangle())
+        .overlay(alignment: .center) {
+            if showMilestoneBadge, let threshold = milestoneThreshold {
+                Image(systemName: threshold == 50 ? "trophy.fill" : "star.fill")
+                    .font(.system(size: 48))
+                    .foregroundStyle(goal.tier.color)
+                    .scaleEffect(badgeScale)
+                    .opacity(badgeOpacity)
+                    .zIndex(1)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+            }
+        }
         .scaleEffect(bounceScale)
         .onChange(of: goal.completed) { _, _ in
             guard !reduceMotion else { return }
@@ -256,6 +287,47 @@ private struct GoalRowView: View {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                     bounceScale = 1.0
                 }
+            }
+        }
+        .onChange(of: milestoneThreshold) { _, newValue in
+            guard newValue != nil else { return }
+            fireMilestoneBadge(threshold: newValue ?? 0)
+        }
+    }
+
+    // MARK: - Milestone Badge Animation (PROG-03, D-12, D-14)
+
+    private func fireMilestoneBadge(threshold: Int) {
+        showMilestoneBadge = true
+        UIAccessibility.post(notification: .announcement,
+                             argument: "Milestone reached: \(threshold) completions!")
+        if reduceMotion {
+            // Static badge: instant in, hold 0.5s, fade 0.2s
+            badgeOpacity = 1.0
+            badgeScale = 1.0
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(500))
+                withAnimation(.easeIn(duration: 0.2)) { badgeOpacity = 0 }
+                try? await Task.sleep(for: .milliseconds(200))
+                showMilestoneBadge = false
+                badgeScale = 0.5
+            }
+        } else {
+            // Default: scale 0.5→1.2, opacity 0→1 (0.2s) → spring to 1.0 → hold 1.5s → fade 0.3s
+            withAnimation(.easeOut(duration: 0.2)) {
+                badgeOpacity = 1.0
+                badgeScale = 1.2
+            }
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(200))
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                    badgeScale = 1.0
+                }
+                try? await Task.sleep(for: .milliseconds(1500))
+                withAnimation(.easeIn(duration: 0.3)) { badgeOpacity = 0 }
+                try? await Task.sleep(for: .milliseconds(300))
+                showMilestoneBadge = false
+                badgeScale = 0.5
             }
         }
     }
