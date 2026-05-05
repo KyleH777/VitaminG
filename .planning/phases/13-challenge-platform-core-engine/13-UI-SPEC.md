@@ -65,22 +65,27 @@ Exceptions:
 All type uses `.fontDesign(.rounded)` on system fonts, consistent with existing views
 (GoalDetailView, DailyWinsView, StatsView patterns).
 
+Exactly 2 weights are used: `.regular` (400) and `.semibold` (600).
+Exactly 4 sizes are declared: `.caption` (~12pt), `.body` (~17pt), `.title2` (~22pt), and the 48pt display counter.
+
 | Role | Size | Weight | Line Height | Usage |
 |------|------|--------|-------------|-------|
-| Display | `.title2` (~22pt Dynamic Type) | `.semibold` (600) | 1.2 | Challenge template title on discovery card and detail header |
-| Heading | `.title3` (~20pt Dynamic Type) | `.semibold` (600) | 1.2 | Section headers ("Featured Challenges", "Browse by Category"), day counter label |
+| Display | `.title2` (~22pt Dynamic Type) | `.semibold` (600) | 1.2 | Challenge template title on discovery card, detail header, section headers ("Featured Challenges", "Browse by Category"), day counter label, milestone celebration message |
 | Body | `.body` (~17pt Dynamic Type) | `.regular` (400) | 1.5 | Challenge description text, check-in field labels, reminder picker |
 | Label / Caption | `.caption` (~12pt Dynamic Type) | `.regular` (400) | 1.4 | Community size ("1,240 people"), streak count labels, day-dot accessibility text |
+| Day Counter | 48pt fixed | `.semibold` (600) | 1.2 | Prominent day counter for sobriety-type challenges |
 
 Special cases:
-- Day counter (sobriety-type challenge): `.system(size: 48, weight: .bold, design: .rounded)` — matches StatsView global streak display pattern
-- Milestone celebration message: `.title2.weight(.semibold).fontDesign(.rounded)`
+- Day counter (sobriety-type challenge): `.system(size: 48, weight: .semibold, design: .rounded)` — matches StatsView global streak display pattern. Weight is `.semibold` (600), consistent with the 2-weight contract.
 - Milestone badge SF Symbol: displayed at 64pt image scale (`.imageScale(.large)` + `.font(.system(size: 64))`)
 - Quote/inspiration card (if shown in challenge detail): `VGTheme.serifItalic(17)` — matches GoalDetailView quote pattern
 
 Note: All font sizes are Dynamic Type text styles, not hardcoded CGFloat values, except
 the day counter (48pt) and milestone badge (64pt) which intentionally use fixed sizes
 for display impact (same precedent as StatsView streak counter).
+
+The former `.title3` role has been consolidated into the `.title2` Display role. All previously
+`.title3`-referenced elements (section headers, day counter label) now use `.title2.weight(.semibold).fontDesign(.rounded)`.
 
 ---
 
@@ -151,10 +156,22 @@ New components introduced in Phase 13:
 - 12pt corner radius (matches existing TierCardView corner radius)
 - Horizontal padding 16pt, vertical padding 12pt
 - Template icon (SF Symbol) at 32pt, template accent color tint
-- Challenge title: `.title3.weight(.semibold).fontDesign(.rounded)`
+- Challenge title: `.title2.weight(.semibold).fontDesign(.rounded)`
 - Description (1 line, truncated): `.body.fontDesign(.rounded)` with `.lineLimit(1)`
 - Community size badge: `.caption.fontDesign(.rounded)`, `VGTheme.muted` foreground
 - "Join" button: template accent fill, white label, `.body.weight(.semibold)`, 44pt minimum height
+
+### ChallengeDiscoveryView layout
+
+**Screen-level focal point:** The primary visual anchor when a user first lands on the Challenges tab is the Featured Challenges section — the first ChallengeCard's template icon and title draw the eye as the leading hero element.
+
+Top-to-bottom structure:
+1. `.navigationTitle("Challenges")` — `.title2.weight(.semibold)` (system nav title)
+2. "Featured Challenges" section header — `.title2.weight(.semibold).fontDesign(.rounded)`
+3. Featured ChallengeCard list (vertical LazyVStack, 12pt gap)
+4. "Browse by Category" section header — `.title2.weight(.semibold).fontDesign(.rounded)`
+5. Category row (horizontal scroll or grid)
+6. "Build Your Own" CTA button — full width, secondary style, 44pt height
 
 ### ChallengeDetailView layout (top-to-bottom)
 1. Large title header — challenge name in `.title2.weight(.semibold).fontDesign(.rounded)`
@@ -172,7 +189,7 @@ New components introduced in Phase 13:
 - Multi-step type: two-step wizard with progress indicator (Step 1 of 2 / Step 2 of 2) at top
   - Step 1: boolean workout toggle
   - Step 2: numeric duration field (minutes)
-  - "Next" / "Save Check-In" button label changes between steps
+  - "Next Step" / "Save Check-In" button label changes between steps
 - All modal sheets: `.background(Color(.systemGroupedBackground))` surface
 
 ### MilestoneCelebrationView (fullScreenCover)
@@ -272,7 +289,7 @@ Challenges Tab Root (ChallengeDiscoveryView)
 | Numeric check-in prompt (Save $5,000) | "Amount saved today ($)" |
 | Boolean check-in prompt (Dry Summer) | "Stayed alcohol-free today?" |
 | Save check-in button | "Save Check-In" |
-| Multi-step next button | "Next" |
+| Multi-step next button | "Next Step" |
 | Coming soon sheet title | "Custom Challenges" |
 | Coming soon sheet body | "Design your own challenge with custom goals, check-in types, and duration. Coming soon." |
 | Coming soon dismiss | "Got It" |
@@ -291,6 +308,7 @@ Challenges Tab Root (ChallengeDiscoveryView)
 - "Checked In Today" not "Done / Completed"
 - "Keep Going" not "Close" (milestone and abandon dialog)
 - "Your Streak" not "Streak Count"
+- "Next Step" not "Next" (multi-step wizard advance button — communicates progress in a sequence)
 - Milestone messages from `MilestoneConfig.message` — seeded with human warmth ("One week strong!", "A whole month! Keep going.", "You did it! 90 days!")
 
 ---
@@ -366,3 +384,7 @@ uses SwiftUI `Canvas` + `TimelineView` — no external particle library.
 | CHAL-09: check-in type UI branching in View only, not engine | CONTEXT.md D-01, CHAL-07, RESEARCH.md anti-patterns |
 | Abandon uses system red | Color contract: destructive = `Color.red` (system) |
 | Confetti via SwiftUI Canvas — no SpriteKit | CLAUDE.md (no external deps) + RESEARCH.md Don't Hand-Roll |
+| Day counter weight changed to `.semibold` (from `.bold`) | Checker revision — 2-weight max contract: regular (400) + semibold (600) only |
+| `.title3` consolidated into `.title2` Display role | Checker revision — 4-size max contract; `.title3` was a 5th size |
+| "Next" → "Next Step" in multi-step wizard | Checker revision Dimension 1 — communicates sequence progress more clearly |
+| Screen focal point declaration added to ChallengeDiscoveryView | Checker revision Dimension 2 — explicit visual anchor statement |
