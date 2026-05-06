@@ -9,7 +9,7 @@ import SwiftData
 /// Testing: in-memory store with no App Group or CloudKit binding.
 enum ModelContainerFactory {
     static func makeContainer(inMemory: Bool = false) throws -> ModelContainer {
-        let schema = Schema(SchemaV3.models, version: SchemaV3.versionIdentifier)
+        let schema = Schema(SchemaV4.models, version: SchemaV4.versionIdentifier)
 
         // On Simulator, App Group entitlements are not provisioned, so skip group container
         // and CloudKit to avoid a fatal assertion crash at launch (affects both app and test runner).
@@ -35,7 +35,7 @@ enum ModelContainerFactory {
     /// Pitfall 2 from RESEARCH.md: widget must use cloudKitDatabase: .none.
     /// Must use same schema + migration plan as makeContainer to avoid store mismatch crash (T-07-02).
     static func makeWidgetContainer() throws -> ModelContainer {
-        let schema = Schema(SchemaV3.models, version: SchemaV3.versionIdentifier)
+        let schema = Schema(SchemaV4.models, version: SchemaV4.versionIdentifier)
 
         #if targetEnvironment(simulator)
         let config = ModelConfiguration(
@@ -81,7 +81,8 @@ extension ModelContainerFactory {
             desc.shouldAddStoreAsynchronously = false  // Required — schema init must be synchronous
 
             if let mom = NSManagedObjectModel.makeManagedObjectModel(
-                for: [Goal.self, CompletionEvent.self, UserProfile.self, DailyWin.self]
+                for: [Goal.self, CompletionEvent.self, UserProfile.self, DailyWin.self,
+                      ChallengeTemplate.self, UserChallenge.self, CheckIn.self]
             ) {
                 let ckContainer = NSPersistentCloudKitContainer(
                     name: "VitaminG",
