@@ -63,6 +63,10 @@ struct ContentView: View {
                         EmptyView()  // Never pushed onto NavigationStack; sheet path handles this route
                     case .wins:
                         DailyWinsView()  // Phase 11: wins deep-link destination
+                    case .challengeDetail:
+                        EmptyView()  // Phase 13 — UI implemented in Phase 13 Wave 4
+                    case .challengeCheckIn:
+                        EmptyView()  // Phase 13 — sheet path handles check-in; never pushed
                     }
                 }
         }
