@@ -12,4 +12,6 @@ enum AppRoute: Hashable {
     case profile    // Phase 7: profile tab deep link navigation
     case publicProfile(recordID: String)   // Phase 10 — D-04, D-05; sheet-only, never pushed onto NavigationStack
     case wins   // Phase 11 — Wins tab navigation (deep-link reserved; plain foreground open in Phase 11)
+    case challengeDetail(UserChallenge)    // Phase 13 — CHAL-08, D-05
+    case challengeCheckIn(UserChallenge)   // Phase 13 — CHAL-09, D-05, D-06
 }

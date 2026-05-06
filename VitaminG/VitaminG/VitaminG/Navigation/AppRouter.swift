@@ -10,6 +10,7 @@ final class AppRouter {
     /// Set to a non-nil recordID by .onOpenURL handler in VitaminGApp.
     /// Setting nil dismisses the sheet.
     var pendingPublicProfileRecordID: String? = nil
+    var pendingChallengeCheckInID: String? = nil
 
     func navigate(to route: AppRoute) {
         path.append(route)
@@ -29,4 +30,10 @@ final class AppRouter {
 /// Defined alongside AppRouter because it is a navigation type, not a view type.
 struct ProfileDeepLinkItem: Identifiable {
     let id: String  // id == recordID
+}
+
+/// Thin Identifiable wrapper enabling .sheet(item:) binding on pendingChallengeCheckInID.
+/// Parallel structure to ProfileDeepLinkItem — id is the UserChallenge UUID string.
+struct ChallengeCheckInDeepLinkItem: Identifiable, Hashable {
+    let id: String   // UUID string
 }
