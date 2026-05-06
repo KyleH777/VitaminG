@@ -832,7 +832,7 @@ enum CheckInPayload {
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Multi-step check-in: what are the steps for "90-Day Summer Body"?**
    - What we know: `checkInType = "multiStep"` is defined; the engine is type-blind
