@@ -237,7 +237,15 @@ Plans:
   5. Milestone array from template config triggers full-screen celebration (confetti + personalized message + badge saved to profile) at each configured trigger point
   6. Evening check-in reminder notification fires per-challenge at user-set time if no check-in logged that day
 **Effort:** Large
-**Plans:** TBD
+**Plans:** 7 plans (3 executed: 13-01, 13-02, 13-03; 4 gap-closure: 13-04, 13-05, 13-06, 13-07)
+Plans:
+- [x] 13-01-PLAN.md — SchemaV4 data layer (ChallengeTemplate, UserChallenge, CheckIn, migration)
+- [x] 13-02-PLAN.md — Challenge engine (ChallengeStreakEngine, ChallengeViewModel, seed logic)
+- [x] 13-03-PLAN.md — Navigation and notification infrastructure (AppRoute, AppRouter, DeepLinkBuilder/Parser, NotificationScheduler)
+- [ ] 13-04-PLAN.md — Discovery screen, 5th Challenges tab, StreakChainView component
+- [ ] 13-05-PLAN.md — ChallengeDetailView and ChallengeCheckInView (type-adaptive check-in modal)
+- [ ] 13-06-PLAN.md — MilestoneCelebrationView and badge persistence (CHAL-10)
+- [ ] 13-07-PLAN.md — Deep-link routing wiring and VitaminGApp.onOpenURL (CHAL-12)
 
 ### Phase 14: Challenge Platform — Community & Modules
 **Goal:** The Challenge Platform gains a scoped community feed with reactions and profanity filtering, all five optional modules (Spending Freeze, Craving Tools, Transformation Photos, Nutrition Log, Buddy Accountability), a Custom Challenge builder, and the full notification suite
