@@ -15,4 +15,16 @@ enum DeepLinkParser {
               !recordID.isEmpty else { return nil }
         return recordID
     }
+
+    /// Parse a challenge check-in URL: vitaming://challengeCheckIn/<userChallengeID>
+    /// Validates scheme + host + non-empty path component. Returns nil for any malformed URL.
+    /// SECURITY (T-13-11): UUID format is NOT validated here — caller must use UUID(uuidString:)
+    /// which returns nil for non-UUID strings. Matches the recordID(from:) validation pattern.
+    static func challengeCheckInID(from url: URL) -> String? {
+        guard url.scheme == DeepLinkBuilder.scheme,
+              url.host == "challengeCheckIn",
+              let id = url.pathComponents.dropFirst().first,
+              !id.isEmpty else { return nil }
+        return id
+    }
 }
