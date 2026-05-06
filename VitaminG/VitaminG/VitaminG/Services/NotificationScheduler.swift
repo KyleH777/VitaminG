@@ -172,3 +172,65 @@ final class NotificationScheduler {
         )
     }
 }
+
+// MARK: - Phase 13 challenge reminders (CHAL-12, D-08)
+
+extension NotificationScheduler {
+
+    /// Per-challenge identifier scheme: one identifier per active UserChallenge.
+    /// Remove-before-add pattern preserves the iOS 64-request cap.
+    static func challengeReminderIdentifier(for challengeID: UUID) -> String {
+        "com.kyleharrington.VitaminG.challengeReminder.\(challengeID.uuidString)"
+    }
+
+    /// Schedule (or replace) the evening reminder for a UserChallenge at the given hour/minute.
+    /// Notification userInfo carries deepLink + userChallengeID for routing on tap (D-06, D-07).
+    func scheduleChallengeReminder(
+        for challenge: UserChallenge,
+        hour: Int,
+        minute: Int
+    ) async {
+        let challengeID = challenge.id
+        let identifier = Self.challengeReminderIdentifier(for: challengeID)
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: [identifier])
+
+        let validHour   = max(0, min(23, hour))
+        let validMinute = max(0, min(59, minute))
+
+        let content = UNMutableNotificationContent()
+        content.title = "Check in on your challenge"
+        content.body = challenge.template?.title ?? "Daily check-in reminder"
+        content.sound = .default
+        content.userInfo = [
+            "deepLink": "challengeCheckIn",
+            "userChallengeID": challengeID.uuidString
+        ]
+
+        var components = DateComponents()
+        components.hour   = validHour
+        components.minute = validMinute
+
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
+        let request = UNNotificationRequest(
+            identifier: identifier,
+            content: content,
+            trigger: trigger
+        )
+        do {
+            try await center.add(request)
+        } catch {
+            #if DEBUG
+            print("[NotificationScheduler] Failed to add challenge reminder: \(error)")
+            #endif
+        }
+    }
+
+    /// Remove the pending evening reminder for a given challenge.
+    /// Called when a UserChallenge is abandoned, completed, or has its reminder turned off.
+    func removeChallengeReminder(for challengeID: UUID) {
+        let identifier = Self.challengeReminderIdentifier(for: challengeID)
+        UNUserNotificationCenter.current()
+            .removePendingNotificationRequests(withIdentifiers: [identifier])
+    }
+}
