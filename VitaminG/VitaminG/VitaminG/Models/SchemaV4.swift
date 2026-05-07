@@ -65,6 +65,11 @@ enum SchemaV4: VersionedSchema {
         var totalCheckIns: Int = 0
         var statusRaw: String?              // "active" | "completed" | "abandoned"
         var milestoneHistoryJSON: String?   // JSON-encoded [Int] thresholds awarded
+        /// JSON-encoded [String] array of SF Symbol names for earned milestone badges.
+        /// Parallel to milestoneHistoryJSON ([Int] thresholds); separate field avoids
+        /// re-encoding the threshold list when a badge symbol is added.
+        /// Example: ["flame.fill", "trophy.fill"]
+        var earnedBadgeSymbolsJSON: String?
         var reminderHour: Int?
         var reminderMinute: Int?
 
