@@ -239,13 +239,25 @@ Plans:
 **Effort:** Large
 **Plans:** 7 plans (3 executed: 13-01, 13-02, 13-03; 4 gap-closure: 13-04, 13-05, 13-06, 13-07)
 Plans:
+**Wave 1**
 - [x] 13-01-PLAN.md — SchemaV4 data layer (ChallengeTemplate, UserChallenge, CheckIn, migration)
 - [x] 13-02-PLAN.md — Challenge engine (ChallengeStreakEngine, ChallengeViewModel, seed logic)
+
+**Wave 2** *(blocked on Wave 1 completion)*
 - [x] 13-03-PLAN.md — Navigation and notification infrastructure (AppRoute, AppRouter, DeepLinkBuilder/Parser, NotificationScheduler)
-- [ ] 13-04-PLAN.md — Discovery screen, 5th Challenges tab, StreakChainView component
-- [ ] 13-05-PLAN.md — ChallengeDetailView and ChallengeCheckInView (type-adaptive check-in modal)
-- [ ] 13-06-PLAN.md — MilestoneCelebrationView and badge persistence (CHAL-10)
-- [ ] 13-07-PLAN.md — Deep-link routing wiring and VitaminGApp.onOpenURL (CHAL-12)
+
+**Wave 3** *(blocked on Wave 2 completion — parallel pair)*
+- [ ] 13-04-PLAN.md — Discovery screen, 5th Challenges tab, StreakChainView component (CHAL-08, CHAL-11)
+- [ ] 13-05-PLAN.md — ChallengeDetailView and ChallengeCheckInView, type-adaptive check-in modal (CHAL-09, CHAL-11)
+
+**Wave 4** *(blocked on Wave 3 completion)*
+- [ ] 13-06-PLAN.md — MilestoneCelebrationView, badge persistence, ChallengeDetailView fullScreenCover wiring (CHAL-10)
+- [ ] 13-07-PLAN.md — VitaminGApp.onOpenURL deep-link routing, ContentView check-in sheet, .challengeCheckIn route wired (CHAL-12)
+
+**Cross-cutting constraints:**
+- All new SwiftUI views must use `.fontDesign(.rounded)` and semantic adaptive colors (no `Color.white` hardcode)
+- All check-in type branching lives in Views only — ChallengeViewModel engine remains type-blind (CHAL-07)
+- MilestoneCelebrationView confetti uses SwiftUI Canvas + TimelineView — no SpriteKit or third-party (CLAUDE.md)
 
 ### Phase 14: Challenge Platform — Community & Modules
 **Goal:** The Challenge Platform gains a scoped community feed with reactions and profanity filtering, all five optional modules (Spending Freeze, Craving Tools, Transformation Photos, Nutrition Log, Buddy Accountability), a Custom Challenge builder, and the full notification suite
