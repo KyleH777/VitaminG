@@ -21,7 +21,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 8: Verification Sprint** - Generate VERIFICATION.md for phases 2, 3, and 7; register PROF-01–10 in REQUIREMENTS.md; update stale checkboxes (completed 2026-04-27)
 - [x] **Phase 9: TierPickerView Accessibility Fix** - Fix Color.white Dark Mode failure (UI-05) and hardcoded Dynamic Type font sizes (UI-06) in TierCardView (completed 2026-04-27)
 - [x] **Phase 10: Profile Deep Link Handler** - Add vitaming:// onOpenURL handler to VitaminGApp; wire AppRouter profile navigation for PROF-06 and PROF-07 (completed 2026-04-23)
-- [ ] **Phase 13: Challenge Platform — Core Engine** - ChallengeTemplate/UserChallenge/CheckIn (SchemaV3), challenge engine, featured challenge seed data, discovery screen, check-in flows, streak/milestone system
+- [x] **Phase 13: Challenge Platform — Core Engine** - ChallengeTemplate/UserChallenge/CheckIn (SchemaV3), challenge engine, featured challenge seed data, discovery screen, check-in flows, streak/milestone system (completed 2026-05-07)
 - [ ] **Phase 14: Challenge Platform — Community & Modules** - Community feed (CloudKit public DB), reactions, profanity filter, optional modules (5), custom challenge builder, full notification suite
 - [x] **Phase 11: Gratitude / Daily Wins Module** - Daily text-entry log, date-keyed SwiftData model, history view, "What's your win today?" notification variant (completed 2026-05-01)
 - [x] **Phase 12: Goal Progress Visualization** - Progress rings on goal cards, per-goal completion history, micro-milestone celebrations, momentum score (completed 2026-05-04)
@@ -237,7 +237,7 @@ Plans:
   5. Milestone array from template config triggers full-screen celebration (confetti + personalized message + badge saved to profile) at each configured trigger point
   6. Evening check-in reminder notification fires per-challenge at user-set time if no check-in logged that day
 **Effort:** Large
-**Plans:** 7 plans (3 executed: 13-01, 13-02, 13-03; 4 gap-closure: 13-04, 13-05, 13-06, 13-07)
+**Plans:** 7/7 plans complete
 Plans:
 **Wave 1**
 - [x] 13-01-PLAN.md — SchemaV4 data layer (ChallengeTemplate, UserChallenge, CheckIn, migration)
@@ -247,12 +247,12 @@ Plans:
 - [x] 13-03-PLAN.md — Navigation and notification infrastructure (AppRoute, AppRouter, DeepLinkBuilder/Parser, NotificationScheduler)
 
 **Wave 3** *(blocked on Wave 2 completion — parallel pair)*
-- [ ] 13-04-PLAN.md — Discovery screen, 5th Challenges tab, StreakChainView component (CHAL-08, CHAL-11)
-- [ ] 13-05-PLAN.md — ChallengeDetailView and ChallengeCheckInView, type-adaptive check-in modal (CHAL-09, CHAL-11)
+- [x] 13-04-PLAN.md — Discovery screen, 5th Challenges tab, StreakChainView component (CHAL-08, CHAL-11)
+- [x] 13-05-PLAN.md — ChallengeDetailView and ChallengeCheckInView, type-adaptive check-in modal (CHAL-09, CHAL-11)
 
 **Wave 4** *(blocked on Wave 3 completion)*
-- [ ] 13-06-PLAN.md — MilestoneCelebrationView, badge persistence, ChallengeDetailView fullScreenCover wiring (CHAL-10)
-- [ ] 13-07-PLAN.md — VitaminGApp.onOpenURL deep-link routing, ContentView check-in sheet, .challengeCheckIn route wired (CHAL-12)
+- [x] 13-06-PLAN.md — MilestoneCelebrationView, badge persistence, ChallengeDetailView fullScreenCover wiring (CHAL-10)
+- [x] 13-07-PLAN.md — VitaminGApp.onOpenURL deep-link routing, ContentView check-in sheet, .challengeCheckIn route wired (CHAL-12)
 
 **Cross-cutting constraints:**
 - All new SwiftUI views must use `.fontDesign(.rounded)` and semantic adaptive colors (no `Color.white` hardcode)
@@ -291,5 +291,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 10. Profile Deep Link Handler | 2/2 | Complete | 2026-04-23 |
 | 11. Gratitude / Daily Wins Module | 4/4 | Complete | 2026-05-01 |
 | 12. Goal Progress Visualization | 6/6 | Complete | 2026-05-04 |
-| 13. Challenge Platform — Core Engine | 0/TBD | Not started | - |
+| 13. Challenge Platform — Core Engine | 7/7 | Complete   | 2026-05-07 |
 | 14. Challenge Platform — Community & Modules | 0/TBD | Not started | - |
