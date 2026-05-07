@@ -29,6 +29,14 @@ struct ContentView: View {
                 Label("Wins", systemImage: "book.pages")
             }
 
+            // Challenges tab — Phase 13 (D-04, CHAL-08)
+            NavigationStack {
+                ChallengeDiscoveryView()
+            }
+            .tabItem {
+                Label("Challenges", systemImage: "flame.fill")
+            }
+
             // Profile tab — Plan 07-02 (D-11)
             NavigationStack {
                 ProfileView()
@@ -63,8 +71,8 @@ struct ContentView: View {
                         EmptyView()  // Never pushed onto NavigationStack; sheet path handles this route
                     case .wins:
                         DailyWinsView()  // Phase 11: wins deep-link destination
-                    case .challengeDetail:
-                        EmptyView()  // Phase 13 — UI implemented in Phase 13 Wave 4
+                    case .challengeDetail(let challenge):
+                        ChallengeDetailView(userChallenge: challenge)
                     case .challengeCheckIn:
                         EmptyView()  // Phase 13 — sheet path handles check-in; never pushed
                     }
