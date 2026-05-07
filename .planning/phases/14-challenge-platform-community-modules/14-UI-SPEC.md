@@ -171,7 +171,7 @@ Same rules as Phase 13 — no `Color.white` hardcodes:
 - Location: `Views/PostComposeSheet.swift`
 - Presented as `.sheet` (swipe-to-dismiss)
 - Structure:
-  1. Navigation bar: "Share Progress" title + "Cancel" leading button + "Post" trailing button (disabled until text is non-empty)
+  1. Navigation bar: "Share Progress" title + "Discard Post" leading button + "Post" trailing button (disabled until text is non-empty)
   2. TextEditor: `.body.fontDesign(.rounded)`, min 5 lines, max 500 characters, character count badge `.caption` at bottom-right
   3. "Add Photo" row below editor: `photo.fill` SF Symbol + "Add Photo" label — opens PHPickerViewController
   4. Photo preview (when selected): 80pt × 80pt thumbnail + "Remove" button
@@ -248,7 +248,7 @@ Same rules as Phase 13 — no `Color.white` hardcodes:
      - Date-Bound: `DatePicker` for end date
   4. "Duration (days)" stepper: 7–365
   5. "Create Challenge" button: template accent fill (user-selected from Step 1), full width, 44pt height
-- "Cancel" button: top-left in navigation bar (swipe-to-dismiss also works)
+- "Discard Builder" button: top-left in navigation bar (swipe-to-dismiss also works)
 - Validation: "Create Challenge" button is disabled until Challenge Name is non-empty AND Goal Type inputs are complete
 
 ---
@@ -355,7 +355,7 @@ Reduce Motion: disable the fill/drain animation — show phase label + countdown
 | Feed section header | "Community" |
 | Compose CTA | "Share Your Progress" |
 | Post sheet title | "Share Progress" |
-| Post sheet cancel | "Cancel" |
+| Post sheet cancel | "Discard Post" |
 | Post sheet submit | "Post" |
 | TextEditor placeholder | "How's your challenge going? Share a win or encouragement..." |
 | Character count badge | "N/500" |
@@ -469,7 +469,7 @@ Reduce Motion: disable the fill/drain animation — show phase label + countdown
 | Next button | "Next" |
 | Back button | "Back" |
 | Create button | "Create Challenge" |
-| Cancel button | "Cancel" |
+| Cancel button | "Discard Builder" |
 | Validation: name empty | "Please enter a challenge name." |
 | Validation: target value empty | "Please enter a goal value." |
 | Validation: date in past | "End date must be in the future." |
@@ -574,7 +574,7 @@ Box breathing animation uses SwiftUI `.animation(.linear)` + `TimelineView` — 
 | Custom Challenge builder fields: name/category/type/goal/duration/privacy | REQUIREMENTS.md CHAL-23 |
 | Notification suite: 4 trigger types | REQUIREMENTS.md CHAL-24 |
 | Warm empty state, no red failure states | REQUIREMENTS.md CHAL-25 + UI-02 |
-| Buddy ping = local UNNotification, not remote push | CONTEXT.md open question: "Buddy ping: local UNUserNotification or CloudKit push?" — resolved here as local (CloudKit push requires server-side component, violating CLAUDE.md no-backend constraint) |
+| Buddy ping = local UNUserNotification, not remote push | CONTEXT.md open question: "Buddy ping: local UNUserNotification or CloudKit push?" — resolved here as local (CloudKit push requires server-side component, violating CLAUDE.md no-backend constraint) |
 | Profanity filter = on-device word list | CONTEXT.md open question: "Profanity filter approach" — resolved here as on-device word list (CoreML NaturalLanguage adds training complexity; CreateML classifier is out-of-scope for Phase 14; word list is sufficient for launch) |
 | Report auto-hide at 3 reports from different users | CONTEXT.md open question: "CloudKit public DB moderation" — resolved here as threshold-based auto-hide (no backend moderation team; 3-report threshold balances false positives) |
 | Transformation photo storage: private SwiftData + `@Attribute(.externalStorage)` | CONTEXT.md open question: "CloudKit private DB asset storage" — resolved here: binary blob stored via `@Attribute(.externalStorage)` on a `Data?` property, CloudKit private DB asset (not public) |
@@ -584,3 +584,5 @@ Box breathing animation uses SwiftUI `.animation(.linear)` + `TimelineView` — 
 | 3-report auto-hide threshold | Discretion — conservative, no user-visible report count |
 | 80pt photo thumbnails | Discretion — 3-column grid on SE-sized screen at 375pt width: (375 - 32 padding - 16 gap) / 3 ≈ 109pt, constrained to 80pt for visual consistency with Transformation Photos module |
 | "Be the First to Share" empty state copy | Discretion — CHAL-25 warm empty state requirement + UI-02 tone |
+| "Discard Post" for PostComposeSheet cancel | Checker revision — "Cancel" is on block list; context-specific label replaces it |
+| "Discard Builder" for CustomChallengeBuilderView cancel | Checker revision — "Cancel" is on block list; context-specific label replaces it |
