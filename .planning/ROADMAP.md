@@ -237,7 +237,7 @@ Plans:
   5. Milestone array from template config triggers full-screen celebration (confetti + personalized message + badge saved to profile) at each configured trigger point
   6. Evening check-in reminder notification fires per-challenge at user-set time if no check-in logged that day
 **Effort:** Large
-**Plans:** 7/7 plans complete
+**Plans:** 9/9 plans complete
 Plans:
 **Wave 1**
 - [x] 13-01-PLAN.md — SchemaV4 data layer (ChallengeTemplate, UserChallenge, CheckIn, migration)
@@ -291,5 +291,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 10. Profile Deep Link Handler | 2/2 | Complete | 2026-04-23 |
 | 11. Gratitude / Daily Wins Module | 4/4 | Complete | 2026-05-01 |
 | 12. Goal Progress Visualization | 6/6 | Complete | 2026-05-04 |
-| 13. Challenge Platform — Core Engine | 7/7 | Complete   | 2026-05-07 |
+| 13. Challenge Platform — Core Engine | 9/9 | Complete    | 2026-05-07 |
 | 14. Challenge Platform — Community & Modules | 0/TBD | Not started | - |
