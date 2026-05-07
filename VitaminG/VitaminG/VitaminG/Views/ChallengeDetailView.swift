@@ -48,7 +48,13 @@ struct ChallengeDetailView: View {
             ChallengeCheckInView(userChallenge: userChallenge, viewModel: viewModel)
         }
         .fullScreenCover(isPresented: $showMilestoneCelebration) {
-            EmptyView() // wired in Plan 06 — MilestoneCelebrationView added when that type is available
+            if let milestone = currentMilestone {
+                MilestoneCelebrationView(
+                    userChallenge: userChallenge,
+                    threshold: milestone.threshold,
+                    onDismiss: { showMilestoneCelebration = false }
+                )
+            }
         }
         .onChange(of: viewModel.pendingMilestone?.challengeID) { _, _ in
             if let m = viewModel.pendingMilestone {
