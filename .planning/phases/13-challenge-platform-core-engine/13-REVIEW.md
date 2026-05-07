@@ -1,95 +1,73 @@
 ---
 phase: 13-challenge-platform-core-engine
-reviewed: 2026-05-06T12:00:00Z
+reviewed: 2026-05-06T18:00:00Z
 depth: standard
-files_reviewed: 18
+files_reviewed: 19
 files_reviewed_list:
+  - VitaminG/VitaminG/VitaminG/Models/ChallengeTemplate+Featured.swift
   - VitaminG/VitaminG/VitaminG/Models/SchemaV4.swift
   - VitaminG/VitaminG/VitaminG/Models/VitaminGMigrationPlan.swift
-  - VitaminG/VitaminG/VitaminG/Persistence/ModelContainerFactory.swift
-  - VitaminG/VitaminG/VitaminG/Services/ChallengeStreakEngine.swift
-  - VitaminG/VitaminG/VitaminG/Models/ChallengeTemplate+Featured.swift
-  - VitaminG/VitaminG/VitaminG/ViewModels/ChallengeViewModel.swift
   - VitaminG/VitaminG/VitaminG/Navigation/AppRoute.swift
   - VitaminG/VitaminG/VitaminG/Navigation/AppRouter.swift
+  - VitaminG/VitaminG/VitaminG/Persistence/ModelContainerFactory.swift
+  - VitaminG/VitaminG/VitaminG/Services/ChallengeStreakEngine.swift
   - VitaminG/VitaminG/VitaminG/Services/DeepLinkBuilder.swift
   - VitaminG/VitaminG/VitaminG/Services/DeepLinkParser.swift
+  - VitaminG/VitaminG/VitaminG/Services/NotificationDelegate.swift
   - VitaminG/VitaminG/VitaminG/Services/NotificationScheduler.swift
-  - VitaminG/VitaminG/VitaminG/Views/ContentView.swift
-  - VitaminG/VitaminG/VitaminG/Views/Components/StreakChainView.swift
-  - VitaminG/VitaminG/VitaminG/Views/ChallengeDiscoveryView.swift
-  - VitaminG/VitaminG/VitaminG/Views/ChallengeDetailView.swift
+  - VitaminG/VitaminG/VitaminG/ViewModels/ChallengeViewModel.swift
   - VitaminG/VitaminG/VitaminG/Views/ChallengeCheckInView.swift
+  - VitaminG/VitaminG/VitaminG/Views/ChallengeDetailView.swift
+  - VitaminG/VitaminG/VitaminG/Views/ChallengeDiscoveryView.swift
+  - VitaminG/VitaminG/VitaminG/Views/Components/StreakChainView.swift
+  - VitaminG/VitaminG/VitaminG/Views/ContentView.swift
   - VitaminG/VitaminG/VitaminG/Views/MilestoneCelebrationView.swift
   - VitaminG/VitaminG/VitaminG/VitaminGApp.swift
 findings:
-  critical: 4
+  critical: 3
   warning: 5
   info: 3
-  total: 12
+  total: 11
 status: issues_found
 ---
 
 # Phase 13: Code Review Report
 
-**Reviewed:** 2026-05-06T12:00:00Z
+**Reviewed:** 2026-05-06T18:00:00Z
 **Depth:** standard
-**Files Reviewed:** 18
+**Files Reviewed:** 19
 **Status:** issues_found
 
 ## Summary
 
-Phase 13 adds the Challenge Platform core engine: three new SwiftData models (`ChallengeTemplate`, `UserChallenge`, `CheckIn`) in SchemaV4, a lightweight migration, `ChallengeStreakEngine`, featured template seeds, `ChallengeViewModel` with type-blind check-in dispatch, AppRoute/AppRouter extensions, DeepLinkBuilder/Parser for the new URL scheme, per-challenge notification scheduling, and six new Views.
+Phase 13 introduces the Challenge Platform core engine: three new SwiftData models (`ChallengeTemplate`, `UserChallenge`, `CheckIn`) in SchemaV4, a lightweight V3→V4 migration, `ChallengeStreakEngine`, featured template seeds, `ChallengeViewModel` with type-blind check-in dispatch, AppRoute/AppRouter extensions, DeepLinkBuilder/Parser for the new `vitaming://challengeCheckIn/` URL scheme, per-challenge notification scheduling, and six new Views.
 
-The schema design is correct — all properties are optional or defaulted, no `@Attribute(.unique)`, inverse relationships are declared on both sides. The streak engine is pure, injectable, and algorithmically sound. The `CheckInPayload` dispatch pattern is clean and avoids `switch checkInType` in the ViewModel as required by CHAL-07.
+The schema design is correct: all properties are optional or carry default values, no `@Attribute(.unique)`, and inverse relationships are declared on both sides. `ChallengeStreakEngine` is pure, injectable, and algorithmically correct. `CheckInPayload` dispatch avoids `switch checkInType` in the ViewModel as required. `NotificationDelegate` correctly passes the full `userInfo` dictionary to the closure, and `VitaminGApp` correctly extracts `userChallengeID` from it — the notification routing plumbing is wired.
 
-Four blockers were found:
+Three blockers were found:
 
-1. **Challenge notification tap is completely unrouted** — `NotificationDelegate` forwards the raw `"challengeCheckIn"` string to `VitaminGApp`, but the closure only handles `"goalList"`. The `userChallengeID` from `userInfo` is never extracted, `AppRouter.pendingChallengeCheckInID` is never set from notification taps, and no check-in sheet appears. The entire CHAL-12/D-06 notification flow is wired but dead.
+1. **Win-reminder notification tap is completely unrouted.** `NotificationScheduler.makeWinContent()` fires a daily notification with `"deepLink": "wins"`. The `NotificationDelegate` callback in `VitaminGApp.init()` only handles `"goalList"` and `"challengeCheckIn"`. Tapping the win reminder opens the app but performs no navigation.
 
-2. **`multiStepBool` from Step 1 of the wizard is silently discarded** — the Toggle on page 0 captures the user's "Did you work out today?" answer but it is never included in the `CheckInPayload.multiStep` sent on page 1. The boolean value is dead state.
+2. **`seedFeaturedTemplates` idempotency guard is too coarse.** It returns early if any featured template exists, permanently blocking recovery from a partial seed (e.g., 1 of 3 templates inserted before a crash/force-quit). It also creates a duplicate-insertion window: `onAppear` fires on every tab switch; if called twice before the first auto-save, the guard finds an empty store both times and inserts all three templates twice.
 
-3. **`seedFeaturedTemplates` idempotency guard is too coarse** — guards on `existing.isEmpty`, so a partial seed (1 of 3 templates inserted before a crash) permanently blocks the other 2 templates from ever being inserted.
+3. **`progressValue` divides by zero when `durationDays` is `0`.** The `?? 90` guard protects against `nil` but not an explicit `0` stored in the model, producing `NaN` passed to `ProgressView` which has undefined rendering behavior.
 
-4. **`progressValue` divides by zero when `durationDays == 0`** — the nil-coalescing default of `90` does not protect against an explicit zero stored in the model, producing NaN passed to `ProgressView`.
-
-Five warnings cover: `scheduleChallengeReminder` not persisting `reminderHour`/`reminderMinute` to the model, the `longestStreak` denormalization shortcut diverging under CloudKit sync-driven deletes, a hardcoded "Days Alcohol-Free" label that is wrong for non-sobriety `dateBound` challenges, `featuredTemplates` being `static var` computed properties that create floating `@Model` instances on each access, and `ChallengeCheckInView` not catching `CheckInError.noteTooLong` specifically.
+Five warnings cover: `longestStreak` using a `max` shortcut that diverges under CloudKit-synced deletes, a hardcoded "Days Alcohol-Free" label wrong for any non-sobriety `dateBound` challenge, business logic (model mutation + async notification scheduling) living inside a View computed property, `static var` computed properties creating new floating `@Model` instances on every access, and `CheckInError.noteTooLong` not caught with a user-facing message.
 
 ---
 
 ## Critical Issues
 
-### CR-01: Challenge notification tap is completely unrouted — tapping a reminder does nothing
+### CR-01: Win-reminder notification tap is completely unrouted — tapping does nothing
 
-**File:** `VitaminG/VitaminG/VitaminG/VitaminGApp.swift:22-26` and `VitaminG/VitaminG/VitaminG/Services/NotificationDelegate.swift:31-33`
+**File:** `VitaminG/VitaminG/VitaminG/VitaminGApp.swift:22-32`
 
-**Issue:** `NotificationScheduler.scheduleChallengeReminder` stores two keys in `userInfo`:
-```
-"deepLink": "challengeCheckIn"
-"userChallengeID": challengeID.uuidString
-```
-`NotificationDelegate.userNotificationCenter(_:didReceive:)` correctly extracts the `deepLink` string and calls `onDeepLink("challengeCheckIn")`. However, the `onDeepLink` closure wired in `VitaminGApp.init()` (line 23) only handles the literal string `"goalList"`. The `"challengeCheckIn"` value falls through the `if` with no `else if` branch. `AppRouter.pendingChallengeCheckInID` is never set, `ChallengeCheckInDeepLinkItem` is never created, and the check-in sheet declared in `ContentView` is never triggered. The user taps the notification, the app opens, nothing happens.
-
-Additionally, the `onDeepLink` callback signature is `(String) -> Void` — it receives only the `deepLink` string, not the full `userInfo`. Even if an `else if deepLink == "challengeCheckIn"` branch were added, it could not read `userChallengeID` because `NotificationDelegate` discards `userInfo` after extracting `deepLink`.
-
-**Fix:** Change `NotificationDelegate` to pass the full `userInfo` to the callback, then handle the challenge case in `VitaminGApp`:
-
+**Issue:** `NotificationScheduler.makeWinContent()` (NotificationScheduler.swift line 133) sets:
 ```swift
-// NotificationDelegate.swift — change callback signature
-private let onDeepLink: (String, [AnyHashable: Any]) -> Void
-
-func userNotificationCenter(
-    _ center: UNUserNotificationCenter,
-    didReceive response: UNNotificationResponse,
-    withCompletionHandler completionHandler: @escaping () -> Void
-) {
-    if let deepLink = response.notification.request.content.userInfo["deepLink"] as? String {
-        onDeepLink(deepLink, response.notification.request.content.userInfo)
-    }
-    completionHandler()
-}
-
-// VitaminGApp.init() — handle challenge case
+content.userInfo = ["deepLink": "wins"]
+```
+`NotificationDelegate` correctly extracts this value and calls `onDeepLink("wins", userInfo)`. The closure in `VitaminGApp.init()` handles only `"goalList"` and `"challengeCheckIn"`:
+```swift
 let delegate = NotificationDelegate { deepLink, userInfo in
     if deepLink == "goalList" {
         appRouter.popToRoot()
@@ -97,41 +75,42 @@ let delegate = NotificationDelegate { deepLink, userInfo in
               let idString = userInfo["userChallengeID"] as? String {
         appRouter.pendingChallengeCheckInID = idString
     }
+    // "wins" falls through — no navigation occurs
+}
+```
+The `AppRoute.wins` case exists, `AppRouter.navigate(to:)` is available, and `DailyWinsView` is the tab destination. The routing is not wired. A user who taps a win reminder notification is silently dropped at whatever screen they were on last.
+
+**Fix:** Add a `"wins"` branch to the delegate closure. Because `AppRouter.path` drives the Goals tab's `NavigationStack`, and the Wins tab is a sibling tab, the simplest correct approach is to use a dedicated pending state on `AppRouter` (parallel to `pendingChallengeCheckInID`) to switch the `TabView` selection to the Wins tab:
+
+```swift
+// AppRouter.swift — add pending wins state
+var pendingWinsDeepLink: Bool = false
+
+// VitaminGApp.init() — handle wins case
+} else if deepLink == "wins" {
+    appRouter.pendingWinsDeepLink = true
 }
 ```
 
----
-
-### CR-02: `multiStepBool` from Step 1 of the wizard is silently discarded — user data is lost
-
-**File:** `VitaminG/VitaminG/VitaminG/Views/ChallengeCheckInView.swift:112-158`
-
-**Issue:** `multiStepCheckInSection` shows a Toggle bound to `@State private var multiStepBool: Bool` on page 0 with the prompt "Did you work out today?". When the user taps "Next Step" and proceeds to page 1, `save(payload:)` is called with:
-```swift
-CheckInPayload.multiStep(note: "", numericValue: Double(multiStepNumericText))
-```
-`multiStepBool` is never referenced here. The user's boolean answer from step 1 is permanently lost — it is not passed in the payload, not stored in `CheckIn`, and not used anywhere. The `CheckInPayload.multiStep` case has a `note: String` parameter that could carry the boolean as a string, or the payload could be extended. As implemented, Step 1 of the wizard collects data that is thrown away.
-
-**Fix:** Include the step 1 value in the payload. The simplest approach using the existing `note` field:
-```swift
-save(payload: CheckInPayload.multiStep(
-    note: multiStepBool ? "completed" : "skipped",
-    numericValue: Double(multiStepNumericText)
-))
-```
-A more robust fix adds a `numericBool` field to the `multiStep` case and extends `CheckInPayload.apply(to:)` to write `payloadBool` on the `CheckIn`.
+Then in `ContentView`, observe `router.pendingWinsDeepLink` with `.onChange` and switch the `TabView` selection to the Wins tab when it fires.
 
 ---
 
-### CR-03: `seedFeaturedTemplates` idempotency guard blocks partial-seed recovery
+### CR-02: `seedFeaturedTemplates` idempotency guard blocks partial-seed recovery and creates a duplicate-insertion window
 
 **File:** `VitaminG/VitaminG/VitaminG/ViewModels/ChallengeViewModel.swift:75-84`
 
-**Issue:** Line 80: `guard existing.isEmpty else { return }`. This returns immediately if any featured template exists, regardless of whether all three are present. If the app crashes mid-seed (after inserting 1 of 3 templates but before the context auto-saves), or if a future phase adds a 4th featured template, the incomplete catalog is never repaired. The user sees a permanently incomplete list of challenges with no error or recovery path.
+**Issue:** Line 80:
+```swift
+guard existing.isEmpty else { return }
+```
+This guard treats the presence of any one featured template as proof all three are seeded. Two failure modes follow:
 
-Additionally, `seedFeaturedTemplates` is called from `ChallengeDiscoveryView.onAppear` (line 34 of `ChallengeDiscoveryView.swift`). On tab-switching, `onAppear` fires repeatedly. If the first call inserts templates and auto-save has not yet committed, a second `onAppear` call will find `existing.isEmpty == true` (unflushed context), re-insert all three templates, and create duplicates.
+**Partial-seed recovery gap:** If the app is force-quit between inserting template 1 and template 3 (before `ModelContext` auto-saves), subsequent launches find `existing.count == 1` and return without inserting the remaining two. The incomplete catalog is permanent.
 
-**Fix:** Use per-title deduplication to insert only the missing templates:
+**Duplicate-insertion window on rapid tab switches:** `seedFeaturedTemplates` is called from `ChallengeDiscoveryView.onAppear` (ChallengeDiscoveryView.swift line 34). SwiftUI fires `onAppear` on every tab switch. If the Challenges tab is visited twice in quick succession before the first `ModelContext` auto-save commits the inserted objects, the second call also finds `existing.isEmpty == true` and inserts all three templates again, creating duplicates.
+
+**Fix:** Guard per-title, inserting only the templates not yet present:
 ```swift
 func seedFeaturedTemplates(context: ModelContext) {
     let descriptor = FetchDescriptor<ChallengeTemplate>(
@@ -146,10 +125,11 @@ func seedFeaturedTemplates(context: ModelContext) {
     }
 }
 ```
+This is idempotent per-template and safe to call on every `onAppear`.
 
 ---
 
-### CR-04: `progressValue` divides by zero when `durationDays` is `0`, producing NaN passed to `ProgressView`
+### CR-03: `progressValue` divides by zero when `durationDays` is `0`, producing `NaN` passed to `ProgressView`
 
 **File:** `VitaminG/VitaminG/VitaminG/Views/ChallengeDetailView.swift:219-222`
 
@@ -160,7 +140,7 @@ private var progressValue: Double {
     return min(1.0, Double(userChallenge.totalCheckIns) / Double(total))
 }
 ```
-`durationDays` is `Int?`. The nil-coalescing `?? 90` guards against `nil`, but if `durationDays` is stored as `0` (possible via corrupted CloudKit sync, a future custom-challenge feature, or direct model tampering), `total = 0`, and `Double(n) / Double(0)` is `+Infinity` (for n > 0) or `NaN` (for n == 0). `min(1.0, +Infinity) == 1.0` (incidentally correct), but `min(1.0, NaN)` is NaN in Swift's IEEE 754 implementation. `ProgressView(value: NaN)` has undefined rendering behavior — it typically renders as a full bar but may crash on some UIKit-backed implementations.
+`durationDays` is `Int?`. The `?? 90` nil-coalescing default handles `nil`, but does not guard against an explicit `0`. A value of `0` can reach the model through a corrupted CloudKit sync record or via a future custom-challenge path where the user does not set a duration. When `total == 0` and `totalCheckIns > 0`, the result is `+Infinity`; `min(1.0, +Infinity)` incidentally returns `1.0`. When `total == 0` and `totalCheckIns == 0`, the result is `NaN`; `min(1.0, NaN)` returns `NaN` under IEEE 754 semantics in Swift. Passing `NaN` to `ProgressView(value:)` has undefined rendering behavior.
 
 **Fix:**
 ```swift
@@ -175,25 +155,7 @@ private var progressValue: Double {
 
 ## Warnings
 
-### WR-01: `scheduleChallengeReminder` does not write back `reminderHour`/`reminderMinute` to the model — data lost after CloudKit restore
-
-**File:** `VitaminG/VitaminG/VitaminG/Services/NotificationScheduler.swift:188-227`
-
-**Issue:** `UserChallenge` declares `reminderHour: Int?` and `reminderMinute: Int?` (SchemaV4.swift lines 73-74), and these fields are read in `ChallengeDetailView.reminderLabel` and `reminderBinding`. The intent is clear: these persist the user's chosen reminder time in the model so it survives app reinstalls and CloudKit restores. However, `NotificationScheduler.scheduleChallengeReminder(for:hour:minute:)` never writes `challenge.reminderHour = hour` or `challenge.reminderMinute = minute`. The fields are only written by `ChallengeDetailView.reminderBinding.set` (line 244-245 of ChallengeDetailView.swift), which correctly sets them before calling the scheduler. If `scheduleChallengeReminder` is called from any other path (e.g., a future "reschedule all on launch" function that reads reminders from models), the hour/minute will be `nil` because the scheduler was never responsible for persisting them. The current call site happens to work, but the contract is fragile.
-
-**Fix:** Make `scheduleChallengeReminder` own the write-back so the contract is always satisfied:
-```swift
-func scheduleChallengeReminder(for challenge: UserChallenge, hour: Int, minute: Int) async {
-    challenge.reminderHour = hour
-    challenge.reminderMinute = minute
-    // ... rest of scheduling
-}
-```
-Then `ChallengeDetailView.reminderBinding.set` can remove its duplicate assignment.
-
----
-
-### WR-02: `longestStreak` uses a `max` shortcut that diverges under check-in deletion or CloudKit out-of-order sync
+### WR-01: `longestStreak` is updated via `max` shortcut and permanently overstates after check-in deletion
 
 **File:** `VitaminG/VitaminG/VitaminG/ViewModels/ChallengeViewModel.swift:190`
 
@@ -201,13 +163,64 @@ Then `ChallengeDetailView.reminderBinding.set` can remove its duplicate assignme
 ```swift
 challenge.longestStreak = max(challenge.longestStreak, challenge.currentStreak)
 ```
-This is correct for append-only check-in history, but SwiftData with CloudKit can deliver deletes. If a CheckIn record is deleted (by the user on another device) and the relationship syncs, `challenge.checkIns` shrinks — but `challenge.longestStreak` is never recomputed downward. The stored value permanently overstates the true longest streak. Additionally, `currentStreak` is the current consecutive run, not the all-time longest; taking `max(longestStreak, currentStreak)` will miss a historical run that was longer than the current one but shorter than the stored value. (Example: stored longestStreak=10 from a previous run, current run is 6 — the max correctly stays 10. But if the historical 10-day run's check-ins are deleted via sync, longestStreak stays 10 even though no run of 10 days ever existed in the remaining data.)
+`currentStreak` is the length of the current consecutive run ending today. Taking `max(stored, currentStreak)` is correct for append-only history, but SwiftData with CloudKit delivers deletions when a record is deleted on another device. If a `CheckIn` record is deleted and synced, `challenge.checkIns` shrinks and `currentStreak` drops — but `challenge.longestStreak` is never recomputed downward. The stored value permanently overstates the historical best.
 
-**Fix:**
+Additionally, `currentStreak` can never exceed the true `longestStreak` during a single check-in event unless the current run is the longest ever. There are intermediate states (e.g., a 6-day current run that is shorter than a previous 10-day run) where `max(10, 6)` is correctly 10, but the stored `10` is never verified against the actual data.
+
+**Fix:** Replace the `max` shortcut with a full recompute that stays consistent with the actual check-in set:
 ```swift
 challenge.longestStreak = ChallengeStreakEngine.longestStreak(from: allDates)
 ```
-This keeps `longestStreak` consistent with the actual check-in history on every write, at O(n log n) cost bounded to 90 days.
+This is O(n log n) bounded to 90 check-ins per challenge, which is negligible.
+
+---
+
+### WR-02: Business logic (model mutation + async notification scheduling) lives inside a View computed property — MVVM violation
+
+**File:** `VitaminG/VitaminG/VitaminG/Views/ChallengeDetailView.swift:231-252`
+
+**Issue:** `reminderBinding` is a `Binding<Date>` declared as a `private var` computed property directly in the View:
+```swift
+private var reminderBinding: Binding<Date> {
+    Binding<Date>(
+        get: { ... },
+        set: { newDate in
+            let comps = Calendar.current.dateComponents([.hour, .minute], from: newDate)
+            let h = comps.hour ?? 20
+            let m = comps.minute ?? 0
+            userChallenge.reminderHour = h      // <-- SwiftData model mutation in View
+            userChallenge.reminderMinute = m    // <-- SwiftData model mutation in View
+            Task {
+                await NotificationScheduler.shared.scheduleChallengeReminder(
+                    for: userChallenge, hour: h, minute: m   // <-- async side effect in View
+                )
+            }
+        }
+    )
+}
+```
+The `setter` directly mutates SwiftData `@Model` properties and fires an async `Task` that calls the notification service. Per the project's MVVM constraint (CLAUDE.md: "MVVM strictly enforced — no business logic in Views"), both the model mutation and the notification scheduling belong in `ChallengeViewModel`.
+
+**Fix:** Move the logic to `ChallengeViewModel`:
+```swift
+// ChallengeViewModel.swift
+func setReminder(for challenge: UserChallenge, hour: Int, minute: Int) async {
+    challenge.reminderHour = hour
+    challenge.reminderMinute = minute
+    await NotificationScheduler.shared.scheduleChallengeReminder(
+        for: challenge, hour: hour, minute: minute
+    )
+}
+```
+Then the View's `reminderBinding` setter becomes a single call:
+```swift
+set: { newDate in
+    let comps = Calendar.current.dateComponents([.hour, .minute], from: newDate)
+    Task { await viewModel.setReminder(for: userChallenge,
+                                        hour: comps.hour ?? 20,
+                                        minute: comps.minute ?? 0) }
+}
+```
 
 ---
 
@@ -220,14 +233,17 @@ This keeps `longestStreak` consistent with the actual check-in history on every 
 if userChallenge.template?.goalType == "dateBound" {
     Text("Days Alcohol-Free")
 ```
-This label is sobriety-specific. The `goalType` field is a free-form string that could represent any date-bound challenge (a future fitness or finance challenge with a fixed end date, for example). The hardcoded string would incorrectly label a non-sobriety challenge as "Days Alcohol-Free". Even within the current catalog there is no `dateBound` template, making this branch dead code with a wrong label ready to mislead users when such a template is added.
+The `goalType` field is a free-form `String?`. Any future date-bound challenge (fitness, finance, etc.) would display the sobriety-specific label "Days Alcohol-Free". None of the three current featured templates use `goalType == "dateBound"` (they use `"streak"` and `"target"`), making this branch dead code with a categorically wrong label waiting to mislead users.
 
-**Fix:** Read the label from the template or derive it from the category:
+**Fix:** Derive the label from the template's category:
 ```swift
 if userChallenge.template?.goalType == "dateBound" {
-    Text(userChallenge.template?.category == "sobriety" ? "Days Alcohol-Free" : "Days Completed")
+    let label = userChallenge.template?.category == "sobriety"
+        ? "Days Alcohol-Free"
+        : "Days Completed"
+    Text(label)
 ```
-Or add a `progressLabel: String?` field to `ChallengeTemplate` to make it data-driven.
+Or add a `progressLabel: String?` field to `ChallengeTemplate` to make it fully data-driven.
 
 ---
 
@@ -235,20 +251,20 @@ Or add a `progressLabel: String?` field to `ChallengeTemplate` to make it data-d
 
 **File:** `VitaminG/VitaminG/VitaminG/Models/ChallengeTemplate+Featured.swift:32-36`
 
-**Issue:** `static var featuredTemplates: [ChallengeTemplate]` (line 32) and each of `summerBodyTemplate`, `save5000Template`, `drySummerTemplate` are computed properties — Swift recomputes them on every access. Each call to `featuredTemplates` allocates three new `ChallengeTemplate()` instances. Because `ChallengeTemplate` is a SwiftData `@Model` class, these are persistent model objects created outside any `ModelContext`. Accessing `ChallengeTemplate.featuredTemplates` from anywhere other than `seedFeaturedTemplates` (e.g., a future view that wants to display catalog metadata without inserting) creates floating model objects that are not tracked by any context and may trigger SwiftData assertions on iOS 17.
+**Issue:** `featuredTemplates`, `summerBodyTemplate`, `save5000Template`, and `drySummerTemplate` are all declared as `static var` computed properties. Every access re-evaluates them and allocates new `ChallengeTemplate()` instances. Because `ChallengeTemplate` is a SwiftData `@Model` class, these are persistent model objects instantiated with `init()` outside any `ModelContext`. SwiftData tracks `@Model` objects by context; floating instances created this way are not tracked and may trigger internal SwiftData consistency checks or assertions on iOS 17 in certain code paths. The current single call site (`seedFeaturedTemplates`) happens to insert them immediately and never reads `featuredTemplates` a second time, but nothing prevents a future caller from iterating `featuredTemplates` repeatedly.
 
-**Fix:** Change to factory functions with explicit naming to signal single-use intent:
+**Fix:** Rename to factory functions to make the allocation cost explicit and single-use intent clear:
 ```swift
 static func makeFeaturedTemplates() -> [ChallengeTemplate] {
     [makeSummerBodyTemplate(), makeSave5000Template(), makeDrySummerTemplate()]
 }
-// rename individual statics to makeSummerBodyTemplate(), etc.
+static func makeSummerBodyTemplate() -> ChallengeTemplate { ... }
+// etc.
 ```
-This makes the allocation cost explicit at every call site and prevents accidental repeated access.
 
 ---
 
-### WR-05: `ChallengeCheckInView.save` does not catch `CheckInError.noteTooLong` — user sees a generic error message
+### WR-05: `ChallengeCheckInView.save` does not catch `CheckInError.noteTooLong` specifically — user receives a misleading generic error
 
 **File:** `VitaminG/VitaminG/VitaminG/Views/ChallengeCheckInView.swift:177-186`
 
@@ -265,12 +281,14 @@ private func save(payload: CheckInPayload) {
     }
 }
 ```
-`recordCheckIn` can throw `CheckInError.noteTooLong` (line 12-13 of `ChallengeViewModel.swift`) when a multiStep note exceeds 500 characters after sanitization. This error falls into the generic `catch` branch and displays "Couldn't save your check-in. Please try again." — a misleading message that gives the user no indication that the note is too long. As implemented with the multiStep wizard always passing `note: ""`, this error can never be triggered today (see CR-02). But the error is defined in the public API and should be handled correctly now to avoid a confusing UX regression when CR-02 is fixed.
+`ChallengeViewModel.recordCheckIn` is declared to throw `CheckInError.noteTooLong` when a multiStep note exceeds 500 characters post-sanitization (ChallengeViewModel.swift lines 12-13). This error falls into the generic `catch` branch displaying "Couldn't save your check-in. Please try again." — an actionable error that gives the user no information that the note is the problem.
+
+The multiStep wizard currently passes `note: multiStepBool ? "completed" : "skipped"`, which never exceeds 500 characters, so this error cannot be triggered today. However, `noteTooLong` is a defined public contract of `recordCheckIn`, and any future UI extension (free-text multiStep notes) will silently display the wrong error message.
 
 **Fix:**
 ```swift
 } catch CheckInError.noteTooLong {
-    saveError = "Your note is too long. Please shorten it to 500 characters or fewer."
+    saveError = "Your note is too long (500 character limit). Please shorten it and try again."
 } catch {
     saveError = "Couldn't save your check-in. Please try again."
 }
@@ -282,56 +300,55 @@ private func save(payload: CheckInPayload) {
 
 ### IN-01: `CheckIn` declares both `date` and `timestamp` with no documented semantic distinction
 
-**File:** `VitaminG/VitaminG/VitaminG/Models/SchemaV4.swift:83-87`
+**File:** `VitaminG/VitaminG/VitaminG/Models/SchemaV4.swift:89-90`
 
-**Issue:** `CheckIn` has `var date: Date?` and `var timestamp: Date?`. In `ChallengeViewModel.recordCheckIn`, both are set to `Date()` at the same moment (lines 170-171). There is no comment distinguishing them. The one-per-day enforcement in `todayCheckIn` queries `ci.date` — if a future developer uses `ci.timestamp` for the same purpose, the behavior differs only if the two fields ever diverge. The duplication adds maintenance risk with no documented benefit.
+**Issue:** `CheckIn` has `var date: Date?` and `var timestamp: Date?`. In `ChallengeViewModel.recordCheckIn` both are set to `Date()` at the same instant (lines 170-171). One-per-day enforcement queries `ci.date` (ChallengeViewModel.swift line 101). Without inline documentation distinguishing the two fields, a future developer may write to `timestamp` when they intend `date` (or vice versa), silently breaking duplicate detection.
 
-**Fix:** Add inline comments:
+**Fix:** Add clarifying comments to the model:
 ```swift
-var date: Date?       // Calendar day anchor — used for one-per-day enforcement (startOfDay range query)
-var timestamp: Date?  // Exact submission wall-clock time — retained for future audit or ordering use
-```
-If the two will always be set together, consider whether a single `Date?` field is sufficient.
-
----
-
-### IN-02: `StreakChainView.checkedInDays` uses `.map` instead of `.compactMap` — not a crash risk but skips nil-safety
-
-**File:** `VitaminG/VitaminG/VitaminG/Views/Components/StreakChainView.swift:32-34`
-
-**Issue:**
-```swift
-private var checkedInDays: Set<Date> {
-    Set(checkInDates.map { Calendar.current.startOfDay(for: $0) })
-}
-```
-`checkInDates: [Date]` is non-optional (declared `let checkInDates: [Date]`), so there is no nil risk here. However, `ChallengeStreakEngine` uses `.compactMap` throughout for the same transformation, and the parallel caller in `ChallengeDetailView` line 29 also uses `.compactMap { $0.date }` before passing dates to this view. The inconsistency between `.map` here and `.compactMap` in the engine is a minor style divergence that could confuse readers who expect the nil-safety pattern to be consistent.
-
-**Fix:** No code change required (the type is already `[Date]`, so `.map` is correct). Add a comment confirming the array is pre-filtered:
-```swift
-// checkInDates is already [Date] (non-optional) — .map is safe here
+var date: Date?       // Calendar day anchor — used for one-per-day enforcement (startOfDay range)
+var timestamp: Date?  // Exact wall-clock submission time — reserved for future ordering/audit use
 ```
 
 ---
 
-### IN-03: `AppRoute.publicProfile` and `AppRoute.challengeCheckIn` are handled with `EmptyView()` in `navigationDestination` — accidental pushes produce silent empty screens
+### IN-02: `AppRoute.publicProfile` and `AppRoute.challengeCheckIn` resolve to `EmptyView()` in `navigationDestination` with no development-time guard
 
 **File:** `VitaminG/VitaminG/VitaminG/Views/ContentView.swift:92-101`
 
-**Issue:** Both `case .publicProfile` and `case .challengeCheckIn` resolve to `EmptyView()` in the `navigationDestination` switch, with comments noting they are sheet-only paths. If either route is ever accidentally appended to `router.path` (e.g., by a future developer calling `router.navigate(to: .challengeCheckIn(...))`), the NavigationStack pushes a blank white screen with a back button but no visible content. There is no assertion to catch this during development.
+**Issue:** Both routes are documented as sheet-only and should never be pushed onto the Goals tab's `NavigationStack`. If a future developer calls `router.navigate(to: .challengeCheckIn(...))` or `.publicProfile(...)`, the NavigationStack pushes a blank white screen with a back button and no visible content, with no development-time feedback that this is wrong.
 
-**Fix:** Add `#if DEBUG` assertions to make accidental pushes visible:
+**Fix:** Add `#if DEBUG` assertions to make accidental pushes immediately visible during development:
 ```swift
 case .publicProfile:
-    let _ = { assertionFailure("Route .publicProfile must be presented as a sheet via pendingPublicProfileRecordID, not pushed") }()
+    let _ = { assertionFailure(
+        ".publicProfile must be presented as a sheet; do not push onto NavigationStack") }()
     EmptyView()
 case .challengeCheckIn:
-    let _ = { assertionFailure("Route .challengeCheckIn from NavigationStack push is not supported; use the sheet path") }()
+    let _ = { assertionFailure(
+        ".challengeCheckIn via NavigationStack is not supported; use the sheet path") }()
     EmptyView()
 ```
 
 ---
 
-_Reviewed: 2026-05-06T12:00:00Z_
+### IN-03: `ChallengeDiscoveryView` category chips are decorative-only with no filter behavior and no disabled/selected state
+
+**File:** `VitaminG/VitaminG/VitaminG/Views/ChallengeDiscoveryView.swift:78-92`
+
+**Issue:** The "Browse by Category" row renders tappable-looking `Text` chips for "Fitness", "Finance", and "Sobriety" but attaches no action or selection state. Tapping a chip does nothing. There is no visual feedback distinguishing selected from unselected, no filtering of the featured list, and no accessibility hint indicating the chips are non-interactive. Users who tap a chip expecting to filter challenges will see no response and may assume the app is broken.
+
+**Fix:** Either make the chips functional (add a `@State var selectedCategory: String?` and filter `templates` by matching category), or mark them visually and accessibly as non-interactive labels:
+```swift
+Text(category)
+    // ...
+    .allowsHitTesting(false)
+    .accessibilityLabel("\(category) category")
+    .accessibilityHint("Category filter coming soon")
+```
+
+---
+
+_Reviewed: 2026-05-06T18:00:00Z_
 _Reviewer: Claude (gsd-code-reviewer)_
 _Depth: standard_
