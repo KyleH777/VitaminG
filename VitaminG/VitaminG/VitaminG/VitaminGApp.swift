@@ -17,12 +17,18 @@ struct VitaminGApp: App {
         let appRouter = AppRouter()
         self.router = appRouter
 
-        // Step 2: Wire NotificationDelegate with deep-link handler (NOTIF-07).
+        // Step 2: Wire NotificationDelegate with deep-link handler (NOTIF-07, CHAL-12).
         // Set as delegate BEFORE container creation — ensures taps during launch are handled.
-        let delegate = NotificationDelegate { deepLink in
+        let delegate = NotificationDelegate { deepLink, userInfo in
             if deepLink == "goalList" {
-                // T-03-09: Only act on known "goalList" value; unknown values are ignored by NotificationDelegate
+                // T-03-09: Only act on known "goalList" value; unknown values are ignored.
                 appRouter.popToRoot()
+            } else if deepLink == "challengeCheckIn",
+                      let idString = userInfo["userChallengeID"] as? String {
+                // CHAL-12 / D-06: Notification tap routes to per-challenge check-in modal.
+                // ContentView resolves the UUID string back to a UserChallenge via @Query
+                // and presents ChallengeCheckInView as a sheet.
+                appRouter.pendingChallengeCheckInID = idString
             }
         }
         self.notificationDelegate = delegate
