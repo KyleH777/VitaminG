@@ -149,7 +149,7 @@ struct ChallengeCheckInView: View {
 
                     saveButton("Save Check-In") {
                         save(payload: CheckInPayload.multiStep(
-                            note: "",
+                            note: multiStepBool ? "completed" : "skipped",
                             numericValue: Double(multiStepNumericText)
                         ))
                     }
