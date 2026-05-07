@@ -69,6 +69,11 @@ struct VitaminGApp: App {
                 if let recordID = DeepLinkParser.recordID(from: url) {
                     router.pendingPublicProfileRecordID = recordID
                 }
+                // Phase 13 — D-06, D-07: Parse vitaming://challengeCheckIn/<userChallengeID>
+                // Sets pendingChallengeCheckInID; ContentView sheet binding resolves UserChallenge from SwiftData.
+                else if let challengeID = DeepLinkParser.challengeCheckInID(from: url) {
+                    router.pendingChallengeCheckInID = challengeID
+                }
             }
         }
     }
