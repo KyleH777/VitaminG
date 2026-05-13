@@ -128,3 +128,55 @@ enum CommunityService {
         #endif
     }
 }
+
+// MARK: - Reaction received subscription (CHAL-24) — best-effort
+
+extension CommunityService {
+
+    /// Registers a CKQuerySubscription that fires when someone creates a CommunityReaction
+    /// targeting the current user's posts. Non-fatal — any failure is silently logged in DEBUG.
+    ///
+    /// Reliability caveat (RESEARCH.md Pitfall 3): iOS 26.4 has a regression that prevents
+    /// public-database CKQuerySubscription pushes from delivering. Fixed in 26.4.1+. The app
+    /// must function fully without this subscription succeeding.
+    ///
+    /// Capability requirement (RESEARCH.md Pitfall 4): the app target must have the Push
+    /// Notifications capability enabled (`aps-environment` entitlement). If missing,
+    /// subscription save succeeds but no push is ever delivered — this is a configuration
+    /// concern, not a code defect.
+    static func registerReactionSubscription(userRecordName: String) async {
+        let container = CKContainer(identifier: containerID)
+        let db = container.publicCloudDatabase
+        let subscriptionID = "reaction-received-\(userRecordName)"
+
+        // Idempotency: skip if already registered
+        do {
+            let existing = try await db.subscription(for: subscriptionID)
+            if existing != nil {
+                return
+            }
+        } catch {
+            // unknownItem or other fetch error — proceed with creation below
+        }
+
+        let predicate = NSPredicate(format: "targetAuthorID == %@", userRecordName)
+        let subscription = CKQuerySubscription(
+            recordType: reactionRecordType,
+            predicate: predicate,
+            subscriptionID: subscriptionID,
+            options: [.firesOnRecordCreation]
+        )
+        let info = CKSubscription.NotificationInfo()
+        info.alertLocalizationKey = "Someone reacted to your post"
+        info.shouldSendContentAvailable = true
+        subscription.notificationInfo = info
+
+        do {
+            _ = try await db.save(subscription)
+        } catch {
+            #if DEBUG
+            print("[CommunityService] Subscription registration failed (non-fatal): \(error)")
+            #endif
+        }
+    }
+}
