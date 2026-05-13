@@ -24,7 +24,20 @@ final class SchemaV5Tests: XCTestCase {
 
     // CHAL-20 — implemented in Plan 02
     func test_transformationPhoto_savesAndRetrievesImageData() throws {
-        try XCTSkipIf(true, "Implemented in Plan 02")
+        let payload = Data(repeating: 0xAB, count: 1024)
+        let photo = TransformationPhoto()
+        photo.id = UUID()
+        photo.date = Date()
+        photo.userChallengeID = UUID()
+        photo.imageData = payload
+        photo.timestamp = Date()
+        context.insert(photo)
+        try context.save()
+
+        let descriptor = FetchDescriptor<TransformationPhoto>()
+        let fetched = try context.fetch(descriptor)
+        XCTAssertEqual(fetched.count, 1)
+        XCTAssertEqual(fetched.first?.imageData, payload, "imageData must roundtrip byte-equal via @Attribute(.externalStorage)")
     }
 
     // CHAL-18 — implemented in Plan 05
