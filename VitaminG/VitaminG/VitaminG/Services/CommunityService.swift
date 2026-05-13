@@ -94,24 +94,40 @@ enum CommunityService {
     static func reportPost(recordID: CKRecord.ID, reporterID: String) async throws -> Int {
         let container = CKContainer(identifier: containerID)
         let db = container.publicCloudDatabase
-        let record = try await db.record(for: recordID)
 
-        let existingJSON = (record["reporterIDsJSON"] as? String) ?? "[]"
-        var reporters = (try? JSONDecoder().decode([String].self, from: Data(existingJSON.utf8))) ?? []
-
-        guard !reporters.contains(reporterID) else {
-            return (record["reportCount"] as? Int) ?? reporters.count
+        // Extracted helper — applies reporter ID mutation to a fetched record.
+        // Returns nil when reporterID is already present (duplicate guard).
+        func applyReport(to record: CKRecord) -> (CKRecord, Int)? {
+            let existingJSON = (record["reporterIDsJSON"] as? String) ?? "[]"
+            var reporters = (try? JSONDecoder().decode([String].self,
+                from: Data(existingJSON.utf8))) ?? []
+            guard !reporters.contains(reporterID) else { return nil }
+            reporters.append(reporterID)
+            if let data = try? JSONEncoder().encode(reporters),
+               let json = String(data: data, encoding: .utf8) {
+                record["reporterIDsJSON"] = json as CKRecordValue
+            }
+            let count = reporters.count
+            record["reportCount"] = count as CKRecordValue
+            return (record, count)
         }
-        reporters.append(reporterID)
 
-        if let data = try? JSONEncoder().encode(reporters),
-           let json = String(data: data, encoding: .utf8) {
-            record["reporterIDsJSON"] = json as CKRecordValue
+        do {
+            let record = try await db.record(for: recordID)
+            guard let (updated, count) = applyReport(to: record) else {
+                return (record["reportCount"] as? Int) ?? 0
+            }
+            _ = try await db.save(updated)
+            return count
+        } catch let error as CKError where error.code == .serverRecordChanged {
+            // One retry on conflict — mirror toggleReaction retry pattern
+            let record = try await db.record(for: recordID)
+            guard let (updated, count) = applyReport(to: record) else {
+                return (record["reportCount"] as? Int) ?? 0
+            }
+            _ = try await db.save(updated)
+            return count
         }
-        let newCount = reporters.count
-        record["reportCount"] = newCount as CKRecordValue
-        _ = try await db.save(record)
-        return newCount
     }
 
     // MARK: - JPEG compression helper
