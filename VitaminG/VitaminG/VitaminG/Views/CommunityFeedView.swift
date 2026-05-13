@@ -152,6 +152,10 @@ struct CommunityFeedView: View {
     // MARK: - Report handler (silent removal at threshold)
     private func handleReport(post: CKRecord) async {
         let count = await viewModel.reportPost(recordID: post.recordID, reporterID: reporterID)
+        guard count >= 0 else {
+            // Network failure — do not hide the post; count == -1 signals service error
+            return
+        }
         // Hide locally — UI-SPEC: silent removal, no success alert
         withAnimation(.easeOut(duration: 0.25)) {
             viewModel.posts.removeAll { $0.recordID == post.recordID }
