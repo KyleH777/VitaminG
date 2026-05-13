@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-04-03)
 
 Phase: 14
 Status: executing
-Last activity: 2026-05-13 -- Phase 14 Wave 1 complete (plans 14-01, 14-02, 14-03)
+Last activity: 2026-05-13 -- Phase 14 Wave 2 complete (plans 14-01 through 14-04)
 
 Progress: [████████████████████] 100% (Phase 03)
 
