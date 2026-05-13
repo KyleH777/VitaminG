@@ -55,7 +55,9 @@ enum CommunityService {
             let tmpURL = FileManager.default.temporaryDirectory
                 .appendingPathComponent(UUID().uuidString + ".jpg")
             try compressed.write(to: tmpURL)
+            defer { try? FileManager.default.removeItem(at: tmpURL) }
             record["photoAsset"] = CKAsset(fileURL: tmpURL)
+            return try await container.publicCloudDatabase.save(record)
         }
 
         return try await container.publicCloudDatabase.save(record)
