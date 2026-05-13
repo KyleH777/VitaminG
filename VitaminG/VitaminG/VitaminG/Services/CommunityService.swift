@@ -169,10 +169,8 @@ extension CommunityService {
 
         // Idempotency: skip if already registered
         do {
-            let existing = try await db.subscription(for: subscriptionID)
-            if existing != nil {
-                return
-            }
+            _ = try await db.subscription(for: subscriptionID)
+            return  // already registered
         } catch {
             // unknownItem or other fetch error — proceed with creation below
         }
