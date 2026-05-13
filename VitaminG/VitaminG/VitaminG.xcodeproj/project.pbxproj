@@ -13,6 +13,7 @@
 		AA0100000000001C /* SchemaV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000001D /* SchemaV3.swift */; };
 		AA0100000000001E /* VitaminGMigrationPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000001F /* VitaminGMigrationPlan.swift */; };
 		AA01000000000020 /* SchemaV4.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000021 /* SchemaV4.swift */; };
+		AA01000000000022 /* SchemaV5.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000023 /* SchemaV5.swift */; };
 		AA01000000000005 /* Goal.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000006 /* Goal.swift */; };
 		AA01000000000007 /* ModelContainerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000008 /* ModelContainerFactory.swift */; };
 		AA01000000000009 /* StreakEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000000A /* StreakEngine.swift */; };
@@ -67,6 +68,7 @@
 		AA0100000000001D /* SchemaV3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV3.swift; path = VitaminG/Models/SchemaV3.swift; sourceTree = SOURCE_ROOT; };
 		AA0100000000001F /* VitaminGMigrationPlan.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VitaminGMigrationPlan.swift; path = VitaminG/Models/VitaminGMigrationPlan.swift; sourceTree = SOURCE_ROOT; };
 		AA01000000000021 /* SchemaV4.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV4.swift; path = VitaminG/Models/SchemaV4.swift; sourceTree = SOURCE_ROOT; };
+		AA01000000000023 /* SchemaV5.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV5.swift; path = VitaminG/Models/SchemaV5.swift; sourceTree = SOURCE_ROOT; };
 		AA01000000000006 /* Goal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Goal.swift; path = VitaminG/Models/Goal.swift; sourceTree = SOURCE_ROOT; };
 		AA01000000000008 /* ModelContainerFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ModelContainerFactory.swift; path = VitaminG/Persistence/ModelContainerFactory.swift; sourceTree = SOURCE_ROOT; };
 		AA0100000000000A /* StreakEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StreakEngine.swift; path = VitaminG/Services/StreakEngine.swift; sourceTree = SOURCE_ROOT; };
@@ -183,6 +185,7 @@
 				AA0100000000001D /* SchemaV3.swift */,
 				AA0100000000001F /* VitaminGMigrationPlan.swift */,
 				AA01000000000021 /* SchemaV4.swift */,
+				AA01000000000023 /* SchemaV5.swift */,
 				AA01000000000006 /* Goal.swift */,
 				AA01000000000008 /* ModelContainerFactory.swift */,
 				AA0100000000000A /* StreakEngine.swift */,
@@ -396,6 +399,7 @@
 				AA0100000000001C /* SchemaV3.swift in Sources */,
 				AA0100000000001E /* VitaminGMigrationPlan.swift in Sources */,
 				AA01000000000020 /* SchemaV4.swift in Sources */,
+				AA01000000000022 /* SchemaV5.swift in Sources */,
 				AA01000000000005 /* Goal.swift in Sources */,
 				AA01000000000007 /* ModelContainerFactory.swift in Sources */,
 				AA01000000000009 /* StreakEngine.swift in Sources */,

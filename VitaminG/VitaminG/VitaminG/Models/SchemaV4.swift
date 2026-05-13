@@ -41,6 +41,8 @@ enum SchemaV4: VersionedSchema {
         var goalType: String?               // "streak" | "target" | "dateBound"
         var durationDays: Int?
         var milestonesJSON: String?         // JSON-encoded [MilestoneConfig]
+        var enabledModulesJSON: String?     // JSON-encoded [String]; module identifiers e.g. ["spendingFreeze","cravingTools"]
+        var privacy: String?               // "private" | "community" — nil treated as "private"
         var accentColorHex: String?
         var iconName: String?
         var isFeatured: Bool = false
@@ -72,6 +74,8 @@ enum SchemaV4: VersionedSchema {
         var earnedBadgeSymbolsJSON: String?
         var reminderHour: Int?
         var reminderMinute: Int?
+        var buddyDisplayName: String?       // contact display name from CNContact (sanitized)
+        var buddyPingLastSent: Date?        // 24h cooldown gate
 
         var template: ChallengeTemplate?
 
