@@ -70,8 +70,21 @@ final class NotificationSchedulerPhase14Tests: XCTestCase {
         XCTAssertFalse(trigger.repeats)
     }
 
-    // CHAL-22 — implemented in Plan 08 (depends on UserChallenge.canSendBuddyPing extension)
+    // CHAL-22 — implemented in Plan 08
     func test_canSendBuddyPing_within24Hours_returnsFalse() throws {
-        try XCTSkipIf(true, "Implemented in Plan 08")
+        let challenge = UserChallenge()
+        challenge.id = UUID()
+        // Boundary 1: nil last-sent — always allowed
+        XCTAssertNil(challenge.buddyPingLastSent)
+        XCTAssertTrue(challenge.canSendBuddyPing,
+            "When buddyPingLastSent is nil, canSendBuddyPing must be true")
+        // Boundary 2: 1 hour ago — within cooldown, NOT allowed
+        challenge.buddyPingLastSent = Date().addingTimeInterval(-3600)
+        XCTAssertFalse(challenge.canSendBuddyPing,
+            "1 hour after a ping, canSendBuddyPing must be false")
+        // Boundary 3: 25 hours ago — past cooldown, allowed again
+        challenge.buddyPingLastSent = Date().addingTimeInterval(-90_000)
+        XCTAssertTrue(challenge.canSendBuddyPing,
+            "25 hours after a ping, canSendBuddyPing must be true")
     }
 }
