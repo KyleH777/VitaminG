@@ -270,7 +270,28 @@ Plans:
   4. Custom Challenge builder lets users configure name, category, check-in type, goal type/value, duration, and privacy — produces a `ChallengeTemplate` instance using identical infrastructure as featured challenges
   5. Full notification suite: streak-at-risk by 8pm, milestone reached, reaction received on your post, buddy accountability ping — all using existing `UNCalendarNotificationTrigger` infrastructure
 **Effort:** Large
-**Plans:** TBD
+**Plans:** 10 plans
+
+Plans:
+**Wave 0**
+- [ ] 14-01-PLAN.md — SchemaV5 (TransformationPhoto, SpendingFreezeEntry, NutritionEntry) + V4 field additions + migrateV4toV5 + Wave 0 test stubs
+
+**Wave 1** *(blocked on Wave 0)*
+- [ ] 14-02-PLAN.md — ProfanityFilter (on-device word list) + CommunityService (CKRecord CRUD) + CommunityFeedViewModel (Observable + override-injection)
+- [ ] 14-03-PLAN.md — NotificationScheduler Phase 14 suite (streak-at-risk 20:00, milestone, buddy ping) + CKQuerySubscription registration
+
+**Wave 2** *(blocked on Wave 1)*
+- [ ] 14-04-PLAN.md — CommunityFeedView + CommunityPostCard + ReactionPill + PostComposeSheet (PhotosPicker + profanity inline rejection)
+
+**Wave 3** *(parallel — blocked on Wave 0; module Views run independently)*
+- [ ] 14-05-PLAN.md — SpendingFreezeModuleView + NutritionLogModuleView (inline sections) + final SchemaV5 test assertions
+- [ ] 14-06-PLAN.md — CravingToolsModuleView (box breathing + motivational prompt + buddy ping)
+- [ ] 14-07-PLAN.md — TransformationPhotosModuleView (private LazyVGrid + PhotosPicker)
+- [ ] 14-08-PLAN.md — BuddyAccountabilityModuleView + ContactPickerRepresentable + UserChallenge.canSendBuddyPing extension
+
+**Wave 4** *(blocked on Waves 2 + 3)*
+- [ ] 14-09-PLAN.md — CustomChallengeBuilderView (2-step Form sheet) + ChallengeTemplate+Modules extension
+- [ ] 14-10-PLAN.md — AppRoute.communityFeed + ChallengeDetailView Tools & Modules wiring + ChallengeDiscoveryView builder sheet + human UAT checkpoint
 
 ## Progress
 
@@ -292,4 +313,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 11. Gratitude / Daily Wins Module | 4/4 | Complete | 2026-05-01 |
 | 12. Goal Progress Visualization | 6/6 | Complete | 2026-05-04 |
 | 13. Challenge Platform — Core Engine | 9/9 | Complete    | 2026-05-07 |
-| 14. Challenge Platform — Community & Modules | 0/TBD | Not started | - |
+| 14. Challenge Platform — Community & Modules | 0/10 | Not started | - |
