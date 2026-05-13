@@ -63,6 +63,11 @@ final class ProfileViewModel {
                 format: "#%02X%02X%02X",
                 Int(c.red * 255), Int(c.green * 255), Int(c.blue * 255)
             )
+            // Pre-fill name from onboarding if available
+            if let pendingName = UserDefaults.standard.string(forKey: "vg_onboardingName"),
+               !pendingName.isEmpty {
+                newProfile.displayName = String(pendingName.prefix(Self.maxDisplayNameLength))
+            }
             context.insert(newProfile)
             try? context.save()
             self.profile = newProfile

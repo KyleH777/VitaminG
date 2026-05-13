@@ -1,106 +1,236 @@
 import SwiftUI
 
-// MARK: - WelcomeScreen
+// MARK: - VitaminTablet
+// Chunky rounded-square vitamin shape used on the splash screen.
 
-/// Onboarding Screen 1: Welcome.
-/// Shows app name, tagline, and animated accent gradient circle.
-/// Per D-01: Skip button visible from first screen.
-/// Per D-02: .navigationBarBackButtonHidden(true) — first screen, no back.
-/// Per D-13: Pulse animation guarded by accessibilityReduceMotion.
+private struct VitaminTablet: View {
+    let size: CGFloat
+    let color1: Color
+    let color2: Color
+
+    private var corner: CGFloat { size * 0.28 }
+
+    var body: some View {
+        ZStack {
+            // Body
+            RoundedRectangle(cornerRadius: corner)
+                .fill(color1)
+                .overlay(
+                    RoundedRectangle(cornerRadius: corner)
+                        .strokeBorder(Color.white.opacity(0.15), lineWidth: 1)
+                )
+
+            // Bottom-half tint (score effect)
+            VStack(spacing: 0) {
+                Color.clear
+                color2.opacity(0.5)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: corner))
+
+            // Score line
+            Rectangle()
+                .fill(Color.white.opacity(0.18))
+                .frame(height: 1)
+
+            // Shine
+            Ellipse()
+                .fill(Color.white.opacity(0.22))
+                .frame(width: size * 0.27, height: size * 0.22)
+                .offset(x: -size * 0.17, y: -size * 0.19)
+                .rotationEffect(.degrees(-15))
+
+            // Embossed "g"
+            Text("g")
+                .font(Font.custom("Georgia-Italic", size: size * 0.36))
+                .foregroundStyle(Color.white.opacity(0.30))
+        }
+        .frame(width: size, height: size)
+    }
+}
+
+// MARK: - TabletConfig
+private struct TabletConfig: Identifiable {
+    let id: Int
+    let leftFraction: CGFloat
+    let duration: Double
+    let delay: Double
+    let size: CGFloat
+    let color1: Color
+    let color2: Color
+    let rotation: Double
+    // Pile position
+    let pileOffsetX: CGFloat
+    let pileRotation: Double
+}
+
+// MARK: - RainingTabletItem
+private struct RainingTabletItem: View {
+    let config: TabletConfig
+    let screenHeight: CGFloat
+    @State private var yOffset: CGFloat = -80
+
+    var body: some View {
+        VitaminTablet(size: config.size, color1: config.color1, color2: config.color2)
+            .rotationEffect(.degrees(config.rotation))
+            .offset(y: yOffset)
+            .task {
+                try? await Task.sleep(for: .seconds(config.delay))
+                withAnimation(.linear(duration: config.duration).repeatForever(autoreverses: false)) {
+                    yOffset = screenHeight + 100
+                }
+            }
+    }
+}
+
+// MARK: - WelcomeScreen
+// Onboarding Screen 1: Splash — redesigned per Vitamin G brand spec.
+// Raining vitamin tablets, warm clay background, app icon center stage.
+
 struct WelcomeScreen: View {
 
     @Binding var path: [OnboardingStep]
     let onSkip: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var pulseScale: CGFloat = 1.0
 
-    // MARK: - Accent gradient (matches EmptyStateView and global design system)
-    private let gradientColors: [Color] = [
-        Color(red: 0.98, green: 0.55, blue: 0.27),
-        Color(red: 0.78, green: 0.48, blue: 0.95)
+    private let tablets: [TabletConfig] = [
+        TabletConfig(id: 0,  leftFraction: 0.05, duration: 2.8, delay: 0.0, size: 32, color1: VGTheme.terraSoft, color2: VGTheme.terra,   rotation: 15,  pileOffsetX: 18,  pileRotation: -22),
+        TabletConfig(id: 1,  leftFraction: 0.14, duration: 3.2, delay: 0.4, size: 28, color1: VGTheme.sage,      color2: VGTheme.sageMid, rotation: -20, pileOffsetX: 48,  pileRotation: 14),
+        TabletConfig(id: 2,  leftFraction: 0.24, duration: 2.6, delay: 0.8, size: 34, color1: VGTheme.gold,      color2: Color(red: 0.604, green: 0.478, blue: 0.188), rotation: 30, pileOffsetX: 80, pileRotation: -8),
+        TabletConfig(id: 3,  leftFraction: 0.34, duration: 3.4, delay: 0.2, size: 26, color1: VGTheme.purple,    color2: Color(red: 0.416, green: 0.306, blue: 0.541), rotation: -10, pileOffsetX: 108, pileRotation: 20),
+        TabletConfig(id: 4,  leftFraction: 0.45, duration: 2.9, delay: 1.0, size: 30, color1: VGTheme.terraSoft, color2: Color(red: 0.627, green: 0.322, blue: 0.176), rotation: 25, pileOffsetX: 136, pileRotation: -5),
+        TabletConfig(id: 5,  leftFraction: 0.56, duration: 3.1, delay: 0.6, size: 28, color1: VGTheme.sage,      color2: VGTheme.sageMid, rotation: -18, pileOffsetX: 164, pileRotation: 18),
+        TabletConfig(id: 6,  leftFraction: 0.66, duration: 2.7, delay: 1.4, size: 32, color1: VGTheme.gold,      color2: Color(red: 0.604, green: 0.478, blue: 0.188), rotation: 12, pileOffsetX: 192, pileRotation: -12),
+        TabletConfig(id: 7,  leftFraction: 0.75, duration: 3.3, delay: 0.3, size: 26, color1: VGTheme.purple,    color2: Color(red: 0.416, green: 0.306, blue: 0.541), rotation: -30, pileOffsetX: 218, pileRotation: 25),
+        TabletConfig(id: 8,  leftFraction: 0.85, duration: 2.5, delay: 0.9, size: 34, color1: VGTheme.terraSoft, color2: VGTheme.terra,   rotation: 20,  pileOffsetX: 246, pileRotation: -15),
+        TabletConfig(id: 9,  leftFraction: 0.92, duration: 3.0, delay: 0.5, size: 28, color1: VGTheme.sage,      color2: VGTheme.sageMid, rotation: -8,  pileOffsetX: 272, pileRotation: 10),
     ]
 
     var body: some View {
-        ZStack {
-            Color(.systemGroupedBackground)
+        GeometryReader { geo in
+            ZStack(alignment: .bottom) {
+                // Background
+                VGTheme.clay
+                    .ignoresSafeArea()
+
+                // Radial warm glow
+                RadialGradient(
+                    colors: [Color(red: 0.353, green: 0.227, blue: 0.133), VGTheme.clay],
+                    center: .center,
+                    startRadius: 0,
+                    endRadius: geo.size.height * 0.55
+                )
                 .ignoresSafeArea()
 
-            VStack(spacing: 32) {
-                Spacer()
-
-                // MARK: Hero circle with pulsing animation (D-13)
-                ZStack {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: gradientColors,
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 160, height: 160)
-                        .scaleEffect(pulseScale)
-                        .onAppear {
-                            guard !reduceMotion else { return }
-                            withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                                pulseScale = 1.05
-                            }
-                        }
-
-                    Image(systemName: "star.circle.fill")
-                        .font(.system(size: 72))
-                        .foregroundStyle(.white)
+                // Raining tablets
+                if !reduceMotion {
+                    ForEach(tablets) { t in
+                        RainingTabletItem(config: t, screenHeight: geo.size.height)
+                            .position(x: geo.size.width * t.leftFraction, y: geo.size.height / 2)
+                    }
                 }
 
-                // MARK: Copy
-                VStack(spacing: 12) {
+                // Tablet pile at bottom
+                ZStack(alignment: .bottomLeading) {
+                    // First layer
+                    ForEach(tablets) { t in
+                        VitaminTablet(size: t.size, color1: t.color1, color2: t.color2)
+                            .rotationEffect(.degrees(t.pileRotation))
+                            .offset(x: t.pileOffsetX - 20, y: 0)
+                            .opacity(0.85)
+                    }
+                    // Second layer (offset)
+                    ForEach(tablets.prefix(6)) { t in
+                        VitaminTablet(size: t.size * 0.8, color1: t.color2, color2: t.color1)
+                            .rotationEffect(.degrees(t.pileRotation * -0.6))
+                            .offset(x: t.pileOffsetX, y: -t.size * 0.65)
+                            .opacity(0.65)
+                    }
+                }
+                .frame(height: 60)
+                .padding(.bottom, 130)
+                .padding(.leading, 0)
+                .frame(maxWidth: .infinity, alignment: .bottomLeading)
+
+                // Center content
+                VStack(spacing: 0) {
+                    Spacer()
+
+                    // "Your daily dose" badge
+                    HStack(spacing: 7) {
+                        VitaminTablet(size: 16, color1: VGTheme.terraSoft, color2: VGTheme.terra)
+                        Text("YOUR DAILY DOSE")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(VGTheme.sand.opacity(0.7))
+                            .kerning(1.5)
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 6)
+                    .background(Color.white.opacity(0.10))
+                    .overlay(
+                        Capsule().strokeBorder(Color.white.opacity(0.15), lineWidth: 1)
+                    )
+                    .clipShape(Capsule())
+                    .padding(.bottom, 20)
+
+                    // App icon
+                    RoundedRectangle(cornerRadius: 30)
+                        .fill(VGTheme.sand)
+                        .frame(width: 108, height: 108)
+                        .overlay(
+                            Text("G")
+                                .font(Font.custom("Georgia-Italic", size: 54))
+                                .foregroundStyle(VGTheme.clay)
+                        )
+                        .shadow(color: .black.opacity(0.5), radius: 24, y: 12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 30)
+                                .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
+                        )
+                        .padding(.bottom, 22)
+
+                    // App name
                     Text("Vitamin G")
-                        .font(.largeTitle.weight(.bold))
-                        .fontDesign(.rounded)
+                        .font(Font.custom("Georgia", size: 48))
+                        .foregroundStyle(VGTheme.sand)
 
-                    Text("Your daily dose of gratitude and intentionality.")
-                        .font(.body)
-                        .fontDesign(.rounded)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 32)
+                    // Tagline
+                    Text("GOALS. GROWTH. COMMUNITY.")
+                        .font(.system(size: 13, weight: .light))
+                        .foregroundStyle(VGTheme.muted)
+                        .kerning(2)
+                        .padding(.top, 10)
+
+                    Spacer()
                 }
+                .padding(.horizontal, 28)
 
-                // MARK: Get Started CTA
-                Button {
-                    path.append(.tiers)
-                } label: {
-                    Text("Get Started")
-                        .font(.body.weight(.semibold))
-                        .fontDesign(.rounded)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .background(
-                            LinearGradient(
-                                colors: gradientColors,
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .foregroundStyle(.white)
-                        .clipShape(Capsule())
+                // Bottom buttons
+                VStack(spacing: 12) {
+                    Button {
+                        path.append(.phoneSignup)
+                    } label: {
+                        Text("Get Started")
+                            .font(.system(size: 17, weight: .semibold))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 18)
+                            .background(VGTheme.terra)
+                            .foregroundStyle(VGTheme.warmWhite)
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                    }
+
+                    Button(action: onSkip) {
+                        Text("I'll set this up later")
+                            .font(.system(size: 15, weight: .regular))
+                            .foregroundStyle(VGTheme.sand.opacity(0.55))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                    }
                 }
-                .buttonStyle(.plain)
-                .padding(.horizontal, 32)
-
-                Spacer()
+                .padding(.horizontal, 28)
+                .padding(.bottom, 44)
             }
         }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("Skip") {
-                    onSkip()
-                }
-                .font(.callout)
-                .fontDesign(.rounded)
-            }
-        }
+        .navigationBarHidden(true)
     }
 }

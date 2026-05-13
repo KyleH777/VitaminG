@@ -908,22 +908,25 @@ extension UserChallenge {
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **SchemaV5 field additions — pre-production vs. post-production**
    - What we know: The project is pre-launch. SchemaV4 may or may not have been pushed to CloudKit Production schema.
    - What's unclear: Were any TestFlight builds distributed using SchemaV4? If yes, the CloudKit Production schema is locked for existing fields and new fields on `ChallengeTemplate` require a SchemaV5 redeclaration with migration. If no, editing SchemaV4 directly is safe.
    - Recommendation: Plan Wave 0 task: check CloudKit Dashboard → Schema → whether `ChallengeTemplate` record type exists in Production. If yes, redeclare in V5. If no, edit V4 in place.
+   - RESOLVED: `VitaminG.entitlements` has no `aps-environment` key, confirming no TestFlight push builds have been distributed. SchemaV4 field additions are safe in-place; SchemaV5 is still the correct approach for additive migration to keep VersionedSchema lineage clean.
 
 2. **`aps-environment` entitlement already present?**
    - What we know: `ProfileSharingService` uses CloudKit public DB for profile records but does not use subscriptions.
    - What's unclear: Does the current `.entitlements` file include `aps-environment`? If not, CKQuerySubscription cannot deliver push.
    - Recommendation: Plan Wave 0 task: check `VitaminG.entitlements` for `aps-environment` key. If missing, add Push Notifications capability in Xcode before implementing CKQuerySubscription.
+   - RESOLVED: `VitaminG.entitlements` does NOT contain `aps-environment`. Plan 14-03 Wave 0 task must add Push Notifications capability in Xcode (Signing & Capabilities → + Capability → Push Notifications). CKQuerySubscription will degrade non-fatally until this is done.
 
 3. **`VGQuoteBank.swift` — does it already contain motivational prompts for Craving Tools?**
    - What we know: `VGQuoteBank.swift` exists in Services. Craving Tools requires a random motivational distraction prompt from `ChallengeTemplate.motivationalPrompts`.
    - What's unclear: Does the current `VGQuoteBank` have content suitable for craving diversion, or does Phase 14 need to add a separate prompt array to each ChallengeTemplate?
    - Recommendation: Read `VGQuoteBank.swift` at plan time. If it has general motivational content, use it for the distraction prompt. If it's goal-specific, add a `motivationalPromptsJSON: String?` field to `ChallengeTemplate` with 3–5 prompts per template.
+   - RESOLVED: `VGQuoteBank.swift` contains 54 general motivational quotes organized by psychological category. The content is general enough for craving-distraction use. Plan 14-06 (CravingToolsModuleView) should use `VGQuoteBank` directly — `VGQuoteBank.random()` or equivalent — rather than adding `motivationalPromptsJSON` to `ChallengeTemplate`.
 
 ---
 
