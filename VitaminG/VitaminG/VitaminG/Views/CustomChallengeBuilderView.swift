@@ -343,7 +343,13 @@ struct CustomChallengeBuilderView: View {
         template.milestonesJSON = makeDefaultMilestonesJSON()
 
         modelContext.insert(template)
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            #if DEBUG
+            print("[CustomChallengeBuilderView] modelContext.save() failed: \(error)")
+            #endif
+        }
         dismiss()
     }
 

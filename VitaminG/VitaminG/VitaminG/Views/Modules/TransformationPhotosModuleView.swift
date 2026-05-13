@@ -170,7 +170,13 @@ struct TransformationPhotosModuleView: View {
         photo.imageData = jpeg
         photo.timestamp = Date()
         modelContext.insert(photo)
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            #if DEBUG
+            print("[TransformationPhotosModuleView] modelContext.save() failed: \(error)")
+            #endif
+        }
 
         await MainActor.run { selectedItem = nil }
     }
