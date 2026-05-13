@@ -3,11 +3,11 @@ import SwiftData
 
 // MARK: - ChallengeDiscoveryView
 
-/// Root view for the Challenges tab (CHAL-08, D-04).
+/// Root view for the Challenges tab (CHAL-08, D-04, CHAL-23).
 ///
 /// Shows Featured Challenges seeded from ChallengeTemplate.featuredTemplates,
-/// a horizontal category browse row, and a "Build Your Own" CTA that opens a
-/// coming-soon placeholder sheet (UI-SPEC.md Interaction Contract).
+/// a horizontal category browse row, and a "Build Your Own" CTA that opens
+/// CustomChallengeBuilderView (Plan 14-09) as a sheet.
 ///
 /// Navigation: tapping a joined challenge card pushes ChallengeDetailView via
 /// NavigationLink(value: AppRoute.challengeDetail(userChallenge)).
@@ -34,7 +34,7 @@ struct ChallengeDiscoveryView: View {
             viewModel.seedFeaturedTemplates(context: modelContext)
         }
         .sheet(isPresented: $showBuildYourOwn) {
-            buildYourOwnSheet
+            CustomChallengeBuilderView()
         }
     }
 
@@ -128,39 +128,6 @@ struct ChallengeDiscoveryView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 32)
-    }
-
-    // MARK: - Build Your Own Sheet (coming-soon placeholder per UI-SPEC.md Interaction Contract)
-
-    private var buildYourOwnSheet: some View {
-        VStack(spacing: 24) {
-            Spacer()
-            Image(systemName: "hammer.fill")
-                .font(.system(size: 48))
-                .foregroundStyle(VGTheme.muted)
-            Text("Custom Challenges")
-                .font(.title2)
-                .fontWeight(.semibold)
-                .fontDesign(.rounded)
-            Text("Design your own challenge with custom goals, check-in types, and duration. Coming soon.")
-                .font(.body)
-                .fontDesign(.rounded)
-                .foregroundStyle(VGTheme.muted)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 24)
-            Spacer()
-            Button("Got It") { showBuildYourOwn = false }
-                .font(.body)
-                .fontWeight(.semibold)
-                .fontDesign(.rounded)
-                .frame(maxWidth: .infinity, minHeight: 44)
-                .background(VGTheme.sage)
-                .foregroundStyle(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .padding(.horizontal, 24)
-                .padding(.bottom, 32)
-        }
-        .background(Color(.systemGroupedBackground))
     }
 
     // MARK: - Actions
