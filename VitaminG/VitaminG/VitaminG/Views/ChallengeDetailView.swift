@@ -242,6 +242,7 @@ struct ChallengeDetailView: View {
 
     private var progressValue: Double {
         let total = userChallenge.template?.durationDays ?? 90
+        guard total > 0 else { return 0.0 }
         return min(1.0, Double(userChallenge.totalCheckIns) / Double(total))
     }
 
