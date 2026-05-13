@@ -22,7 +22,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 9: TierPickerView Accessibility Fix** - Fix Color.white Dark Mode failure (UI-05) and hardcoded Dynamic Type font sizes (UI-06) in TierCardView (completed 2026-04-27)
 - [x] **Phase 10: Profile Deep Link Handler** - Add vitaming:// onOpenURL handler to VitaminGApp; wire AppRouter profile navigation for PROF-06 and PROF-07 (completed 2026-04-23)
 - [x] **Phase 13: Challenge Platform — Core Engine** - ChallengeTemplate/UserChallenge/CheckIn (SchemaV3), challenge engine, featured challenge seed data, discovery screen, check-in flows, streak/milestone system (completed 2026-05-07)
-- [ ] **Phase 14: Challenge Platform — Community & Modules** - Community feed (CloudKit public DB), reactions, profanity filter, optional modules (5), custom challenge builder, full notification suite
+- [x] **Phase 14: Challenge Platform — Community & Modules** - Community feed (CloudKit public DB), reactions, profanity filter, optional modules (5), custom challenge builder, full notification suite (completed 2026-05-13)
 - [x] **Phase 11: Gratitude / Daily Wins Module** - Daily text-entry log, date-keyed SwiftData model, history view, "What's your win today?" notification variant (completed 2026-05-01)
 - [x] **Phase 12: Goal Progress Visualization** - Progress rings on goal cards, per-goal completion history, micro-milestone celebrations, momentum score (completed 2026-05-04)
 
@@ -270,7 +270,7 @@ Plans:
   4. Custom Challenge builder lets users configure name, category, check-in type, goal type/value, duration, and privacy — produces a `ChallengeTemplate` instance using identical infrastructure as featured challenges
   5. Full notification suite: streak-at-risk by 8pm, milestone reached, reaction received on your post, buddy accountability ping — all using existing `UNCalendarNotificationTrigger` infrastructure
 **Effort:** Large
-**Plans:** 6/10 plans executed
+**Plans:** 10/10 plans executed
 
 Plans:
 **Wave 0**
@@ -284,14 +284,14 @@ Plans:
 - [x] 14-04-PLAN.md — CommunityFeedView + CommunityPostCard + ReactionPill + PostComposeSheet (PhotosPicker + profanity inline rejection)
 
 **Wave 3** *(parallel — blocked on Wave 0; module Views run independently)*
-- [ ] 14-05-PLAN.md — SpendingFreezeModuleView + NutritionLogModuleView (inline sections) + final SchemaV5 test assertions
+- [x] 14-05-PLAN.md — SpendingFreezeModuleView + NutritionLogModuleView (inline sections) + final SchemaV5 test assertions
 - [x] 14-06-PLAN.md — CravingToolsModuleView (box breathing + motivational prompt + buddy ping)
 - [x] 14-07-PLAN.md — TransformationPhotosModuleView (private LazyVGrid + PhotosPicker)
-- [ ] 14-08-PLAN.md — BuddyAccountabilityModuleView + ContactPickerRepresentable + UserChallenge.canSendBuddyPing extension
+- [x] 14-08-PLAN.md — BuddyAccountabilityModuleView + ContactPickerRepresentable + UserChallenge.canSendBuddyPing extension
 
 **Wave 4** *(blocked on Waves 2 + 3)*
-- [ ] 14-09-PLAN.md — CustomChallengeBuilderView (2-step Form sheet) + ChallengeTemplate+Modules extension
-- [ ] 14-10-PLAN.md — AppRoute.communityFeed + ChallengeDetailView Tools & Modules wiring + ChallengeDiscoveryView builder sheet + human UAT checkpoint
+- [x] 14-09-PLAN.md — CustomChallengeBuilderView (2-step Form sheet) + ChallengeTemplate+Modules extension
+- [x] 14-10-PLAN.md — AppRoute.communityFeed + ChallengeDetailView Tools & Modules wiring + ChallengeDiscoveryView builder sheet + human UAT checkpoint
 
 ## Progress
 
@@ -313,4 +313,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 11. Gratitude / Daily Wins Module | 4/4 | Complete | 2026-05-01 |
 | 12. Goal Progress Visualization | 6/6 | Complete | 2026-05-04 |
 | 13. Challenge Platform — Core Engine | 9/9 | Complete    | 2026-05-07 |
-| 14. Challenge Platform — Community & Modules | 6/10 | In Progress|  |
+| 14. Challenge Platform — Community & Modules | 10/10 | Complete | 2026-05-13 |
