@@ -34,7 +34,10 @@ final class CommunityFeedViewModel {
                 posts = try await CommunityService.fetchPosts(category: category, limit: limit)
             }
         } catch {
-            posts = []
+            if posts.isEmpty {
+                posts = []   // first-load failure: stay in empty state
+            }
+            // On refresh failure, preserve existing posts — do not clear cached content
         }
     }
 
