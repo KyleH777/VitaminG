@@ -141,6 +141,15 @@ struct CommunityFeedView: View {
             localReactionByPostID[post.recordID] = type
         }
         Task {
+            // If switching reaction types, decrement the prior one first to keep
+            // server counts consistent — only calling the new type would over-count
+            if let prior, prior != type {
+                _ = await viewModel.toggleReaction(
+                    recordID: post.recordID,
+                    reactionType: prior,
+                    add: false
+                )
+            }
             _ = await viewModel.toggleReaction(
                 recordID: post.recordID,
                 reactionType: type,
