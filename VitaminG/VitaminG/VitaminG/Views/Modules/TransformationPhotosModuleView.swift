@@ -155,11 +155,7 @@ struct TransformationPhotosModuleView: View {
 
     private func handleSelection(_ item: PhotosPickerItem?) async {
         guard let item else { return }
-        var raw: Data? = try? await item.loadTransferable(type: Data.self)
-        if raw == nil, let img = try? await item.loadTransferable(type: UIImage.self) {
-            raw = img.jpegData(compressionQuality: 0.9)
-        }
-        guard let data = raw else { return }
+        guard let data = try? await item.loadTransferable(type: Data.self) else { return }
         let jpeg: Data
         if let img = UIImage(data: data), let encoded = img.jpegData(compressionQuality: 0.9) {
             jpeg = encoded

@@ -16,6 +16,8 @@ struct ChallengeDetailView: View {
     @State private var showAbandonDialog = false
     @State private var showMilestoneCelebration = false
     @State private var currentMilestone: (challengeID: UUID, threshold: Int)? = nil
+    @State private var showCravingTools = false
+    @State private var showBuddySheet = false
 
     var body: some View {
         ScrollView {
@@ -30,6 +32,14 @@ struct ChallengeDetailView: View {
                     accentColor: accentColor
                 )
                 .padding(.top, 12)
+                if let template = userChallenge.template, !template.enabledModules.isEmpty {
+                    modulesSection(template: template)
+                        .padding(.top, 16)
+                }
+                if userChallenge.template?.isCommunity == true {
+                    communitySection
+                        .padding(.top, 16)
+                }
                 reminderSection
                     .padding(.top, 16)
                 descriptionSection
@@ -74,6 +84,20 @@ struct ChallengeDetailView: View {
             Button("Keep Going", role: .cancel) {}
         } message: {
             Text("Your progress will not be deleted, but your streak will end.")
+        }
+        .sheet(isPresented: $showCravingTools) {
+            CravingToolsModuleView(userChallenge: userChallenge)
+        }
+        .sheet(isPresented: $showBuddySheet) {
+            BuddyAccountabilityModuleView(userChallenge: userChallenge)
+        }
+        .task {
+            if userChallenge.statusRaw == "active" {
+                await NotificationScheduler.shared.scheduleStreakAtRiskReminder(
+                    challengeID: userChallenge.id,
+                    challengeTitle: userChallenge.template?.title ?? "your challenge"
+                )
+            }
         }
     }
 
@@ -249,5 +273,96 @@ struct ChallengeDetailView: View {
                 }
             }
         )
+    }
+
+    // MARK: - Tools & Modules Section (Phase 14 — CHAL-13, CHAL-17..22)
+
+    @ViewBuilder
+    private func modulesSection(template: ChallengeTemplate) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Tools & Modules")
+                .font(.title2.weight(.semibold))
+                .fontDesign(.rounded)
+                .foregroundStyle(VGTheme.clay)
+
+            // Fixed display order per UI-SPEC.md lines 285-289
+            let order: [ChallengeTemplate.ModuleIdentifier] = [
+                .spendingFreeze, .cravingTools, .transformationPhotos, .nutritionLog, .buddyAccountability
+            ]
+            ForEach(order.filter { template.isModuleEnabled($0) }, id: \.self) { module in
+                moduleEntry(module)
+            }
+        }
+        .padding(.horizontal, 16)
+    }
+
+    @ViewBuilder
+    private func moduleEntry(_ module: ChallengeTemplate.ModuleIdentifier) -> some View {
+        switch module {
+        case .spendingFreeze:
+            SpendingFreezeModuleView(userChallenge: userChallenge)
+        case .nutritionLog:
+            NutritionLogModuleView(userChallenge: userChallenge)
+        case .cravingTools:
+            moduleRow(label: module.displayName, systemImage: module.systemImage, hasChevron: true) {
+                showCravingTools = true
+            }
+        case .buddyAccountability:
+            moduleRow(label: module.displayName, systemImage: module.systemImage, hasChevron: true) {
+                showBuddySheet = true
+            }
+        case .transformationPhotos:
+            NavigationLink {
+                TransformationPhotosModuleView(userChallenge: userChallenge)
+            } label: {
+                moduleRowLabel(label: module.displayName, systemImage: module.systemImage, hasChevron: true)
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    private func moduleRowLabel(label: String, systemImage: String, hasChevron: Bool) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: systemImage)
+                .foregroundStyle(VGTheme.clay)
+            Text(label)
+                .font(.body).fontDesign(.rounded)
+                .foregroundStyle(VGTheme.clay)
+            Spacer()
+            if hasChevron {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12))
+                    .foregroundStyle(VGTheme.muted)
+            }
+        }
+        .frame(minHeight: 44)
+        .padding(.horizontal, 16)
+        .background(Color(.secondarySystemGroupedBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    private func moduleRow(label: String, systemImage: String, hasChevron: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            moduleRowLabel(label: label, systemImage: systemImage, hasChevron: hasChevron)
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Community Section (Phase 14 — CHAL-25)
+
+    private var communitySection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Community")
+                .font(.title2.weight(.semibold))
+                .fontDesign(.rounded)
+                .foregroundStyle(VGTheme.clay)
+            NavigationLink(value: AppRoute.communityFeed(userChallenge)) {
+                moduleRowLabel(label: "View Community Feed",
+                               systemImage: "person.3.fill",
+                               hasChevron: true)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 16)
     }
 }

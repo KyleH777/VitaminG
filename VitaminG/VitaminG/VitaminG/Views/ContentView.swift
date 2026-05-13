@@ -99,6 +99,8 @@ struct ContentView: View {
                     // The notification deep-link path uses the .sheet(item:) above — both paths wired.
                     case .challengeCheckIn(let challenge):
                         ChallengeCheckInView(userChallenge: challenge, viewModel: ChallengeViewModel())
+                    case .communityFeed(let userChallenge):
+                        CommunityFeedView(userChallenge: userChallenge)
                     }
                 }
         }

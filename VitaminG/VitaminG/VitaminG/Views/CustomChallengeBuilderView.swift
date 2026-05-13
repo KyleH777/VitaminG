@@ -257,10 +257,11 @@ struct CustomChallengeBuilderView: View {
                     .fontDesign(.rounded)
 
             case "dateBound":
+                let tomorrow: Date = Calendar.current.date(byAdding: .day, value: 1, to: .now) ?? .now
                 DatePicker(
                     "End Date",
                     selection: $endDate,
-                    in: Calendar.current.date(byAdding: .day, value: 1, to: .now) ?? .now...,
+                    in: tomorrow...,
                     displayedComponents: [.date]
                 )
                 .font(.body)
