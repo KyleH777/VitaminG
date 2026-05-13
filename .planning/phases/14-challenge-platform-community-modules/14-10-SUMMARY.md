@@ -101,9 +101,39 @@ Integration glue connecting all Phase 14 module views and community feed into Ch
 | `CommunityFeedView(userChallenge: userChallenge)` in ContentView.swift | >=1 | 1 |
 | xcodebuild build exits 0 | BUILD SUCCEEDED | BUILD SUCCEEDED |
 
-## Task 2: Checkpoint (Awaiting Human UAT)
+## Task 2: Human UAT — APPROVED (2026-05-13)
 
-Task 2 is a `checkpoint:human-verify` gate. The human tester must run UAT blocks A–I and record results in `14-UAT.md`.
+All 9 UAT blocks passed. Tester: Kyle. Results in `14-UAT.md`.
+
+| Block | Requirements | Result |
+|-------|-------------|--------|
+| A — Custom Challenge Builder | CHAL-23 | PASS |
+| B — Community feed empty state | CHAL-25 | PASS |
+| C — Post + profanity rejection | CHAL-13, 16, 17 | PASS |
+| D — Reactions + report | CHAL-14, 15 | PASS |
+| E — Box breathing | CHAL-19 | PASS |
+| F — Buddy Accountability | CHAL-22 | PASS |
+| G — Inline modules | CHAL-18, 21 | PASS |
+| H — Transformation Photos | CHAL-20 | PASS |
+| I — Notifications | CHAL-24 | PASS |
+
+## Requirement Coverage
+
+| Requirement | Implementing Plan(s) |
+|-------------|---------------------|
+| CHAL-13 (profanity filter) | 14-02 (ProfanityFilter) |
+| CHAL-14 (reactions) | 14-04 (CommunityFeedView + ReactionPill) |
+| CHAL-15 (report) | 14-04 (flag → hide) |
+| CHAL-16 (post compose) | 14-04 (PostComposeSheet) |
+| CHAL-17 (community feed) | 14-04 (CommunityFeedView) |
+| CHAL-18 (spending freeze) | 14-05 (SpendingFreezeModuleView) |
+| CHAL-19 (craving tools) | 14-06 (CravingToolsModuleView) |
+| CHAL-20 (transformation photos) | 14-07 (TransformationPhotosModuleView) |
+| CHAL-21 (nutrition log) | 14-05 (NutritionLogModuleView) |
+| CHAL-22 (buddy accountability) | 14-08 (BuddyAccountabilityModuleView) |
+| CHAL-23 (custom builder) | 14-09 (CustomChallengeBuilderView) |
+| CHAL-24 (notifications) | 14-03 (NotificationScheduler) |
+| CHAL-25 (community feed nav) | 14-04 + **14-10** (AppRoute.communityFeed integration) |
 
 ## Threat Surface Scan
 
