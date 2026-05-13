@@ -14,4 +14,5 @@ enum AppRoute: Hashable {
     case wins   // Phase 11 — Wins tab navigation (deep-link reserved; plain foreground open in Phase 11)
     case challengeDetail(UserChallenge)    // Phase 13 — CHAL-08, D-05
     case challengeCheckIn(UserChallenge)   // Phase 13 — CHAL-09, D-05, D-06
+    case communityFeed(UserChallenge)      // Phase 14 — CHAL-25
 }
