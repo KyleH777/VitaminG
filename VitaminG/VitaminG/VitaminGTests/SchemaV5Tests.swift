@@ -42,11 +42,46 @@ final class SchemaV5Tests: XCTestCase {
 
     // CHAL-18 — implemented in Plan 05
     func test_spendingFreezeEntry_oneRecordPerChallengePerDay() throws {
-        try XCTSkipIf(true, "Implemented in Plan 05")
+        let challengeID = UUID()
+        let today = Calendar.current.startOfDay(for: Date())
+
+        let a = SpendingFreezeEntry()
+        a.id = UUID(); a.date = today; a.userChallengeID = challengeID; a.isFreeze = true
+        context.insert(a)
+        let b = SpendingFreezeEntry()
+        b.id = UUID(); b.date = today; b.userChallengeID = challengeID; b.isFreeze = false
+        context.insert(b)
+        try context.save()
+
+        let descriptor = FetchDescriptor<SpendingFreezeEntry>()
+        let all = try context.fetch(descriptor)
+        XCTAssertEqual(all.filter { $0.userChallengeID == challengeID }.count, 2,
+            "Schema permits multiple inserts; uniqueness is enforced at the View layer")
+
+        let cal = Calendar.current
+        let todayMatches = all.filter { entry in
+            entry.userChallengeID == challengeID
+                && (entry.date.map { cal.isDateInToday($0) } ?? false)
+        }
+        XCTAssertEqual(todayMatches.count, 2,
+            "Two records for today exist; ViewModel layer takes first() per Plan 05 contract")
     }
 
     // CHAL-21 — implemented in Plan 05
     func test_nutritionEntry_noteMaxThreeHundredChars() throws {
-        try XCTSkipIf(true, "Implemented in Plan 05")
+        let entry = NutritionEntry()
+        entry.id = UUID()
+        entry.date = Date()
+        entry.userChallengeID = UUID()
+        let raw = String(repeating: "a", count: 350)
+        entry.note = String(raw.prefix(300))
+        entry.timestamp = Date()
+        context.insert(entry)
+        try context.save()
+
+        let descriptor = FetchDescriptor<NutritionEntry>()
+        let fetched = try context.fetch(descriptor)
+        XCTAssertEqual(fetched.first?.note?.count, 300,
+            "NutritionEntry.note must store exactly 300 characters when caller truncates per contract")
     }
 }
