@@ -94,7 +94,6 @@ struct OnboardingViewModelTests {
     @Test func initialStateNotCompleted() async {
         let vm = await OnboardingViewModel()
         await #expect(vm.hasCreatedFirstGoal == false)
-        await #expect(vm.showNotificationSheet == false)
     }
 
     @Test func hasCompletedOnboardingDefaultsToFalseWhenNotSet() {

@@ -234,3 +234,133 @@ extension NotificationScheduler {
             .removePendingNotificationRequests(withIdentifiers: [identifier])
     }
 }
+
+// MARK: - Phase 14 Notification Suite (CHAL-22, CHAL-24)
+
+extension NotificationScheduler {
+
+    // MARK: - Identifiers
+
+    static func streakAtRiskIdentifier(for challengeID: UUID) -> String {
+        "com.kyleharrington.VitaminG.streakAtRisk.\(challengeID.uuidString)"
+    }
+
+    static func milestoneIdentifier(for challengeID: UUID, threshold: Int) -> String {
+        "com.kyleharrington.VitaminG.milestone.\(challengeID.uuidString).\(threshold)"
+    }
+
+    static func buddyPingIdentifier(for challengeID: UUID) -> String {
+        "com.kyleharrington.VitaminG.buddyPing.\(challengeID.uuidString)"
+    }
+
+    // MARK: - Streak at risk (CHAL-24) — fires nightly at 20:00 if scheduled
+
+    /// Schedules a repeating nightly reminder at 20:00 when the user hasn't checked in.
+    /// Remove-before-add pattern prevents duplicate scheduling (T-14-06 tamper mitigation).
+    /// Identifier embeds challenge UUID — one notification per active challenge.
+    func scheduleStreakAtRiskReminder(challengeID: UUID, challengeTitle: String) async {
+        let identifier = Self.streakAtRiskIdentifier(for: challengeID)
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: [identifier])
+
+        let content = UNMutableNotificationContent()
+        content.title = "Don't lose your streak!"
+        content.body = "You haven't checked in on \(challengeTitle) today. Tap to log your check-in."
+        content.sound = .default
+        content.userInfo = [
+            "deepLink": "challengeCheckIn",
+            "userChallengeID": challengeID.uuidString,
+            "source": "streakAtRisk"
+        ]
+
+        var components = DateComponents()
+        components.hour = 20
+        components.minute = 0
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        do {
+            try await center.add(request)
+        } catch {
+            #if DEBUG
+            print("[NotificationScheduler] Failed to add streak-at-risk: \(error)")
+            #endif
+        }
+    }
+
+    /// Removes the streak-at-risk reminder for a given challenge.
+    /// Called when the user checks in or abandons the challenge.
+    func cancelStreakAtRiskReminder(challengeID: UUID) {
+        let identifier = Self.streakAtRiskIdentifier(for: challengeID)
+        UNUserNotificationCenter.current()
+            .removePendingNotificationRequests(withIdentifiers: [identifier])
+    }
+
+    // MARK: - Milestone reached (CHAL-24) — fires once, immediately
+
+    /// Fires a one-time notification immediately (timeInterval: 1) when a milestone is reached.
+    /// Identifier embeds UUID + threshold to distinguish multiple milestones on same challenge (T-14-14).
+    func scheduleMilestoneNotification(
+        challengeID: UUID,
+        threshold: Int,
+        message: String
+    ) async {
+        let identifier = Self.milestoneIdentifier(for: challengeID, threshold: threshold)
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: [identifier])
+
+        let content = UNMutableNotificationContent()
+        content.title = "Milestone reached!"
+        content.body = message
+        content.sound = .default
+        content.userInfo = [
+            "deepLink": "challengeDetail",
+            "userChallengeID": challengeID.uuidString,
+            "source": "milestone",
+            "threshold": threshold
+        ]
+
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        do {
+            try await center.add(request)
+        } catch {
+            #if DEBUG
+            print("[NotificationScheduler] Failed to add milestone: \(error)")
+            #endif
+        }
+    }
+
+    // MARK: - Buddy ping (CHAL-22) — local UNUserNotification to self, fire-once
+
+    /// Fires a one-time local notification when a buddy sends an accountability ping.
+    /// Cooldown enforcement (24h) is handled by the caller (UserChallenge.canSendBuddyPing — Plan 08).
+    func scheduleBuddyPing(
+        challengeID: UUID,
+        buddyDisplayName: String,
+        challengeTitle: String
+    ) async {
+        let identifier = Self.buddyPingIdentifier(for: challengeID)
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: [identifier])
+
+        let content = UNMutableNotificationContent()
+        content.title = "Your buddy is cheering for you!"
+        content.body = "\(buddyDisplayName) sent you an accountability ping on \(challengeTitle)."
+        content.sound = .default
+        content.userInfo = [
+            "deepLink": "challengeDetail",
+            "userChallengeID": challengeID.uuidString,
+            "source": "buddyPing"
+        ]
+
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        do {
+            try await center.add(request)
+        } catch {
+            #if DEBUG
+            print("[NotificationScheduler] Failed to add buddy ping: \(error)")
+            #endif
+        }
+    }
+}
