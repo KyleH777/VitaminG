@@ -261,6 +261,16 @@ extension NotificationScheduler {
     func scheduleStreakAtRiskReminder(challengeID: UUID, challengeTitle: String) async {
         let identifier = Self.streakAtRiskIdentifier(for: challengeID)
         let center = UNUserNotificationCenter.current()
+
+        // iOS caps pending notifications at 64; guard with a 4-slot buffer before adding new ones.
+        let pending = await center.pendingNotificationRequests()
+        guard pending.count < 60 else {
+            #if DEBUG
+            print("[NotificationScheduler] Skipping streakAtRisk — approaching 64-cap (\(pending.count) pending)")
+            #endif
+            return
+        }
+
         center.removePendingNotificationRequests(withIdentifiers: [identifier])
 
         let content = UNMutableNotificationContent()
