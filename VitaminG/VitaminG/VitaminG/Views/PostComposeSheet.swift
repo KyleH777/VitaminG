@@ -151,6 +151,8 @@ struct PostComposeSheet: View {
         )
         if success {
             dismiss()
+        } else if viewModel.submitError == CommunityFeedViewModel.profanityRejectionMessage {
+            localProfanityFlagged = true  // show inline profanity UI, not the network-error alert
         } else if viewModel.submitError != nil {
             showAlert = true
         }
