@@ -98,24 +98,30 @@ struct StreakEngine {
     /// Computes the all-time best streak — the longest consecutive run of days
     /// on which at least one CompletionEvent occurred.
     ///
-    /// - Parameter events: Array of CompletionEvent records.
+    /// - Parameters:
+    ///   - events: Array of CompletionEvent records.
+    ///   - tier: If provided, only count events matching this tier.
+    ///           If nil, count all tiers.
+    ///   - calendar: Injectable Calendar for testability. Defaults to `.current`.
     /// - Returns: Length of the longest consecutive-day run. Returns 0 for empty input.
-    static func bestStreak(events: [CompletionEvent]) -> Int {
-        let cal = Calendar.current
+    static func bestStreak(events: [CompletionEvent], tier: GoalTier? = nil, calendar: Calendar = .current) -> Int {
+        let filtered = filteredEvents(events, tier: tier)
         let days = Set(
-            events.compactMap { $0.completedAt }
-                  .map { cal.startOfDay(for: $0) }
+            filtered.compactMap { $0.completedAt }
+                    .map { calendar.startOfDay(for: $0) }
         )
         guard !days.isEmpty else { return 0 }
         var best = 0
         for day in days {
-            let prev = cal.date(byAdding: .day, value: -1, to: day)!
+            guard let prev = calendar.date(byAdding: .day, value: -1, to: day) else { continue }
             guard !days.contains(prev) else { continue }
             var run = 1
-            var next = cal.date(byAdding: .day, value: 1, to: day)!
-            while days.contains(next) {
+            var cursor = day
+            while true {
+                guard let next = calendar.date(byAdding: .day, value: 1, to: cursor) else { break }
+                guard days.contains(next) else { break }
                 run += 1
-                next = cal.date(byAdding: .day, value: 1, to: next)!
+                cursor = next
             }
             best = max(best, run)
         }
