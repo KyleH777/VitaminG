@@ -337,5 +337,6 @@ struct GoalDetailView: View {
             .tint(.red)
         }
         .padding(.horizontal)
+        .sensoryFeedback(.success, trigger: goal.completed) { _, new in new }
     }
 }

@@ -19,6 +19,7 @@ struct ChallengeCheckInView: View {
     @State private var multiStepBool: Bool = false
     @State private var multiStepNumericText: String = ""
     @State private var saveError: String? = nil
+    @State private var checkInSaved = false
 
     var body: some View {
         NavigationStack {
@@ -55,6 +56,7 @@ struct ChallengeCheckInView: View {
                         .fontDesign(.rounded)
                 }
             }
+            .sensoryFeedback(.success, trigger: checkInSaved)
         }
     }
 
@@ -177,6 +179,7 @@ struct ChallengeCheckInView: View {
     private func save(payload: CheckInPayload) {
         do {
             try viewModel.recordCheckIn(for: userChallenge, payload: payload, context: modelContext)
+            checkInSaved = true
             dismiss()
         } catch CheckInError.alreadyCheckedInToday {
             saveError = "Already checked in today."
