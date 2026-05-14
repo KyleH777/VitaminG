@@ -28,7 +28,7 @@ final class StreakFreezeService {
         var intervals = defaults.array(forKey: keyFrozenDates) as? [Double] ?? []
         intervals.append(day.timeIntervalSince1970)
         defaults.set(intervals, forKey: keyFrozenDates)
-        defaults.set(date.timeIntervalSince1970, forKey: keyLastFreezeDate)
+        defaults.set(day.timeIntervalSince1970, forKey: keyLastFreezeDate)
     }
 
     private var lastFreezeDate: Date? {
