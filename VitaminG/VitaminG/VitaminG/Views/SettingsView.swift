@@ -53,8 +53,8 @@ struct SettingsView: View {
                             .foregroundStyle(
                                 LinearGradient(
                                     colors: [
-                                        Color(red: 0.98, green: 0.55, blue: 0.27),
-                                        Color(red: 0.78, green: 0.48, blue: 0.95)
+                                        VGTheme.accentTerra,
+                                        VGTheme.accentPurple
                                     ],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing

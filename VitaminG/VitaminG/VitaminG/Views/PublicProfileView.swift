@@ -20,7 +20,7 @@ struct PublicProfileView: View {
                             dismiss()
                         }
                         .font(.body.weight(.semibold))
-                        .foregroundStyle(Color(red: 0.98, green: 0.55, blue: 0.27))
+                        .foregroundStyle(VGTheme.accentTerra)
                     }
                 }
                 .interactiveDismissDisabled(viewModel.isLoading)
@@ -37,7 +37,7 @@ struct PublicProfileView: View {
         case .loading:
             VStack(spacing: 12) {
                 ProgressView()
-                    .tint(Color(red: 0.98, green: 0.55, blue: 0.27))
+                    .tint(VGTheme.accentTerra)
                     .accessibilityLabel("Loading profile")
                 Text("Loading profile...")
                     .font(.body)

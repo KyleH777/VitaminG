@@ -20,10 +20,7 @@ struct TiersScreen: View {
     }
 
     // MARK: - Accent gradient (matches EmptyStateView and global design system)
-    private let gradientColors: [Color] = [
-        Color(red: 0.98, green: 0.55, blue: 0.27),
-        Color(red: 0.78, green: 0.48, blue: 0.95)
-    ]
+    private let gradientColors: [Color] = [VGTheme.accentTerra, VGTheme.accentPurple]
 
     var body: some View {
         ZStack {

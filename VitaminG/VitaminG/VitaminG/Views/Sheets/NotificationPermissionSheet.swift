@@ -13,10 +13,7 @@ struct NotificationPermissionSheet: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     // Accent gradient (matches global design system)
-    private let gradientColors: [Color] = [
-        Color(red: 0.98, green: 0.55, blue: 0.27),
-        Color(red: 0.78, green: 0.48, blue: 0.95)
-    ]
+    private let gradientColors: [Color] = [VGTheme.accentTerra, VGTheme.accentPurple]
 
     var body: some View {
         VStack(spacing: 24) {

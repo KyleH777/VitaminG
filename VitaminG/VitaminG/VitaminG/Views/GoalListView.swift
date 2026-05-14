@@ -226,7 +226,7 @@ private struct ChallengeHeroCard: View {
                     ForEach(Array(weekDays.enumerated()), id: \.offset) { i, day in
                         VStack(spacing: 4) {
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(i < 5 ? VGTheme.terraSoft.opacity(0.7) : Color.white.opacity(0.1))
+                                .fill(i < 5 ? VGTheme.terraSoft.opacity(0.7) : VGTheme.separator)
                                 .frame(height: 28)
                             Text(day)
                                 .font(.system(size: 10))

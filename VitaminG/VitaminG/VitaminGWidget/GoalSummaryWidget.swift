@@ -78,7 +78,11 @@ struct GoalSummaryWidgetView: View {
                     .padding(.top, 8)
                 HStack(spacing: 4) {
                     Image(systemName: "flame.fill")
-                        .foregroundStyle(Color(red: 0.98, green: 0.55, blue: 0.27))
+                        .foregroundStyle(Color(uiColor: UIColor { t in
+                            t.userInterfaceStyle == .dark
+                                ? UIColor(red: 1.0, green: 0.541, blue: 0.361, alpha: 1)
+                                : UIColor(red: 0.769, green: 0.404, blue: 0.227, alpha: 1)
+                        }))
                         .font(.caption)
                     Text("\(entry.displayData.globalStreak) day streak")
                         .font(.caption)
