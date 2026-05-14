@@ -189,4 +189,32 @@ final class ProfileViewModel {
     func sanitize(_ raw: String) -> String {
         InputSanitizer.sanitizeForPublic(raw)
     }
+
+    // MARK: - Profile redesign additions
+
+    enum ProfileTab { case goals, badges, activity }
+
+    let quotes: [String] = [
+        "The secret of getting ahead is getting started.",
+        "Small daily improvements lead to stunning results.",
+        "You don't have to be great to start, but you have to start to be great.",
+        "Every day is a chance to be better than yesterday.",
+        "Progress, not perfection.",
+        "The only bad workout is the one that didn't happen.",
+        "Discipline is choosing between what you want now and what you want most.",
+        "It always seems impossible until it's done.",
+        "Don't count the days, make the days count.",
+        "You are one decision away from a totally different life.",
+    ]
+
+    var todayQuote: String {
+        let day = Calendar.current.component(.day, from: Date())
+        return quotes[day % quotes.count]
+    }
+
+    var reactionCount: Int = 0
+
+    func loadReactionCount() async {
+        reactionCount = 0
+    }
 }
