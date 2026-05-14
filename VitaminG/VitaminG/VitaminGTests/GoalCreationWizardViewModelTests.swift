@@ -145,13 +145,25 @@ final class GoalCreationWizardViewModelTests: XCTestCase {
         sut.currentStep = 2
         sut.draftTitle = "Something"
         sut.selectedCategory = .body
+        sut.draftTier = .lifeGoal
+        sut.selectedFrequency = .weekly
+        sut.reminderEnabled = false
+        sut.isPrivate = true
+        sut.isLegacy = true
         sut.isEditMode = true
+        sut.editingGoalID = UUID()
 
         sut.reset()
 
         XCTAssertEqual(sut.currentStep, 0)
         XCTAssertEqual(sut.draftTitle, "")
         XCTAssertEqual(sut.selectedCategory, .other)
+        XCTAssertEqual(sut.draftTier, .immediate)
+        XCTAssertEqual(sut.selectedFrequency, .daily)
+        XCTAssertTrue(sut.reminderEnabled)
+        XCTAssertFalse(sut.isPrivate)
+        XCTAssertFalse(sut.isLegacy)
         XCTAssertFalse(sut.isEditMode)
+        XCTAssertNil(sut.editingGoalID)
     }
 }

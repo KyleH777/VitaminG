@@ -18,7 +18,7 @@ final class GoalCreationWizardViewModel {
     var draftTitle: String = ""
 
     var canAdvanceStep2: Bool {
-        !draftTitle.trimmingCharacters(in: .whitespaces).isEmpty
+        !draftTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     // MARK: - Step 3
@@ -45,7 +45,7 @@ final class GoalCreationWizardViewModel {
     // MARK: - Build output
 
     func buildGoalInput() -> GoalInput {
-        let trimmedTitle = draftTitle.trimmingCharacters(in: .whitespaces)
+        let trimmedTitle = draftTitle.trimmingCharacters(in: .whitespacesAndNewlines)
         let reminder: Date? = (reminderEnabled && selectedFrequency != .onetime)
             ? draftReminderTime : nil
         return GoalInput(
@@ -62,6 +62,7 @@ final class GoalCreationWizardViewModel {
     // MARK: - Edit pre-fill
 
     func configure(from goal: Goal) {
+        currentStep = 0
         isEditMode = true
         editingGoalID = goal.id
         draftTitle = goal.title ?? ""
