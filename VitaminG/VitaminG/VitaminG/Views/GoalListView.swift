@@ -13,6 +13,7 @@ struct GoalListView: View {
     @State private var showingDeleteConfirmation = false
     @State private var sortOption: SortOption = .byTier
     @State private var pendingMilestone: (goalID: UUID, threshold: Int)? = nil
+    @State private var milestoneTask: Task<Void, Never>?
 
     private var hasAnyGoals: Bool { !goals.isEmpty }
     private var sortedGoals: [Goal] { GoalSorter.sort(goals, by: sortOption) }
@@ -30,6 +31,7 @@ struct GoalListView: View {
             }
         }
         .background(VGTheme.sandLight)
+        .onDisappear { milestoneTask?.cancel() }
         .toolbar {
             ToolbarItem(placement: .secondaryAction) {
                 Menu {
@@ -55,8 +57,10 @@ struct GoalListView: View {
             if let milestone = viewModel.pendingMilestone {
                 pendingMilestone = milestone
                 viewModel.pendingMilestone = nil
-                Task { @MainActor in
+                milestoneTask?.cancel()
+                milestoneTask = Task { @MainActor in
                     try? await Task.sleep(for: .seconds(3))
+                    guard !Task.isCancelled else { return }
                     pendingMilestone = nil
                 }
             }
@@ -82,6 +86,7 @@ struct GoalListView: View {
                             .background(VGTheme.terra)
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
+                    .accessibilityLabel("Add new goal")
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 20)
@@ -261,12 +266,10 @@ private struct GoalCardView: View {
     @State private var badgeTask: Task<Void, Never>?
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    private let progressVM = ProgressViewModel()
-
     var body: some View {
         HStack(spacing: 14) {
             ProgressRingView(
-                progress: progressVM.ringProgress(for: goal, events: events),
+                progress: ProgressViewModel().ringProgress(for: goal, events: events),
                 tier: goal.tier,
                 isCompleted: goal.isCompleted
             )
@@ -361,8 +364,8 @@ struct EmptyStateView: View {
                     .fill(
                         LinearGradient(
                             colors: [
-                                Color(red: 0.98, green: 0.55, blue: 0.27).opacity(0.15),
-                                Color(red: 0.78, green: 0.48, blue: 0.95).opacity(0.15)
+                                VGTheme.accentTerra.opacity(0.15),
+                                VGTheme.accentPurple.opacity(0.15)
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
@@ -377,8 +380,8 @@ struct EmptyStateView: View {
                     .foregroundStyle(
                         LinearGradient(
                             colors: [
-                                Color(red: 0.98, green: 0.55, blue: 0.27),
-                                Color(red: 0.78, green: 0.48, blue: 0.95)
+                                VGTheme.accentTerra,
+                                VGTheme.accentPurple
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
@@ -408,8 +411,8 @@ struct EmptyStateView: View {
                     .background(
                         LinearGradient(
                             colors: [
-                                Color(red: 0.98, green: 0.55, blue: 0.27),
-                                Color(red: 0.78, green: 0.48, blue: 0.95)
+                                VGTheme.accentTerra,
+                                VGTheme.accentPurple
                             ],
                             startPoint: .leading,
                             endPoint: .trailing
@@ -424,6 +427,6 @@ struct EmptyStateView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.systemGroupedBackground))
+        .background(VGTheme.background)
     }
 }
