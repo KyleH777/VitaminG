@@ -28,7 +28,7 @@ struct ChallengeDiscoveryView: View {
             .padding(.horizontal, 16)
             .padding(.top, 8)
         }
-        .background(VGTheme.sandLight)
+        .background(VGTheme.background)
         .navigationTitle("Challenges")
         .onAppear {
             viewModel.seedFeaturedTemplates(context: modelContext)
@@ -46,7 +46,7 @@ struct ChallengeDiscoveryView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
                 .fontDesign(.rounded)
-                .foregroundStyle(VGTheme.clay)
+                .foregroundStyle(VGTheme.textPrimary)
 
             if templates.filter({ $0.isFeatured }).isEmpty {
                 emptyFeaturedState
@@ -72,7 +72,7 @@ struct ChallengeDiscoveryView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
                 .fontDesign(.rounded)
-                .foregroundStyle(VGTheme.clay)
+                .foregroundStyle(VGTheme.textPrimary)
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
@@ -84,7 +84,7 @@ struct ChallengeDiscoveryView: View {
                             .padding(.vertical, 8)
                             .background(Color(.secondarySystemGroupedBackground))
                             .clipShape(Capsule())
-                            .foregroundStyle(VGTheme.clay)
+                            .foregroundStyle(VGTheme.textPrimary)
                     }
                 }
                 .padding(.horizontal, 2)
@@ -103,7 +103,7 @@ struct ChallengeDiscoveryView: View {
         .fontDesign(.rounded)
         .frame(maxWidth: .infinity, minHeight: 44)
         .background(Color(.secondarySystemGroupedBackground))
-        .foregroundStyle(VGTheme.clay)
+        .foregroundStyle(VGTheme.textPrimary)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .accessibilityLabel("Build Your Own Challenge")
     }
@@ -114,16 +114,16 @@ struct ChallengeDiscoveryView: View {
         VStack(spacing: 16) {
             Image(systemName: "flame.fill")
                 .font(.system(size: 48))
-                .foregroundStyle(VGTheme.muted)
+                .foregroundStyle(VGTheme.textMuted)
             Text("No Challenges Yet")
                 .font(.title2)
                 .fontWeight(.semibold)
                 .fontDesign(.rounded)
-                .foregroundStyle(VGTheme.clay)
+                .foregroundStyle(VGTheme.textPrimary)
             Text("Featured challenges are coming soon. Check back to find your next goal.")
                 .font(.body)
                 .fontDesign(.rounded)
-                .foregroundStyle(VGTheme.muted)
+                .foregroundStyle(VGTheme.textMuted)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
@@ -165,17 +165,17 @@ private struct ChallengeCardView: View {
                     .font(.title2)
                     .fontWeight(.semibold)
                     .fontDesign(.rounded)
-                    .foregroundStyle(VGTheme.clay)
+                    .foregroundStyle(VGTheme.textPrimary)
                 Text(template.challengeDescription ?? "")
                     .font(.body)
                     .fontDesign(.rounded)
-                    .foregroundStyle(VGTheme.muted)
+                    .foregroundStyle(VGTheme.textMuted)
                     .lineLimit(1)
                 if template.communitySize > 0 {
                     Text("\(template.communitySize.formatted()) people")
                         .font(.caption)
                         .fontDesign(.rounded)
-                        .foregroundStyle(VGTheme.muted)
+                        .foregroundStyle(VGTheme.textMuted)
                 }
             }
             Spacer()
@@ -191,7 +191,7 @@ private struct ChallengeCardView: View {
                             .padding(.vertical, 8)
                             .background(Color(.secondarySystemGroupedBackground))
                             .clipShape(RoundedRectangle(cornerRadius: 8))
-                            .foregroundStyle(VGTheme.clay)
+                            .foregroundStyle(VGTheme.textPrimary)
                     }
                     .accessibilityLabel("View progress for \(template.title ?? "challenge")")
                 }

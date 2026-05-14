@@ -51,7 +51,7 @@ struct ChallengeDetailView: View {
             .padding(.horizontal, 16)
             .padding(.top, 16)
         }
-        .background(VGTheme.sandLight)
+        .background(VGTheme.background)
         .navigationTitle(userChallenge.template?.title ?? "Challenge")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showCheckIn) {
@@ -109,13 +109,13 @@ struct ChallengeDetailView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
                 .fontDesign(.rounded)
-                .foregroundStyle(VGTheme.clay)
+                .foregroundStyle(VGTheme.textPrimary)
             if let category = userChallenge.template?.category,
                let days = userChallenge.template?.durationDays {
                 Text("\(category.capitalized) · \(days) days")
                     .font(.caption)
                     .fontDesign(.rounded)
-                    .foregroundStyle(VGTheme.muted)
+                    .foregroundStyle(VGTheme.textMuted)
             }
         }
     }
@@ -159,7 +159,7 @@ struct ChallengeDetailView: View {
                     .font(.title2)
                     .fontWeight(.semibold)
                     .fontDesign(.rounded)
-                    .foregroundStyle(VGTheme.clay)
+                    .foregroundStyle(VGTheme.textPrimary)
                 Text("\(userChallenge.totalCheckIns)")
                     .font(.system(size: 48, weight: .semibold, design: .rounded))
                     .foregroundStyle(accentColor)
@@ -169,7 +169,7 @@ struct ChallengeDetailView: View {
                     .font(.title2)
                     .fontWeight(.semibold)
                     .fontDesign(.rounded)
-                    .foregroundStyle(VGTheme.clay)
+                    .foregroundStyle(VGTheme.textPrimary)
                 ProgressView(value: progressValue)
                     .progressViewStyle(.linear)
                     .tint(accentColor)
@@ -187,12 +187,12 @@ struct ChallengeDetailView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
                 .fontDesign(.rounded)
-                .foregroundStyle(VGTheme.clay)
+                .foregroundStyle(VGTheme.textPrimary)
             HStack {
                 Text(reminderLabel)
                     .font(.body)
                     .fontDesign(.rounded)
-                    .foregroundStyle(VGTheme.muted)
+                    .foregroundStyle(VGTheme.textMuted)
                 Spacer()
                 DatePicker("", selection: reminderBinding, displayedComponents: .hourAndMinute)
                     .labelsHidden()
@@ -212,11 +212,11 @@ struct ChallengeDetailView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
                 .fontDesign(.rounded)
-                .foregroundStyle(VGTheme.clay)
+                .foregroundStyle(VGTheme.textPrimary)
             Text(userChallenge.template?.challengeDescription ?? "")
                 .font(.body)
                 .fontDesign(.rounded)
-                .foregroundStyle(VGTheme.clay)
+                .foregroundStyle(VGTheme.textPrimary)
         }
     }
 
@@ -284,7 +284,7 @@ struct ChallengeDetailView: View {
             Text("Tools & Modules")
                 .font(.title2.weight(.semibold))
                 .fontDesign(.rounded)
-                .foregroundStyle(VGTheme.clay)
+                .foregroundStyle(VGTheme.textPrimary)
 
             // Fixed display order per UI-SPEC.md lines 285-289
             let order: [ChallengeTemplate.ModuleIdentifier] = [
@@ -325,15 +325,15 @@ struct ChallengeDetailView: View {
     private func moduleRowLabel(label: String, systemImage: String, hasChevron: Bool) -> some View {
         HStack(spacing: 12) {
             Image(systemName: systemImage)
-                .foregroundStyle(VGTheme.clay)
+                .foregroundStyle(VGTheme.textPrimary)
             Text(label)
                 .font(.body).fontDesign(.rounded)
-                .foregroundStyle(VGTheme.clay)
+                .foregroundStyle(VGTheme.textPrimary)
             Spacer()
             if hasChevron {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12))
-                    .foregroundStyle(VGTheme.muted)
+                    .foregroundStyle(VGTheme.textMuted)
             }
         }
         .frame(minHeight: 44)
@@ -356,7 +356,7 @@ struct ChallengeDetailView: View {
             Text("Community")
                 .font(.title2.weight(.semibold))
                 .fontDesign(.rounded)
-                .foregroundStyle(VGTheme.clay)
+                .foregroundStyle(VGTheme.textPrimary)
             NavigationLink(value: AppRoute.communityFeed(userChallenge)) {
                 moduleRowLabel(label: "View Community Feed",
                                systemImage: "person.3.fill",

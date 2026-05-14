@@ -1,6 +1,5 @@
 import SwiftUI
 import SwiftData
-import UIKit
 
 // MARK: - ProfileView
 
@@ -39,7 +38,7 @@ struct ProfileView: View {
                             .foregroundStyle(.secondary)
                     }
                     .padding(16)
-                    .background(Color(.systemBackground))
+                    .background(VGTheme.surface)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
                 .accessibilityLabel("Open Settings")
@@ -48,7 +47,7 @@ struct ProfileView: View {
             .padding(.top, 32)
             .padding(.bottom, 32)
         }
-        .background(Color(UIColor.systemGroupedBackground))
+        .background(VGTheme.background)
         .navigationTitle("My Profile")
         .onAppear {
             viewModel.loadOrCreateProfile(context: modelContext)
@@ -131,7 +130,7 @@ struct ProfileView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
         }
-        .background(Color(.systemBackground))
+        .background(VGTheme.surface)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
@@ -158,7 +157,7 @@ struct ProfileView: View {
                 }
                 .padding(20)
                 .frame(maxWidth: .infinity)
-                .background(Color(.systemBackground))
+                .background(VGTheme.surface)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             } else {
                 LazyVStack(spacing: 8) {
@@ -182,7 +181,7 @@ struct ProfileView: View {
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 10)
-                        .background(Color(.systemBackground))
+                        .background(VGTheme.surface)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }

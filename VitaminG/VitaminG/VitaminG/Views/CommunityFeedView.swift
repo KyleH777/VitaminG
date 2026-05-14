@@ -42,7 +42,7 @@ struct CommunityFeedView: View {
                 Text("Community")
                     .font(.title2.weight(.semibold))
                     .fontDesign(.rounded)
-                    .foregroundStyle(VGTheme.clay)
+                    .foregroundStyle(VGTheme.textPrimary)
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
 
@@ -54,7 +54,7 @@ struct CommunityFeedView: View {
                         .font(.body.weight(.semibold)).fontDesign(.rounded)
                         .frame(maxWidth: .infinity, minHeight: 44)
                         .background(Color(.secondarySystemGroupedBackground))
-                        .foregroundStyle(VGTheme.clay)
+                        .foregroundStyle(VGTheme.textPrimary)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
                 .buttonStyle(.plain)
@@ -83,7 +83,7 @@ struct CommunityFeedView: View {
             }
             .padding(.bottom, 32)
         }
-        .background(VGTheme.sandLight)
+        .background(VGTheme.background)
         .navigationTitle("Community")
         .navigationBarTitleDisplayMode(.inline)
         .task {
@@ -115,15 +115,15 @@ struct CommunityFeedView: View {
         VStack(spacing: 16) {
             Image(systemName: "person.3.fill")
                 .font(.system(size: 48))
-                .foregroundStyle(VGTheme.muted)
+                .foregroundStyle(VGTheme.textMuted)
             Text("Be the First to Share")
                 .font(.title2.weight(.semibold))
                 .fontDesign(.rounded)
-                .foregroundStyle(VGTheme.clay)
+                .foregroundStyle(VGTheme.textPrimary)
             Text("Be the first to share your progress! Your post can encourage others on the same journey.")
                 .font(.body)
                 .fontDesign(.rounded)
-                .foregroundStyle(VGTheme.muted)
+                .foregroundStyle(VGTheme.textMuted)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
