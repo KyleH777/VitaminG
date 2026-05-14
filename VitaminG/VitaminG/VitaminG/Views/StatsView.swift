@@ -13,6 +13,8 @@ struct StatsView: View {
     @Query private var goals: [Goal]
 
     @State private var viewModel = StatsViewModel()
+    @State private var freezeService = StreakFreezeService()
+    @State private var showFreezeConfirmation = false
 
     var body: some View {
         ScrollView {
@@ -32,13 +34,13 @@ struct StatsView: View {
         .navigationTitle("Stats")
         .navigationBarTitleDisplayMode(.large)
         .onAppear {
-            viewModel.refresh(events: events, goals: goals)
+            viewModel.refresh(events: events, goals: goals, frozenDates: freezeService.frozenDates)
         }
         .onChange(of: events.count) {
-            viewModel.refresh(events: events, goals: goals)
+            viewModel.refresh(events: events, goals: goals, frozenDates: freezeService.frozenDates)
         }
         .onChange(of: goals.count) {
-            viewModel.refresh(events: events, goals: goals)
+            viewModel.refresh(events: events, goals: goals, frozenDates: freezeService.frozenDates)
         }
     }
 
@@ -49,10 +51,7 @@ struct StatsView: View {
             RoundedRectangle(cornerRadius: 20)
                 .fill(
                     LinearGradient(
-                        colors: [
-                            VGTheme.accentTerra,
-                            VGTheme.accentPurple
-                        ],
+                        colors: [VGTheme.accentTerra, VGTheme.accentPurple],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -68,7 +67,6 @@ struct StatsView: View {
                         .foregroundStyle(.white.opacity(0.9))
                 }
 
-                // D-09 exception: display-proportional numeral in fixed-size card (analogous to AvatarView initials)
                 Text("\(viewModel.globalStreak)")
                     .font(.system(size: 48, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
@@ -76,8 +74,41 @@ struct StatsView: View {
                 Text(viewModel.globalStreak == 1 ? "Day" : "Days")
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.white.opacity(0.8))
+
+                if freezeService.canFreeze {
+                    Button {
+                        showFreezeConfirmation = true
+                    } label: {
+                        Label("Freeze Streak", systemImage: "snowflake")
+                            .font(.caption.weight(.semibold))
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 6)
+                            .background(.white.opacity(0.15))
+                            .clipShape(Capsule())
+                            .foregroundStyle(.white)
+                    }
+                    .padding(.top, 4)
+                } else {
+                    Label("Streak protected this month", systemImage: "checkmark.shield.fill")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.65))
+                        .padding(.top, 4)
+                }
             }
             .padding(.vertical, 24)
+        }
+        .confirmationDialog(
+            "Use your monthly streak freeze?",
+            isPresented: $showFreezeConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Freeze Streak") {
+                freezeService.freeze()
+                viewModel.refresh(events: events, goals: goals, frozenDates: freezeService.frozenDates)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("You get one freeze per month. This will protect today's streak even if you miss a day.")
         }
     }
 

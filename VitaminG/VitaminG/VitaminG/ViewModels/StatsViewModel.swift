@@ -33,13 +33,13 @@ final class StatsViewModel {
 
     /// Recomputes all stats from raw SwiftData arrays.
     /// Call from StatsView.onAppear and .onChange of events/goals.
-    func refresh(events: [CompletionEvent], goals: [Goal]) {
-        globalStreak = StreakEngine.currentStreak(from: events)
+    func refresh(events: [CompletionEvent], goals: [Goal], frozenDates: [Date] = []) {
+        globalStreak = StreakEngine.currentStreak(from: events, frozenDates: frozenDates)
         consistencyScore = ConsistencyEngine.score(events: events)
         recentDaysActivity = ConsistencyEngine.recentDays(events: events)
 
         for tier in GoalTier.ordered {
-            tierStreaks[tier] = StreakEngine.currentStreak(from: events, tier: tier)
+            tierStreaks[tier] = StreakEngine.currentStreak(from: events, tier: tier, frozenDates: frozenDates)
 
             let tierGoals = goals.filter { $0.tier == tier }
             tierCompletionRates[tier] = StreakEngine.completionRate(
