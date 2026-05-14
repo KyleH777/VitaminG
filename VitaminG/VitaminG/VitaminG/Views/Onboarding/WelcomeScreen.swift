@@ -92,6 +92,7 @@ struct WelcomeScreen: View {
     let onSkip: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @AppStorage("vg_onboardingName") private var savedName: String = ""
 
     private let tablets: [TabletConfig] = [
         TabletConfig(id: 0,  leftFraction: 0.05, duration: 2.8, delay: 0.0, size: 32, color1: VGTheme.terraSoft, color2: VGTheme.terra,   rotation: 15,  pileOffsetX: 18,  pileRotation: -22),
@@ -208,7 +209,7 @@ struct WelcomeScreen: View {
                 // Bottom buttons
                 VStack(spacing: 12) {
                     Button {
-                        path.append(.phoneSignup)
+                        path.append(.name)
                     } label: {
                         Text("Get Started")
                             .font(.system(size: 17, weight: .semibold))
@@ -219,8 +220,16 @@ struct WelcomeScreen: View {
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
 
-                    Button(action: onSkip) {
-                        Text("I'll set this up later")
+                    Button(action: {
+                        if !savedName.trimmingCharacters(in: .whitespaces).isEmpty {
+                            path.append(.login)
+                        } else {
+                            onSkip()
+                        }
+                    }) {
+                        Text(savedName.trimmingCharacters(in: .whitespaces).isEmpty
+                             ? "I'll set this up later"
+                             : "Sign in")
                             .font(.system(size: 15, weight: .regular))
                             .foregroundStyle(VGTheme.sand.opacity(0.55))
                             .frame(maxWidth: .infinity)

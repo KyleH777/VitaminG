@@ -1,12 +1,12 @@
+// VitaminG/Views/Onboarding/OnboardingView.swift
 import SwiftUI
 
 // MARK: - OnboardingStep
 
-/// Type-safe navigation steps for the redesigned onboarding flow.
 enum OnboardingStep: Hashable {
-    case phoneSignup        // Step 0: phone / email entry
-    case verificationCode   // Step 0b: OTP verification
-    case name               // Legacy — kept for any existing deep links
+    case name
+    case login
+    case recovery
     case motivationCategories
     case notifications
     case communityGoal
@@ -15,9 +15,6 @@ enum OnboardingStep: Hashable {
 
 // MARK: - OnboardingView
 
-/// NavigationStack shell for the full onboarding flow.
-/// Flow: Splash → Name → Motivation → Notifications → CommunityGoal → CreateFirstGoal
-/// Gates completion via @AppStorage("hasCompletedOnboarding").
 struct OnboardingView: View {
 
     @State private var path: [OnboardingStep] = []
@@ -30,12 +27,12 @@ struct OnboardingView: View {
             WelcomeScreen(path: $path, onSkip: finish)
                 .navigationDestination(for: OnboardingStep.self) { step in
                     switch step {
-                    case .phoneSignup:
-                        PhoneSignupScreen(path: $path, onSkip: finish)
-                    case .verificationCode:
-                        VerificationCodeScreen(path: $path, onSkip: finish)
                     case .name:
                         NameScreen(path: $path, onSkip: finish)
+                    case .login:
+                        LoginScreen(path: $path, onSkip: finish)
+                    case .recovery:
+                        RecoveryScreen(path: $path, onSkip: finish, onRestartOnboarding: restartOnboarding)
                     case .motivationCategories:
                         MotivationCategoryScreen(path: $path, onSkip: finish)
                     case .notifications:
@@ -58,5 +55,10 @@ struct OnboardingView: View {
     private func finish() {
         hasCompletedOnboarding = true
         Task { await onboardingVM.completeOnboarding() }
+    }
+
+    private func restartOnboarding() {
+        onboardingVM.restartOnboarding()
+        path = []
     }
 }
