@@ -178,6 +178,31 @@ final class StreakEngineTests: XCTestCase {
         XCTAssertEqual(rate, 2.0 / 3.0, accuracy: 0.001, "Completion rate should be 2/3")
     }
 
+    // MARK: - Test 12: bestStreak returns longest consecutive run
+
+    func test_bestStreak_returnsLongestConsecutiveRun() {
+        let cal = Calendar.current
+        var events: [CompletionEvent] = []
+        let stubGoal = Goal(title: "Streak Goal", tier: .immediate)
+        context.insert(stubGoal)
+        for day in [1, 2, 3, 7, 8, 9, 10] {
+            var comps = DateComponents()
+            comps.year = 2026; comps.month = 1; comps.day = day
+            let e = CompletionEvent(goal: stubGoal)
+            e.completedAt = cal.date(from: comps)
+            context.insert(e)
+            events.append(e)
+        }
+        let best = StreakEngine.bestStreak(events: events)
+        XCTAssertEqual(best, 4)
+    }
+
+    // MARK: - Test 13: bestStreak with empty events returns zero
+
+    func test_bestStreak_emptyEvents_returnsZero() {
+        XCTAssertEqual(StreakEngine.bestStreak(events: []), 0)
+    }
+
     // MARK: - Test 11: Today with no completion — yesterday's streak is alive
 
     func test_todayWithNoCompletion_yesterdayStreakAlive() {

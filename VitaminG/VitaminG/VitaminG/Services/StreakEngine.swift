@@ -93,6 +93,35 @@ struct StreakEngine {
         return Double(uniqueGoalIDs.count) / Double(totalGoals)
     }
 
+    // MARK: - bestStreak
+
+    /// Computes the all-time best streak — the longest consecutive run of days
+    /// on which at least one CompletionEvent occurred.
+    ///
+    /// - Parameter events: Array of CompletionEvent records.
+    /// - Returns: Length of the longest consecutive-day run. Returns 0 for empty input.
+    static func bestStreak(events: [CompletionEvent]) -> Int {
+        let cal = Calendar.current
+        let days = Set(
+            events.compactMap { $0.completedAt }
+                  .map { cal.startOfDay(for: $0) }
+        )
+        guard !days.isEmpty else { return 0 }
+        var best = 0
+        for day in days {
+            let prev = cal.date(byAdding: .day, value: -1, to: day)!
+            guard !days.contains(prev) else { continue }
+            var run = 1
+            var next = cal.date(byAdding: .day, value: 1, to: day)!
+            while days.contains(next) {
+                run += 1
+                next = cal.date(byAdding: .day, value: 1, to: next)!
+            }
+            best = max(best, run)
+        }
+        return best
+    }
+
     // MARK: - Private Helpers
 
     /// Filters events by tier if provided; returns all events if tier is nil.
