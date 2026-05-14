@@ -55,7 +55,7 @@ enum GoalCategory: String, CaseIterable, Identifiable {
         case .habit:
             return ["Quit social media scrolling", "No snooze button", "Replace coffee with tea", "10 min cleanup daily"]
         case .other:
-            return ["Something uniquely yours"]
+            return ["Something uniquely yours", "Set your own intention"]
         }
     }
 }
