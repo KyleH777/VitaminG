@@ -60,7 +60,7 @@ struct ProfileView: View {
                         .font(.system(size: 10, weight: .semibold))
                         .foregroundStyle(VGTheme.muted)
                         .kerning(1.0)
-                    Text(""\(viewModel.todayQuote)"")
+                    Text("\u{201C}\(viewModel.todayQuote)\u{201D}")
                         .font(VGTheme.serifItalic(14))
                         .foregroundStyle(VGTheme.sand.opacity(0.85))
                         .lineLimit(3)

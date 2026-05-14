@@ -129,11 +129,8 @@ struct HomeView: View {
             HStack(spacing: 20) {
                 ProgressRingView(
                     progress: goalProgress(goal),
-                    size: 100,
-                    strokeWidth: 8,
-                    color: VGTheme.terraSoft,
-                    trackColor: Color.white.opacity(0.1),
-                    label: "\(Int(goalProgress(goal) * 100))%"
+                    tier: goal.tier,
+                    isCompleted: goal.isCompleted
                 )
 
                 VStack(alignment: .leading, spacing: 6) {
@@ -143,7 +140,7 @@ struct HomeView: View {
                         .lineLimit(3)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    Text(goal.tier.label)
+                    Text(goal.tier.displayName)
                         .font(.system(size: 12))
                         .foregroundStyle(VGTheme.muted)
 
@@ -161,7 +158,7 @@ struct HomeView: View {
 
             HStack(spacing: 10) {
                 statCell(value: "\(goal.completionEvents?.count ?? 0)", label: "Check-ins")
-                statCell(value: goal.tier.label, label: "Tier")
+                statCell(value: goal.tier.displayName, label: "Tier")
                 statCell(value: goal.isPublic ? "Public" : "Private", label: "Visibility")
             }
         }
@@ -228,11 +225,8 @@ struct HomeView: View {
         HStack(spacing: 14) {
             ProgressRingView(
                 progress: goalProgress(goal),
-                size: 46,
-                strokeWidth: 4,
-                color: goal.tier.color,
-                trackColor: VGTheme.separator,
-                label: "\(Int(goalProgress(goal) * 100))%"
+                tier: goal.tier,
+                isCompleted: goal.isCompleted
             )
 
             VStack(alignment: .leading, spacing: 3) {
@@ -241,7 +235,7 @@ struct HomeView: View {
                     .foregroundStyle(VGTheme.sand)
                     .lineLimit(2)
                 HStack(spacing: 6) {
-                    Text(goal.tier.label)
+                    Text(goal.tier.displayName)
                         .font(.system(size: 11))
                         .foregroundStyle(VGTheme.muted)
                     Text("·")

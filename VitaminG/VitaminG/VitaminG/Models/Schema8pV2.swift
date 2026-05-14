@@ -93,6 +93,12 @@ enum SchemaV2: VersionedSchema {
             self.completedAt = Date()
         }
 
+        /// No-arg init for test construction and other in-memory usage where a Goal
+        /// relationship is not required at creation time.
+        init() {
+            self.id = UUID()
+        }
+
         /// Computed accessor for the GoalTier enum.
         var tier: GoalTier {
             GoalTier(rawValue: tierRawValue ?? "") ?? .immediate
