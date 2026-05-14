@@ -24,12 +24,19 @@ final class StatsViewModel {
     /// Pre-built heatmap dictionary keyed by Calendar.startOfDay for O(1) per-cell lookup.
     var heatmapData: [Date: Int] = [:]
 
+    /// Weighted consistency score in [0, 100] over the last 30 days.
+    var consistencyScore: Int = 0
+    /// Bool array of length 7: index 0 = today, index 6 = 6 days ago.
+    var recentDaysActivity: [Bool] = Array(repeating: false, count: 7)
+
     // MARK: - Refresh
 
     /// Recomputes all stats from raw SwiftData arrays.
     /// Call from StatsView.onAppear and .onChange of events/goals.
     func refresh(events: [CompletionEvent], goals: [Goal]) {
         globalStreak = StreakEngine.currentStreak(from: events)
+        consistencyScore = ConsistencyEngine.score(events: events)
+        recentDaysActivity = ConsistencyEngine.recentDays(events: events)
 
         for tier in GoalTier.ordered {
             tierStreaks[tier] = StreakEngine.currentStreak(from: events, tier: tier)

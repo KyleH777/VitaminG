@@ -18,6 +18,10 @@ struct StatsView: View {
         ScrollView {
             VStack(spacing: 20) {
                 globalStreakCard
+                ConsistencyScoreCard(
+                    score: viewModel.consistencyScore,
+                    recentDays: viewModel.recentDaysActivity
+                )
                 tierStreakGrid
                 heatmapSection
             }
