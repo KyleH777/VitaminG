@@ -21,12 +21,17 @@ struct StreakEngine {
     ///   - events: Array of CompletionEvent records (STATS-06: sole source of truth)
     ///   - tier: If provided, only count events matching this tier (STATS-01).
     ///           If nil, count all tiers (STATS-02: global streak).
+    ///   - frozenDates: Dates that count as completed days regardless of real events
+    ///                  (e.g. streak freeze burns). Defaults to `[]` so existing callers
+    ///                  are unaffected. Merged into the day set before computation; duplicate
+    ///                  dates (same startOfDay) are deduplicated by the Set.
     ///   - calendar: Injectable Calendar for testability (STATS-03: DST-safe).
     ///               Defaults to `.current`.
     /// - Returns: Number of consecutive days in the current streak.
     static func currentStreak(
         from events: [CompletionEvent],
         tier: GoalTier? = nil,
+        frozenDates: [Date] = [],
         calendar: Calendar = .current
     ) -> Int {
         // Step 1: Filter by tier if provided; T-03-02 — GoalTier(rawValue:) handles invalid raw values
@@ -35,9 +40,13 @@ struct StreakEngine {
         // Step 2: Build a Set<Date> of unique calendar start-of-day values.
         // compactMap skips nil completedAt (T-03-01 threat mitigation).
         // calendar.startOfDay(for:) is DST-safe — no raw 86400s.
-        let days: Set<Date> = Set(
+        var days: Set<Date> = Set(
             filtered.compactMap { $0.completedAt }.map { calendar.startOfDay(for: $0) }
         )
+        // Frozen dates count as completed days; union deduplicates same-day entries.
+        for frozen in frozenDates {
+            days.insert(calendar.startOfDay(for: frozen))
+        }
 
         guard !days.isEmpty else { return 0 }
 

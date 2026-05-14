@@ -213,4 +213,32 @@ final class StreakEngineTests: XCTestCase {
         let streak = StreakEngine.currentStreak(from: [e1, e2], tier: nil)
         XCTAssertEqual(streak, 2, "No event today, but yesterday + day-before consecutive = streak of 2 (day isn't over)")
     }
+
+    // MARK: - Frozen Dates Tests
+
+    func test_frozenDate_countsAsCompletedDay() {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: .now)
+        let result = StreakEngine.currentStreak(from: [], frozenDates: [today])
+        XCTAssertEqual(result, 1)
+    }
+
+    func test_frozenDatePlusPriorDay_givesStreak2() {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: .now)
+        let yesterday = cal.date(byAdding: .day, value: -1, to: today)!
+
+        let e = CompletionEvent()
+        e.completedAt = yesterday
+
+        let result = StreakEngine.currentStreak(from: [e], frozenDates: [today])
+        XCTAssertEqual(result, 2)
+    }
+
+    func test_existingCallersUnaffected_defaultFrozenDatesEmpty() {
+        let e = CompletionEvent()
+        e.completedAt = Calendar.current.startOfDay(for: .now)
+        let result = StreakEngine.currentStreak(from: [e])
+        XCTAssertEqual(result, 1)
+    }
 }
