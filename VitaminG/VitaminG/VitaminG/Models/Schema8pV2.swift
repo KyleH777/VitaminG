@@ -1,7 +1,9 @@
 import SwiftData
 import Foundation
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#endif
 
 // MARK: - SchemaV2
 
@@ -140,6 +142,7 @@ typealias UserProfile = SchemaV2.UserProfile
 // MARK: - Color+Hex
 
 extension Color {
+    #if canImport(UIKit)
     /// Returns the hex string representation of this color (e.g. "#FF6B4A").
     var hexString: String {
         let uiColor = UIColor(self)
@@ -147,6 +150,7 @@ extension Color {
         uiColor.getRed(&r, green: &g, blue: &b, alpha: &a)
         return String(format: "#%02X%02X%02X", Int(r * 255), Int(g * 255), Int(b * 255))
     }
+    #endif
 
     /// Initialises a Color from a hex string (e.g. "#FF6B4A" or "FF6B4A").
     init(hex: String) {

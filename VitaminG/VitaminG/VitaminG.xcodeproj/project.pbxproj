@@ -3,21 +3,21 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 100;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		AA01000000000001 /* WidgetDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000002 /* WidgetDataProvider.swift */; };
 		AA01000000000003 /* SchemaV1.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000004 /* SchemaV1.swift */; };
-		AA0100000000001A /* SchemaV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000001B /* SchemaV2.swift */; };
-		AA0100000000001C /* SchemaV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000001D /* SchemaV3.swift */; };
-		AA0100000000001E /* VitaminGMigrationPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000001F /* VitaminGMigrationPlan.swift */; };
-		AA01000000000020 /* SchemaV4.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000021 /* SchemaV4.swift */; };
-		AA01000000000022 /* SchemaV5.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000023 /* SchemaV5.swift */; };
 		AA01000000000005 /* Goal.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000006 /* Goal.swift */; };
 		AA01000000000007 /* ModelContainerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000008 /* ModelContainerFactory.swift */; };
 		AA01000000000009 /* StreakEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000000A /* StreakEngine.swift */; };
 		AA0100000000000B /* VitaminGWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AA0100000000000C /* VitaminGWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		AA0100000000001A /* Schema8pV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000001B /* Schema8pV2.swift */; };
+		AA0100000000001C /* SchemaV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000001D /* SchemaV3.swift */; };
+		AA0100000000001E /* VitaminGMigrationPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000001F /* VitaminGMigrationPlan.swift */; };
+		AA01000000000020 /* SchemaV4.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000021 /* SchemaV4.swift */; };
+		AA01000000000022 /* SchemaV5.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000023 /* SchemaV5.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,14 +47,12 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		AA0100000000000F /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 13;
+			dstSubfolder = PlugIns;
 			files = (
 				AA0100000000000B /* VitaminGWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -64,15 +62,15 @@
 		591E4B022F8097D700CE6C31 /* VitaminGUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VitaminGUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA01000000000002 /* WidgetDataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WidgetDataProvider.swift; path = VitaminG/Services/WidgetDataProvider.swift; sourceTree = SOURCE_ROOT; };
 		AA01000000000004 /* SchemaV1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV1.swift; path = VitaminG/Models/SchemaV1.swift; sourceTree = SOURCE_ROOT; };
-		AA0100000000001B /* SchemaV2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV2.swift; path = VitaminG/Models/SchemaV2.swift; sourceTree = SOURCE_ROOT; };
-		AA0100000000001D /* SchemaV3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV3.swift; path = VitaminG/Models/SchemaV3.swift; sourceTree = SOURCE_ROOT; };
-		AA0100000000001F /* VitaminGMigrationPlan.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VitaminGMigrationPlan.swift; path = VitaminG/Models/VitaminGMigrationPlan.swift; sourceTree = SOURCE_ROOT; };
-		AA01000000000021 /* SchemaV4.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV4.swift; path = VitaminG/Models/SchemaV4.swift; sourceTree = SOURCE_ROOT; };
-		AA01000000000023 /* SchemaV5.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV5.swift; path = VitaminG/Models/SchemaV5.swift; sourceTree = SOURCE_ROOT; };
 		AA01000000000006 /* Goal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Goal.swift; path = VitaminG/Models/Goal.swift; sourceTree = SOURCE_ROOT; };
 		AA01000000000008 /* ModelContainerFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ModelContainerFactory.swift; path = VitaminG/Persistence/ModelContainerFactory.swift; sourceTree = SOURCE_ROOT; };
 		AA0100000000000A /* StreakEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StreakEngine.swift; path = VitaminG/Services/StreakEngine.swift; sourceTree = SOURCE_ROOT; };
 		AA0100000000000C /* VitaminGWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = VitaminGWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA0100000000001B /* Schema8pV2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Schema8pV2.swift; path = VitaminG/Models/Schema8pV2.swift; sourceTree = SOURCE_ROOT; };
+		AA0100000000001D /* SchemaV3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV3.swift; path = VitaminG/Models/SchemaV3.swift; sourceTree = SOURCE_ROOT; };
+		AA0100000000001F /* VitaminGMigrationPlan.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VitaminGMigrationPlan.swift; path = VitaminG/Models/VitaminGMigrationPlan.swift; sourceTree = SOURCE_ROOT; };
+		AA01000000000021 /* SchemaV4.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV4.swift; path = VitaminG/Models/SchemaV4.swift; sourceTree = SOURCE_ROOT; };
+		AA01000000000023 /* SchemaV5.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV5.swift; path = VitaminG/Models/SchemaV5.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -124,31 +122,23 @@
 /* Begin PBXFrameworksBuildPhase section */
 		591E4AE42F8097D500CE6C31 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		591E4AF52F8097D700CE6C31 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		591E4AFF2F8097D700CE6C31 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		AA010000000000012 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -164,6 +154,7 @@
 				59816B322F8D5ED100EDA10F /* Recovered References */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		591E4AE82F8097D500CE6C31 /* Products */ = {
 			isa = PBXGroup;
@@ -181,7 +172,7 @@
 			children = (
 				AA01000000000002 /* WidgetDataProvider.swift */,
 				AA01000000000004 /* SchemaV1.swift */,
-				AA0100000000001B /* SchemaV2.swift */,
+				AA0100000000001B /* Schema8pV2.swift */,
 				AA0100000000001D /* SchemaV3.swift */,
 				AA0100000000001F /* VitaminGMigrationPlan.swift */,
 				AA01000000000021 /* SchemaV4.swift */,
@@ -214,8 +205,6 @@
 				591E4AE92F8097D500CE6C31 /* VitaminG */,
 			);
 			name = VitaminG;
-			packageProductDependencies = (
-			);
 			productName = VitaminG;
 			productReference = 591E4AE72F8097D500CE6C31 /* VitaminG.app */;
 			productType = "com.apple.product-type.application";
@@ -237,8 +226,6 @@
 				591E4AFB2F8097D700CE6C31 /* VitaminGTests */,
 			);
 			name = VitaminGTests;
-			packageProductDependencies = (
-			);
 			productName = VitaminGTests;
 			productReference = 591E4AF82F8097D700CE6C31 /* VitaminGTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -260,8 +247,6 @@
 				591E4B052F8097D700CE6C31 /* VitaminGUITests */,
 			);
 			name = VitaminGUITests;
-			packageProductDependencies = (
-			);
 			productName = VitaminGUITests;
 			productReference = 591E4B022F8097D700CE6C31 /* VitaminGUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -276,14 +261,10 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			fileSystemSynchronizedGroups = (
 				AA010000000000011 /* VitaminGWidget */,
 			);
 			name = VitaminGWidgetExtension;
-			packageProductDependencies = (
-			);
 			productName = VitaminGWidgetExtension;
 			productReference = AA0100000000000C /* VitaminGWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -296,7 +277,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2640;
-				LastUpgradeCheck = 2640;
+				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					591E4AE62F8097D500CE6C31 = {
 						CreatedOnToolsVersion = 26.4;
@@ -314,7 +295,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 591E4AE22F8097D500CE6C31 /* Build configuration list for PBXProject "VitaminG" */;
+			buildConfigurationList = 591E4AE22F8097D500CE6C31 /* Build configuration list for PBXProject "Vitamin G" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -323,7 +304,10 @@
 			);
 			mainGroup = 591E4ADE2F8097D500CE6C31;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
+			packageReferences = (
+				5973DB682FB5588200EFA70F /* XCRemoteSwiftPackageReference "open-multi-agent" */,
+			);
+			preferredProjectObjectVersion = 100;
 			productRefGroup = 591E4AE82F8097D500CE6C31 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -339,63 +323,48 @@
 /* Begin PBXResourcesBuildPhase section */
 		591E4AE52F8097D500CE6C31 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		591E4AF62F8097D700CE6C31 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		591E4B002F8097D700CE6C31 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		AA010000000000016 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		591E4AE32F8097D500CE6C31 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		591E4AF42F8097D700CE6C31 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		591E4AFE2F8097D700CE6C31 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		AA010000000000015 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				AA01000000000001 /* WidgetDataProvider.swift in Sources */,
 				AA01000000000003 /* SchemaV1.swift in Sources */,
-				AA0100000000001A /* SchemaV2.swift in Sources */,
+				AA0100000000001A /* Schema8pV2.swift in Sources */,
 				AA0100000000001C /* SchemaV3.swift in Sources */,
 				AA0100000000001E /* VitaminGMigrationPlan.swift in Sources */,
 				AA01000000000020 /* SchemaV4.swift in Sources */,
@@ -404,7 +373,6 @@
 				AA01000000000007 /* ModelContainerFactory.swift in Sources */,
 				AA01000000000009 /* StreakEngine.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
@@ -427,19 +395,23 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		591E4B0C2F8097D700CE6C31 /* Debug */ = {
+		591E4B0C2F8097D700CE6C31 /* Debug configuration for PBXNativeTarget "VitaminG" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = L5K62B8KK5;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VitaminG/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Vitamin G";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -471,19 +443,23 @@
 			};
 			name = Debug;
 		};
-		591E4B0D2F8097D700CE6C31 /* Release */ = {
+		591E4B0D2F8097D700CE6C31 /* Release configuration for PBXNativeTarget "VitaminG" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = L5K62B8KK5;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VitaminG/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Vitamin G";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -515,7 +491,7 @@
 			};
 			name = Release;
 		};
-		591E4B0E2F8097D700CE6C31 /* Debug */ = {
+		591E4B0E2F8097D700CE6C31 /* Debug configuration for PBXProject "Vitamin G" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -549,6 +525,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -571,12 +548,13 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
-		591E4B0F2F8097D700CE6C31 /* Release */ = {
+		591E4B0F2F8097D700CE6C31 /* Release configuration for PBXProject "Vitamin G" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -610,6 +588,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -625,17 +604,20 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 			};
 			name = Release;
 		};
-		591E4B112F8097D700CE6C31 /* Debug */ = {
+		591E4B112F8097D700CE6C31 /* Debug configuration for PBXNativeTarget "VitaminGTests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = L5K62B8KK5;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
 				MACOSX_DEPLOYMENT_TARGET = 26.3;
@@ -656,13 +638,15 @@
 			};
 			name = Debug;
 		};
-		591E4B122F8097D700CE6C31 /* Release */ = {
+		591E4B122F8097D700CE6C31 /* Release configuration for PBXNativeTarget "VitaminGTests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = L5K62B8KK5;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
 				MACOSX_DEPLOYMENT_TARGET = 26.3;
@@ -683,11 +667,13 @@
 			};
 			name = Release;
 		};
-		591E4B142F8097D700CE6C31 /* Debug */ = {
+		591E4B142F8097D700CE6C31 /* Debug configuration for PBXNativeTarget "VitaminGUITests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = L5K62B8KK5;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
 				MACOSX_DEPLOYMENT_TARGET = 26.3;
@@ -707,11 +693,13 @@
 			};
 			name = Debug;
 		};
-		591E4B152F8097D700CE6C31 /* Release */ = {
+		591E4B152F8097D700CE6C31 /* Release configuration for PBXNativeTarget "VitaminGUITests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = L5K62B8KK5;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
 				MACOSX_DEPLOYMENT_TARGET = 26.3;
@@ -731,7 +719,7 @@
 			};
 			name = Release;
 		};
-		AA010000000000017 /* Debug */ = {
+		AA010000000000017 /* Debug configuration for PBXNativeTarget "VitaminGWidgetExtension" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -759,7 +747,7 @@
 			};
 			name = Debug;
 		};
-		AA010000000000018 /* Release */ = {
+		AA010000000000018 /* Release configuration for PBXNativeTarget "VitaminGWidgetExtension" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -790,52 +778,58 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		591E4AE22F8097D500CE6C31 /* Build configuration list for PBXProject "VitaminG" */ = {
+		591E4AE22F8097D500CE6C31 /* Build configuration list for PBXProject "Vitamin G" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				591E4B0E2F8097D700CE6C31 /* Debug */,
-				591E4B0F2F8097D700CE6C31 /* Release */,
+				591E4B0E2F8097D700CE6C31 /* Debug configuration for PBXProject "Vitamin G" */,
+				591E4B0F2F8097D700CE6C31 /* Release configuration for PBXProject "Vitamin G" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		591E4B0B2F8097D700CE6C31 /* Build configuration list for PBXNativeTarget "VitaminG" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				591E4B0C2F8097D700CE6C31 /* Debug */,
-				591E4B0D2F8097D700CE6C31 /* Release */,
+				591E4B0C2F8097D700CE6C31 /* Debug configuration for PBXNativeTarget "VitaminG" */,
+				591E4B0D2F8097D700CE6C31 /* Release configuration for PBXNativeTarget "VitaminG" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		591E4B102F8097D700CE6C31 /* Build configuration list for PBXNativeTarget "VitaminGTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				591E4B112F8097D700CE6C31 /* Debug */,
-				591E4B122F8097D700CE6C31 /* Release */,
+				591E4B112F8097D700CE6C31 /* Debug configuration for PBXNativeTarget "VitaminGTests" */,
+				591E4B122F8097D700CE6C31 /* Release configuration for PBXNativeTarget "VitaminGTests" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		591E4B132F8097D700CE6C31 /* Build configuration list for PBXNativeTarget "VitaminGUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				591E4B142F8097D700CE6C31 /* Debug */,
-				591E4B152F8097D700CE6C31 /* Release */,
+				591E4B142F8097D700CE6C31 /* Debug configuration for PBXNativeTarget "VitaminGUITests" */,
+				591E4B152F8097D700CE6C31 /* Release configuration for PBXNativeTarget "VitaminGUITests" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		AA010000000000014 /* Build configuration list for PBXNativeTarget "VitaminGWidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AA010000000000017 /* Debug */,
-				AA010000000000018 /* Release */,
+				AA010000000000017 /* Debug configuration for PBXNativeTarget "VitaminGWidgetExtension" */,
+				AA010000000000018 /* Release configuration for PBXNativeTarget "VitaminGWidgetExtension" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5973DB682FB5588200EFA70F /* XCRemoteSwiftPackageReference "open-multi-agent" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/open-multi-agent/open-multi-agent";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = 591E4ADF2F8097D500CE6C31 /* Project object */;
 }
