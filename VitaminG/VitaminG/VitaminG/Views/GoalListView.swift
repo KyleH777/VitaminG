@@ -1,12 +1,11 @@
 import SwiftUI
 import SwiftData
 
-// MARK: - GoalListView
-
 struct GoalListView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var goals: [Goal]   // no sort descriptor — dynamic sort via computed property
+    @Query private var goals: [Goal]
     @Query private var events: [CompletionEvent]
+    @Query private var userChallenges: [UserChallenge]
 
     @State private var viewModel = GoalViewModel()
     @State private var showingAddGoal = false
@@ -15,49 +14,28 @@ struct GoalListView: View {
     @State private var sortOption: SortOption = .byTier
     @State private var pendingMilestone: (goalID: UUID, threshold: Int)? = nil
 
-    // MARK: Derived
-
     private var hasAnyGoals: Bool { !goals.isEmpty }
-
-    /// All goals sorted by the current SortOption.
-    private var sortedGoals: [Goal] {
-        GoalSorter.sort(goals, by: sortOption)
+    private var sortedGoals: [Goal] { GoalSorter.sort(goals, by: sortOption) }
+    private func goals(for tier: GoalTier) -> [Goal] { sortedGoals.filter { $0.tier == tier } }
+    private var primaryChallenge: UserChallenge? {
+        userChallenges.first(where: { $0.statusRaw == "active" })
     }
-
-    /// Goals for a tier section, sourced from sortedGoals.
-    /// GoalSorter.byTier already orders active before completed within tier (D-09).
-    private func goals(for tier: GoalTier) -> [Goal] {
-        sortedGoals.filter { $0.tier == tier }
-    }
-
-    // MARK: Body
 
     var body: some View {
         Group {
             if hasAnyGoals {
-                goalList
+                goalScrollView
             } else {
-                EmptyStateView {
-                    showingAddGoal = true
-                }
+                EmptyStateView { showingAddGoal = true }
             }
         }
-        .navigationTitle("My Goals")
-        .navigationBarTitleDisplayMode(.large)
+        .background(VGTheme.sandLight)
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    showingAddGoal = true
-                } label: {
-                    Label("Add Goal", systemImage: "plus")
-                }
-            }
             ToolbarItem(placement: .secondaryAction) {
                 Menu {
                     Picker("Sort", selection: $sortOption) {
                         ForEach(SortOption.allCases, id: \.self) { option in
-                            Label(option.displayName, systemImage: option.systemImage)
-                                .tag(option)
+                            Label(option.displayName, systemImage: option.systemImage).tag(option)
                         }
                     }
                 } label: {
@@ -66,78 +44,17 @@ struct GoalListView: View {
                 .accessibilityLabel("Sort goals")
             }
         }
-        .sheet(isPresented: $showingAddGoal) {
-            AddGoalView(viewModel: viewModel)
-        }
-        .confirmationDialog(
-            "Delete this goal?",
-            isPresented: $showingDeleteConfirmation,
-            titleVisibility: .visible
-        ) {
+        .sheet(isPresented: $showingAddGoal) { AddGoalView(viewModel: viewModel) }
+        .confirmationDialog("Delete this goal?", isPresented: $showingDeleteConfirmation, titleVisibility: .visible) {
             Button("Delete", role: .destructive) {
-                if let goal = goalToDelete {
-                    viewModel.delete(goal: goal, context: modelContext)
-                }
+                if let goal = goalToDelete { viewModel.delete(goal: goal, context: modelContext) }
             }
             Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("This action cannot be undone.")
-        }
-    }
-
-    // MARK: Goal List
-
-    private var goalList: some View {
-        List {
-            if sortOption == .byCompletionStatus {
-                // D-08: Two sections — Active (tier-ordered within) + Completed (flat)
-                let active    = sortedGoals.filter { !$0.completed }
-                let completed = sortedGoals.filter { $0.completed }
-                if !active.isEmpty {
-                    Section("Active") {
-                        ForEach(active) { goal in
-                            goalRow(for: goal)
-                        }
-                    }
-                }
-                if !completed.isEmpty {
-                    Section("Completed") {
-                        ForEach(completed) { goal in
-                            goalRow(for: goal)
-                        }
-                    }
-                }
-            } else {
-                // Tier sections (byTier default + byCreationDate)
-                ForEach(GoalTier.ordered, id: \.self) { tier in
-                    let tieredGoals = goals(for: tier)
-                    TierSectionView(tier: tier) {
-                        if tieredGoals.isEmpty {
-                            EmptyTierView(tier: tier) {
-                                viewModel.draftTier = tier
-                                showingAddGoal = true
-                            }
-                        } else {
-                            ForEach(tieredGoals) { goal in
-                                goalRow(for: goal)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        .listStyle(.insetGrouped)
-        .animation(.easeOut(duration: 0.25), value: sortOption)
-        .animation(.easeOut(duration: 0.15), value: goals.count)
+        } message: { Text("This action cannot be undone.") }
         .onChange(of: viewModel.pendingMilestone?.goalID) { _, _ in
-            // Consume the milestone event from GoalViewModel and route it to the
-            // matching row via @State. The row observes its own milestoneThreshold
-            // parameter via .onChange(of:) and triggers the overlay.
             if let milestone = viewModel.pendingMilestone {
                 pendingMilestone = milestone
                 viewModel.pendingMilestone = nil
-                // Auto-clear after the animation window so the same threshold can
-                // refire on a subsequent goal that hits the same count.
                 Task { @MainActor in
                     try? await Task.sleep(for: .seconds(3))
                     pendingMilestone = nil
@@ -146,29 +63,94 @@ struct GoalListView: View {
         }
     }
 
-    // MARK: Goal Row Helper
+    private var goalScrollView: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text("My Goals")
+                        .font(VGTheme.serif(28))
+                        .foregroundStyle(VGTheme.clay)
+                    Spacer()
+                    Button {
+                        showingAddGoal = true
+                    } label: {
+                        Text("+ New Goal")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 8)
+                            .background(VGTheme.terra)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 20)
+                .padding(.bottom, 4)
+
+                if let challenge = primaryChallenge {
+                    ChallengeHeroCard(challenge: challenge)
+                        .padding(.horizontal, 16)
+                }
+
+                if sortOption == .byCompletionStatus {
+                    let active    = sortedGoals.filter { !$0.isCompleted }
+                    let completed = sortedGoals.filter { $0.isCompleted }
+                    if !active.isEmpty {
+                        sectionHeader("Active")
+                        ForEach(active) { goal in goalCard(for: goal) }
+                    }
+                    if !completed.isEmpty {
+                        sectionHeader("Completed")
+                        ForEach(completed) { goal in goalCard(for: goal) }
+                    }
+                } else {
+                    ForEach(GoalTier.ordered, id: \.self) { tier in
+                        let tieredGoals = goals(for: tier)
+                        sectionHeader(tier.displayName.uppercased())
+                        if tieredGoals.isEmpty {
+                            EmptyTierView(tier: tier) {
+                                viewModel.draftTier = tier
+                                showingAddGoal = true
+                            }
+                            .padding(.horizontal, 16)
+                        } else {
+                            ForEach(tieredGoals) { goal in goalCard(for: goal) }
+                        }
+                    }
+                }
+
+                Spacer(minLength: 32)
+            }
+        }
+        .animation(.easeOut(duration: 0.25), value: sortOption)
+        .animation(.easeOut(duration: 0.15), value: goals.count)
+    }
 
     @ViewBuilder
-    private func goalRow(for goal: Goal) -> some View {
+    private func sectionHeader(_ text: String) -> some View {
+        Text(text)
+            .font(.system(size: 10, weight: .bold))
+            .foregroundStyle(VGTheme.muted)
+            .kerning(1.0)
+            .padding(.horizontal, 24)
+            .padding(.top, 8)
+    }
+
+    @ViewBuilder
+    private func goalCard(for goal: Goal) -> some View {
         let milestoneThreshold: Int? = (pendingMilestone?.goalID == goal.id)
-            ? pendingMilestone?.threshold
-            : nil
+            ? pendingMilestone?.threshold : nil
         NavigationLink(value: AppRoute.goalDetail(goal)) {
-            GoalRowView(
+            GoalCardView(
                 goal: goal,
                 events: events,
                 milestoneThreshold: milestoneThreshold,
-                onToggle: {
-                    viewModel.toggleCompletion(goal: goal, context: modelContext)
-                }
+                onToggle: { viewModel.toggleCompletion(goal: goal, context: modelContext) }
             )
         }
-        .listRowBackground(
-            goal.completed
-                ? Color.completionGreen.opacity(0.08)
-                : Color(.secondarySystemGroupedBackground)
-        )
-        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+        .buttonStyle(.plain)
+        .padding(.horizontal, 16)
+        .contextMenu {
             Button(role: .destructive) {
                 goalToDelete = goal
                 showingDeleteConfirmation = true
@@ -179,92 +161,143 @@ struct GoalListView: View {
     }
 }
 
-// MARK: - TierSectionView
+// MARK: - ChallengeHeroCard
 
-private struct TierSectionView<Content: View>: View {
-    let tier: GoalTier
-    @ViewBuilder let content: () -> Content
+private struct ChallengeHeroCard: View {
+    let challenge: UserChallenge
+
+    private var challengeName: String { challenge.template?.title ?? "Challenge" }
+    private var category: String { challenge.template?.category ?? "" }
+    private var dayNumber: Int { challenge.totalCheckIns }
+    private var daysRemaining: Int { max(0, (challenge.template?.durationDays ?? 90) - dayNumber) }
+    private var progress: Double {
+        let total = Double(challenge.template?.durationDays ?? 90)
+        return min(1.0, Double(dayNumber) / max(1, total))
+    }
+    private let weekDays = ["M","T","W","T","F","S","S"]
 
     var body: some View {
-        Section {
-            content()
-        } header: {
-            HStack(spacing: 8) {
-                Image(systemName: tier.icon)
-                    .foregroundStyle(tier.color)
-                Text(tier.displayName)
-                    .font(.subheadline.weight(tier.typographicWeight))
-                    .foregroundStyle(tier.color)
+        ZStack(alignment: .topTrailing) {
+            Circle()
+                .fill(VGTheme.terra.opacity(0.15))
+                .frame(width: 120, height: 120)
+                .offset(x: 30, y: -30)
+
+            VStack(alignment: .leading, spacing: 0) {
+                Text(category.uppercased())
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(VGTheme.muted)
+                    .kerning(1.2)
+                    .padding(.bottom, 12)
+
+                HStack(alignment: .center, spacing: 18) {
+                    ProgressRingView(
+                        progress: progress,
+                        tier: .immediate,
+                        isCompleted: false
+                    )
+                    .frame(width: 80, height: 80)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(challengeName)
+                            .font(VGTheme.serif(18))
+                            .foregroundStyle(VGTheme.sand)
+                            .lineLimit(2)
+                        Text("\(daysRemaining) days remaining")
+                            .font(.system(size: 12))
+                            .foregroundStyle(VGTheme.muted)
+                        HStack(spacing: 5) {
+                            Circle().fill(VGTheme.sage).frame(width: 8, height: 8)
+                            Text("On track")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundStyle(VGTheme.sage)
+                        }
+                        .padding(.top, 4)
+                    }
+                }
+                .padding(.bottom, 16)
+
+                HStack(spacing: 6) {
+                    ForEach(Array(weekDays.enumerated()), id: \.offset) { i, day in
+                        VStack(spacing: 4) {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(i < 5 ? VGTheme.terraSoft.opacity(0.7) : Color.white.opacity(0.1))
+                                .frame(height: 28)
+                            Text(day)
+                                .font(.system(size: 10))
+                                .foregroundStyle(VGTheme.muted)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                }
             }
-            .textCase(nil)
+            .padding(20)
         }
+        .background(
+            LinearGradient(
+                colors: [VGTheme.clay, VGTheme.clayMid],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .shadow(color: VGTheme.clay.opacity(0.3), radius: 12, y: 4)
     }
 }
 
-// MARK: - GoalRowView
+// MARK: - GoalCardView
 
-private struct GoalRowView: View {
+private struct GoalCardView: View {
     let goal: Goal
     let events: [CompletionEvent]
     let milestoneThreshold: Int?
     let onToggle: () -> Void
 
-    // MARK: - Milestone Badge State (PROG-03)
     @State private var showMilestoneBadge = false
     @State private var badgeOpacity: Double = 0
     @State private var badgeScale: CGFloat = 0.5
-
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var bounceScale: CGFloat = 1.0
     @State private var bounceTask: Task<Void, Never>?
     @State private var badgeTask: Task<Void, Never>?
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    private let completionGreen = Color.completionGreen
     private let progressVM = ProgressViewModel()
 
     var body: some View {
         HStack(spacing: 14) {
-            // Completion toggle — bounce effect on state change (D-10)
-            Button(action: onToggle) {
-                Image(systemName: goal.completed ? "checkmark.circle.fill" : "circle")
-                    .font(.title3)
-                    .foregroundStyle(goal.completed ? completionGreen : Color.secondary)
-                    .contentTransition(.symbolEffect(.replace))
-                    .symbolEffect(.bounce, value: goal.completed)
-            }
-            .buttonStyle(.plain)
-            .frame(minWidth: 44, minHeight: 44)
-            .accessibilityLabel(goal.completed
-                ? "Mark \(goal.title ?? "goal") as active"
-                : "Mark \(goal.title ?? "goal") as complete")
+            ProgressRingView(
+                progress: progressVM.ringProgress(for: goal, events: events),
+                tier: goal.tier,
+                isCompleted: goal.isCompleted
+            )
+            .frame(width: 48, height: 48)
 
             VStack(alignment: .leading, spacing: 3) {
-                // Title: completionGreen with thin strikethrough when complete (D-10, UI-SPEC)
                 Text(goal.title ?? "")
-                    .font(.body.weight(goal.tier.typographicWeight)).fontDesign(.rounded)
-                    .foregroundStyle(goal.completed ? completionGreen : Color.primary)
-                    .strikethrough(goal.completed, pattern: .solid,
-                                   color: completionGreen.opacity(0.5))
-
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(goal.isCompleted ? VGTheme.muted : VGTheme.clay)
+                    .strikethrough(goal.isCompleted, color: VGTheme.muted.opacity(0.6))
+                    .lineLimit(2)
                 if let desc = goal.goalDescription, !desc.isEmpty {
                     Text(desc)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(2)
+                        .font(.system(size: 12))
+                        .foregroundStyle(VGTheme.muted)
+                        .lineLimit(1)
                 }
             }
 
             Spacer()
 
-            // PROG-01 — circular progress ring replaces the prior tier pip (D-01)
-            ProgressRingView(
-                progress: progressVM.ringProgress(for: goal, events: events),
-                tier: goal.tier,
-                isCompleted: goal.completed
-            )
+            Image(systemName: "chevron.right")
+                .font(.system(size: 12))
+                .foregroundStyle(VGTheme.muted)
         }
-        .padding(.vertical, 4)
-        .contentShape(Rectangle())
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .background(VGTheme.warmWhite)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .shadow(color: VGTheme.clay.opacity(0.07), radius: 8, y: 1)
+        .scaleEffect(bounceScale)
         .overlay(alignment: .center) {
             if showMilestoneBadge, let threshold = milestoneThreshold {
                 Image(systemName: threshold == 50 ? "trophy.fill" : "star.fill")
@@ -272,76 +305,42 @@ private struct GoalRowView: View {
                     .foregroundStyle(goal.tier.color)
                     .scaleEffect(badgeScale)
                     .opacity(badgeOpacity)
-                    .zIndex(1)
                     .allowsHitTesting(false)
                     .accessibilityHidden(true)
             }
         }
-        .scaleEffect(bounceScale)
-        .onChange(of: goal.completed) { _, _ in
+        .onChange(of: goal.isCompleted) { _, _ in
             guard !reduceMotion else { return }
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
-                bounceScale = 1.02
-            }
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) { bounceScale = 1.02 }
             bounceTask?.cancel()
             bounceTask = Task { @MainActor in
                 try? await Task.sleep(for: .milliseconds(150))
                 guard !Task.isCancelled else { return }
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                    bounceScale = 1.0
-                }
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) { bounceScale = 1.0 }
             }
-        }
-        .onDisappear {
-            bounceTask?.cancel()
-            badgeTask?.cancel()
         }
         .onChange(of: milestoneThreshold) { _, newValue in
             guard newValue != nil else { return }
             fireMilestoneBadge(threshold: newValue ?? 0)
         }
+        .onDisappear { bounceTask?.cancel(); badgeTask?.cancel() }
     }
-
-    // MARK: - Milestone Badge Animation (PROG-03, D-12, D-14)
 
     private func fireMilestoneBadge(threshold: Int) {
         showMilestoneBadge = true
-        UIAccessibility.post(notification: .announcement,
-                             argument: "Milestone reached: \(threshold) completions!")
+        UIAccessibility.post(notification: .announcement, argument: "Milestone reached: \(threshold) completions!")
         badgeTask?.cancel()
-        if reduceMotion {
-            // Static badge: instant in, hold 0.5s, fade 0.2s
-            badgeOpacity = 1.0
-            badgeScale = 1.0
-            badgeTask = Task { @MainActor in
-                try? await Task.sleep(for: .milliseconds(500))
-                guard !Task.isCancelled else { return }
-                withAnimation(.easeIn(duration: 0.2)) { badgeOpacity = 0 }
-                try? await Task.sleep(for: .milliseconds(200))
-                guard !Task.isCancelled else { return }
-                showMilestoneBadge = false
-                badgeScale = 0.5
-            }
-        } else {
-            // Default: scale 0.5→1.2, opacity 0→1 (0.2s) → spring to 1.0 → hold 1.5s → fade 0.3s
-            withAnimation(.easeOut(duration: 0.2)) {
-                badgeOpacity = 1.0
-                badgeScale = 1.2
-            }
-            badgeTask = Task { @MainActor in
-                try? await Task.sleep(for: .milliseconds(200))
-                guard !Task.isCancelled else { return }
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                    badgeScale = 1.0
-                }
-                try? await Task.sleep(for: .milliseconds(1500))
-                guard !Task.isCancelled else { return }
-                withAnimation(.easeIn(duration: 0.3)) { badgeOpacity = 0 }
-                try? await Task.sleep(for: .milliseconds(300))
-                guard !Task.isCancelled else { return }
-                showMilestoneBadge = false
-                badgeScale = 0.5
-            }
+        withAnimation(.easeOut(duration: 0.2)) { badgeOpacity = 1.0; badgeScale = 1.2 }
+        badgeTask = Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(200))
+            guard !Task.isCancelled else { return }
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) { badgeScale = 1.0 }
+            try? await Task.sleep(for: .milliseconds(1500))
+            guard !Task.isCancelled else { return }
+            withAnimation(.easeIn(duration: 0.3)) { badgeOpacity = 0 }
+            try? await Task.sleep(for: .milliseconds(300))
+            guard !Task.isCancelled else { return }
+            showMilestoneBadge = false; badgeScale = 0.5
         }
     }
 }
@@ -357,7 +356,6 @@ struct EmptyStateView: View {
         VStack(spacing: 32) {
             Spacer()
 
-            // Illustration
             ZStack {
                 Circle()
                     .fill(
@@ -389,7 +387,6 @@ struct EmptyStateView: View {
                     .symbolEffect(.pulse, isActive: !reduceMotion)
             }
 
-            // Copy
             VStack(spacing: 12) {
                 Text("Time to take your Vitamin G!")
                     .font(.title2.bold())
@@ -403,7 +400,6 @@ struct EmptyStateView: View {
             }
             .padding(.horizontal, 32)
 
-            // CTA
             Button(action: onAddTapped) {
                 Label("Add Your First Goal", systemImage: "plus.circle.fill")
                     .font(.headline)
