@@ -2,7 +2,12 @@ import SwiftUI
 
 struct ConsistencyScoreCard: View {
     let score: Int
-    let recentDays: [Bool]   // 7 elements: index 0 = today
+    let recentDays: [Bool]   // 7 elements: index 0 = today; padded/truncated to 7 below
+
+    // Defensive: always exactly 7 elements regardless of caller
+    private var chartDays: [Bool] {
+        Array((recentDays + Array(repeating: false, count: 7)).prefix(7))
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -12,17 +17,18 @@ struct ConsistencyScoreCard: View {
                         .font(.subheadline.weight(.semibold))
                         .fontDesign(.rounded)
                         .foregroundStyle(VGTheme.textSecondary)
-                    Text("Last 30 days · recent days weighted")
+                    Text("Last 30 days · recent activity")
                         .font(.caption)
                         .foregroundStyle(VGTheme.textMuted)
                 }
                 Spacer()
-                // Mini 7-bar chart
+                // Mini 7-bar chart (oldest → newest, left to right)
                 HStack(alignment: .bottom, spacing: 3) {
-                    ForEach(Array(recentDays.reversed().enumerated()), id: \.offset) { _, active in
+                    ForEach(Array(chartDays.reversed().enumerated()), id: \.offset) { _, active in
                         RoundedRectangle(cornerRadius: 2)
                             .fill(active ? VGTheme.accentSage : VGTheme.separator)
                             .frame(width: 5, height: active ? 28 : 12)
+                            .animation(.easeInOut(duration: 0.25), value: active)
                     }
                 }
             }
