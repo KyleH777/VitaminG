@@ -15,7 +15,11 @@ final class GoalViewModelTests: XCTestCase {
         sut = GoalViewModel()
     }
 
-    override func tearDownWithError() throws {
+    override func tearDown() async throws {
+        // Yield the actor so any in-flight Tasks (e.g. rescheduleNotification) can
+        // complete before we nil the container. Destroying the container while a Task
+        // still holds Goal model references crashes with SwiftData temporaryIdentifier.
+        await Task.yield()
         sut = nil
         context = nil
         container = nil
