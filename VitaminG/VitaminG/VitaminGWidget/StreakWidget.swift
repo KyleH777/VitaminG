@@ -25,15 +25,13 @@ struct StreakProvider: TimelineProvider {
             let displayData = WidgetDataProvider.build(goals: goals, events: events)
             let entry = GoalEntry(date: .now, displayData: displayData)
 
-            let nextRefresh = WidgetDataProvider.nextMorningRefreshDate(
-                hour: NotificationPreferences.sharedHour(),
-                minute: NotificationPreferences.sharedMinute()
-            )
-            let timeline = Timeline(entries: [entry], policy: .after(nextRefresh))
+            // Push-only refresh: app explicitly calls reloadAllTimelines() on mutations (WIDGET-05)
+            let timeline = Timeline(entries: [entry], policy: .never)
             completion(timeline)
         } catch {
+            // Fallback: empty data — push-only refresh (WIDGET-05)
             let entry = GoalEntry(date: .now, displayData: .empty)
-            let timeline = Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
+            let timeline = Timeline(entries: [entry], policy: .never)
             completion(timeline)
         }
     }
