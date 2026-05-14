@@ -5,7 +5,7 @@ struct CommunityTabView: View {
     @Binding var selectedTab: Int
     @Query private var userChallenges: [UserChallenge]
     private var activeChallenges: [UserChallenge] {
-        userChallenges.filter { !$0.isCompleted }
+        userChallenges.filter { $0.statusRaw == "active" }
     }
 
     var body: some View {
@@ -74,7 +74,7 @@ private struct CommunityChallengeCellView: View {
         }
         return VGTheme.terra
     }
-    private var challengeName: String { challenge.template?.name ?? "Challenge" }
+    private var challengeName: String { challenge.template?.title ?? "Challenge" }
     private var categoryLabel: String { challenge.template?.category ?? "" }
 
     var body: some View {
