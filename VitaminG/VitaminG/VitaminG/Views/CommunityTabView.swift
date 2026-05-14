@@ -4,9 +4,7 @@ import SwiftData
 struct CommunityTabView: View {
     @Binding var selectedTab: Int
     @Query private var userChallenges: [UserChallenge]
-    @Environment(\.modelContext) private var modelContext
-
-    var activeChallenges: [UserChallenge] {
+    private var activeChallenges: [UserChallenge] {
         userChallenges.filter { !$0.isCompleted }
     }
 
@@ -71,7 +69,10 @@ private struct CommunityChallengeCellView: View {
     let challenge: UserChallenge
 
     private var accentColor: Color {
-        Color(hex: challenge.template?.accentColorHex ?? "#C4673A")
+        if let hex = challenge.template?.accentColorHex {
+            return Color(hex: hex)
+        }
+        return VGTheme.terra
     }
     private var challengeName: String { challenge.template?.name ?? "Challenge" }
     private var categoryLabel: String { challenge.template?.category ?? "" }

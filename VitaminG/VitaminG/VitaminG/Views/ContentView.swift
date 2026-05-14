@@ -21,6 +21,11 @@ struct ContentView: View {
 
             NavigationStack {
                 CommunityTabView(selectedTab: $selectedTab)
+                    .navigationDestination(for: AppRoute.self) { route in
+                        if case .communityFeed(let c) = route {
+                            CommunityFeedView(userChallenge: c)
+                        }
+                    }
             }
             .tabItem { Label("Community", systemImage: "person.2.fill") }
             .tag(2)
