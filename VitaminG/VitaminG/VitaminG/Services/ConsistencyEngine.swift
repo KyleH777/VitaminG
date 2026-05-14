@@ -17,9 +17,9 @@ struct ConsistencyEngine {
 
     private static let windowDays = 30
     /// Decay rate: larger values penalise older days more steeply.
-    /// At decay = 0.7, weight(day 0) accounts for ~50% of total weight across 30 days,
+    /// At decay = 0.75, weight(day 0) accounts for ~53% of total weight across 30 days,
     /// satisfying the test invariant that a single today-only event scores > 50.
-    /// weight(day 29) / weight(day 0) = exp(-0.7 * 29) ≈ 0.00001 — effectively negligible.
+    /// weight(day 29) / weight(day 0) = exp(-0.75 * 29) ≈ 0.000001 — effectively negligible.
     private static let decay: Double = 0.75
 
     // MARK: - score
