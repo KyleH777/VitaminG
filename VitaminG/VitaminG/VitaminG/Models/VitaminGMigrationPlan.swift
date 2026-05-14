@@ -15,15 +15,16 @@ import Foundation
 /// - V2 → V3: lightweight (added new DailyWin model)
 /// - V3 → V4: lightweight (added ChallengeTemplate, UserChallenge, CheckIn models — purely additive)
 /// - V4 → V5: lightweight (added TransformationPhoto, SpendingFreezeEntry, NutritionEntry + 4 optional fields — purely additive)
+/// - V5 → V6: lightweight (added category, frequency, reminderTime, startDate to Goal — all optional, purely additive)
 ///
 /// Source: developer.apple.com/documentation/swiftdata/modelcontainer/init(for:migrationplan:configurations:)
 enum VitaminGMigrationPlan: SchemaMigrationPlan {
     static var schemas: [any VersionedSchema.Type] {
-        [SchemaV1.self, SchemaV2.self, SchemaV3.self, SchemaV4.self, SchemaV5.self]
+        [SchemaV1.self, SchemaV2.self, SchemaV3.self, SchemaV4.self, SchemaV5.self, SchemaV6.self]
     }
 
     static var stages: [MigrationStage] {
-        [migrateV1toV2, migrateV2toV3, migrateV3toV4, migrateV4toV5]
+        [migrateV1toV2, migrateV2toV3, migrateV3toV4, migrateV4toV5, migrateV5toV6]
     }
 
     static let migrateV1toV2 = MigrationStage.lightweight(
@@ -44,5 +45,10 @@ enum VitaminGMigrationPlan: SchemaMigrationPlan {
     static let migrateV4toV5 = MigrationStage.lightweight(
         fromVersion: SchemaV4.self,
         toVersion: SchemaV5.self
+    )
+
+    static let migrateV5toV6 = MigrationStage.lightweight(
+        fromVersion: SchemaV5.self,
+        toVersion: SchemaV6.self
     )
 }

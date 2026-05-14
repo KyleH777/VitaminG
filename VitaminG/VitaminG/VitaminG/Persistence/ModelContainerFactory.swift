@@ -1,4 +1,5 @@
 import SwiftData
+import Foundation
 
 // MARK: - ModelContainerFactory
 
@@ -9,23 +10,30 @@ import SwiftData
 /// Testing: in-memory store with no App Group or CloudKit binding.
 enum ModelContainerFactory {
     static func makeContainer(inMemory: Bool = false) throws -> ModelContainer {
-        let schema = Schema(SchemaV5.models, version: SchemaV5.versionIdentifier)
+        let schema = Schema(SchemaV6.models, version: SchemaV6.versionIdentifier)
 
-        // On Simulator, App Group entitlements are not provisioned, so skip group container
-        // and CloudKit to avoid a fatal assertion crash at launch (affects both app and test runner).
-        #if targetEnvironment(simulator)
-        let config = ModelConfiguration(
-            schema: schema,
-            isStoredInMemoryOnly: inMemory
-        )
-        #else
-        let config = ModelConfiguration(
-            schema: schema,
-            isStoredInMemoryOnly: inMemory,
-            groupContainer: inMemory ? .none : .identifier("group.com.kyleharrington.VitaminG"),
-            cloudKitDatabase: inMemory ? .none : .automatic
-        )
-        #endif
+        // Check at runtime whether the App Group is provisioned.
+        // On Simulator and on device with a free personal team, this returns nil — fall back to
+        // a plain local store so the app doesn't fatal-crash on launch.
+        let appGroupAvailable = !inMemory &&
+            FileManager.default.containerURL(
+                forSecurityApplicationGroupIdentifier: "group.com.kyleharrington.VitaminG"
+            ) != nil
+
+        let config: ModelConfiguration
+        if appGroupAvailable {
+            // CloudKit disabled until paid Developer Program team is active in Xcode signing.
+            // Switch cloudKitDatabase back to .automatic once the paid team appears in the
+            // Team dropdown under Signing & Capabilities.
+            config = ModelConfiguration(
+                schema: schema,
+                isStoredInMemoryOnly: false,
+                groupContainer: .identifier("group.com.kyleharrington.VitaminG"),
+                cloudKitDatabase: .none
+            )
+        } else {
+            config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: inMemory)
+        }
 
         return try ModelContainer(for: schema, migrationPlan: VitaminGMigrationPlan.self, configurations: config)
     }
@@ -35,21 +43,23 @@ enum ModelContainerFactory {
     /// Pitfall 2 from RESEARCH.md: widget must use cloudKitDatabase: .none.
     /// Must use same schema + migration plan as makeContainer to avoid store mismatch crash (T-07-02).
     static func makeWidgetContainer() throws -> ModelContainer {
-        let schema = Schema(SchemaV5.models, version: SchemaV5.versionIdentifier)
+        let schema = Schema(SchemaV6.models, version: SchemaV6.versionIdentifier)
 
-        #if targetEnvironment(simulator)
-        let config = ModelConfiguration(
-            schema: schema,
-            isStoredInMemoryOnly: false
-        )
-        #else
-        let config = ModelConfiguration(
-            schema: schema,
-            isStoredInMemoryOnly: false,
-            groupContainer: .identifier("group.com.kyleharrington.VitaminG"),
-            cloudKitDatabase: .none
-        )
-        #endif
+        let appGroupAvailable = FileManager.default.containerURL(
+            forSecurityApplicationGroupIdentifier: "group.com.kyleharrington.VitaminG"
+        ) != nil
+
+        let config: ModelConfiguration
+        if appGroupAvailable {
+            config = ModelConfiguration(
+                schema: schema,
+                isStoredInMemoryOnly: false,
+                groupContainer: .identifier("group.com.kyleharrington.VitaminG"),
+                cloudKitDatabase: .none
+            )
+        } else {
+            config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        }
 
         return try ModelContainer(for: schema, migrationPlan: VitaminGMigrationPlan.self, configurations: config)
     }

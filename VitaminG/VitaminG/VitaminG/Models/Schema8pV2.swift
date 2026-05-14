@@ -141,7 +141,7 @@ enum SchemaV2: VersionedSchema {
 
 /// Convenience typealiases so call sites resolve to V2 types transparently.
 /// Replaces the V1 typealiases that were removed from SchemaV1.swift.
-typealias Goal = SchemaV2.Goal
+typealias Goal = SchemaV6.Goal
 typealias CompletionEvent = SchemaV2.CompletionEvent
 typealias UserProfile = SchemaV2.UserProfile
 
