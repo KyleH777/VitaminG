@@ -29,7 +29,7 @@ struct ProfileView: View {
             }
         }
         .background(VGTheme.sandLight)
-        .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
         .onAppear {
             viewModel.loadOrCreateProfile(context: modelContext)
             Task { await viewModel.loadReactionCount() }
@@ -333,7 +333,7 @@ struct ProfileView: View {
                                     ZStack(alignment: .leading) {
                                         RoundedRectangle(cornerRadius: 99).fill(VGTheme.sandMid).frame(height: 4)
                                         RoundedRectangle(cornerRadius: 99).fill(VGTheme.terra)
-                                            .frame(width: geo.size.width * 0.5, height: 4)
+                                            .frame(width: geo.size.width * min(1.0, Double(currentStreak) / 7.0), height: 4)
                                     }
                                 }.frame(height: 4)
                             }
@@ -466,7 +466,7 @@ private struct HeatmapCard: View {
             }
 
             HStack(spacing: 3) {
-                ForEach(days, id: \.self) { d in
+                ForEach(Array(days.enumerated()), id: \.offset) { _, d in
                     Text(d).font(.system(size: 9)).foregroundStyle(VGTheme.muted)
                         .frame(maxWidth: .infinity)
                 }
