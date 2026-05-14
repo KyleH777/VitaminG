@@ -74,6 +74,7 @@ final class GoalCreationWizardViewModel {
             draftReminderTime = rt
         } else {
             reminderEnabled = false
+            draftReminderTime = GoalCreationWizardViewModel.defaultReminderTime
         }
         isPrivate = !goal.isPublic
         isLegacy = goal.startDate != nil
