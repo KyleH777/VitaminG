@@ -3,6 +3,7 @@ import SwiftUI
 struct Step2NameScreen: View {
     @Bindable var wizardVM: GoalCreationWizardViewModel
     @FocusState private var isFocused: Bool
+    @State private var suggestionIndex: Int = 0
 
     var body: some View {
         ScrollView {
@@ -77,9 +78,31 @@ struct Step2NameScreen: View {
 
     private var suggestionsSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Need ideas?")
-                .font(.caption).fontWeight(.bold).textCase(.uppercase)
-                .foregroundStyle(VGTheme.muted).tracking(1)
+            HStack {
+                Text("Need ideas?")
+                    .font(.caption).fontWeight(.bold).textCase(.uppercase)
+                    .foregroundStyle(VGTheme.muted).tracking(1)
+                Spacer()
+                let pool = wizardVM.selectedCategory.suggestions
+                if !pool.isEmpty {
+                    Button {
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            wizardVM.draftTitle = pool[suggestionIndex % pool.count]
+                            suggestionIndex += 1
+                        }
+                    } label: {
+                        Text("Pick one for me ✦")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundStyle(VGTheme.accentTerra)
+                            .padding(.horizontal, 14).padding(.vertical, 8)
+                            .background(VGTheme.surface)
+                            .clipShape(Capsule())
+                            .overlay(Capsule().strokeBorder(VGTheme.separator, lineWidth: 1))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
             FlowLayout(spacing: 6) {
                 ForEach(wizardVM.selectedCategory.suggestions, id: \.self) { suggestion in
                     Button { wizardVM.draftTitle = suggestion } label: {

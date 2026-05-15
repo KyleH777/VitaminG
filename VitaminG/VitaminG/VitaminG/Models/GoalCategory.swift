@@ -41,21 +41,36 @@ enum GoalCategory: String, CaseIterable, Identifiable {
     var suggestions: [String] {
         switch self {
         case .body:
-            return ["Walk 10,000 steps", "Work out 3×/week", "Run a 5K", "Stretch daily", "No junk food"]
+            return ["Work out 4 times this week", "Run a 5K without stopping",
+                    "Do 10 push-ups every morning", "Walk 8,000 steps every day",
+                    "No junk food for 21 days"]
         case .mind:
-            return ["Read 20 pages daily", "Learn one new thing", "Meditate 10 min", "No phone first hour", "Journal every night"]
+            return ["Read 20 pages every night before sleep", "Finish one book this month",
+                    "Learn one new word daily", "Journal for 5 minutes every morning",
+                    "No social media before noon"]
         case .wellness:
-            return ["Sleep by 11pm", "Drink 8 glasses of water", "No alcohol this month", "Morning walk", "Breathe before reacting"]
+            return ["Be in bed by 10:30 pm", "Drink 3 litres of water daily",
+                    "No alcohol this month", "Meditate for 10 minutes daily",
+                    "Take a 10-minute walk every day"]
         case .money:
-            return ["Save $500 this month", "No impulse buys", "Track every expense", "Build 3-month emergency fund"]
+            return ["Save $200 this month", "Track every expense for 30 days",
+                    "No unnecessary purchases for 2 weeks", "Pack lunch 4 days a week",
+                    "Transfer 10% of every paycheck to savings"]
         case .connection:
-            return ["Call a friend weekly", "Family dinner every Sunday", "Send a thank-you note", "No phones at dinner"]
+            return ["Call a friend or family member once a week",
+                    "Plan one meaningful outing this month",
+                    "Put the phone away at dinner every night",
+                    "Send a genuine compliment once a day"]
         case .creative:
-            return ["Write 500 words daily", "Finish one project", "Learn an instrument", "Sketch every day"]
+            return ["Write 300 words every day", "Sketch something every evening",
+                    "Finish one project you've been putting off",
+                    "Learn one chord or one note every day"]
         case .habit:
-            return ["Quit social media scrolling", "No snooze button", "Replace coffee with tea", "10 min cleanup daily"]
+            return ["No phone in bed", "Make your bed every single morning",
+                    "Floss every night", "10-minute tidy before bed",
+                    "First thing: drink water, not scroll"]
         case .other:
-            return ["Something uniquely yours", "Set your own intention"]
+            return []
         }
     }
 }
