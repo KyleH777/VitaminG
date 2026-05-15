@@ -164,7 +164,7 @@ struct WelcomeScreen: View {
                     Button {
                         path.append(.name)
                     } label: {
-                        Text("Get Started")
+                        Text("Create account")
                             .font(.system(size: 17, weight: .semibold))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 18)
@@ -183,10 +183,14 @@ struct WelcomeScreen: View {
                         Text(savedName.trimmingCharacters(in: .whitespaces).isEmpty
                              ? "I'll set this up later"
                              : "Sign in")
-                            .font(.system(size: 15, weight: .regular))
-                            .foregroundStyle(VGTheme.sand.opacity(0.55))
+                            .font(.system(size: 17, weight: .medium))
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
+                            .padding(.vertical, 18)
+                            .foregroundStyle(VGTheme.sand)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .strokeBorder(Color.white.opacity(0.2), lineWidth: 1.5)
+                            )
                     }
                 }
                 .padding(.horizontal, 28)

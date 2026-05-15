@@ -13,14 +13,14 @@ struct MotivationCategoryScreen: View {
     @State private var selected: Set<Int> = []
 
     private let categories: [(label: String, icon: String)] = [
-        ("Health & Fitness", "figure.run"),
-        ("Mindfulness", "leaf"),
-        ("Career", "briefcase"),
-        ("Relationships", "heart.circle"),
-        ("Learning", "book"),
-        ("Nutrition", "fork.knife"),
-        ("Creativity", "paintbrush"),
-        ("Morning Habits", "sunrise"),
+        ("Health & Fitness", "◎"),
+        ("Mindfulness", "◇"),
+        ("Career", "△"),
+        ("Relationships", "◈"),
+        ("Learning", "◉"),
+        ("Nutrition", "◑"),
+        ("Creativity", "◐"),
+        ("Morning Habits", "☀"),
     ]
 
     private let columns = [GridItem(.flexible()), GridItem(.flexible())]
@@ -63,8 +63,8 @@ struct MotivationCategoryScreen: View {
                             if on { selected.remove(i) } else { selected.insert(i) }
                         } label: {
                             HStack(spacing: 10) {
-                                Image(systemName: categories[i].icon)
-                                    .font(.system(size: 16))
+                                Text(categories[i].icon)
+                                    .font(.system(size: 18))
                                     .foregroundStyle(on ? VGTheme.terra : VGTheme.muted)
 
                                 Text(categories[i].label)
