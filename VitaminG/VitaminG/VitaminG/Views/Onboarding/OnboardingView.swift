@@ -40,11 +40,7 @@ struct OnboardingView: View {
                     case .communityGoal:
                         CommunityGoalOnboardingScreen(path: $path, onSkip: finish)
                     case .createGoal:
-                        CreateFirstGoalScreen(
-                            onboardingVM: onboardingVM,
-                            onComplete: finish,
-                            onSkipGoal: finish
-                        )
+                        GoalCreationWizardView(isOnboarding: true, onComplete: finish)
                     }
                 }
         }
