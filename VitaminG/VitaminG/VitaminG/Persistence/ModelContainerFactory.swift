@@ -10,7 +10,7 @@ import Foundation
 /// Testing: in-memory store with no App Group or CloudKit binding.
 enum ModelContainerFactory {
     static func makeContainer(inMemory: Bool = false) throws -> ModelContainer {
-        let schema = Schema(SchemaV6.models, version: SchemaV6.versionIdentifier)
+        let schema = Schema(SchemaV7.models, version: SchemaV7.versionIdentifier)
 
         // Check at runtime whether the App Group is provisioned.
         // On Simulator and on device with a free personal team, this returns nil — fall back to
@@ -43,7 +43,7 @@ enum ModelContainerFactory {
     /// Pitfall 2 from RESEARCH.md: widget must use cloudKitDatabase: .none.
     /// Must use same schema + migration plan as makeContainer to avoid store mismatch crash (T-07-02).
     static func makeWidgetContainer() throws -> ModelContainer {
-        let schema = Schema(SchemaV6.models, version: SchemaV6.versionIdentifier)
+        let schema = Schema(SchemaV7.models, version: SchemaV7.versionIdentifier)
 
         let appGroupAvailable = FileManager.default.containerURL(
             forSecurityApplicationGroupIdentifier: "group.com.kyleharrington.VitaminG"
