@@ -6,7 +6,7 @@ import Charts
 
 /// Full detail screen for a single goal.
 /// Displays tier badge, title, dates, quote card (associatedInspiration), notes, and action buttons.
-/// Edit toolbar button presents AddGoalView as a sheet. Delete triggers confirmationDialog.
+/// Edit toolbar button presents GoalCreationWizardView as a sheet. Delete triggers confirmationDialog.
 struct GoalDetailView: View {
     let goal: Goal
 
