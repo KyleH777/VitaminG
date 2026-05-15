@@ -12,6 +12,7 @@ struct GoalDetailView: View {
 
     @State private var showingEditGoal = false
     @State private var showingDeleteConfirmation = false
+    @State private var showingStartDatePicker = false
     @State private var viewModel = GoalViewModel()
 
     @Environment(\.modelContext) private var modelContext
@@ -45,7 +46,39 @@ struct GoalDetailView: View {
             }
         }
         .sheet(isPresented: $showingEditGoal) {
-            AddGoalView(viewModel: viewModel, editingGoal: goal)
+            GoalCreationWizardView(editingGoal: goal)
+        }
+        .sheet(isPresented: $showingStartDatePicker) {
+            NavigationStack {
+                VStack(spacing: 24) {
+                    Text("When did you actually start this goal?")
+                        .font(.headline)
+                        .multilineTextAlignment(.center)
+                        .padding(.top)
+
+                    DatePicker(
+                        "Start date",
+                        selection: Binding(
+                            get: { goal.startDate ?? goal.creationDate ?? Date() },
+                            set: { goal.startDate = $0 }
+                        ),
+                        in: ...Date.now,
+                        displayedComponents: .date
+                    )
+                    .datePickerStyle(.graphical)
+                    .padding()
+
+                    Spacer()
+                }
+                .navigationTitle("Edit Start Date")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { showingStartDatePicker = false }
+                    }
+                }
+            }
+            .presentationDetents([.medium])
         }
         .confirmationDialog(
             "Delete this goal?",
@@ -323,6 +356,18 @@ struct GoalDetailView: View {
                     ? "Reactivate goal \(goal.title ?? "")"
                     : "Mark goal \(goal.title ?? "") as complete"
             )
+
+            // Edit start date (legacy backdating)
+            Button {
+                showingStartDatePicker = true
+            } label: {
+                Label("Edit start date", systemImage: "calendar.badge.clock")
+                    .font(.system(.body, design: .rounded))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+            }
+            .buttonStyle(.bordered)
+            .tint(VGTheme.terra)
 
             // Delete button
             Button(role: .destructive) {
