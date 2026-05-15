@@ -1,4 +1,5 @@
 import SwiftUI
+import AuthenticationServices
 
 
 // MARK: - TabletConfig
@@ -46,6 +47,8 @@ struct WelcomeScreen: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @AppStorage("vg_onboardingName") private var savedName: String = ""
+    @AppStorage("vg_appleUserID") private var appleUserID: String = ""
+    @State private var showGoogleComingSoon = false
 
     private let tablets: [TabletConfig] = [
         TabletConfig(id: 0,  leftFraction: 0.05, duration: 2.8, delay: 0.0, size: 32, color1: VGTheme.terraSoft, color2: VGTheme.terra,   rotation: 15,  pileOffsetX: 18,  pileRotation: -22),
@@ -161,9 +164,8 @@ struct WelcomeScreen: View {
 
                 // Bottom buttons
                 VStack(spacing: 12) {
-                    Button {
-                        path.append(.name)
-                    } label: {
+                    // Button 1: Create account (terra fill)
+                    Button { path.append(.name) } label: {
                         Text("Create account")
                             .font(.system(size: 17, weight: .semibold))
                             .frame(maxWidth: .infinity)
@@ -173,6 +175,52 @@ struct WelcomeScreen: View {
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
 
+                    // Button 2: Sign in with Apple (functional)
+                    SignInWithAppleButton(.signIn, onRequest: { request in
+                        request.requestedScopes = [.fullName, .email]
+                    }, onCompletion: { result in
+                        switch result {
+                        case .success(let auth):
+                            if let cred = auth.credential as? ASAuthorizationAppleIDCredential {
+                                let uid = cred.user
+                                appleUserID = uid
+                                UserDefaults.standard.set(uid, forKey: "vg_appleUserID")
+                            }
+                            if !savedName.trimmingCharacters(in: .whitespaces).isEmpty {
+                                onSkip()
+                            } else {
+                                path.append(.name)
+                            }
+                        case .failure:
+                            break
+                        }
+                    })
+                    .signInWithAppleButtonStyle(.black)
+                    .frame(maxWidth: .infinity, minHeight: 54)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+
+                    // Button 3: Google stub (coming soon alert)
+                    Button { showGoogleComingSoon = true } label: {
+                        HStack(spacing: 10) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color.white)
+                                    .frame(width: 20, height: 20)
+                                Text("G")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(Color(red: 0.255, green: 0.522, blue: 0.957))
+                            }
+                            Text("Continue with Google")
+                                .font(.system(size: 17, weight: .semibold))
+                                .foregroundStyle(.black)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(Color.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                    }
+
+                    // Button 4: I'll set this up later (ghost)
                     Button(action: {
                         if !savedName.trimmingCharacters(in: .whitespaces).isEmpty {
                             path.append(.login)
@@ -180,17 +228,12 @@ struct WelcomeScreen: View {
                             onSkip()
                         }
                     }) {
-                        Text(savedName.trimmingCharacters(in: .whitespaces).isEmpty
-                             ? "I'll set this up later"
-                             : "Sign in")
+                        Text("I'll set this up later")
                             .font(.system(size: 17, weight: .medium))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 18)
                             .foregroundStyle(VGTheme.sand)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 14)
-                                    .strokeBorder(Color.white.opacity(0.2), lineWidth: 1.5)
-                            )
+                            .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(Color.white.opacity(0.2), lineWidth: 1.5))
                     }
                 }
                 .padding(.horizontal, 28)
@@ -198,5 +241,10 @@ struct WelcomeScreen: View {
             }
         }
         .navigationBarHidden(true)
+        .alert("Coming Soon", isPresented: $showGoogleComingSoon) {
+            Button("Got it", role: .cancel) {}
+        } message: {
+            Text("Google Sign-In is coming soon.")
+        }
     }
 }
