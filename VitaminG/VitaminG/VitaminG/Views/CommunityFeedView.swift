@@ -11,6 +11,7 @@ struct CommunityFeedView: View {
     @State private var viewModel = CommunityFeedViewModel()
     @State private var showCompose = false
     @State private var localReactionByPostID: [CKRecord.ID: ReactionType] = [:]
+    @State private var commentPostID: String? = nil
 
     // MARK: - Derived inputs
     private var category: String {
@@ -74,7 +75,8 @@ struct CommunityFeedView: View {
                                 currentUserReaction: localReactionByPostID[post.recordID],
                                 accentColor: accentColor,
                                 onReact: { type in handleReact(post: post, type: type) },
-                                onReport: { Task { await handleReport(post: post) } }
+                                onReport: { Task { await handleReport(post: post) } },
+                                onComment: { commentPostID = post.recordID.recordName }
                             )
                         }
                     }
@@ -100,6 +102,14 @@ struct CommunityFeedView: View {
                 authorColorHex: currentProfile?.avatarColorHex,
                 viewModel: viewModel
             )
+        }
+        .sheet(isPresented: Binding(
+            get: { commentPostID != nil },
+            set: { if !$0 { commentPostID = nil } }
+        )) {
+            if let id = commentPostID {
+                CommentSheetView(postID: id)
+            }
         }
         .alert(CommunityFeedViewModel.reactionSaveFailureMessage,
                isPresented: Binding(

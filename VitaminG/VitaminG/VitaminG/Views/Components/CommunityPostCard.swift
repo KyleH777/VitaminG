@@ -7,6 +7,7 @@ struct CommunityPostCard: View {
     let accentColor: Color
     let onReact: (ReactionType) -> Void
     let onReport: () -> Void
+    var onComment: (() -> Void)? = nil
 
     @State private var showReportDialog = false
 
@@ -91,6 +92,16 @@ struct CommunityPostCard: View {
                     accentColor: accentColor,
                     action: { onReact(.heart) }
                 )
+                if let onComment {
+                    Button { onComment() } label: {
+                        HStack(spacing: 5) {
+                            Image(systemName: "bubble.left").font(.system(size: 12))
+                            Text("Reply").font(.system(size: 12))
+                        }
+                        .foregroundStyle(VGTheme.textMuted)
+                    }
+                    .buttonStyle(.plain)
+                }
                 Spacer()
             }
         }
