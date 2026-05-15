@@ -12,11 +12,9 @@ struct ContentView: View {
             NavigationStack {
                 HomeView()
             }
-            .tabItem { Label("Home", systemImage: "house.fill") }
             .tag(0)
 
             goalsTab
-                .tabItem { Label("Goals", systemImage: "target") }
                 .tag(1)
 
             NavigationStack {
@@ -27,22 +25,23 @@ struct ContentView: View {
                         }
                     }
             }
-            .tabItem { Label("Community", systemImage: "person.2.fill") }
             .tag(2)
 
             NavigationStack {
                 ChallengeDiscoveryView()
             }
-            .tabItem { Label("Challenges", systemImage: "flame.fill") }
             .tag(3)
 
             NavigationStack {
                 ProfileView()
             }
-            .tabItem { Label("Profile", systemImage: "person.crop.circle.fill") }
             .tag(4)
         }
-        .tint(VGTheme.terra)
+        .toolbar(.hidden, for: .tabBar)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            VGTabBar(selection: $selectedTab)
+        }
+        .tint(VGTheme.accentTerra)
         .sheet(item: Binding(
             get: { router.pendingPublicProfileRecordID.map { ProfileDeepLinkItem(id: $0) } },
             set: { _ in router.pendingPublicProfileRecordID = nil }
