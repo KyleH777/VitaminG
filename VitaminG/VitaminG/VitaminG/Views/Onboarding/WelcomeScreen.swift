@@ -1,52 +1,5 @@
 import SwiftUI
 
-// MARK: - VitaminTablet
-// Chunky rounded-square vitamin shape used on the splash screen.
-
-private struct VitaminTablet: View {
-    let size: CGFloat
-    let color1: Color
-    let color2: Color
-
-    private var corner: CGFloat { size * 0.28 }
-
-    var body: some View {
-        ZStack {
-            // Body
-            RoundedRectangle(cornerRadius: corner)
-                .fill(color1)
-                .overlay(
-                    RoundedRectangle(cornerRadius: corner)
-                        .strokeBorder(Color.white.opacity(0.15), lineWidth: 1)
-                )
-
-            // Bottom-half tint (score effect)
-            VStack(spacing: 0) {
-                Color.clear
-                color2.opacity(0.5)
-            }
-            .clipShape(RoundedRectangle(cornerRadius: corner))
-
-            // Score line
-            Rectangle()
-                .fill(Color.white.opacity(0.18))
-                .frame(height: 1)
-
-            // Shine
-            Ellipse()
-                .fill(Color.white.opacity(0.22))
-                .frame(width: size * 0.27, height: size * 0.22)
-                .offset(x: -size * 0.17, y: -size * 0.19)
-                .rotationEffect(.degrees(-15))
-
-            // Embossed "g"
-            Text("g")
-                .font(Font.custom("Georgia-Italic", size: size * 0.36))
-                .foregroundStyle(Color.white.opacity(0.30))
-        }
-        .frame(width: size, height: size)
-    }
-}
 
 // MARK: - TabletConfig
 private struct TabletConfig: Identifiable {
@@ -70,7 +23,7 @@ private struct RainingTabletItem: View {
     @State private var yOffset: CGFloat = -80
 
     var body: some View {
-        VitaminTablet(size: config.size, color1: config.color1, color2: config.color2)
+        VGCapsule(size: config.size, color1: config.color1, color2: config.color2)
             .rotationEffect(.degrees(config.rotation))
             .offset(y: yOffset)
             .task {
@@ -135,14 +88,14 @@ struct WelcomeScreen: View {
                 ZStack(alignment: .bottomLeading) {
                     // First layer
                     ForEach(tablets) { t in
-                        VitaminTablet(size: t.size, color1: t.color1, color2: t.color2)
+                        VGCapsule(size: t.size, color1: t.color1, color2: t.color2)
                             .rotationEffect(.degrees(t.pileRotation))
                             .offset(x: t.pileOffsetX - 20, y: 0)
                             .opacity(0.85)
                     }
                     // Second layer (offset)
                     ForEach(tablets.prefix(6)) { t in
-                        VitaminTablet(size: t.size * 0.8, color1: t.color2, color2: t.color1)
+                        VGCapsule(size: t.size * 0.8, color1: t.color2, color2: t.color1)
                             .rotationEffect(.degrees(t.pileRotation * -0.6))
                             .offset(x: t.pileOffsetX, y: -t.size * 0.65)
                             .opacity(0.65)
@@ -159,7 +112,7 @@ struct WelcomeScreen: View {
 
                     // "Your daily dose" badge
                     HStack(spacing: 7) {
-                        VitaminTablet(size: 16, color1: VGTheme.terraSoft, color2: VGTheme.terra)
+                        VGCapsule(size: 16, color1: VGTheme.terraSoft, color2: VGTheme.terra)
                         Text("YOUR DAILY DOSE")
                             .font(.system(size: 11, weight: .semibold))
                             .foregroundStyle(VGTheme.sand.opacity(0.7))
