@@ -317,6 +317,86 @@ final class GoalViewModelTests: XCTestCase {
         XCTAssertEqual(sut.draftInspiration, "")
     }
 
+    // MARK: - addGoal(input:)
+
+    func test_addGoalInput_createsGoalWithCorrectFields() throws {
+        let input = GoalInput(
+            title: "Walk 10,000 steps",
+            tier: .immediate,
+            category: .body,
+            frequency: .daily,
+            reminderTime: nil,
+            isPrivate: true,
+            startDate: nil
+        )
+        try sut.addGoal(input: input, context: context)
+
+        let goals = try context.fetch(FetchDescriptor<Goal>())
+        XCTAssertEqual(goals.count, 1)
+        let goal = try XCTUnwrap(goals.first)
+        XCTAssertEqual(goal.title, "Walk 10,000 steps")
+        XCTAssertEqual(goal.category, GoalCategory.body.rawValue)
+        XCTAssertEqual(goal.frequency, GoalFrequency.daily.rawValue)
+        XCTAssertFalse(goal.isPublic)
+    }
+
+    func test_addGoalInput_emptyTitle_throwsTitleEmpty() throws {
+        let input = GoalInput(
+            title: "   ",
+            tier: .immediate,
+            category: .other,
+            frequency: .daily,
+            reminderTime: nil,
+            isPrivate: false,
+            startDate: nil
+        )
+        XCTAssertThrowsError(try sut.addGoal(input: input, context: context)) { error in
+            XCTAssertEqual(error as? GoalValidationError, .titleEmpty)
+        }
+    }
+
+    func test_addGoalInput_legacyStartDate_stored() throws {
+        let past = Calendar.current.date(byAdding: .day, value: -30, to: Date())!
+        let input = GoalInput(
+            title: "Sober",
+            tier: .lifeGoal,
+            category: .habit,
+            frequency: .daily,
+            reminderTime: nil,
+            isPrivate: true,
+            startDate: past
+        )
+        try sut.addGoal(input: input, context: context)
+
+        let goals = try context.fetch(FetchDescriptor<Goal>())
+        XCTAssertNotNil(goals.first?.startDate)
+    }
+
+    // MARK: - updateGoal(_:input:)
+
+    func test_updateGoalInput_updatesFields() throws {
+        sut.draftTitle = "Old title"
+        try sut.addGoal(context: context)
+
+        let goal = try XCTUnwrap(context.fetch(FetchDescriptor<Goal>()).first)
+
+        let input = GoalInput(
+            title: "New title",
+            tier: .longTerm,
+            category: .mind,
+            frequency: .weekly,
+            reminderTime: nil,
+            isPrivate: false,
+            startDate: nil
+        )
+        try sut.updateGoal(goal, input: input, context: context)
+
+        XCTAssertEqual(goal.title, "New title")
+        XCTAssertEqual(goal.tier, .longTerm)
+        XCTAssertEqual(goal.category, GoalCategory.mind.rawValue)
+        XCTAssertTrue(goal.isPublic)
+    }
+
     // MARK: - toggleCompletion: Reactivates
 
     func test_toggleCompletion_reactivates() throws {

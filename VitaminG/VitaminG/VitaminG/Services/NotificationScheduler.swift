@@ -374,3 +374,63 @@ extension NotificationScheduler {
         }
     }
 }
+
+// MARK: - Phase B: Per-goal reminders
+
+extension NotificationScheduler {
+
+    static func perGoalIdentifier(for goalID: UUID) -> String {
+        "com.kyleharrington.VitaminG.goal.\(goalID.uuidString)"
+    }
+
+    /// Schedules a repeating notification for a single goal based on its frequency and reminderTime.
+    /// One-time goals are skipped. Remove-before-add pattern stays within the iOS 64-request cap.
+    func schedulePerGoal(_ goal: Goal) async {
+        guard let frequencyRaw = goal.frequency,
+              let frequency = GoalFrequency(rawValue: frequencyRaw),
+              frequency != .onetime else { return }
+
+        let identifier = Self.perGoalIdentifier(for: goal.id)
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: [identifier])
+
+        let content = UNMutableNotificationContent()
+        content.title = "Vitamin G"
+        content.body = goal.title ?? "Time to work on your goal"
+        content.sound = .default
+        content.userInfo = ["deepLink": "goalList", "goalID": goal.id.uuidString]
+
+        let anchor = goal.reminderTime ?? GoalCreationWizardViewModel.defaultReminderTime
+        var components = Calendar.current.dateComponents([.hour, .minute], from: anchor)
+
+        switch frequency {
+        case .daily:
+            break
+        case .weekly:
+            let startAnchor = goal.startDate ?? goal.creationDate ?? Date()
+            components.weekday = Calendar.current.component(.weekday, from: startAnchor)
+        case .monthly:
+            let startAnchor = goal.startDate ?? goal.creationDate ?? Date()
+            components.day = Calendar.current.component(.day, from: startAnchor)
+        case .onetime:
+            return
+        }
+
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        do {
+            try await center.add(request)
+        } catch {
+            #if DEBUG
+            print("[NotificationScheduler] Failed to add per-goal reminder: \(error)")
+            #endif
+        }
+    }
+
+    /// Removes the pending per-goal notification for the given goal ID.
+    func cancelPerGoalNotification(for goalID: UUID) {
+        let identifier = Self.perGoalIdentifier(for: goalID)
+        UNUserNotificationCenter.current()
+            .removePendingNotificationRequests(withIdentifiers: [identifier])
+    }
+}

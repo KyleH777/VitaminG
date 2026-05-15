@@ -115,4 +115,23 @@ final class NotificationSchedulerTests: XCTestCase {
         let content = scheduler.makeContent(activeGoals: [])
         XCTAssertEqual(content.sound, .default, "Notification sound should be default")
     }
+
+    // MARK: - perGoalIdentifier
+
+    func test_perGoalIdentifier_containsUUID() {
+        let id = UUID()
+        let identifier = NotificationScheduler.perGoalIdentifier(for: id)
+        XCTAssertTrue(identifier.contains(id.uuidString))
+    }
+
+    func test_perGoalIdentifier_hasBundlePrefix() {
+        let identifier = NotificationScheduler.perGoalIdentifier(for: UUID())
+        XCTAssertTrue(identifier.hasPrefix("com.kyleharrington.VitaminG.goal."))
+    }
+
+    // MARK: - cancelPerGoalNotification (smoke — no crash on unknown ID)
+
+    func test_cancelPerGoalNotification_unknownID_doesNotCrash() {
+        scheduler.cancelPerGoalNotification(for: UUID())
+    }
 }

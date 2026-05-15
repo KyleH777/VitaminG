@@ -149,6 +149,49 @@ final class GoalViewModel {
         reloadWidgetTimelines()
     }
 
+    // MARK: - Input-based CRUD (wizard path)
+
+    func addGoal(input: GoalInput, context: ModelContext) throws {
+        let cleanTitle = sanitize(input.title)
+        try validate(title: cleanTitle, description: "", inspiration: "")
+
+        let goal = Goal(title: cleanTitle, tier: input.tier)
+        goal.category     = input.category.rawValue
+        goal.frequency    = input.frequency.rawValue
+        goal.reminderTime = input.reminderTime
+        goal.isPublic     = !input.isPrivate
+        goal.startDate    = input.startDate
+
+        context.insert(goal)
+        rescheduleNotification(context: context)
+        reloadWidgetTimelines()
+
+        if input.reminderTime != nil {
+            Task { await NotificationScheduler.shared.schedulePerGoal(goal) }
+        }
+    }
+
+    func updateGoal(_ goal: Goal, input: GoalInput, context: ModelContext) throws {
+        let cleanTitle = sanitize(input.title)
+        try validate(title: cleanTitle, description: "", inspiration: "")
+
+        goal.title     = cleanTitle
+        goal.tier      = input.tier
+        goal.category  = input.category.rawValue
+        goal.frequency = input.frequency.rawValue
+        goal.isPublic  = !input.isPrivate
+        goal.startDate = input.startDate
+
+        NotificationScheduler.shared.cancelPerGoalNotification(for: goal.id)
+        goal.reminderTime = input.reminderTime
+        if input.reminderTime != nil {
+            Task { await NotificationScheduler.shared.schedulePerGoal(goal) }
+        }
+
+        rescheduleNotification(context: context)
+        reloadWidgetTimelines()
+    }
+
     func delete(goal: Goal, context: ModelContext) {
         context.delete(goal)
         rescheduleNotification(context: context)
