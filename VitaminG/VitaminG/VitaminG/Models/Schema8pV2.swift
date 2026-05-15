@@ -84,9 +84,9 @@ enum SchemaV2: VersionedSchema {
         var completedAt: Date?
         /// Denormalized tier snapshot so stats remain correct if a goal's tier changes later.
         var tierRawValue: String?
-        var goal: Goal?
+        var goal: SchemaV6.Goal?
 
-        init(goal: Goal) {
+        init(goal: SchemaV6.Goal) {
             self.id = UUID()
             self.goal = goal
             self.tierRawValue = goal.tierRawValue
@@ -143,7 +143,7 @@ enum SchemaV2: VersionedSchema {
 /// Replaces the V1 typealiases that were removed from SchemaV1.swift.
 typealias Goal = SchemaV6.Goal
 typealias CompletionEvent = SchemaV2.CompletionEvent
-typealias UserProfile = SchemaV2.UserProfile
+typealias UserProfile = SchemaV8.UserProfile
 
 // MARK: - Color+Hex
 

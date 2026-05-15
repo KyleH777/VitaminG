@@ -16,17 +16,19 @@ import Foundation
 /// - V3 → V4: lightweight (added ChallengeTemplate, UserChallenge, CheckIn models — purely additive)
 /// - V4 → V5: lightweight (added TransformationPhoto, SpendingFreezeEntry, NutritionEntry + 4 optional fields — purely additive)
 /// - V5 → V6: lightweight (added category, frequency, reminderTime, startDate to Goal — all optional, purely additive)
+/// - V6 → V7: lightweight (added GoalIdea, MoodEntry — new models, purely additive)
+/// - V7 → V8: lightweight (added UserProfile.username — optional, nil default — UIADD-07)
 ///
 /// Source: developer.apple.com/documentation/swiftdata/modelcontainer/init(for:migrationplan:configurations:)
 enum VitaminGMigrationPlan: SchemaMigrationPlan {
     static var schemas: [any VersionedSchema.Type] {
         [SchemaV1.self, SchemaV2.self, SchemaV3.self, SchemaV4.self,
-         SchemaV5.self, SchemaV6.self, SchemaV7.self]
+         SchemaV5.self, SchemaV6.self, SchemaV7.self, SchemaV8.self]
     }
 
     static var stages: [MigrationStage] {
         [migrateV1toV2, migrateV2toV3, migrateV3toV4,
-         migrateV4toV5, migrateV5toV6, migrateV6toV7]
+         migrateV4toV5, migrateV5toV6, migrateV6toV7, migrateV7toV8]
     }
 
     static let migrateV1toV2 = MigrationStage.lightweight(
@@ -57,5 +59,10 @@ enum VitaminGMigrationPlan: SchemaMigrationPlan {
     static let migrateV6toV7 = MigrationStage.lightweight(
         fromVersion: SchemaV6.self,
         toVersion: SchemaV7.self
+    )
+
+    static let migrateV7toV8 = MigrationStage.lightweight(
+        fromVersion: SchemaV7.self,
+        toVersion: SchemaV8.self
     )
 }
