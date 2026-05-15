@@ -74,6 +74,7 @@ struct ContentView: View {
                     case .challengeDetail(let c): ChallengeDetailView(userChallenge: c)
                     case .challengeCheckIn(let c): ChallengeCheckInView(userChallenge: c, viewModel: ChallengeViewModel())
                     case .communityFeed(let c): CommunityFeedView(userChallenge: c)
+                    case .communityGoals: EmptyView() // Phase 15 stub — replaced by Plan 08 with CommunityGoalsLandingView
                     }
                 }
         }

@@ -15,4 +15,5 @@ enum AppRoute: Hashable {
     case challengeDetail(UserChallenge)    // Phase 13 — CHAL-08, D-05
     case challengeCheckIn(UserChallenge)   // Phase 13 — CHAL-09, D-05, D-06
     case communityFeed(UserChallenge)      // Phase 14 — CHAL-25
+    case communityGoals(UserChallenge)     // Phase 15 — UIADD-04, C4
 }
