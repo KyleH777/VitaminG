@@ -5,6 +5,7 @@ struct ContentView: View {
     @Environment(AppRouter.self) private var router
     @Query private var allUserChallenges: [UserChallenge]
     @State private var selectedTab: Int = 0
+    @State private var challengesNavPath: NavigationPath = NavigationPath()
 
     var body: some View {
         @Bindable var router = router
@@ -20,15 +21,25 @@ struct ContentView: View {
             NavigationStack {
                 CommunityTabView(selectedTab: $selectedTab)
                     .navigationDestination(for: AppRoute.self) { route in
-                        if case .communityFeed(let c) = route {
-                            CommunityFeedView(userChallenge: c)
+                        switch route {
+                        case .communityFeed(let c): CommunityFeedView(userChallenge: c)
+                        case .communityGoals(let c): CommunityGoalsLandingView(userChallenge: c)
+                        default: EmptyView()
                         }
                     }
             }
             .tag(2)
 
-            NavigationStack {
-                ChallengeDiscoveryView()
+            NavigationStack(path: $challengesNavPath) {
+                ChallengeDiscoveryView(navigationPath: $challengesNavPath)
+                    .navigationDestination(for: AppRoute.self) { route in
+                        switch route {
+                        case .goalDetail(let goal): GoalDetailView(goal: goal)
+                        case .challengeDetail(let c): ChallengeDetailView(userChallenge: c)
+                        case .communityGoals(let c): CommunityGoalsLandingView(userChallenge: c)
+                        default: EmptyView()
+                        }
+                    }
             }
             .tag(3)
 
@@ -74,7 +85,7 @@ struct ContentView: View {
                     case .challengeDetail(let c): ChallengeDetailView(userChallenge: c)
                     case .challengeCheckIn(let c): ChallengeCheckInView(userChallenge: c, viewModel: ChallengeViewModel())
                     case .communityFeed(let c): CommunityFeedView(userChallenge: c)
-                    case .communityGoals: EmptyView() // Phase 15 stub — replaced by Plan 08 with CommunityGoalsLandingView
+                    case .communityGoals(let c): CommunityGoalsLandingView(userChallenge: c)
                     }
                 }
         }
