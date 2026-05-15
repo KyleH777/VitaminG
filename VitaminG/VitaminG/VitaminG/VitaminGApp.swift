@@ -38,9 +38,8 @@ struct VitaminGApp: App {
         do {
             container = try ModelContainerFactory.makeContainer()
 
-            #if DEBUG && !targetEnvironment(simulator)
-            ModelContainerFactory.initializeCloudKitSchema(container: container)
-            #endif
+            // initializeCloudKitSchema disabled — CloudKit schema already promoted to Production.
+            // Re-enable only when testing schema changes with a paid developer team in Xcode.
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }

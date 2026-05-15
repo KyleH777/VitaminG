@@ -20,23 +20,35 @@ struct GoalCreationWizardView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        wizardContent
+            .onAppear {
+                if let goal = editingGoal { wizardVM.configure(from: goal) }
+            }
+            .alert("Validation Error", isPresented: $showingValidationAlert, presenting: validationError) { _ in
+                Button("OK", role: .cancel) {}
+            } message: { error in
+                Text(error.localizedDescription)
+            }
+    }
+
+    // Wraps in NavigationStack only when used as a standalone sheet (not inside OnboardingView's stack).
+    // In onboarding mode we're already inside OnboardingView's NavigationStack, so a second
+    // NavigationStack would produce nested stacks — causing swipe-back to pop the outer stack
+    // (returning to WelcomeScreen) instead of navigating within the wizard.
+    @ViewBuilder
+    private var wizardContent: some View {
+        if isOnboarding {
             stepView
-                .toolbar {
-                    if !isOnboarding {
+                .navigationBarBackButtonHidden(true)
+        } else {
+            NavigationStack {
+                stepView
+                    .toolbar {
                         ToolbarItem(placement: .cancellationAction) {
                             Button("Cancel") { wizardVM.reset(); dismiss() }
                         }
                     }
-                }
-        }
-        .onAppear {
-            if let goal = editingGoal { wizardVM.configure(from: goal) }
-        }
-        .alert("Validation Error", isPresented: $showingValidationAlert, presenting: validationError) { _ in
-            Button("OK", role: .cancel) {}
-        } message: { error in
-            Text(error.localizedDescription)
+            }
         }
     }
 

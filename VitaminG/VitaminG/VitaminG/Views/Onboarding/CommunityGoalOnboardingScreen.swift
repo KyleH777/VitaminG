@@ -30,19 +30,11 @@ struct CommunityGoalOnboardingScreen: View {
                         .padding(.bottom, 28)
 
                     // Headline
-                    Group {
-                        Text("Your first\n")
-                            .font(Font.custom("Georgia", size: 42))
-                            .foregroundStyle(VGTheme.clay)
-                        + Text("challenge ")
-                            .font(Font.custom("Georgia-Italic", size: 42))
-                            .foregroundStyle(VGTheme.terra)
-                        + Text("awaits.")
-                            .font(Font.custom("Georgia", size: 42))
-                            .foregroundStyle(VGTheme.clay)
-                    }
-                    .lineSpacing(4)
-                    .padding(.bottom, 12)
+                    Text("Your first\n\(Text("challenge ").font(Font.custom("Georgia-Italic", size: 42)).foregroundStyle(VGTheme.terra))\(Text("awaits.").font(Font.custom("Georgia", size: 42)).foregroundStyle(VGTheme.clay))")
+                        .font(Font.custom("Georgia", size: 42))
+                        .foregroundStyle(VGTheme.clay)
+                        .lineSpacing(4)
+                        .padding(.bottom, 12)
 
                     Text("Join thousands already working toward it. You're never doing this alone.")
                         .font(.system(size: 14, weight: .light))

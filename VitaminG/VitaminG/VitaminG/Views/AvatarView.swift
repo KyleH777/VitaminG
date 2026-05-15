@@ -1,5 +1,7 @@
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#endif
 
 // MARK: - AvatarView
 
@@ -16,6 +18,7 @@ struct AvatarView: View {
 
     var body: some View {
         Group {
+            #if canImport(UIKit)
             if let photoData, let uiImage = UIImage(data: photoData) {
                 Image(uiImage: uiImage)
                     .resizable()
@@ -23,29 +26,36 @@ struct AvatarView: View {
                     .frame(width: size, height: size)
                     .clipShape(Circle())
             } else {
-                ZStack {
-                    Circle()
-                        .fill(avatarColor)
-                        .frame(width: size, height: size)
-                    Text(initials)
-                        .font(.system(size: initialsSize, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.white)
-                }
+                initialsCircle
             }
+            #else
+            initialsCircle
+            #endif
         }
         .shadow(color: .black.opacity(0.10), radius: shadowRadius, y: shadowY)
         .accessibilityLabel("Profile avatar for \(displayName ?? "you")")
     }
 
+    // MARK: - Subviews
+
+    private var initialsCircle: some View {
+        ZStack {
+            Circle()
+                .fill(avatarColor)
+                .frame(width: size, height: size)
+            Text(initials)
+                .font(.system(size: initialsSize, weight: .semibold, design: .rounded))
+                .foregroundStyle(.white)
+        }
+    }
+
     // MARK: - Computed Properties
 
-    /// Parse avatarColorHex to Color, fallback to gray
     private var avatarColor: Color {
         guard let hex = avatarColorHex, !hex.isEmpty else { return .gray }
         return Color(hex: hex)
     }
 
-    /// 1-2 character initials from displayName. "?" if empty.
     private var initials: String {
         guard let name = displayName?.trimmingCharacters(in: .whitespacesAndNewlines),
               !name.isEmpty else {
@@ -56,19 +66,7 @@ struct AvatarView: View {
         return String(chars).uppercased()
     }
 
-    /// Scale initials font size proportionally to circle size.
-    /// 88pt circle -> 34pt text (UI-SPEC ratio ~38.6%)
-    private var initialsSize: CGFloat {
-        size * 0.386
-    }
-
-    /// Shadow radius scales with size
-    private var shadowRadius: CGFloat {
-        size >= 64 ? 8 : 4
-    }
-
-    /// Shadow Y offset scales with size
-    private var shadowY: CGFloat {
-        size >= 64 ? 4 : 2
-    }
+    private var initialsSize: CGFloat { size * 0.386 }
+    private var shadowRadius: CGFloat { size >= 64 ? 8 : 4 }
+    private var shadowY: CGFloat { size >= 64 ? 4 : 2 }
 }
