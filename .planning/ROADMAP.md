@@ -297,7 +297,7 @@ Plans:
 ### Phase 15: UI Additions & Fixes
 **Goal:** Ship 17 approved design units across 4 tabs — HomeView additions (check-in CTA, quick stats, Stay Close), ChallengeDiscoveryView full redesign (Dispenser / Mood Scanner / Trending / Vitamin Shelf), Community Goals landing page with photo sharing, ProfileView bug fixes (mood picker, camera), and WelcomeScreen auth buttons (Sign in with Apple + Google stub)
 **Depends on:** Phase 14 (community feed and challenge modules fully implemented)
-**Requirements:** UIADD-01, UIADD-02, UIADD-03, UIADD-04, UIADD-05, UIADD-06
+**Requirements:** UIADD-01, UIADD-02, UIADD-03, UIADD-04, UIADD-05, UIADD-06, UIADD-07
 **Success Criteria** (what must be TRUE):
   1. HomeView shows the check-in CTA, Quick Stats row (active goals / check-ins / badges), and Stay Close section with three functional cards; AboutUsView and FAQView are reachable from Stay Close
   2. ChallengeDiscoveryView uses the new four-section layout (Dispenser → Mood Scanner → Trending → Vitamin Shelf); shaking the Dispenser or tapping "+ ADD" adds the goal and navigates to its detail view
@@ -307,10 +307,10 @@ Plans:
 **Plans:** 9 plans
 **Source:** `VitaminG/docs/superpowers/specs/2026-05-15-ui-additions-design.md`
 Plans:
-- [ ] 15-01-PLAN.md — Infrastructure: AppRoute.communityGoals, GoalViewModel.addGoal returns Goal, CommunityService.postCheckInPhoto, Info.plist NSCameraUsageDescription
+- [ ] 15-01-PLAN.md — Infrastructure: AppRoute.communityGoals stub, GoalViewModel.addGoal returns Goal, CommunityService.postCheckInPhoto, Info.plist NSCameraUsageDescription, SchemaV8 (UserProfile.username)
 - [ ] 15-02-PLAN.md — New support views: AboutUsView + FAQView in Views/Support/
 - [ ] 15-03-PLAN.md — HomeView additions: check-in CTA (A1), Quick Stats row (A2), Stay Close section (A3)
-- [ ] 15-04-PLAN.md — ProfileView fixes: mood picker conditional hide (D1), camera badge permission + PhotosPicker (D2)
+- [ ] 15-04-PLAN.md — ProfileView fixes: mood picker conditional hide (D1), camera badge permission + PhotosPicker (D2), username display + edit (UIADD-07)
 - [ ] 15-05-PLAN.md — WelcomeScreen auth buttons: Sign in with Apple + Google stub (E1-E3)
 - [ ] 15-06-PLAN.md — ChallengeDiscoveryView full redesign: Dispenser + MoodScanner + Trending + VitaminShelf (B1-B8)
 - [ ] 15-07-PLAN.md — Community Goals: CommunityChallengeCellView redesign (C1) + CommunityGoalsLandingView (C2+C3)
@@ -338,3 +338,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 12. Goal Progress Visualization | 6/6 | Complete | 2026-05-04 |
 | 13. Challenge Platform — Core Engine | 9/9 | Complete    | 2026-05-07 |
 | 14. Challenge Platform — Community & Modules | 10/10 | Complete | 2026-05-13 |
+| 15. UI Additions & Fixes | 0/9 | Ready to execute | — |

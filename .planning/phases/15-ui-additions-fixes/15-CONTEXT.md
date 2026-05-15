@@ -57,6 +57,12 @@
 - **E2: Sign in with Apple** — `AuthenticationServices` (built-in); on completion, save `userIdentifier` to `UserDefaults`; if user previously onboarded (name stored), call `onSkip()` to go to main app; otherwise push to `.name` onboarding step
 - **E3: Google stub** — no `GoogleSignIn-iOS` package; button is white pill with inline SwiftUI `G` logo; tap shows `Alert`: "Google Sign-In is coming soon."; swap in real SDK post-launch when needed
 
+### Username Field (added 2026-05-15)
+
+- **UIADD-07: Username added to UserProfile** — `UserProfile` gains `var username: String?`; requires SchemaV6 migration (V5 → V6) adding the field with `nil` default on existing records; displayed alongside display name in ProfileView and ProfileEditSheet; editable in ProfileEditSheet; validation: alphanumeric + underscores only, lowercase, max 30 characters; shown as "@username" format where displayed; also surfaced in WelcomeScreen sign-up flow as an optional step after name entry (or added to ProfileEditSheet only — planner's discretion on entry point)
+- **Username in community contexts** — where community posts/cards show the author, show `@username` (if set) below the display name; fall back to display name only if `username` is nil
+- **No unique constraint** — per CloudKit compatibility rules (`@Attribute(.unique)` is forbidden); application-level duplicate detection is not required for Phase 15 (post-launch concern)
+
 ### Claude's Discretion
 
 - Exact confetti/animation details for any new micro-interactions not specified in the design

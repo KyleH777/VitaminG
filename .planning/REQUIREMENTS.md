@@ -145,6 +145,7 @@
 - [ ] **UIADD-04**: Community Goals landing page — `CommunityGoalsLandingView.swift` (new): collective progress ring, photo wall with PhotosPicker + CloudKit CKAsset posting, live ticker (seed data), leaderboard (local); `CommunityChallengeCellView` redesigned (100pt height, 56pt icon square, ProgressRingView); `AppRoute.communityGoals(UserChallenge)` case added; card tap routes to landing instead of community feed
 - [ ] **UIADD-05**: ProfileView fixes — mood picker hidden after today's mood logged (replaced by "Feeling: [mood]" badge with "change" link); camera badge wired to request `AVCaptureDevice` permission then present `PhotosPicker`; on photo selection, compress to max 200KB JPEG and save to `profile.photoData`
 - [ ] **UIADD-06**: WelcomeScreen auth buttons — `SignInWithAppleButton` (AuthenticationServices, black pill); Google Sign-In stub (white pill + inline Google G SVG, shows "coming soon" alert on tap, zero new dependencies); "I'll set this up later" ghost link moved below auth buttons
+- [ ] **UIADD-07**: `UserProfile` gains `username: String?` field via SchemaV6 migration (V5→V6, nil default on existing records); displayed as "@username" alongside display name in ProfileView and ProfileEditSheet; editable in ProfileEditSheet with validation (alphanumeric + underscores, lowercase, max 30 chars); no `@Attribute(.unique)` (CloudKit restriction)
 
 ---
 
@@ -291,6 +292,7 @@
 | UIADD-04 | Phase 15 | Pending |
 | UIADD-05 | Phase 15 | Pending |
 | UIADD-06 | Phase 15 | Pending |
+| UIADD-07 | Phase 15 | Pending |
 
 **Coverage:**
 - v1 requirements: 91 total (66 previous + 25 challenge platform requirements added 2026-05-01)
