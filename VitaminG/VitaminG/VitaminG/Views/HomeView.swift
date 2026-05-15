@@ -1,11 +1,15 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 struct HomeView: View {
     @Query private var goals: [Goal]
+    @Query private var completionEvents: [CompletionEvent]
+    @Query private var userChallenges: [UserChallenge]
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("vg_onboardingName") private var storedName: String = ""
+    @State private var goalVM = GoalViewModel()
 
     private var displayName: String {
         storedName.trimmingCharacters(in: .whitespaces).isEmpty ? "You" : storedName
@@ -28,6 +32,13 @@ struct HomeView: View {
         goals.filter { !$0.isCompleted && $0.id != primaryGoal?.id }.prefix(3).map { $0 }
     }
 
+    private var todayCheckedIn: Bool {
+        completionEvents.contains(where: {
+            guard let at = $0.completedAt else { return false }
+            return Calendar.current.isDateInToday(at)
+        })
+    }
+
     var body: some View {
         ZStack {
             VGTheme.heroBackground.ignoresSafeArea()
@@ -44,6 +55,12 @@ struct HomeView: View {
                     if let goal = primaryGoal {
                         primaryGoalCard(goal)
                     }
+                    if let goal = primaryGoal, !todayCheckedIn {
+                        checkInCTA(goal)
+                            .padding(.top, 12)
+                    }
+                    quickStatsRow
+                    stayCloseSection
                     secondaryGoalsSection
                     Spacer(minLength: 32)
                 }
@@ -207,6 +224,25 @@ struct HomeView: View {
         .padding(.top, 20)
     }
 
+    private func checkInCTA(_ goal: Goal) -> some View {
+        NavigationLink(destination: GoalDetailView(goal: goal)) {
+            Text("Log today's check-in →")
+                .font(.system(size: 16, weight: .semibold))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(
+                    LinearGradient(
+                        colors: [VGTheme.accentTerra, VGTheme.terra],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .foregroundStyle(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .padding(.horizontal, 24)
+        }
+    }
+
     private func statCell(value: String, label: String) -> some View {
         VStack(spacing: 2) {
             Text(value)
@@ -221,6 +257,112 @@ struct HomeView: View {
         .padding(.vertical, 10)
         .background(Color.white.opacity(0.06))
         .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+
+    // MARK: - Quick Stats Row
+
+    private var quickStatsRow: some View {
+        HStack(spacing: 8) {
+            statCell(
+                value: "\(goals.filter { !($0.isCompleted) }.count)",
+                label: "Active Goals"
+            )
+            statCell(
+                value: "\(completionEvents.count)",
+                label: "Check-ins"
+            )
+            statCell(
+                value: "\(goalVM.earnedBadgeCount(from: userChallenges))",
+                label: "Badges"
+            )
+        }
+        .padding(.horizontal, 24)
+        .padding(.top, 16)
+    }
+
+    // MARK: - Stay Close Section
+
+    private var stayCloseSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Stay close")
+                    .font(VGTheme.serif(20, weight: .semibold))
+                    .foregroundStyle(VGTheme.sand)
+                Text("We're a small team and we'd love to hear from you.")
+                    .font(.system(size: 12))
+                    .foregroundStyle(VGTheme.muted)
+            }
+            .padding(.horizontal, 24)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    // About Us card
+                    NavigationLink(destination: AboutUsView()) {
+                        stayCloseCard(
+                            icon: "heart.fill",
+                            title: "About Us",
+                            subtitle: "Our story"
+                        )
+                    }
+                    .buttonStyle(.plain)
+
+                    // Contact Us card
+                    Button {
+                        UIApplication.shared.open(URL(string: "mailto:hello@vitamingapp.com")!)
+                    } label: {
+                        stayCloseCard(
+                            icon: "envelope.fill",
+                            title: "Contact Us",
+                            subtitle: "Say hello"
+                        )
+                    }
+                    .buttonStyle(.plain)
+
+                    // FAQ card
+                    NavigationLink(destination: FAQView()) {
+                        stayCloseCard(
+                            icon: "questionmark.circle.fill",
+                            title: "FAQ",
+                            subtitle: "Common questions"
+                        )
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.leading, 24)
+                .padding(.trailing, 16)
+            }
+        }
+        .padding(.top, 20)
+    }
+
+    private func stayCloseCard(icon: String, title: String, subtitle: String) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(VGTheme.accentTerra.opacity(0.15))
+                    .frame(width: 44, height: 44)
+                Image(systemName: icon)
+                    .font(.system(size: 20))
+                    .foregroundStyle(VGTheme.accentTerra)
+            }
+            Text(title)
+                .font(VGTheme.serif(18))
+                .foregroundStyle(VGTheme.textPrimary)
+            Text(subtitle)
+                .font(.system(size: 12))
+                .foregroundStyle(VGTheme.textMuted)
+            Text("Open →")
+                .font(.system(size: 12))
+                .foregroundStyle(VGTheme.accentTerra)
+        }
+        .padding(16)
+        .frame(width: 148)
+        .background(VGTheme.surface)
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .strokeBorder(VGTheme.separator, lineWidth: 1)
+        )
     }
 
     // MARK: - Secondary Goals
