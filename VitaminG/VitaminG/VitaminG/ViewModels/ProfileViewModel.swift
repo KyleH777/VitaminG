@@ -1,4 +1,5 @@
 import Observation
+import PhotosUI
 import SwiftData
 import SwiftUI
 
@@ -54,6 +55,7 @@ final class ProfileViewModel {
 
         if let existing = results.first {
             self.profile = existing
+            draftUsername = existing.username ?? ""
         } else {
             let newProfile = UserProfile()
             // Assign random avatar color — persisted, never re-randomized (D-02)
@@ -216,5 +218,45 @@ final class ProfileViewModel {
 
     func loadReactionCount() async {
         reactionCount = 0
+    }
+
+    // MARK: - Photo handling (Phase 15 — UIADD-05)
+
+    func handlePhotoSelection(_ item: PhotosPickerItem?, context: ModelContext) async {
+        guard let item else { return }
+        guard let data = try? await item.loadTransferable(type: Data.self) else { return }
+        let compressed = CommunityService.compressToJPEG(data, maxBytes: 200_000) ?? data
+        profile?.photoData = compressed
+        try? context.save()
+    }
+
+    // MARK: - Username (Phase 15 — UIADD-07)
+
+    var draftUsername: String = ""
+    static let maxUsernameLength = 30
+
+    var usernameValidationError: String? {
+        guard !draftUsername.isEmpty else { return nil }
+        if draftUsername.count > ProfileViewModel.maxUsernameLength {
+            return "Username must be 30 characters or fewer."
+        }
+        let allowed = CharacterSet.lowercaseLetters.union(.decimalDigits).union(CharacterSet(charactersIn: "_"))
+        if draftUsername.unicodeScalars.contains(where: { !allowed.contains($0) }) {
+            return "Username must be lowercase letters, numbers, and underscores only."
+        }
+        return nil
+    }
+
+    func validateAndSaveUsername(context: ModelContext) -> Bool {
+        let trimmed = draftUsername.trimmingCharacters(in: .whitespaces).lowercased()
+        draftUsername = trimmed
+        if let error = usernameValidationError {
+            validationErrorMessage = error
+            showingValidationAlert = true
+            return false
+        }
+        profile?.username = trimmed.isEmpty ? nil : trimmed
+        try? context.save()
+        return true
     }
 }

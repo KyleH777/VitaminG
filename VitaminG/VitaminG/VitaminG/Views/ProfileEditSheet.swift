@@ -54,6 +54,34 @@ struct ProfileEditSheet: View {
                     Text("This name appears on your profile and is visible to anyone you share your profile with.")
                         .font(.caption).fontDesign(.rounded)
                 }
+
+                Section {
+                    VStack(alignment: .leading, spacing: 4) {
+                        TextField("username", text: $viewModel.draftUsername)
+                            .font(.body)
+                            .fontDesign(.rounded)
+                            .autocorrectionDisabled(true)
+                            .textInputAutocapitalization(.never)
+                            .onChange(of: viewModel.draftUsername) { _, newValue in
+                                if newValue.count > ProfileViewModel.maxUsernameLength {
+                                    viewModel.draftUsername = String(newValue.prefix(ProfileViewModel.maxUsernameLength))
+                                }
+                            }
+                        HStack {
+                            Spacer()
+                            Text("\(viewModel.draftUsername.count)/\(ProfileViewModel.maxUsernameLength)")
+                                .font(.caption)
+                                .fontDesign(.rounded)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                } header: {
+                    Text("Username")
+                } footer: {
+                    Text("Lowercase letters, numbers, and underscores only. Leave blank to skip.")
+                        .font(.caption)
+                        .fontDesign(.rounded)
+                }
             }
             .navigationTitle("Edit Profile")
             .navigationBarTitleDisplayMode(.inline)
@@ -64,8 +92,9 @@ struct ProfileEditSheet: View {
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Update Name") {
+                    Button("Save") {
                         if viewModel.validateAndSaveDisplayName(context: modelContext) {
+                            _ = viewModel.validateAndSaveUsername(context: modelContext)
                             dismiss()
                         }
                     }

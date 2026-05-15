@@ -1,3 +1,5 @@
+import AVFoundation
+import PhotosUI
 import SwiftUI
 import SwiftData
 
@@ -6,6 +8,10 @@ struct ProfileView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) private var colorScheme
     @State private var activeTab: ProfileViewModel.ProfileTab = .goals
+    @State private var overrideMoodDisplay: Bool = false
+    @State private var showingPhotoPicker = false
+    @State private var cameraPermissionDenied = false
+    @State private var selectedPhotoItem: PhotosPickerItem? = nil
 
     @Query private var goals: [Goal]
     @Query private var completionEvents: [CompletionEvent]
@@ -39,6 +45,7 @@ struct ProfileView: View {
             modelContext.insert(entry)
         }
         try? modelContext.save()
+        overrideMoodDisplay = false
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
 
@@ -65,6 +72,16 @@ struct ProfileView: View {
             Button("Got It", role: .cancel) {}
         } message: {
             Text("Check your internet connection and try again.")
+        }
+        .photosPicker(isPresented: $showingPhotoPicker, selection: $selectedPhotoItem, matching: .images)
+        .onChange(of: selectedPhotoItem) { _, item in
+            Task { await viewModel.handlePhotoSelection(item, context: modelContext) }
+        }
+        .alert("Camera Access Denied", isPresented: $cameraPermissionDenied) {
+            Button("Open Settings") { UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!) }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Please allow camera access in Settings to update your profile photo.")
         }
     }
 
@@ -103,31 +120,41 @@ struct ProfileView: View {
                 .padding(.bottom, 16)
 
                 HStack(alignment: .bottom, spacing: 14) {
-                    ZStack(alignment: .bottomTrailing) {
-                        AvatarView(
-                            displayName: viewModel.profile?.displayName,
-                            avatarColorHex: viewModel.profile?.avatarColorHex,
-                            photoData: viewModel.profile?.photoData,
-                            size: 72
-                        )
-                        .overlay(Circle().stroke(VGTheme.clay, lineWidth: 3))
-
-                        Circle()
-                            .fill(VGTheme.terra)
-                            .frame(width: 22, height: 22)
-                            .overlay(
-                                Image(systemName: "camera.fill")
-                                    .font(.system(size: 9))
-                                    .foregroundStyle(.white)
+                    Button { requestCameraAndShow() } label: {
+                        ZStack(alignment: .bottomTrailing) {
+                            AvatarView(
+                                displayName: viewModel.profile?.displayName,
+                                avatarColorHex: viewModel.profile?.avatarColorHex,
+                                photoData: viewModel.profile?.photoData,
+                                size: 72
                             )
-                            .overlay(Circle().stroke(VGTheme.clay, lineWidth: 2))
+                            .overlay(Circle().stroke(VGTheme.clay, lineWidth: 3))
+
+                            Circle()
+                                .fill(VGTheme.terra)
+                                .frame(width: 22, height: 22)
+                                .overlay(
+                                    Image(systemName: "camera.fill")
+                                        .font(.system(size: 9))
+                                        .foregroundStyle(.white)
+                                )
+                                .overlay(Circle().stroke(VGTheme.clay, lineWidth: 2))
+                        }
                     }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Change profile photo")
 
                     VStack(alignment: .leading, spacing: 2) {
                         if let name = viewModel.profile?.displayName, !name.isEmpty {
                             Text(name)
                                 .font(VGTheme.serif(22))
                                 .foregroundStyle(VGTheme.sand)
+                        }
+                        if let username = viewModel.profile?.username, !username.isEmpty {
+                            Text("@\(username)")
+                                .font(.system(size: 13))
+                                .fontDesign(.rounded)
+                                .foregroundStyle(VGTheme.muted)
                         }
                         Text("Vitamin G Member")
                             .font(.system(size: 12))
@@ -137,6 +164,7 @@ struct ProfileView: View {
 
                     Button {
                         viewModel.draftDisplayName = viewModel.profile?.displayName ?? ""
+                        viewModel.draftUsername = viewModel.profile?.username ?? ""
                         viewModel.showingEditSheet = true
                     } label: {
                         Text("Edit")
@@ -184,40 +212,60 @@ struct ProfileView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 16)
 
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("HOW ARE YOU FEELING TODAY?")
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(VGTheme.muted)
-                        .kerning(0.8)
+                if todayMood == nil || overrideMoodDisplay {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("HOW ARE YOU FEELING TODAY?")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(VGTheme.muted)
+                            .kerning(0.8)
 
-                    let moods = [("◎", "Amazing"), ("○", "Good"), ("◐", "Okay"), ("◑", "Low"), ("◉", "Push")]
-                    HStack(spacing: 8) {
-                        ForEach(Array(moods.enumerated()), id: \.offset) { index, mood in
-                            let isActive = todayMood == index
-                            Button { logMood(index) } label: {
-                                VStack(spacing: 4) {
-                                    Text(mood.0).font(.system(size: 18))
-                                        .foregroundStyle(isActive ? VGTheme.accentTerra : VGTheme.textSecondary)
-                                        .shadow(color: isActive && colorScheme == .dark ? VGTheme.accentTerra.opacity(0.6) : .clear, radius: 6)
-                                    Text(mood.1).font(.system(size: 9, weight: isActive ? .semibold : .regular))
-                                        .kerning(0.4)
-                                        .foregroundStyle(isActive ? VGTheme.accentTerra : VGTheme.muted)
+                        let moods = [("◎", "Amazing"), ("○", "Good"), ("◐", "Okay"), ("◑", "Low"), ("◉", "Push")]
+                        HStack(spacing: 8) {
+                            ForEach(Array(moods.enumerated()), id: \.offset) { index, mood in
+                                let isActive = todayMood == index
+                                Button { logMood(index) } label: {
+                                    VStack(spacing: 4) {
+                                        Text(mood.0).font(.system(size: 18))
+                                            .foregroundStyle(isActive ? VGTheme.accentTerra : VGTheme.textSecondary)
+                                            .shadow(color: isActive && colorScheme == .dark ? VGTheme.accentTerra.opacity(0.6) : .clear, radius: 6)
+                                        Text(mood.1).font(.system(size: 9, weight: isActive ? .semibold : .regular))
+                                            .kerning(0.4)
+                                            .foregroundStyle(isActive ? VGTheme.accentTerra : VGTheme.muted)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 8)
+                                    .background(isActive ? VGTheme.accentTerra.opacity(0.14) : Color.white.opacity(0.05))
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .overlay(RoundedRectangle(cornerRadius: 10)
+                                        .strokeBorder(isActive ? VGTheme.accentTerra.opacity(0.4) : Color.clear, lineWidth: 1))
+                                    .shadow(color: isActive && colorScheme == .dark ? VGTheme.accentTerra.opacity(0.2) : .clear, radius: 8)
                                 }
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 8)
-                                .background(isActive ? VGTheme.accentTerra.opacity(0.14) : Color.white.opacity(0.05))
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .overlay(RoundedRectangle(cornerRadius: 10)
-                                    .strokeBorder(isActive ? VGTheme.accentTerra.opacity(0.4) : Color.clear, lineWidth: 1))
-                                .shadow(color: isActive && colorScheme == .dark ? VGTheme.accentTerra.opacity(0.2) : .clear, radius: 8)
+                                .buttonStyle(.plain)
+                                .accessibilityLabel(mood.1)
                             }
-                            .buttonStyle(.plain)
-                            .accessibilityLabel(mood.1)
                         }
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
+                } else {
+                    HStack(spacing: 6) {
+                        let moods = [("◎", "Amazing"), ("○", "Good"), ("◐", "Okay"), ("◑", "Low"), ("◉", "Push")]
+                        Text("Feeling:")
+                            .font(.system(size: 12))
+                            .foregroundStyle(VGTheme.muted)
+                        if let idx = todayMood, idx >= 0, idx < moods.count {
+                            Text(moods[idx].1)
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(VGTheme.accentTerra)
+                        }
+                        Spacer()
+                        Button("change") { overrideMoodDisplay = true }
+                            .font(.system(size: 12))
+                            .foregroundStyle(VGTheme.muted)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 16)
 
                 Color(VGTheme.background)
                     .frame(height: 24)
@@ -435,6 +483,27 @@ struct ProfileView: View {
         }
         .padding(.horizontal, 16)
         .padding(.top, 8)
+    }
+
+    // MARK: - Camera permission
+
+    private func requestCameraAndShow() {
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:
+            showingPhotoPicker = true
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                DispatchQueue.main.async {
+                    if granted {
+                        self.showingPhotoPicker = true
+                    } else {
+                        self.cameraPermissionDenied = true
+                    }
+                }
+            }
+        default:
+            cameraPermissionDenied = true
+        }
     }
 
     // MARK: - Badge helpers
