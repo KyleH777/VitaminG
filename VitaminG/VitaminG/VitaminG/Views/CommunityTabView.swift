@@ -51,7 +51,7 @@ struct CommunityTabView: View {
     private var challengeList: some View {
         LazyVStack(spacing: 10) {
             ForEach(activeChallenges) { challenge in
-                NavigationLink(value: AppRoute.communityFeed(challenge)) {
+                NavigationLink(value: AppRoute.communityGoals(challenge)) {
                     CommunityChallengeCellView(challenge: challenge)
                 }
                 .buttonStyle(.plain)
@@ -97,24 +97,48 @@ private struct CommunityChallengeCellView: View {
     private var challengeName: String { challenge.template?.title ?? "Challenge" }
     private var categoryLabel: String { challenge.template?.category ?? "" }
 
+    private var cellProgress: Double {
+        let checkIns = Double(challenge.totalCheckIns ?? 0)
+        let duration = Double(max(1, challenge.template?.durationDays ?? 90))
+        return min(1.0, checkIns / duration)
+    }
+
     var body: some View {
         HStack(spacing: 12) {
-            RoundedRectangle(cornerRadius: 2)
-                .fill(accentColor)
-                .frame(width: 4, height: 44)
+            // Icon chip
+            ZStack {
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(accentColor.opacity(0.15))
+                    .frame(width: 56, height: 56)
+                Image(systemName: challenge.template?.iconName ?? "flame.fill")
+                    .font(.system(size: 28))
+                    .foregroundStyle(accentColor)
+            }
+
+            // Text stack
             VStack(alignment: .leading, spacing: 3) {
                 Text(challengeName)
                     .font(.system(size: 14, weight: .medium))
                     .foregroundStyle(VGTheme.textPrimary)
+                    .lineLimit(2)
                 Text(categoryLabel)
                     .font(.system(size: 12))
                     .foregroundStyle(VGTheme.textMuted)
             }
+
             Spacer()
-            Image(systemName: "chevron.right")
-                .font(.system(size: 12))
-                .foregroundStyle(VGTheme.textMuted)
+
+            // Progress ring
+            ProgressRingView(
+                progress: cellProgress,
+                tier: .longTerm,
+                isCompleted: false,
+                size: 48,
+                strokeWidth: 4,
+                glow: false
+            )
         }
+        .frame(minHeight: 100)
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
         .background(VGTheme.surface)
