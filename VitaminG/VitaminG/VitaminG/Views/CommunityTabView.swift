@@ -1,9 +1,16 @@
 import SwiftUI
 import SwiftData
 
+enum CommunitySegment: String, CaseIterable {
+    case feed = "Feed"
+    case ideas = "Ideas"
+}
+
 struct CommunityTabView: View {
     @Binding var selectedTab: Int
     @Query private var userChallenges: [UserChallenge]
+    @State private var segment: CommunitySegment = .feed
+
     private var activeChallenges: [UserChallenge] {
         userChallenges.filter { $0.statusRaw == "active" }
     }
@@ -16,12 +23,25 @@ struct CommunityTabView: View {
                     .foregroundStyle(VGTheme.textPrimary)
                     .padding(.horizontal, 24)
                     .padding(.top, 20)
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 12)
 
-                if activeChallenges.isEmpty {
-                    emptyState
+                Picker("Section", selection: $segment) {
+                    ForEach(CommunitySegment.allCases, id: \.self) { s in
+                        Text(s.rawValue).tag(s)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
+
+                if segment == .feed {
+                    if activeChallenges.isEmpty {
+                        emptyState
+                    } else {
+                        challengeList
+                    }
                 } else {
-                    challengeList
+                    IdeaBoardView()
                 }
             }
         }
