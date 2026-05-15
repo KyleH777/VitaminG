@@ -371,3 +371,194 @@ Use `@Environment(\.colorScheme) var colorScheme` in views that need it.
 | `Views/SettingsView.swift` | Modify — dark mode adaptive colors |
 
 All paths relative to `Desktop/AI/Vitamin G/VitaminG/VitaminG/`.
+
+---
+
+## Addendum — User Feedback (2026-05-14)
+
+The following requirements were added after the initial design review. They extend Phases 2–4.
+
+---
+
+### A. Community — Engagement + Idea Board
+
+#### Post engagement (extends Phase 3 CommunityFeedView)
+
+Every post card must support real taps, not static display:
+- **♡ Heart:** toggle liked state, increment/decrement count locally. Persist `likedPostIDs: Set<String>` in `@AppStorage` (CloudKit community posts are read-only; likes are local-only for now).
+- **◉ Fire / ◎ Inspired:** same toggle pattern, separate `AppStorage` keys per reaction type.
+- **Reply / Comment:** tap opens a `CommentSheetView` — a bottom sheet with a list of existing comments (stored on the `CommunityPost` model) and a text field to add one. Comments are local-first (SwiftData), not synced to other users in this phase.
+
+#### Idea Board tab (new, inside Community) — Propose + Vote → Promote
+
+`CommunityTabView` gets a segmented picker at the top: **Feed | Ideas**. Both segments live within the same `NavigationStack`.
+
+**Ideas segment — `IdeaBoardView`** (new file):
+- Scrollable list of `GoalIdea` entries sorted by `upvoteCount DESC`
+- Each card: idea title (serif 17pt) + description (13pt muted) + category pill + upvote count with `△` icon (tappable, toggles user's upvote) + copy count + "Add to my goals →" button
+- **Promotion banner** on cards approaching the threshold (≥ 15 upvotes): `"🔥 Almost a challenge — \(upvotes) votes"` in accentTerra
+- **"Now a Challenge" badge** on promoted cards (`isPromoted == true`): sageGlow badge, "View in Explore →" link
+- FAB: `+` bottom-right, `accentTerra` fill, opens `ProposeIdeaSheet`
+
+**`GoalIdea` SwiftData model** (new):
+```swift
+@Model class GoalIdea {
+    var id: UUID = UUID()
+    var title: String = ""
+    var ideaDescription: String = ""
+    var category: String = ""       // GoalCategory raw value
+    var authorName: String = ""
+    var createdAt: Date = Date()
+    var upvoteCount: Int = 0
+    var copyCount: Int = 0
+    var isPromoted: Bool = false    // true when upvoteCount >= promotionThreshold (20)
+    var promotedChallengeID: UUID? = nil  // links to the Challenge created on promotion
+}
+```
+All fields optional-or-defaulted for CloudKit compatibility.
+
+**Promotion logic:** `IdeaBoardViewModel` observes `GoalIdea` entries. When `upvoteCount` reaches 20 and `isPromoted == false`:
+1. Creates a `Challenge` record from the idea (title, description, category).
+2. Sets `idea.isPromoted = true`, `idea.promotedChallengeID = newChallenge.id`.
+3. Shows a one-time toast: `"🎉 Your idea just became a challenge!"` if the current user authored it.
+
+**`ProposeIdeaSheet`** (new file): bottom sheet with:
+- "Propose a challenge" serif heading
+- Title text field (required, max 80 chars)
+- Description text field (optional, max 200 chars)
+- Category picker (same 8 categories as goal creation)
+- "Share idea" primary button — saves `GoalIdea`, dismisses
+
+**User upvote persistence:** `@AppStorage("vg_upvotedIdeaIDs")` as a comma-separated UUID string. Prevents double-voting without a backend.
+
+**"Add to my goals →" action:** calls `GoalViewModel.addGoal(input:context:)` with idea's title + category. Increments `idea.copyCount`. Navigates to Goals tab.
+
+---
+
+### B. Mood Logging (extends Phase 3 ProfileView)
+
+Replace `@AppStorage("vg_todayMood")` with a persisted SwiftData model.
+
+**`MoodEntry` SwiftData model** (new):
+```swift
+@Model class MoodEntry {
+    var id: UUID = UUID()
+    var mood: Int = 0          // 0 = Amazing, 1 = Good, 2 = Okay, 3 = Low, 4 = Push
+    var recordedAt: Date = Date()
+    var note: String? = nil    // future use
+}
+```
+
+**Behavior:** When the user taps a mood option in the `ProfileView` mood picker:
+1. Query today's `MoodEntry` (where `recordedAt` is same calendar day).
+2. If one exists: update `mood` value in place.
+3. If none: insert new `MoodEntry`.
+4. Show a subtle confirmation: `withAnimation` opacity flash on the selected cell + `UIImpactFeedbackGenerator(style: .light).impactOccurred()`.
+
+**Mood history** (Phase 4 stretch): `ProfileViewModel` exposes `moodHistory: [MoodEntry]` for the last 30 days. Shown as a color-coded row of dots above the activity heatmap (Amazing = sageGlow, Good = accentTerra, Okay = goldGlow, Low = accentPurple, Push = muted). Only rendered if ≥3 entries exist.
+
+---
+
+### C. Explore / Challenges — More Options & Categories
+
+Replace the current hardcoded challenge list in `ChallengeDiscoveryView` with a rich, categorized catalogue.
+
+**12 categories** (replace the old 3):
+
+| Category | Icon | Color |
+|----------|------|-------|
+| Morning Habits | `◐` | accentTerra |
+| Movement | `◎` | accentSage |
+| Mindfulness | `◇` | accentPurple |
+| Nutrition | `◑` | accentGold |
+| Sleep | `☽` | accentPurple |
+| Career & Learning | `△` | accentGold |
+| Relationships | `◈` | accentTerra |
+| Creativity | `◐` | accentSage |
+| Finance | `◉` | accentGold |
+| Sobriety & Recovery | `◎` | accentSage |
+| Productivity | `△` | accentTerra |
+| Gratitude | `♡` | accentTerra |
+
+**Each category has 4–6 goals.** Sample high-quality goals:
+
+- **Morning Habits:** "No phone for the first 30 minutes", "Make your bed before leaving your room", "Drink a full glass of water before coffee", "5-minute morning journal", "Cold shower every morning"
+- **Movement:** "10-minute walk after every meal", "3 full workouts per week", "Stretch for 5 minutes before bed", "Take the stairs every time", "Stand up every hour at work"
+- **Mindfulness:** "Meditate for 10 minutes daily", "3 deep breaths before any hard conversation", "One hour of phone-free time per day", "Gratitude — write 3 things every night"
+- **Nutrition:** "Drink 8 glasses of water daily", "No added sugar for 30 days", "Cook at home at least 5 nights a week", "Eat a vegetable with every meal"
+- **Sleep:** "In bed by 10:30 pm every night", "No screens 30 minutes before sleep", "Same wake time every day including weekends"
+- **Finance:** "Log every purchase the day it happens", "No impulse buys — 48-hour wait rule", "Save $100 per week automatically", "Pack lunch instead of eating out"
+- **Sobriety & Recovery:** "30 days alcohol-free", "Replace the habit with a walk", "Call your accountability partner weekly"
+- **Gratitude:** "Send one thank-you message per day", "End each day listing one win", "Tell someone you appreciate them weekly"
+
+**Featured challenge** rotates among `UserChallenge` entries with `isFeatured == true` (new optional Bool field on the `Challenge` model, default `false`). Hardcode 1–2 featured challenges in the initial seed data.
+
+**Data source:** `ChallengeDiscoveryView` reads from a `ChallengeLibrary` struct (static catalogue, no network) for the template goals. Existing `UserChallenge` + `Challenge` SwiftData models are used for joinable challenges.
+
+---
+
+### D. Goals Tab — Satisfying Interactions
+
+Apply throughout `GoalListView` and `GoalDetailView`:
+
+**Check-in / completion feedback:**
+- `UIImpactFeedbackGenerator(style: .medium).impactOccurred()` on every successful check-in
+- `UINotificationFeedbackGenerator().notificationOccurred(.success)` when a goal hits 100%
+- Progress ring animates from old value to new value using `withAnimation(.spring(response: 0.5, dampingFraction: 0.7))`
+
+**Goal row tap:**
+- Scale spring: `.scaleEffect(isPressed ? 0.97 : 1.0).animation(.spring(response: 0.2, dampingFraction: 0.8), value: isPressed)` using `ButtonStyle`
+
+**"+ New goal" button:**
+- Pulse glow on first appearance: `.shadow` animates from 0 to `accentTerra.opacity(0.45)` and back once, `withAnimation(.easeInOut(duration: 1.0).repeatCount(2))`
+
+**Goal list reorder / swipe:**
+- Swipe-to-complete: leading swipe reveals a terra checkmark action; triggers check-in + haptic
+- Swipe-to-delete: trailing swipe, existing behavior, adds `UIFeedbackGenerator` on delete
+
+**Streak milestone:**
+- When streak crosses 7, 14, 30, 60, 90: full-screen `MilestoneCelebrationView` already exists — ensure it fires from GoalListView on check-in via the existing `viewModel.pendingMilestone` path.
+
+---
+
+### E. Goal Suggestions — High-Quality Curated Goals
+
+Replace the existing suggestion chips in `Step2NameScreen` (goal creation wizard) with genuinely useful, specific, and motivating goals. The "Let the app pick" action (if it exists) draws from the same pool.
+
+**Principle:** Every suggestion should be specific, time-bound or measurable, and sound like something a real person would actually want to do — not a generic label.
+
+**Updated suggestion pool per `GoalCategory`:**
+
+| Category | Suggestions |
+|----------|-------------|
+| Body | "Work out 4 times this week", "Run a 5K without stopping", "Do 10 push-ups every morning", "Walk 8,000 steps every day", "No junk food for 21 days" |
+| Mind | "Read 20 pages every night before sleep", "Finish one book this month", "Learn one new word daily", "Journal for 5 minutes every morning", "No social media before noon" |
+| Wellness | "Be in bed by 10:30 pm", "Drink 3 litres of water daily", "No alcohol this month", "Meditate for 10 minutes daily", "Take a 10-minute walk every day" |
+| Money | "Save $200 this month", "Track every expense for 30 days", "No unnecessary purchases for 2 weeks", "Pack lunch 4 days a week", "Transfer 10% of every paycheck to savings" |
+| Connection | "Call a friend or family member once a week", "Plan one meaningful outing this month", "Put the phone away at dinner every night", "Send a genuine compliment once a day" |
+| Creative | "Write 300 words every day", "Sketch something every evening", "Finish one project you've been putting off", "Learn one chord or one note every day" |
+| Habit | "No phone in bed", "Make your bed every single morning", "Floss every night", "10-minute tidy before bed", "First thing: drink water, not scroll" |
+| Other | (user types their own — no chip suggestions; show placeholder "Describe your goal…") |
+
+**"Pick one for me" / random suggestion:** draw randomly from the active category's list, animate in with a spring slide from the right. If the user taps again, cycle to the next suggestion.
+
+---
+
+### Updated File Change Map (Addendum)
+
+| File | Action | Phase |
+|------|--------|-------|
+| `Models/GoalIdea.swift` | Create | 3 |
+| `Models/MoodEntry.swift` | Create | 3 |
+| `Models/ChallengeLibrary.swift` | Create (static catalogue) | 3 |
+| `Views/Community/IdeaBoardView.swift` | Create | 3 |
+| `Views/Community/ProposeIdeaSheet.swift` | Create | 3 |
+| `ViewModels/IdeaBoardViewModel.swift` | Create — upvote logic + promotion pipeline | 3 |
+| `Views/Community/CommentSheetView.swift` | Create | 3 |
+| `Views/CommunityTabView.swift` | Modify — Feed/Ideas segmented picker | 3 |
+| `Views/CommunityFeedView.swift` | Modify — tappable reactions, comment sheet trigger | 3 |
+| `Views/ChallengeDiscoveryView.swift` | Modify — 12 categories, full goal catalogue | 3 |
+| `Views/ProfileView.swift` | Modify — MoodEntry persistence, mood history dots | 3 |
+| `Views/GoalListView.swift` | Modify — haptics, spring animations, swipe-to-complete | 2 |
+| `Views/GoalDetailView.swift` | Modify — haptics, ring animation | 2 |
+| `Views/GoalCreation/Step2NameScreen.swift` | Modify — updated suggestion pool, "pick for me" | 2 |
