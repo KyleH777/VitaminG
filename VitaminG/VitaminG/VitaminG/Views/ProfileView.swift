@@ -4,18 +4,42 @@ import SwiftData
 struct ProfileView: View {
     @State private var viewModel = ProfileViewModel()
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.colorScheme) private var colorScheme
     @State private var activeTab: ProfileViewModel.ProfileTab = .goals
-    @State private var selectedMood: Int? = nil
 
     @Query private var goals: [Goal]
     @Query private var completionEvents: [CompletionEvent]
     @Query private var userChallenges: [UserChallenge]
+    @Query(sort: \SchemaV7.MoodEntry.recordedAt, order: .reverse)
+    private var moodEntries: [SchemaV7.MoodEntry]
 
     private var currentStreak: Int {
         StreakEngine.currentStreak(from: completionEvents, tier: nil)
     }
     private var bestStreak: Int {
         StreakEngine.bestStreak(events: completionEvents)
+    }
+
+    private var todayMood: Int? {
+        let today = Calendar.current.startOfDay(for: Date())
+        return moodEntries.first(where: {
+            Calendar.current.startOfDay(for: $0.recordedAt) == today
+        })?.mood
+    }
+
+    private func logMood(_ index: Int) {
+        let today = Calendar.current.startOfDay(for: Date())
+        if let existing = moodEntries.first(where: {
+            Calendar.current.startOfDay(for: $0.recordedAt) == today
+        }) {
+            existing.mood = index
+        } else {
+            let entry = SchemaV7.MoodEntry()
+            entry.mood = index
+            modelContext.insert(entry)
+        }
+        try? modelContext.save()
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
 
     var body: some View {
@@ -28,7 +52,7 @@ struct ProfileView: View {
                 shareAndSettings
             }
         }
-        .background(VGTheme.sandLight)
+        .background(VGTheme.background)
         .toolbar(.hidden, for: .navigationBar)
         .onAppear {
             viewModel.loadOrCreateProfile(context: modelContext)
@@ -166,27 +190,26 @@ struct ProfileView: View {
                         .foregroundStyle(VGTheme.muted)
                         .kerning(0.8)
 
-                    let moods: [(String, String)] = [("🌟","Amazing"),("😊","Good"),("😐","Okay"),("😔","Low"),("💪","Push")]
+                    let moods = [("◎", "Amazing"), ("○", "Good"), ("◐", "Okay"), ("◑", "Low"), ("◉", "Push")]
                     HStack(spacing: 8) {
-                        ForEach(Array(moods.enumerated()), id: \.offset) { i, mood in
-                            Button {
-                                selectedMood = i
-                            } label: {
-                                VStack(spacing: 3) {
+                        ForEach(Array(moods.enumerated()), id: \.offset) { index, mood in
+                            let isActive = todayMood == index
+                            Button { logMood(index) } label: {
+                                VStack(spacing: 4) {
                                     Text(mood.0).font(.system(size: 18))
-                                    Text(mood.1)
-                                        .font(.system(size: 9))
-                                        .foregroundStyle(selectedMood == i ? VGTheme.terraSoft : VGTheme.muted)
+                                        .foregroundStyle(isActive ? VGTheme.accentTerra : VGTheme.textSecondary)
+                                        .shadow(color: isActive && colorScheme == .dark ? VGTheme.accentTerra.opacity(0.6) : .clear, radius: 6)
+                                    Text(mood.1).font(.system(size: 9, weight: isActive ? .semibold : .regular))
                                         .kerning(0.4)
+                                        .foregroundStyle(isActive ? VGTheme.accentTerra : VGTheme.muted)
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 8)
-                                .background(selectedMood == i ? VGTheme.terra.opacity(0.25) : Color.white.opacity(0.05))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(selectedMood == i ? VGTheme.terra.opacity(0.4) : Color.clear, lineWidth: 1)
-                                )
+                                .background(isActive ? VGTheme.accentTerra.opacity(0.14) : Color.white.opacity(0.05))
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .overlay(RoundedRectangle(cornerRadius: 10)
+                                    .strokeBorder(isActive ? VGTheme.accentTerra.opacity(0.4) : Color.clear, lineWidth: 1))
+                                .shadow(color: isActive && colorScheme == .dark ? VGTheme.accentTerra.opacity(0.2) : .clear, radius: 8)
                             }
                             .buttonStyle(.plain)
                             .accessibilityLabel(mood.1)
@@ -196,7 +219,7 @@ struct ProfileView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 16)
 
-                Color(VGTheme.sandLight)
+                Color(VGTheme.background)
                     .frame(height: 24)
                     .clipShape(
                         UnevenRoundedRectangle(
@@ -235,8 +258,8 @@ struct ProfileView: View {
                 .accessibilityLabel(label)
             }
         }
-        .background(VGTheme.sandLight)
-        .overlay(Divider().foregroundStyle(VGTheme.sandMid), alignment: .bottom)
+        .background(VGTheme.background)
+        .overlay(Divider().foregroundStyle(VGTheme.separator), alignment: .bottom)
     }
 
     // MARK: - Tab Content
