@@ -304,8 +304,18 @@ Plans:
   3. Tapping a community challenge card navigates to CommunityGoalsLandingView (not CommunityFeedView); the "Share today's check-in" CTA opens PhotosPicker and posts a photo via CommunityService
   4. ProfileView hides the mood picker when today's mood is already logged and shows a "Feeling: [mood]" badge; the camera badge opens a photo picker after requesting AVCaptureDevice permission and saves compressed photo to profile
   5. WelcomeScreen shows Sign in with Apple button (functional via AuthenticationServices) and Google stub button (shows "coming soon" alert); no new SPM dependencies added
-**Plans:** TBD
+**Plans:** 9 plans
 **Source:** `VitaminG/docs/superpowers/specs/2026-05-15-ui-additions-design.md`
+Plans:
+- [ ] 15-01-PLAN.md — Infrastructure: AppRoute.communityGoals, GoalViewModel.addGoal returns Goal, CommunityService.postCheckInPhoto, Info.plist NSCameraUsageDescription
+- [ ] 15-02-PLAN.md — New support views: AboutUsView + FAQView in Views/Support/
+- [ ] 15-03-PLAN.md — HomeView additions: check-in CTA (A1), Quick Stats row (A2), Stay Close section (A3)
+- [ ] 15-04-PLAN.md — ProfileView fixes: mood picker conditional hide (D1), camera badge permission + PhotosPicker (D2)
+- [ ] 15-05-PLAN.md — WelcomeScreen auth buttons: Sign in with Apple + Google stub (E1-E3)
+- [ ] 15-06-PLAN.md — ChallengeDiscoveryView full redesign: Dispenser + MoodScanner + Trending + VitaminShelf (B1-B8)
+- [ ] 15-07-PLAN.md — Community Goals: CommunityChallengeCellView redesign (C1) + CommunityGoalsLandingView (C2+C3)
+- [ ] 15-08-PLAN.md — ContentView navigation wiring: challengesNavPath binding + communityGoals destinations (C4 + B8)
+- [ ] 15-09-PLAN.md — Build verification + human UAT checkpoint
 
 ## Progress
 
