@@ -22,7 +22,7 @@ enum CommunityService {
 
     // MARK: - Fetch posts by category (CHAL-13)
     static func fetchPosts(category: String, limit: Int = 50) async throws -> [CKRecord] {
-        let container = CKContainer(identifier: containerID)
+        let container = CKContainer.default()
         let db = container.publicCloudDatabase
         let predicate = NSPredicate(format: "category == %@ AND reportCount < 3", category)
         let query = CKQuery(recordType: postRecordType, predicate: predicate)
@@ -39,7 +39,7 @@ enum CommunityService {
         authorDisplayName: String?,
         authorColorHex: String?
     ) async throws -> CKRecord {
-        let container = CKContainer(identifier: containerID)
+        let container = CKContainer.default()
         let record = CKRecord(recordType: postRecordType)
         record["text"] = InputSanitizer.sanitizeForPublic(text) as CKRecordValue
         record["category"] = category as CKRecordValue
@@ -69,7 +69,7 @@ enum CommunityService {
         reactionType: ReactionType,
         add: Bool
     ) async throws -> CKRecord {
-        let container = CKContainer(identifier: containerID)
+        let container = CKContainer.default()
         let db = container.publicCloudDatabase
         do {
             let record = try await db.record(for: recordID)
@@ -92,7 +92,7 @@ enum CommunityService {
     // MARK: - Report post (CHAL-15)
     /// Returns the new report count after de-duplicated insert.
     static func reportPost(recordID: CKRecord.ID, reporterID: String) async throws -> Int {
-        let container = CKContainer(identifier: containerID)
+        let container = CKContainer.default()
         let db = container.publicCloudDatabase
 
         // Extracted helper — applies reporter ID mutation to a fetched record.
@@ -130,6 +130,19 @@ enum CommunityService {
         }
     }
 
+    // MARK: - Check-in photo (UIADD-04, C3)
+    static func postCheckInPhoto(_ imageData: Data, challengeCategory: String) async throws -> CKRecord {
+        let compressed = compressToJPEG(imageData, maxBytes: 800_000) ?? imageData
+        let tmpURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".jpg")
+        defer { try? FileManager.default.removeItem(at: tmpURL) }
+        try compressed.write(to: tmpURL)
+        let record = CKRecord(recordType: "CheckInPhoto")
+        record["category"] = challengeCategory as CKRecordValue
+        record["photoAsset"] = CKAsset(fileURL: tmpURL)
+        record["creationEpoch"] = Int(Date().timeIntervalSince1970) as CKRecordValue
+        return try await CKContainer.default().publicCloudDatabase.save(record)
+    }
+
     // MARK: - JPEG compression helper
     static func compressToJPEG(_ data: Data, maxBytes: Int) -> Data? {
         #if canImport(UIKit)
@@ -163,7 +176,7 @@ extension CommunityService {
     /// subscription save succeeds but no push is ever delivered — this is a configuration
     /// concern, not a code defect.
     static func registerReactionSubscription(userRecordName: String) async {
-        let container = CKContainer(identifier: containerID)
+        let container = CKContainer.default()
         let db = container.publicCloudDatabase
         let subscriptionID = "reaction-received-\(userRecordName)"
 
