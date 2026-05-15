@@ -114,8 +114,11 @@ final class GoalViewModel {
     func toggleCompletion(goal: Goal, context: ModelContext) {
         goal.completed.toggle()
         if goal.completed {
-            let event = CompletionEvent(goal: goal)
+            let event = CompletionEvent()
+            event.completedAt = Date()
+            event.tierRawValue = goal.tierRawValue
             context.insert(event)
+            event.goal = goal
 
             // PROG-03 — milestone threshold check after the new event is in the
             // graph. SwiftData updates `goal.completionEvents` synchronously on
@@ -151,7 +154,8 @@ final class GoalViewModel {
 
     // MARK: - Input-based CRUD (wizard path)
 
-    func addGoal(input: GoalInput, context: ModelContext) throws {
+    @discardableResult
+    func addGoal(input: GoalInput, context: ModelContext) throws -> Goal {
         let cleanTitle = sanitize(input.title)
         try validate(title: cleanTitle, description: "", inspiration: "")
 
@@ -169,6 +173,7 @@ final class GoalViewModel {
         if input.reminderTime != nil {
             Task { await NotificationScheduler.shared.schedulePerGoal(goal) }
         }
+        return goal
     }
 
     func updateGoal(_ goal: Goal, input: GoalInput, context: ModelContext) throws {
