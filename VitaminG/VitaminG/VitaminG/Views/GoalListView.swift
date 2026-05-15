@@ -30,7 +30,7 @@ struct GoalListView: View {
                 EmptyStateView { showingAddGoal = true }
             }
         }
-        .background(VGTheme.sandLight)
+        .background(VGTheme.background)
         .onDisappear { milestoneTask?.cancel() }
         .toolbar {
             ToolbarItem(placement: .secondaryAction) {
@@ -78,14 +78,15 @@ struct GoalListView: View {
                     Button {
                         showingAddGoal = true
                     } label: {
-                        Text("+ New Goal")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(.white)
+                        Text("+ New goal")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(VGTheme.background)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 8)
-                            .background(VGTheme.terra)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .background(VGTheme.accentTerra)
+                            .clipShape(Capsule())
                     }
+                    .shadow(color: VGTheme.accentTerra.opacity(0.4), radius: 8)
                     .accessibilityLabel("Add new goal")
                 }
                 .padding(.horizontal, 24)
@@ -150,10 +151,16 @@ struct GoalListView: View {
                 goal: goal,
                 events: events,
                 milestoneThreshold: milestoneThreshold,
-                onToggle: { viewModel.toggleCompletion(goal: goal, context: modelContext) }
+                onToggle: {
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    viewModel.toggleCompletion(goal: goal, context: modelContext)
+                    if goal.isCompleted {
+                        UINotificationFeedbackGenerator().notificationOccurred(.success)
+                    }
+                }
             )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(GoalRowButtonStyle())
         .padding(.horizontal, 16)
         .contextMenu {
             Button(role: .destructive) {
@@ -250,6 +257,16 @@ private struct ChallengeHeroCard: View {
     }
 }
 
+// MARK: - GoalRowButtonStyle
+
+struct GoalRowButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .animation(.spring(response: 0.2, dampingFraction: 0.8), value: configuration.isPressed)
+    }
+}
+
 // MARK: - GoalCardView
 
 private struct GoalCardView: View {
@@ -278,8 +295,8 @@ private struct GoalCardView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(goal.title ?? "")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(goal.isCompleted ? VGTheme.muted : VGTheme.clay)
-                    .strikethrough(goal.isCompleted, color: VGTheme.muted.opacity(0.6))
+                    .foregroundStyle(goal.isCompleted ? VGTheme.textMuted : VGTheme.textPrimary)
+                    .strikethrough(goal.isCompleted, color: VGTheme.textMuted.opacity(0.6))
                     .lineLimit(2)
                 if let desc = goal.goalDescription, !desc.isEmpty {
                     Text(desc)
@@ -297,9 +314,9 @@ private struct GoalCardView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
-        .background(VGTheme.warmWhite)
+        .background(VGTheme.surface)
         .clipShape(RoundedRectangle(cornerRadius: 14))
-        .shadow(color: VGTheme.clay.opacity(0.07), radius: 8, y: 1)
+        .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(VGTheme.separator, lineWidth: 1))
         .scaleEffect(bounceScale)
         .overlay(alignment: .center) {
             if showMilestoneBadge, let threshold = milestoneThreshold {
