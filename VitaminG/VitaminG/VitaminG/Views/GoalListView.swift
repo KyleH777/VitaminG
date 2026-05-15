@@ -46,7 +46,7 @@ struct GoalListView: View {
                 .accessibilityLabel("Sort goals")
             }
         }
-        .sheet(isPresented: $showingAddGoal) { AddGoalView(viewModel: viewModel) }
+        .sheet(isPresented: $showingAddGoal) { GoalCreationWizardView() }
         .confirmationDialog("Delete this goal?", isPresented: $showingDeleteConfirmation, titleVisibility: .visible) {
             Button("Delete", role: .destructive) {
                 if let goal = goalToDelete { viewModel.delete(goal: goal, context: modelContext) }
