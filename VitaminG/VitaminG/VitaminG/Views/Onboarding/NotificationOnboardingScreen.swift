@@ -58,11 +58,11 @@ struct NotificationOnboardingScreen: View {
                         .foregroundStyle(VGTheme.sand)
                         .padding(.bottom, 6)
 
-                    Text(VGQuoteBank.todaysQuote().displayText)
+                    Text("Day 12 of your Summer Body Challenge. You're 72% there.")
                         .font(.system(size: 13, weight: .light))
                         .foregroundStyle(VGTheme.sand.opacity(0.7))
                         .lineSpacing(4)
-                        .lineLimit(3)
+                        .lineLimit(2)
                 }
                 .padding(18)
                 .background(.ultraThinMaterial.opacity(0.3))
@@ -77,12 +77,9 @@ struct NotificationOnboardingScreen: View {
 
                 // Headline
                 VStack(alignment: .leading, spacing: 14) {
-                    Text("Stay on track,\n")
+                    Text("Stay on track,\n\(Text("every day.").font(Font.custom("Georgia-Italic", size: 42)).foregroundStyle(VGTheme.terraSoft))")
                         .font(Font.custom("Georgia", size: 42))
                         .foregroundStyle(VGTheme.sand)
-                    + Text("every day.")
-                        .font(Font.custom("Georgia-Italic", size: 42))
-                        .foregroundStyle(VGTheme.terraSoft)
 
                     Text("One daily nudge at the time you choose. No noise — just your reminder to keep going.")
                         .font(.system(size: 14, weight: .light))
