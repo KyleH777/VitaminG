@@ -232,6 +232,18 @@ final class GoalViewModel {
         }
     }
 
+    // MARK: - Stats (Phase 15 — UIADD-02)
+
+    func earnedBadgeCount(from challenges: [UserChallenge]) -> Int {
+        challenges.reduce(0) { total, challenge in
+            guard let json = challenge.earnedBadgeSymbolsJSON,
+                  let data = json.data(using: .utf8),
+                  let symbols = try? JSONDecoder().decode([String].self, from: data)
+            else { return total }
+            return total + symbols.count
+        }
+    }
+
     // MARK: - Helpers
 
     func resetDraft() {
