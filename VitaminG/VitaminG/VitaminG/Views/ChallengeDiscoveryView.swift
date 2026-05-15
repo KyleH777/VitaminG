@@ -14,18 +14,32 @@ import SwiftData
 struct ChallengeDiscoveryView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel = ChallengeViewModel()
+    @State private var goalVM = GoalViewModel()
     @Query private var templates: [ChallengeTemplate]
     @Query private var userChallenges: [UserChallenge]
     @State private var showBuildYourOwn = false
+    @State private var searchText = ""
+
+    private let catalogue = ChallengeLibrary.categories
+    private var filtered: [GoalCategorySection] {
+        guard !searchText.isEmpty else { return catalogue }
+        return catalogue.compactMap { section in
+            let goals = section.goals.filter {
+                $0.title.localizedCaseInsensitiveContains(searchText)
+            }
+            return goals.isEmpty ? nil : GoalCategorySection(
+                name: section.name, icon: section.icon,
+                colorToken: section.colorToken, goals: goals)
+        }
+    }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 featuredSection
-                categorySection
+                catalogueSection
                 buildYourOwnButton
             }
-            .padding(.horizontal, 16)
             .padding(.top, 8)
         }
         .background(VGTheme.background)
@@ -64,30 +78,72 @@ struct ChallengeDiscoveryView: View {
         }
     }
 
-    // MARK: - Category Section
+    // MARK: - Catalogue Section
 
-    private var categorySection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Browse by Category")
-                .font(.title2)
-                .fontWeight(.semibold)
-                .fontDesign(.rounded)
-                .foregroundStyle(VGTheme.textPrimary)
+    private var catalogueSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // Search bar
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 14)).foregroundStyle(VGTheme.textFaint)
+                TextField("Search goals…", text: $searchText)
+                    .font(.system(size: 13.5))
+                    .foregroundStyle(VGTheme.textPrimary)
+            }
+            .padding(.horizontal, 14).padding(.vertical, 11)
+            .background(VGTheme.surface)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(VGTheme.separator, lineWidth: 1))
+            .padding(.horizontal, 16)
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(["Fitness", "Finance", "Sobriety"], id: \.self) { category in
-                        Text(category)
-                            .font(.body)
-                            .fontDesign(.rounded)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(Color(.secondarySystemGroupedBackground))
+            // 12-category list
+            ForEach(filtered) { section in
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 6) {
+                        Text(section.icon).font(.system(size: 14))
+                            .foregroundStyle(VGTheme.accentTerra)
+                        Text(section.name.uppercased())
+                            .font(.system(size: 10, weight: .semibold)).kerning(1.2)
+                            .foregroundStyle(VGTheme.textMuted)
+                    }
+                    .padding(.horizontal, 16)
+
+                    ForEach(section.goals) { goal in
+                        HStack(spacing: 12) {
+                            Circle().fill(VGTheme.accentTerra).frame(width: 7, height: 7)
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(goal.title).font(.system(size: 14, weight: .medium))
+                                    .foregroundStyle(VGTheme.textPrimary)
+                                HStack(spacing: 8) {
+                                    Text(goal.duration).font(.system(size: 11)).foregroundStyle(VGTheme.textMuted)
+                                    Text(goal.level)
+                                        .font(.system(size: 11, weight: .semibold))
+                                        .foregroundStyle(goal.level == "Easy" ? VGTheme.accentSage : VGTheme.accentGold)
+                                }
+                            }
+                            Spacer()
+                            Button("+ Add") {
+                                let input = GoalInput(title: goal.title, tier: .immediate,
+                                                     category: .habit, frequency: .daily,
+                                                     reminderTime: nil, isPrivate: false, startDate: nil)
+                                try? goalVM.addGoal(input: input, context: modelContext)
+                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                            }
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(VGTheme.accentTerra)
+                            .padding(.horizontal, 12).padding(.vertical, 7)
+                            .background(VGTheme.accentTerra.opacity(0.12))
                             .clipShape(Capsule())
-                            .foregroundStyle(VGTheme.textPrimary)
+                            .overlay(Capsule().strokeBorder(VGTheme.accentTerra.opacity(0.3), lineWidth: 1))
+                        }
+                        .padding(.horizontal, 16).padding(.vertical, 14)
+                        .background(VGTheme.surface)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(VGTheme.separator, lineWidth: 1))
+                        .padding(.horizontal, 16)
                     }
                 }
-                .padding(.horizontal, 2)
+                .padding(.bottom, 14)
             }
         }
     }
