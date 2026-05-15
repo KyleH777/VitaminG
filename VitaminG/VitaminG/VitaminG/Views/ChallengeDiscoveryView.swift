@@ -19,6 +19,7 @@ struct ChallengeDiscoveryView: View {
     @Query private var userChallenges: [UserChallenge]
     @State private var showBuildYourOwn = false
     @State private var searchText = ""
+    @State private var addedGoalTitles: Set<String> = []
 
     private let catalogue = ChallengeLibrary.categories
     private var filtered: [GoalCategorySection] {
@@ -122,19 +123,28 @@ struct ChallengeDiscoveryView: View {
                                 }
                             }
                             Spacer()
-                            Button("+ Add") {
+                            let isAdded = addedGoalTitles.contains(goal.title)
+                            Button {
+                                guard !isAdded else { return }
                                 let input = GoalInput(title: goal.title, tier: .immediate,
                                                      category: .habit, frequency: .daily,
                                                      reminderTime: nil, isPrivate: false, startDate: nil)
                                 try? goalVM.addGoal(input: input, context: modelContext)
+                                addedGoalTitles.insert(goal.title)
                                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Image(systemName: isAdded ? "checkmark" : "plus")
+                                        .font(.system(size: 11, weight: .bold))
+                                    Text(isAdded ? "Added" : "Add")
+                                        .font(.system(size: 12, weight: .semibold))
+                                }
+                                .foregroundStyle(isAdded ? VGTheme.accentSage : VGTheme.accentTerra)
+                                .padding(.horizontal, 12).padding(.vertical, 7)
+                                .background((isAdded ? VGTheme.accentSage : VGTheme.accentTerra).opacity(0.12))
+                                .clipShape(Capsule())
+                                .overlay(Capsule().strokeBorder((isAdded ? VGTheme.accentSage : VGTheme.accentTerra).opacity(0.3), lineWidth: 1))
                             }
-                            .font(.system(size: 12, weight: .semibold))
-                            .foregroundStyle(VGTheme.accentTerra)
-                            .padding(.horizontal, 12).padding(.vertical, 7)
-                            .background(VGTheme.accentTerra.opacity(0.12))
-                            .clipShape(Capsule())
-                            .overlay(Capsule().strokeBorder(VGTheme.accentTerra.opacity(0.3), lineWidth: 1))
                         }
                         .padding(.horizontal, 16).padding(.vertical, 14)
                         .background(VGTheme.surface)
