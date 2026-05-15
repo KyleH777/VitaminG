@@ -137,6 +137,15 @@
 - [ ] **PROG-04**: A momentum score (completions in last 7 days ÷ 7, clamped 0–1) is computed per goal and shown in GoalDetailView with a color indicator
 - [ ] **PROG-05**: All progress and momentum computations derive from existing `CompletionEvent` records — no new model required
 
+### UI Additions & Fixes (Phase 15)
+
+- [ ] **UIADD-01**: HomeView additions — "Log your workout →" CTA below primaryGoalCard (shown only when not checked in today), Quick Stats row with active goals / total check-ins / badges earned, Stay Close section with About Us / Contact Us / FAQ cards
+- [ ] **UIADD-02**: Support pages — `AboutUsView` (static scroll with terra gradient header + founder note) and `FAQView` (DisclosureGroup accordion, 8–10 Q&As) in `Views/Support/`
+- [ ] **UIADD-03**: ChallengeDiscoveryView full redesign — replace flat layout with: VitaminDispenserView (shake gesture → random goal), MoodScannerView (mood pill filter), TrendingChallengesRow (horizontal scroll of featured cards), VitaminShelfGrid (2-column category grid); Build-Your-Own button moved below Mood Scanner; GoalViewModel.addGoal returns `Goal` and navigates to new goal after add
+- [ ] **UIADD-04**: Community Goals landing page — `CommunityGoalsLandingView.swift` (new): collective progress ring, photo wall with PhotosPicker + CloudKit CKAsset posting, live ticker (seed data), leaderboard (local); `CommunityChallengeCellView` redesigned (100pt height, 56pt icon square, ProgressRingView); `AppRoute.communityGoals(UserChallenge)` case added; card tap routes to landing instead of community feed
+- [ ] **UIADD-05**: ProfileView fixes — mood picker hidden after today's mood logged (replaced by "Feeling: [mood]" badge with "change" link); camera badge wired to request `AVCaptureDevice` permission then present `PhotosPicker`; on photo selection, compress to max 200KB JPEG and save to `profile.photoData`
+- [ ] **UIADD-06**: WelcomeScreen auth buttons — `SignInWithAppleButton` (AuthenticationServices, black pill); Google Sign-In stub (white pill + inline Google G SVG, shows "coming soon" alert on tap, zero new dependencies); "I'll set this up later" ghost link moved below auth buttons
+
 ---
 
 ## v2 Requirements
@@ -276,11 +285,19 @@
 | PROG-04 | Phase 12 | Pending |
 | PROG-05 | Phase 12 | Pending |
 
+| UIADD-01 | Phase 15 | Pending |
+| UIADD-02 | Phase 15 | Pending |
+| UIADD-03 | Phase 15 | Pending |
+| UIADD-04 | Phase 15 | Pending |
+| UIADD-05 | Phase 15 | Pending |
+| UIADD-06 | Phase 15 | Pending |
+
 **Coverage:**
 - v1 requirements: 91 total (66 previous + 25 challenge platform requirements added 2026-05-01)
-- Mapped to phases: 66
+- Phase 15 requirements: 6 (UIADD-01–06, UI additions & fixes, added 2026-05-15)
+- Mapped to phases: 72
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-04-03*
-*Last updated: 2026-05-01 — GRAT-01–06 (Phase 11) and PROG-01–05 (Phase 12) added for new feature phases*
+*Last updated: 2026-05-15 — UIADD-01–06 (Phase 15) added for UI additions & fixes*

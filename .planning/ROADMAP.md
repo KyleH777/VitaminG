@@ -25,6 +25,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 14: Challenge Platform — Community & Modules** - Community feed (CloudKit public DB), reactions, profanity filter, optional modules (5), custom challenge builder, full notification suite (completed 2026-05-13)
 - [x] **Phase 11: Gratitude / Daily Wins Module** - Daily text-entry log, date-keyed SwiftData model, history view, "What's your win today?" notification variant (completed 2026-05-01)
 - [x] **Phase 12: Goal Progress Visualization** - Progress rings on goal cards, per-goal completion history, micro-milestone celebrations, momentum score (completed 2026-05-04)
+- [ ] **Phase 15: UI Additions & Fixes** - HomeView additions (check-in CTA, quick stats, Stay Close), ChallengeDiscoveryView full redesign, Community Goals landing page with photo sharing, ProfileView bug fixes, WelcomeScreen auth buttons
 
 ## Phase Details
 
@@ -292,6 +293,19 @@ Plans:
 **Wave 4** *(blocked on Waves 2 + 3)*
 - [x] 14-09-PLAN.md — CustomChallengeBuilderView (2-step Form sheet) + ChallengeTemplate+Modules extension
 - [x] 14-10-PLAN.md — AppRoute.communityFeed + ChallengeDetailView Tools & Modules wiring + ChallengeDiscoveryView builder sheet + human UAT checkpoint
+
+### Phase 15: UI Additions & Fixes
+**Goal:** Ship 17 approved design units across 4 tabs — HomeView additions (check-in CTA, quick stats, Stay Close), ChallengeDiscoveryView full redesign (Dispenser / Mood Scanner / Trending / Vitamin Shelf), Community Goals landing page with photo sharing, ProfileView bug fixes (mood picker, camera), and WelcomeScreen auth buttons (Sign in with Apple + Google stub)
+**Depends on:** Phase 14 (community feed and challenge modules fully implemented)
+**Requirements:** UIADD-01, UIADD-02, UIADD-03, UIADD-04, UIADD-05, UIADD-06
+**Success Criteria** (what must be TRUE):
+  1. HomeView shows the check-in CTA, Quick Stats row (active goals / check-ins / badges), and Stay Close section with three functional cards; AboutUsView and FAQView are reachable from Stay Close
+  2. ChallengeDiscoveryView uses the new four-section layout (Dispenser → Mood Scanner → Trending → Vitamin Shelf); shaking the Dispenser or tapping "+ ADD" adds the goal and navigates to its detail view
+  3. Tapping a community challenge card navigates to CommunityGoalsLandingView (not CommunityFeedView); the "Share today's check-in" CTA opens PhotosPicker and posts a photo via CommunityService
+  4. ProfileView hides the mood picker when today's mood is already logged and shows a "Feeling: [mood]" badge; the camera badge opens a photo picker after requesting AVCaptureDevice permission and saves compressed photo to profile
+  5. WelcomeScreen shows Sign in with Apple button (functional via AuthenticationServices) and Google stub button (shows "coming soon" alert); no new SPM dependencies added
+**Plans:** TBD
+**Source:** `VitaminG/docs/superpowers/specs/2026-05-15-ui-additions-design.md`
 
 ## Progress
 
