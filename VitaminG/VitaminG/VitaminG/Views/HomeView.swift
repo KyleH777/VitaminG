@@ -4,6 +4,12 @@ import SwiftData
 struct HomeView: View {
     @Query private var goals: [Goal]
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("vg_onboardingName") private var storedName: String = ""
+
+    private var displayName: String {
+        storedName.trimmingCharacters(in: .whitespaces).isEmpty ? "You" : storedName
+    }
 
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -51,16 +57,19 @@ struct HomeView: View {
     private var headerSection: some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(greeting)
+                Text("\(greeting) ☀️")
                     .font(.system(size: 13, weight: .regular))
-                    .foregroundStyle(VGTheme.muted)
+                    .foregroundStyle(VGTheme.textMuted)
                     .kerning(0.5)
-                Text("Vitamin G")
+                Text(displayName)
                     .font(VGTheme.serif(26))
                     .foregroundStyle(VGTheme.sand)
             }
             Spacer()
-            streakBadge
+            HStack(spacing: 10) {
+                streakBadge
+                bellButton
+            }
         }
         .padding(.horizontal, 24)
         .padding(.top, 8)
@@ -69,20 +78,38 @@ struct HomeView: View {
 
     private var streakBadge: some View {
         HStack(spacing: 5) {
-            Image(systemName: "flame.fill")
+            Text("◉")
                 .font(.system(size: 13))
-                .foregroundStyle(VGTheme.terraSoft)
+                .foregroundStyle(VGTheme.accentTerra)
+                .shadow(color: colorScheme == .dark ? VGTheme.accentTerra.opacity(0.6) : .clear, radius: 4)
             Text("\(currentStreak)")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(VGTheme.terraSoft)
+                .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                .foregroundStyle(VGTheme.accentTerra)
             Text("day streak")
                 .font(.system(size: 11))
-                .foregroundStyle(VGTheme.muted)
+                .foregroundStyle(VGTheme.textMuted)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 6)
-        .background(Color.white.opacity(0.1))
+        .background(VGTheme.surface)
         .clipShape(Capsule())
+        .overlay(Capsule().strokeBorder(VGTheme.separator, lineWidth: 1))
+    }
+
+    private var bellButton: some View {
+        ZStack(alignment: .topTrailing) {
+            Image(systemName: "bell.fill")
+                .font(.system(size: 16))
+                .foregroundStyle(VGTheme.textSecondary)
+                .frame(width: 36, height: 36)
+                .background(VGTheme.surface)
+                .clipShape(Circle())
+                .overlay(Circle().strokeBorder(VGTheme.separator, lineWidth: 1))
+            Circle()
+                .fill(VGTheme.accentTerra)
+                .frame(width: 6, height: 6)
+                .offset(x: 1, y: -1)
+        }
     }
 
     private var currentStreak: Int {
@@ -100,21 +127,28 @@ struct HomeView: View {
         ]
         let quote = quotes[Calendar.current.component(.day, from: Date()) % quotes.count]
 
-        return Text(quote)
-            .font(VGTheme.serifItalic(15))
-            .foregroundStyle(VGTheme.sand.opacity(0.85))
-            .lineSpacing(4)
-            .padding(.horizontal, 18)
-            .padding(.vertical, 16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.white.opacity(0.06))
-            .overlay(
-                Rectangle().frame(width: 3).foregroundStyle(VGTheme.terra),
-                alignment: .leading
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 14))
-            .padding(.horizontal, 24)
-            .padding(.top, 20)
+        return VStack(alignment: .leading, spacing: 6) {
+            Text("TODAY'S DOSE")
+                .font(.system(size: 9, weight: .semibold))
+                .kerning(1.4)
+                .textCase(.uppercase)
+                .foregroundStyle(VGTheme.textMuted)
+            Text(quote)
+                .font(VGTheme.serifItalic(16))
+                .foregroundStyle(VGTheme.textSecondary)
+                .lineSpacing(4)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(VGTheme.surface)
+        .overlay(alignment: .leading) {
+            Rectangle().frame(width: 2).foregroundStyle(VGTheme.accentTerra)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .padding(.horizontal, 24)
+        .padding(.top, 20)
     }
 
     // MARK: - Primary Goal Card
@@ -226,37 +260,35 @@ struct HomeView: View {
             ProgressRingView(
                 progress: goalProgress(goal),
                 tier: goal.tier,
-                isCompleted: goal.isCompleted
+                isCompleted: goal.isCompleted,
+                size: 46,
+                strokeWidth: 4,
+                glow: true
             )
-
             VStack(alignment: .leading, spacing: 3) {
                 Text(goal.title ?? "Untitled")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(VGTheme.sand)
+                    .font(.system(size: 13.5, weight: .medium))
+                    .foregroundStyle(VGTheme.textPrimary)
                     .lineLimit(2)
-                HStack(spacing: 6) {
+                HStack(spacing: 4) {
                     Text(goal.tier.displayName)
                         .font(.system(size: 11))
-                        .foregroundStyle(VGTheme.muted)
-                    Text("·")
-                        .foregroundStyle(VGTheme.muted)
-                    Text(goal.isCompleted ? "Done" : "Active")
+                        .foregroundStyle(VGTheme.textMuted)
+                    Text("· Today")
                         .font(.system(size: 11))
-                        .foregroundStyle(goal.tier.color)
+                        .foregroundStyle(VGTheme.accentTerra)
                 }
             }
             Spacer()
             Image(systemName: "chevron.right")
-                .font(.system(size: 13))
-                .foregroundStyle(VGTheme.muted)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(VGTheme.textMuted)
         }
-        .padding(14)
-        .background(Color.white.opacity(0.07))
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(Color.white.opacity(0.08), lineWidth: 1)
-        )
+        .padding(.horizontal, 14)
+        .padding(.vertical, 14)
+        .background(VGTheme.surface)
         .clipShape(RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(VGTheme.separator, lineWidth: 1))
     }
 
     private func goalProgress(_ goal: Goal) -> Double {
