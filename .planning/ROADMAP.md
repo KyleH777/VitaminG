@@ -55,7 +55,9 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
   2. User navigates from the Home tab to Stats and from Home tab to Daily Wins via tappable elements (not top-level tabs)
   3. A deep link or widget intent encoded with a tab name routes to the correct screen after the index swap (no routing regression)
   4. The Explore and Community tabs exist in the bar as empty placeholder screens (no crashes on tap)
-**Plans**: TBD
+**Plans**: 2 plans
+- [ ] 16-01-PLAN.md — Tab enum + 5-tab restructure + Community/Explore swap + placeholder views (TAB-01, TAB-04)
+- [ ] 16-02-PLAN.md — HomeView Stats and Daily Wins entry points + Home-tab navigationDestination (TAB-02, TAB-03)
 
 ### Phase 17: Onboarding Overhaul
 **Goal**: New users complete onboarding with Apple Sign-In, a unique username, optional profile picture, and permission priming; returning signed-out users see a Welcome Back screen; every public profile has a report/block action
@@ -181,7 +183,7 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
 | 13. Challenge Platform — Core Engine | v1.0 | 9/9 | Complete | 2026-05-07 |
 | 14. Challenge Platform — Community & Modules | v1.0 | 10/10 | Complete | 2026-05-13 |
 | 15. UI Additions & Fixes | v1.0 | 9/9 | Complete | 2026-05-15 |
-| 16. Tab Restructuring + AppRoute Updates | v2.0 | 0/? | Not started | - |
+| 16. Tab Restructuring + AppRoute Updates | v2.0 | 0/2 | Not started | - |
 | 17. Onboarding Overhaul | v2.0 | 0/? | Not started | - |
 | 18. Home Tab + Goals Flow Enhancements | v2.0 | 0/? | Not started | - |
 | 19. Tip Jar + About Page + Settings | v2.0 | 0/? | Not started | - |
