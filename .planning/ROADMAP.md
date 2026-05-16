@@ -25,7 +25,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 14: Challenge Platform — Community & Modules** - Community feed (CloudKit public DB), reactions, profanity filter, optional modules (5), custom challenge builder, full notification suite (completed 2026-05-13)
 - [x] **Phase 11: Gratitude / Daily Wins Module** - Daily text-entry log, date-keyed SwiftData model, history view, "What's your win today?" notification variant (completed 2026-05-01)
 - [x] **Phase 12: Goal Progress Visualization** - Progress rings on goal cards, per-goal completion history, micro-milestone celebrations, momentum score (completed 2026-05-04)
-- [ ] **Phase 15: UI Additions & Fixes** - HomeView additions (check-in CTA, quick stats, Stay Close), ChallengeDiscoveryView full redesign, Community Goals landing page with photo sharing, ProfileView bug fixes, WelcomeScreen auth buttons
+- [x] **Phase 15: UI Additions & Fixes** - HomeView additions (check-in CTA, quick stats, Stay Close), ChallengeDiscoveryView full redesign, Community Goals landing page with photo sharing, ProfileView bug fixes, WelcomeScreen auth buttons (completed 2026-05-15)
 
 ## Phase Details
 
