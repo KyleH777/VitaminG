@@ -148,21 +148,71 @@
 
 ## Traceability
 
-*To be filled by roadmapper — maps each REQ-ID to the phase that implements it.*
-
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
-| TAB-01 to TAB-04 | — | Pending |
-| AUTH-01 to AUTH-07 | — | Pending |
-| HOME-01 to HOME-06 | — | Pending |
-| GOAL2-01 to GOAL2-05 | — | Pending |
-| EXPLORE-01 to EXPLORE-06 | — | Pending |
-| COMM-01 to COMM-07 | — | Pending |
-| SOC-01 to SOC-03 | — | Pending |
-| PROF-01 to PROF-05 | — | Pending |
-| MILE-01 to MILE-06 | — | Pending |
-| DISC-01 to DISC-04 | — | Pending |
-| NOTIF-01 to NOTIF-02 | — | Pending |
-| MON-01 to MON-04 | — | Pending |
-| SET-01 to SET-05 | — | Pending |
-| WID-01 to WID-02 | — | Pending |
+| TAB-01 | Phase 16 | Pending |
+| TAB-02 | Phase 16 | Pending |
+| TAB-03 | Phase 16 | Pending |
+| TAB-04 | Phase 16 | Pending |
+| AUTH-01 | Phase 17 | Pending |
+| AUTH-02 | Phase 17 | Pending |
+| AUTH-03 | Phase 17 | Pending |
+| AUTH-04 | Phase 17 | Pending |
+| AUTH-05 | Phase 17 | Pending |
+| AUTH-06 | Phase 17 | Pending |
+| AUTH-07 | Phase 17 | Pending |
+| PROF-05 | Phase 17 | Pending |
+| HOME-01 | Phase 18 | Pending |
+| HOME-02 | Phase 18 | Pending |
+| HOME-03 | Phase 18 | Pending |
+| HOME-04 | Phase 18 | Pending |
+| HOME-05 | Phase 18 | Pending |
+| HOME-06 | Phase 18 | Pending |
+| GOAL2-01 | Phase 18 | Pending |
+| GOAL2-02 | Phase 18 | Pending |
+| GOAL2-03 | Phase 18 | Pending |
+| GOAL2-04 | Phase 18 | Pending |
+| GOAL2-05 | Phase 18 | Pending |
+| MON-01 | Phase 19 | Pending |
+| MON-02 | Phase 19 | Pending |
+| MON-03 | Phase 19 | Pending |
+| MON-04 | Phase 19 | Pending |
+| SET-01 | Phase 19 | Pending |
+| SET-02 | Phase 19 | Pending |
+| SET-03 | Phase 19 | Pending |
+| SET-04 | Phase 19 | Pending |
+| SET-05 | Phase 19 | Pending |
+| NOTIF-01 | Phase 19 | Pending |
+| NOTIF-02 | Phase 19 | Pending |
+| EXPLORE-01 | Phase 20 | Pending |
+| EXPLORE-02 | Phase 20 | Pending |
+| EXPLORE-03 | Phase 20 | Pending |
+| EXPLORE-04 | Phase 20 | Pending |
+| EXPLORE-05 | Phase 20 | Pending |
+| EXPLORE-06 | Phase 20 | Pending |
+| COMM-01 | Phase 21 | Pending |
+| COMM-02 | Phase 21 | Pending |
+| COMM-03 | Phase 21 | Pending |
+| COMM-04 | Phase 21 | Pending |
+| COMM-05 | Phase 21 | Pending |
+| COMM-06 | Phase 21 | Pending |
+| COMM-07 | Phase 21 | Pending |
+| SOC-01 | Phase 21 | Pending |
+| SOC-02 | Phase 21 | Pending |
+| SOC-03 | Phase 21 | Pending |
+| PROF-01 | Phase 22 | Pending |
+| PROF-02 | Phase 22 | Pending |
+| PROF-03 | Phase 22 | Pending |
+| PROF-04 | Phase 22 | Pending |
+| DISC-01 | Phase 22 | Pending |
+| DISC-02 | Phase 22 | Pending |
+| DISC-03 | Phase 22 | Pending |
+| DISC-04 | Phase 22 | Pending |
+| MILE-01 | Phase 23 | Pending |
+| MILE-02 | Phase 23 | Pending |
+| MILE-03 | Phase 23 | Pending |
+| MILE-04 | Phase 23 | Pending |
+| MILE-05 | Phase 23 | Pending |
+| MILE-06 | Phase 23 | Pending |
+| WID-01 | Phase 24 | Pending |
+| WID-02 | Phase 24 | Pending |

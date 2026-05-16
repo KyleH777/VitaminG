@@ -4,14 +4,15 @@ milestone: v2.0
 milestone_name: Social Growth Engine
 status: planning
 stopped_at: ~
-last_updated: "2026-05-15T00:00:00.000Z"
-last_activity: 2026-05-15 -- Milestone v2.0 started
+last_updated: "2026-05-16T00:00:00.000Z"
+last_activity: 2026-05-16 -- Roadmap created; 9 phases, 66 requirements mapped
 progress:
-  total_phases: 0
+  total_phases: 9
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
   percent: 0
+current_phase: 16
 ---
 
 # Project State
@@ -25,10 +26,14 @@ See: .planning/PROJECT.md (updated 2026-05-15)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 16 — Tab Restructuring + AppRoute Updates
 Plan: —
-Status: Defining requirements
-Last activity: 2026-05-15 — Milestone v2.0 started
+Status: Planning (roadmap created; ready to plan Phase 16)
+Last activity: 2026-05-16 — Roadmap created (9 phases, 66 requirements)
+
+```
+v2.0 Progress: [                    ] 0% (0/9 phases)
+```
 
 ## Accumulated Context
 
@@ -38,6 +43,15 @@ Last activity: 2026-05-15 — Milestone v2.0 started
 |----------|-----------|
 | v2.0 tab structure: Home · Goals · Explore · Community · Profile | Replaces Goals · Stats · Wins · Challenges · Profile — Stats/Wins consolidated into Home, Challenges replaced by Explore/Community |
 | Apple Sign-In only | Remove Google Sign-In; aligns with iOS-native identity + T&C PDF requirement |
+| No SchemaV9 required | SchemaV8 already has username + photoData; all new social data goes to CloudKit public DB record types — avoids migration risk |
+| PROF-05 (report/block) ships in Phase 17 | App Store Guideline 1.2 requires moderation alongside profile photos — cannot defer |
+| Phases continue from 16 (not reset to 1) | Continuous phase numbering across milestones |
+| Tab enum with stable string raw values | Prevents deep link and widget intent routing breakage when tab indices shift |
+| Active Today (not live heartbeat) | CloudKit write quota exhaustion risk; single lastActive write at app open; show users active within 2 hours |
+| CKAsset fileURL must be copied immediately | OS silently reclaims temporary paths under storage pressure — copy to Application Support on fetch |
+| StoreKit 2 consumable IAPs only | No external payment links (App Store Guideline 3.1.1); Transaction.updates listener at VitaminGApp init |
+| StreakFreeze uses ISO8601 calendar | weekOfYear Monday reset requires Calendar(identifier: .iso8601), not .gregorian |
+| Widget phase is last (Phase 24) | Widgets are read-only consumers; schema must be stable before wiring WidgetCenter reloads |
 
 ### Blockers
 
@@ -45,7 +59,8 @@ None.
 
 ### Pending Todos
 
-None.
+- App Store Connect: configure 3 consumable IAP products (Small Coffee ~$0.99, Large Coffee ~$2.99, Supporter ~$4.99) before Phase 19 real-device testing
+- CloudKit Console: promote new public DB record types (UserPresence, Applause, Follow, extended PublicProfile) to Production before Phase 21
 
 ## Deferred Items (from v1.0)
 
