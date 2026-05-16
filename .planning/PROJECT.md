@@ -1,5 +1,26 @@
 # Vitamin G
 
+## Current Milestone: v2.0 Social Growth Engine
+
+**Goal:** Transform Vitamin G from a personal goal tracker into a social growth platform with a new tab structure, community-first Explore tab, redesigned Community feed with live interactions, enhanced goal creation flows, public profiles with applause, streak freeze, achievement celebrations, Discover page, tip jar, and full settings + onboarding overhaul.
+
+**Target features:**
+- Explore tab (new) — shake for daily goal, feelings prompt, trending, vitamin shelf, 3 gifts for stuck days
+- Community page redesign — goal landing, Today's glimpses, live users, Glowing spotlight + 👏 applause
+- Onboarding overhaul — Apple Sign-In only, T&C PDF, unique username, profile picture, permission slides
+- Home tab (new dashboard) — streak, quote of day, primary goal progress, My Goals list
+- Goals flow enhancements — create goal wizard, need ideas, goal detail with streak + flame
+- Public profile ("Jordan Kim") — follow, cheer, public goals + progress
+- Streak freeze ("Life happened.") — once/week snowflake protection
+- Achievement unlocked — 7d/30d+ milestone celebrations, community share
+- Discover page — search public goals/profiles, trending challenges
+- Notification picker — "Pick your daily nudge time" landing
+- Tip Jar + About page — tiered payments, version info
+- Settings page — nudge time, privacy, dark mode, contact support
+- Enhanced widgets — improved home screen widget interactions
+
+**Tab structure (v2.0):** Home · Goals · Explore · Community · Profile
+
 ## What This Is
 
 Vitamin G is an iOS app for daily gratitude and tiered goal tracking. Users set goals across four tiers — from immediate wins to life goals — receive personalized daily morning push notifications, track streaks and progress, join community challenges, log daily wins, and share goals socially via CloudKit-backed public profiles. It's "Vitamin G for Gratitude": a daily dose of intentionality.
@@ -46,7 +67,72 @@ Shipped: 2026-05-15
 
 ### Active (v2.0 Targets)
 
-- [ ] Interactive widget buttons (App Intents) to mark goals complete from home screen
+**Explore Tab**
+- [ ] "Shake out some growth" daily goal gifter with confetti + accomplished counter (top-right, one/day)
+- [ ] "How are you feeling" collapsible prompt with checkmark confirmation
+- [ ] "Trending Now" — most active goals + newest community goal with progress circles to 100%
+- [ ] Vitamin Shelf — 6 category redirects: body, mind, wellness, money, connection, creative
+- [ ] "3 gifts for stuck days" — easy daily goals; added once, disappear from Explore page per day
+
+**Community Page**
+- [ ] Goal landing page — progress circle with % in middle, people count, days remaining, % remaining
+- [ ] "Today's glimpses" — cycling community member goal cards; tap to open goal page with comments/photos
+- [ ] Live users section — users currently on app + their most current goal
+- [ ] "Glowing this week" spotlight — applause (👏) system; username floats on profile + appears on applauded goal
+- [ ] Community feed — live active users at top, most liked → recent → random feed, reply + react (❤️🔥👍)
+
+**Onboarding / Auth**
+- [ ] Apple Sign-In only (remove Google Sign-In)
+- [ ] T&C PDF clickable link (Vitamin_G_Terms_and_Conditions.pdf)
+- [ ] Unique username (one per user, no duplicates — extends SchemaV8)
+- [ ] Profile picture upload in onboarding
+- [ ] Notification permission slide in onboarding
+- [ ] Camera access permission slide in onboarding
+- [ ] "Welcome Back" re-login screen ("Good to see you" + Sign in with Apple)
+
+**Home Tab**
+- [ ] Name + streak display at top of Home tab
+- [ ] Quote of the day
+- [ ] Primary goal (community set goal) with progress bar
+- [ ] "My Goals" list with "+add" inline, progress rings, days remaining per goal
+
+**Goals Flow**
+- [ ] Create goal wizard: What kind? → Say it out loud → How often? (duration, start, reminder, public/private, start journey)
+- [ ] "Need ideas" → pre-made goals list ("My goals, your journey starts here…")
+- [ ] "Already have a goal" → blank goal landing page
+- [ ] Goal check-off → checkmark celebration page with streak + back to goals
+- [ ] Goal detail page — daily checkmarks, days remaining slots, "Check in for today" with streak, flame icon
+
+**Profile & Social**
+- [ ] Public profile ("Jordan Kim" style) — motto/bio, streak, goal count, cheers given
+- [ ] Follow + "cheer them on today" (once/day limit)
+- [ ] Public goals with progress to 100% on profile view
+
+**Milestone Features**
+- [ ] Streak freeze "Life happened." page (snowflake ❄️, once/week)
+- [ ] Achievement unlocked screen (7d, 30d, etc.) — fire emoji, community share, Continue → Home
+- [ ] Achievements scroll in community main page
+- [ ] Goal completed "You did it" celebration page
+
+**Discover Page**
+- [ ] Search public goals to join
+- [ ] Search profiles to follow
+- [ ] Trending challenges section
+
+**Notification Picker**
+- [ ] "Pick your daily nudge time" landing page with quick pick times
+
+**Tip Jar & About**
+- [ ] About page — "Vitamin G" + current version
+- [ ] Tip jar tiers (tiered payments), accessible via big button on About page
+
+**Settings**
+- [ ] Daily nudge time setting
+- [ ] Public/private profile toggle
+- [ ] Dark mode toggle
+- [ ] Contact support
+
+**Deferred from pre-v2.0 targets** (pushed to v3.0)
 - [ ] Apple Watch app (accessory complications)
 - [ ] Full analytics dashboard with historical charts + CSV export
 - [ ] AI-powered goal suggestions based on existing goals
@@ -72,7 +158,7 @@ Shipped: 2026-05-15
 - Schema versioned from day one (SchemaV1 → SchemaV8 via VitaminGMigrationPlan)
 - Challenge Platform is template-driven — adding new challenge types requires zero core logic
 - Community features use CloudKit public DB — no server backend required
-- 5-tab navigation: Goals · Stats · Wins · Challenges · Profile
+- 5-tab navigation (v2.0): Home · Goals · Explore · Community · Profile
 
 ## Constraints
 
@@ -98,5 +184,22 @@ Shipped: 2026-05-15
 | Decimal phase numbering for insertions | Clean insertion semantics without renumbering existing phases | ✓ Good |
 | App Group UserDefaults for widget sync | Widgets read from shared store; no file I/O complexity | ✓ Good |
 
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `/gsd-transition`):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `/gsd:complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
+
 ---
-*Last updated: 2026-05-15 after v1.0 milestone*
+*Last updated: 2026-05-15 — v2.0 milestone started*

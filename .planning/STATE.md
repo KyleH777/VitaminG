@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: MVP
-status: archived
+milestone: v2.0
+milestone_name: Social Growth Engine
+status: planning
 stopped_at: ~
 last_updated: "2026-05-15T00:00:00.000Z"
-last_activity: 2026-05-15 -- v1.0 milestone archived
+last_activity: 2026-05-15 -- Milestone v2.0 started
 progress:
-  total_phases: 15
-  completed_phases: 15
-  total_plans: 67
-  completed_plans: 67
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -21,17 +21,35 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-15)
 
 **Core value:** Every morning, the user is reminded of their goals — making progress feel inevitable, not accidental.
-**Current focus:** Planning next milestone (v2.0)
+**Current focus:** Milestone v2.0 — Social Growth Engine
 
 ## Current Position
 
-Milestone: v1.0 MVP — ARCHIVED 2026-05-15
-All 15 phases complete. All 67 plans complete. 98/98 requirements satisfied.
-Git tag: v1.0
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-05-15 — Milestone v2.0 started
 
-## Deferred Items
+## Accumulated Context
 
-Items deferred at milestone close on 2026-05-15:
+### Key Decisions
+
+| Decision | Rationale |
+|----------|-----------|
+| v2.0 tab structure: Home · Goals · Explore · Community · Profile | Replaces Goals · Stats · Wins · Challenges · Profile — Stats/Wins consolidated into Home, Challenges replaced by Explore/Community |
+| Apple Sign-In only | Remove Google Sign-In; aligns with iOS-native identity + T&C PDF requirement |
+
+### Blockers
+
+None.
+
+### Pending Todos
+
+None.
+
+## Deferred Items (from v1.0)
+
+Items deferred at v1.0 close — carry forward context:
 
 | Category | Item | Status |
 |----------|------|--------|
