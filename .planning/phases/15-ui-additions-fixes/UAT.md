@@ -1,7 +1,7 @@
 ---
 phase: 15
 plan: "15-09"
-status: partial
+status: approved
 created: "2026-05-15"
 ---
 
@@ -56,6 +56,6 @@ is a false negative — ProfileView correctly renders `Text("@\(username)")` at 
 | Infrastructure NSCameraUsageDescription | 1 | 1 ✓ |
 | Infrastructure postCheckInPhoto in CommunityService | ≥1 | 1 ✓ |
 
-## Human UAT: PENDING
+## Human UAT: APPROVED
 
-Status: awaiting user on-device verification of 40 items (see 15-09-PLAN.md Task 2).
+All 40 items verified by user on 2026-05-15. Phase 15 complete.
