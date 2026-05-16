@@ -2,49 +2,77 @@
 
 ## What This Is
 
-Vitamin G is an iOS app for daily gratitude and tiered goal tracking. Users set goals across four tiers — from immediate wins to life goals — and receive a daily morning push notification reminding them of what they're working toward. It's "Vitamin G for Gratitude": a daily dose of intentionality.
+Vitamin G is an iOS app for daily gratitude and tiered goal tracking. Users set goals across four tiers — from immediate wins to life goals — receive personalized daily morning push notifications, track streaks and progress, join community challenges, log daily wins, and share goals socially via CloudKit-backed public profiles. It's "Vitamin G for Gratitude": a daily dose of intentionality.
+
+The app shipped v1.0 as a full-featured iOS app with a configurable Challenge Platform (3 featured challenges + custom builder + 5 optional modules), community feed with reactions and profanity filtering, goal progress rings and milestone celebrations, gratitude/daily wins module, and App Store-quality accessibility.
 
 ## Core Value
 
 Every morning, the user is reminded of their goals — making progress feel inevitable, not accidental.
 
+## Current State (v1.0)
+
+Shipped: 2026-05-15
+- 15 phases, 67 plans, 98 requirements — all complete
+- ~16,917 LOC Swift, 134 Swift files
+- SwiftData with 8 schema versions (SchemaV1 → SchemaV8)
+- CloudKit private DB (sync) + CloudKit public DB (community features)
+- 5 tabs: Goals, Stats, Wins, Challenges, Profile
+
 ## Requirements
 
 ### Validated
 
-- [x] Four-tier goal system: Immediate, Short-Term, Long-Term, Life Goal — *Validated in Phase 1: Foundation*
-- [x] Goal model: id, title, goalDescription, tier, isCompleted, creationDate, associatedInspiration — *Validated in Phase 1: Foundation*
-- [x] Secure input validation on all String fields (100/500/300 char limits, sanitization) — *Validated in Phase 1: Foundation*
-- [x] MVVM architecture with SwiftData persistence (SchemaV1 VersionedSchema, ModelContainerFactory) — *Validated in Phase 1: Foundation*
-- [x] App Group + CloudKit-ready ModelContainer shared between app and widget targets — *Validated in Phase 1: Foundation*
+- ✓ Four-tier goal system with CRUD, completion toggle, sorting — v1.0 (Phase 2)
+- ✓ VersionedSchema SwiftData models + ModelContainerFactory — v1.0 (Phase 1)
+- ✓ App Group + CloudKit-ready ModelContainer shared with widget targets — v1.0 (Phase 1)
+- ✓ MVVM architecture with @Observable ViewModels — v1.0 (Phase 1)
+- ✓ Secure input validation (100/500/300 char limits, sanitization) — v1.0 (Phase 1)
+- ✓ CompletionEvent-based streak computation (per-tier + global) — v1.0 (Phase 3)
+- ✓ Stats screen with heatmap, streak cards, completion rate — v1.0 (Phase 3)
+- ✓ Personalized daily push notifications (top 3 active goal titles, user time) — v1.0 (Phase 3)
+- ✓ CloudKit transparent sync across devices — v1.0 (Phase 4)
+- ✓ systemMedium home screen widget + accessoryRectangular lock screen widget — v1.0 (Phase 4)
+- ✓ First-launch onboarding with tier explanation and first-goal creation — v1.0 (Phase 5)
+- ✓ App Store-quality polish: Dark Mode, Dynamic Type, VoiceOver — v1.0 (Phases 5, 9)
+- ✓ CloudKit schema promoted to Production, PrivacyInfo.xcprivacy, TestFlight — v1.0 (Phase 6)
+- ✓ User Profiles with AvatarView, privacy toggle, public goals, profile sharing — v1.0 (Phase 7)
+- ✓ vitaming:// deep link receive handler for incoming profile links — v1.0 (Phase 10)
+- ✓ DailyWin model + DailyWinsView + "What's your win today?" notification variant — v1.0 (Phase 11)
+- ✓ Progress rings on goal cards + per-goal history + micro-milestone celebrations + momentum score — v1.0 (Phase 12)
+- ✓ ChallengeTemplate engine (SchemaV4) with 3 featured challenges + custom builder — v1.0 (Phase 13)
+- ✓ Community feed with CloudKit public DB, reactions, profanity filter, 5 optional modules — v1.0 (Phase 14)
+- ✓ ChallengeDiscoveryView redesign, Community Goals landing, ProfileView fixes, username (SchemaV8) — v1.0 (Phase 15)
 
-### Active
+### Active (v2.0 Targets)
 
-- [ ] Four-tier goal system: Immediate, Short-Term, Long-Term, Life Goal
-- [ ] Goal model: id, title, description, tier, isCompleted, creationDate, associatedInspiration
-- [ ] Secure input validation on all String fields (character limits, injection prevention)
-- [ ] MVVM architecture with SwiftData persistence
-- [ ] Daily morning push notifications summarizing active goals
-- [ ] Streak tracking and completion statistics per tier
-- [ ] iCloud sync via CloudKit / SwiftData sync
-- [ ] Home screen and lock screen widgets showing daily goal summary
-- [ ] Polished, App Store-quality UI (ui-ux-pro-max design quality)
+- [ ] Interactive widget buttons (App Intents) to mark goals complete from home screen
+- [ ] Apple Watch app (accessory complications)
+- [ ] Full analytics dashboard with historical charts + CSV export
+- [ ] AI-powered goal suggestions based on existing goals
+- [ ] Smart notification content personalization
 
 ### Out of Scope
 
-- Social / sharing features — keeping it personal and private for v1
-- Goal collaboration / team goals — single-user app for now
-- Android / cross-platform — iOS-first, always
-- Web dashboard — native iOS is the experience
+| Feature | Reason |
+|---------|--------|
+| Android / cross-platform | iOS-native only — SwiftData/CloudKit ecosystem |
+| Web dashboard | Native iOS is the experience |
+| Goal collaboration / team goals | Single-user app; social features require backend + moderation |
+| Vision board / image collage | Complex media pipeline, CloudKit size limits |
+| Recurring / habit goals | Different product primitive from aspirational goal tracking |
+| Markdown / rich text in goals | Increases validation complexity; plain text is safer |
+| In-app calendar integration | Morning push notification covers the reminder use case |
 
 ## Context
 
-- Target platform: iOS 17+ (SwiftData requires iOS 17)
-- Architecture: MVVM with SwiftData as the persistence layer
-- Distribution: App Store launch + portfolio showcase
-- User mentioned 6 phases in mind for the roadmap
-- Developer has a specific vision for the 4-tier goal hierarchy; relationship between tiers is flexible for now (left to v2+)
-- UI quality is a priority — ui-ux-pro-max skill to be applied during frontend phases
+- Target platform: iOS 17+ (SwiftData, @Observable, modern SwiftUI APIs)
+- Architecture: MVVM with SwiftData + WidgetKit + CloudKit (private + public DB)
+- Distribution: App Store + portfolio showcase
+- Schema versioned from day one (SchemaV1 → SchemaV8 via VitaminGMigrationPlan)
+- Challenge Platform is template-driven — adding new challenge types requires zero core logic
+- Community features use CloudKit public DB — no server backend required
+- 5-tab navigation: Goals · Stats · Wins · Challenges · Profile
 
 ## Constraints
 
@@ -58,30 +86,17 @@ Every morning, the user is reminded of their goals — making progress feel inev
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| SwiftData over CoreData | Modern Swift-native API, SwiftUI integration, CloudKit sync built-in | — Pending |
-| MVVM architecture | Clean separation of concerns, testable ViewModels, industry standard for iOS | — Pending |
-| SwiftUI-first UI | Matches SwiftData, enables widgets via WidgetKit naturally | — Pending |
-| 4-tier goal hierarchy | Immediate → Short-Term → Long-Term → Life Goal maps to realistic planning horizons | — Pending |
-| Input validation at model layer | Prevent injection/overflow even in local storage; defense in depth | — Pending |
-
-## Evolution
-
-This document evolves at phase transitions and milestone boundaries.
-
-**After each phase transition** (via `/gsd:transition`):
-1. Requirements invalidated? → Move to Out of Scope with reason
-2. Requirements validated? → Move to Validated with phase reference
-3. New requirements emerged? → Add to Active
-4. Decisions to log? → Add to Key Decisions
-5. "What This Is" still accurate? → Update if drifted
-
-**After each milestone** (via `/gsd:complete-milestone`):
-1. Full review of all sections
-2. Core Value check — still the right priority?
-3. Audit Out of Scope — reasons still valid?
-4. Update Context with current state
+| SwiftData over CoreData | Modern Swift-native API, SwiftUI integration, CloudKit sync built-in | ✓ Good — paid upfront with VersionedSchema, paid off across 8 schema versions |
+| MVVM architecture | Clean separation, testable ViewModels, industry standard for iOS | ✓ Good — ChallengeViewModel, DailyWinsViewModel etc. all clean |
+| SwiftUI-first UI | Matches SwiftData, enables widgets via WidgetKit naturally | ✓ Good |
+| 4-tier goal hierarchy | Maps to realistic planning horizons | ✓ Good — core differentiator |
+| Input validation at model layer | Defense in depth even for local storage | ✓ Good |
+| VersionedSchema from Phase 1 | One-time cost to enable safe future migrations | ✓ Good — enabled 8 schema versions without data loss |
+| Template-driven Challenge Platform | ChallengeTemplate config drives all challenge types; zero core logic per type | ✓ Good — CHAL-07 validated |
+| CloudKit public DB for community | Posts, reactions, public profiles — no server required | ✓ Good — no backend cost |
+| On-device profanity filter | No server round-trip for content moderation | ✓ Good — fast rejection UX |
+| Decimal phase numbering for insertions | Clean insertion semantics without renumbering existing phases | ✓ Good |
+| App Group UserDefaults for widget sync | Widgets read from shared store; no file I/O complexity | ✓ Good |
 
 ---
-*Last updated: 2026-04-18 after Phase 9: TierPickerView Accessibility Fix complete*
-
-**Current State:** Phase 9 complete — UI-05 (Dark Mode) and UI-06 (Dynamic Type) verified as SATISFIED by code audit of commit be7aaa8. REQUIREMENTS.md checkboxes and traceability updated to Phase 9 Complete. 2 human verification items pending for runtime visual checks (Dark Mode rendering, Dynamic Type scaling in tier picker). Phase 10 (Profile Deep Link Handler) is next.
+*Last updated: 2026-05-15 after v1.0 milestone*
