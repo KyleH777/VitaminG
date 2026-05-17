@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Social Growth Engine
-status: completed
-last_updated: "2026-05-16T00:00:00.000Z"
-last_activity: 2026-05-16 -- Phase 17 UI-SPEC approved (17-UI-SPEC.md)
+status: ready_to_execute
+last_updated: "2026-05-17T00:00:00.000Z"
+last_activity: 2026-05-17 -- Phase 17 planned (5 plans, 2 waves)
 progress:
   total_phases: 9
   completed_phases: 1
-  total_plans: 2
+  total_plans: 7
   completed_plans: 2
   percent: 11
 ---
@@ -26,8 +26,8 @@ See: .planning/PROJECT.md (updated 2026-05-15)
 
 Phase: 17 — Onboarding Overhaul
 Plan: —
-Status: UI-SPEC approved — ready for planning
-Last activity: 2026-05-16 -- Phase 17 UI-SPEC approved (17-UI-SPEC.md)
+Status: Ready to execute — 5 plans, 2 waves
+Last activity: 2026-05-17 -- Phase 17 planned (5 plans verified)
 
 ```
 v2.0 Progress: [==                  ] 11% (1/9 phases)
@@ -42,7 +42,7 @@ v2.0 Progress: [==                  ] 11% (1/9 phases)
 | v2.0 tab structure: Home · Goals · Explore · Community · Profile | Replaces Goals · Stats · Wins · Challenges · Profile — Stats/Wins consolidated into Home, Challenges replaced by Explore/Community |
 | Apple Sign-In only | Remove Google Sign-In; aligns with iOS-native identity + T&C PDF requirement |
 | No SchemaV9 required | SchemaV8 already has username + photoData; all new social data goes to CloudKit public DB record types — avoids migration risk |
-| PROF-05 (report/block) ships in Phase 17 | App Store Guideline 1.2 requires moderation alongside profile photos — cannot defer |
+| PROF-05 (report/block) ships in Phase 17 on PublicProfileView | App Store Guideline 1.2 requires moderation alongside profile photos — cannot defer; D-12 revised: PublicProfileView (not ProfileView) is the correct target since ProfileView is self-view |
 | Phases continue from 16 (not reset to 1) | Continuous phase numbering across milestones |
 | Tab enum with stable string raw values | Prevents deep link and widget intent routing breakage when tab indices shift |
 | Active Today (not live heartbeat) | CloudKit write quota exhaustion risk; single lastActive write at app open; show users active within 2 hours |

@@ -76,7 +76,11 @@ Plans:
 - [ ] 17-02-PLAN.md — T&C screen: TermsAndConditionsScreen + PDFPreviewView + PDF bundle (AUTH-02)
 - [ ] 17-03-PLAN.md — Username: UsernameLookupService + OnboardingViewModel debounce + UsernameScreen (AUTH-03)
 - [ ] 17-04-PLAN.md — Name pre-fill + ProfilePictureScreen + CameraPermissionScreen (AUTH-04, AUTH-05, AUTH-06)
-- [ ] 17-05-PLAN.md — Report/Block: BlockListService + PublicProfileView + ProfileView contextMenu (PROF-05)
+- [ ] 17-05-PLAN.md — Report/Block: BlockListService + PublicProfileView contextMenu + MFMailCompose/mailto report + UserDefaults block list (PROF-05)
+
+**Wave 1** *(17-02 and 17-03 blocked on 17-01 completion)*
+**Wave 2 *(blocked on Wave 1 completion)***
+**Cross-cutting constraints:** OnboardingStep enum (17-01) is prerequisite for all downstream navigation; CloudKit Console username index must be confirmed before 17-03 runs (human checkpoint); T&C PDF must be in Xcode target before 17-02 runs (human checkpoint)
 **UI hint**: yes
 
 ### Phase 18: Home Tab + Goals Flow Enhancements

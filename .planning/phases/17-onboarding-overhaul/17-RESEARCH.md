@@ -698,7 +698,7 @@ This sequence minimizes integration risk by establishing the routing scaffold be
 | Block list UserDefaults persistence | HIGH | Standard UserDefaults pattern; no novel risk |
 | Report/Block contextMenu targets | HIGH | PublicProfileView.swift confirmed as Phase 17 target (user decision); contextMenu targets identified in codebase read |
 
-### Open Questions (RESOLVED)
+### Open Questions (PARTIALLY RESOLVED)
 1. **Where is the public profile view?** (RESOLVED) PublicProfileView.swift exists and receives `recordID: String`. It is the destination for the `vitaming://profile/<recordID>` deep link and is the confirmed Phase 17 target for PROF-05 (user decision). Plan 05 adds Report/Block to PublicProfileView.
 2. **Is `NSCameraUsageDescription` already in Info.plist?** (RESOLVED: YES) Confirmed present at VitaminG/VitaminG/VitaminG/Info.plist line 30: "Vitamin G uses your camera to update your profile photo." No action required. Plan 04 threat model updated to reflect this (T-17-04-04 disposition changed from open to mitigate/confirmed).
 3. **Has the `username` field been added to CloudKit Console for PublicProfile?** (UNRESOLVED — requires CloudKit Console access) Cannot verify from code. Plan 03 includes a blocking human checkpoint to confirm the Queryable index exists before username availability checks are tested on device.
