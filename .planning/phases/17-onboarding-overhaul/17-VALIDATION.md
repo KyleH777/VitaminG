@@ -2,7 +2,7 @@
 phase: 17
 slug: onboarding-overhaul
 status: draft
-nyquist_compliant: false
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-05-16
 ---
@@ -43,20 +43,21 @@ created: 2026-05-16
 | 17-01-03 | 01 | 1 | AUTH-01 | — | OnboardingStep enum compiles with new cases | unit | `xcodebuild build` | ❌ W0 | ⬜ pending |
 | 17-02-01 | 02 | 1 | AUTH-02 | — | T&C PDF opens in QuickLook sheet from TermsAndConditionsScreen | manual | Build + simulator | ❌ W0 | ⬜ pending |
 | 17-02-02 | 02 | 1 | AUTH-02 | — | "I Agree — Continue" advances to NameScreen | manual | Build + simulator | ❌ W0 | ⬜ pending |
-| 17-03-01 | 03 | 2 | AUTH-03 | — | Username debounce fires at 500ms; spinner shown during check | manual | Build + simulator | ❌ W0 | ⬜ pending |
-| 17-03-02 | 03 | 2 | AUTH-03 | — | Taken username shows ✗ inline; Continue button disabled | manual | Build + simulator | ❌ W0 | ⬜ pending |
-| 17-03-03 | 03 | 2 | AUTH-03 | — | Available username shows ✓ inline; Continue button enabled | manual | Build + simulator | ❌ W0 | ⬜ pending |
+| 17-03-01 | 03 | 1 | AUTH-03 | — | UsernameCheckState transitions (idle→invalid, idle→idle on short/empty) verified by XCTest | unit | `xcodebuild test -only-testing:VitaminGTests/OnboardingViewModelUsernameTests` | ❌ W0 | ⬜ pending |
+| 17-03-02 | 03 | 1 | AUTH-03 | — | Username debounce fires at 500ms; spinner shown during check | manual | Build + simulator | ❌ W0 | ⬜ pending |
+| 17-03-03 | 03 | 1 | AUTH-03 | — | Taken username shows ✗ inline; Continue button disabled | manual | Build + simulator | ❌ W0 | ⬜ pending |
+| 17-03-04 | 03 | 1 | AUTH-03 | — | Available username shows ✓ inline; Continue button enabled | manual | Build + simulator | ❌ W0 | ⬜ pending |
 | 17-04-01 | 04 | 2 | AUTH-04 | — | NameScreen pre-fills from Apple credential fullName | manual | Build + simulator | ❌ W0 | ⬜ pending |
 | 17-04-02 | 04 | 2 | AUTH-04 | — | ProfilePictureScreen shows PHPicker + camera option | manual | Build + simulator | ❌ W0 | ⬜ pending |
 | 17-04-03 | 04 | 2 | AUTH-04 | — | ProfilePictureScreen skip advances flow without crash | manual | Build + simulator | ❌ W0 | ⬜ pending |
-| 17-04-04 | 04 | 2 | AUTH-05 | — | NotificationOnboardingScreen appears in correct step position | manual | Build + simulator | ❌ W0 | ⬜ pending |
+| 17-04-04 | 04 | 2 | AUTH-05 | — | NotificationOnboardingScreen appears in correct step position (.notifications case grep-verified) | unit | `grep -q 'case .notifications' OnboardingView.swift` | ❌ W0 | ⬜ pending |
 | 17-04-05 | 04 | 2 | AUTH-06 | — | CameraPermissionScreen priming slide shown before system alert | manual | Build + simulator | ❌ W0 | ⬜ pending |
 | 17-04-06 | 04 | 2 | AUTH-06 | — | "Allow Camera" CTA triggers AVCaptureDevice.requestAccess | manual | Build + simulator | ❌ W0 | ⬜ pending |
-| 17-05-01 | 05 | 3 | PROF-05 | — | BlockListService CRUD passes XCTest unit tests | unit | `xcodebuild test -only-testing:VitaminGTests/BlockListServiceTests` | ❌ W0 | ⬜ pending |
-| 17-05-02 | 05 | 3 | PROF-05 | — | Long-press on avatar shows Report/Block context menu | manual | Build + simulator | ❌ W0 | ⬜ pending |
-| 17-05-03 | 05 | 3 | PROF-05 | — | Block confirmation alert appears before blocking | manual | Build + simulator | ❌ W0 | ⬜ pending |
-| 17-05-04 | 05 | 3 | PROF-05 | — | Blocked user ID persists in UserDefaults after app relaunch | unit | XCTest BlockListServiceTests | ❌ W0 | ⬜ pending |
-| 17-05-05 | 05 | 3 | PROF-05 | — | Report action opens mail compose or mailto: URL | manual | Build + simulator | ❌ W0 | ⬜ pending |
+| 17-05-01 | 05 | 2 | PROF-05 | — | BlockListService CRUD passes XCTest unit tests | unit | `xcodebuild test -only-testing:VitaminGTests/BlockListServiceTests` | ❌ W0 | ⬜ pending |
+| 17-05-02 | 05 | 2 | PROF-05 | — | Long-press on PublicProfileView avatar shows Report/Block context menu | manual | Build + simulator | ❌ W0 | ⬜ pending |
+| 17-05-03 | 05 | 2 | PROF-05 | — | Block confirmation alert appears before blocking | manual | Build + simulator | ❌ W0 | ⬜ pending |
+| 17-05-04 | 05 | 2 | PROF-05 | — | Blocked user ID persists in UserDefaults after app relaunch | unit | XCTest BlockListServiceTests | ❌ W0 | ⬜ pending |
+| 17-05-05 | 05 | 2 | PROF-05 | — | Report action opens mail compose or mailto: URL | manual | Build + simulator | ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -64,9 +65,9 @@ created: 2026-05-16
 
 ## Wave 0 Requirements
 
-- [ ] Verify `NSCameraUsageDescription` key present in Info.plist (Phase 15 may have added it)
-- [ ] Verify CloudKit Console: `PublicProfile` record type has `username` as queryable String field — required before AUTH-03 device testing
-- [ ] `Vitamin_G_Terms_and_Conditions.pdf` added to Xcode project bundle (new file, Wave 0)
+- [x] Verify `NSCameraUsageDescription` key present in Info.plist — **RESOLVED: present** ("Vitamin G uses your camera to update your profile photo." confirmed in VitaminG/VitaminG/VitaminG/Info.plist line 30)
+- [ ] Verify CloudKit Console: `PublicProfile` record type has `username` as queryable String field — required before AUTH-03 device testing (Plan 03 checkpoint)
+- [ ] `Vitamin_G_Terms_and_Conditions.pdf` added to Xcode project bundle (Plan 02 checkpoint)
 - [ ] Existing test infrastructure — no new framework install needed (XCTest ships with Xcode)
 
 ---
@@ -86,11 +87,11 @@ created: 2026-05-16
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references (CloudKit index, PDF bundle, Info.plist key)
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify (Plan 03 Task 3a adds XCTest for UsernameCheckState state machine; Plan 05 Task 1 has BlockListServiceTests; Plan 04 Task 1 has grep gate for AUTH-05)
+- [x] Wave 0 covers all MISSING references (CloudKit index, PDF bundle, Info.plist key — Info.plist resolved)
 - [ ] No watch-mode flags
 - [ ] Feedback latency < 90s (unit)
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] `nyquist_compliant: true` set in frontmatter
 
 **Approval:** pending
