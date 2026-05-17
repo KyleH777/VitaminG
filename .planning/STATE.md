@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Social Growth Engine
 status: completed
-last_updated: "2026-05-17T02:43:50.273Z"
-last_activity: 2026-05-16 -- Phase 16 execution complete (2/2 plans)
+last_updated: "2026-05-16T00:00:00.000Z"
+last_activity: 2026-05-16 -- Phase 17 UI-SPEC approved (17-UI-SPEC.md)
 progress:
   total_phases: 9
   completed_phases: 1
@@ -24,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-05-15)
 
 ## Current Position
 
-Phase: 16 — Tab Restructuring + AppRoute Updates
+Phase: 17 — Onboarding Overhaul
 Plan: —
-Status: Complete
-Last activity: 2026-05-16 -- Phase 16 execution complete (2/2 plans)
+Status: UI-SPEC approved — ready for planning
+Last activity: 2026-05-16 -- Phase 17 UI-SPEC approved (17-UI-SPEC.md)
 
 ```
 v2.0 Progress: [==                  ] 11% (1/9 phases)
