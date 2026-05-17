@@ -1,21 +1,23 @@
 import SwiftUI
 
 struct VGTabBar: View {
-    @Binding var selection: Int
+    @Binding var selection: Tab
     @Environment(\.colorScheme) private var colorScheme
 
+    // Tab icon mapping — 1:1 with Tab.allCases order (home/goals/explore/community/profile).
+    // D-07: Community and Explore positions swapped; "Me" renamed to "Profile".
     private let tabs: [(label: String, icon: String)] = [
         ("Home",      "house"),
         ("Goals",     "circle.circle"),
-        ("Community", "person.2"),
         ("Explore",   "magnifyingglass"),
-        ("Me",        "person"),
+        ("Community", "person.2"),
+        ("Profile",   "person"),
     ]
 
     var body: some View {
         HStack(spacing: 0) {
-            ForEach(Array(tabs.enumerated()), id: \.offset) { index, tab in
-                tabItem(index: index, label: tab.label, icon: tab.icon)
+            ForEach(Array(zip(Tab.allCases, tabs)), id: \.0) { tabCase, tab in
+                tabItem(tab: tabCase, label: tab.label, icon: tab.icon)
             }
         }
         .frame(maxWidth: .infinity)
@@ -31,10 +33,10 @@ struct VGTabBar: View {
         .background(.ultraThinMaterial)
     }
 
-    private func tabItem(index: Int, label: String, icon: String) -> some View {
-        let isActive = selection == index
+    private func tabItem(tab: Tab, label: String, icon: String) -> some View {
+        let isActive = selection == tab
         return Button {
-            withAnimation(.easeInOut(duration: 0.15)) { selection = index }
+            withAnimation(.easeInOut(duration: 0.15)) { selection = tab }
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         } label: {
             VStack(spacing: 4) {

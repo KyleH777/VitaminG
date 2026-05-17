@@ -20,6 +20,7 @@
 		AA01000000000022 /* SchemaV5.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000023 /* SchemaV5.swift */; };
 		AA01000000000024 /* SchemaV6.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000025 /* SchemaV6.swift */; };
 		AA01000000000026 /* SchemaV7.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000027 /* SchemaV7.swift */; };
+		AA01000000000028 /* SchemaV8.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000029 /* SchemaV8.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +76,7 @@
 		AA01000000000023 /* SchemaV5.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV5.swift; path = VitaminG/Models/SchemaV5.swift; sourceTree = SOURCE_ROOT; };
 		AA01000000000025 /* SchemaV6.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV6.swift; path = VitaminG/Models/SchemaV6.swift; sourceTree = SOURCE_ROOT; };
 		AA01000000000027 /* SchemaV7.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV7.swift; path = VitaminG/Models/SchemaV7.swift; sourceTree = SOURCE_ROOT; };
+		AA01000000000029 /* SchemaV8.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV8.swift; path = VitaminG/Models/SchemaV8.swift; sourceTree = SOURCE_ROOT; };
 		FONT000000000001 /* CormorantGaramond-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; name = "CormorantGaramond-Regular.ttf"; path = "VitaminG/Resources/Fonts/CormorantGaramond-Regular.ttf"; sourceTree = SOURCE_ROOT; };
 		FONT000000000002 /* CormorantGaramond-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; name = "CormorantGaramond-Italic.ttf"; path = "VitaminG/Resources/Fonts/CormorantGaramond-Italic.ttf"; sourceTree = SOURCE_ROOT; };
 		FONT000000000003 /* CormorantGaramond-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; name = "CormorantGaramond-Medium.ttf"; path = "VitaminG/Resources/Fonts/CormorantGaramond-Medium.ttf"; sourceTree = SOURCE_ROOT; };
@@ -197,6 +199,7 @@
 				FONT000000000004 /* CormorantGaramond-SemiBold.ttf */,
 				AA01000000000025 /* SchemaV6.swift */,
 				AA01000000000027 /* SchemaV7.swift */,
+				AA01000000000029 /* SchemaV8.swift */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -385,6 +388,7 @@
 				AA01000000000022 /* SchemaV5.swift in Sources */,
 				AA01000000000024 /* SchemaV6.swift in Sources */,
 				AA01000000000026 /* SchemaV7.swift in Sources */,
+				AA01000000000028 /* SchemaV8.swift in Sources */,
 				AA01000000000005 /* Goal.swift in Sources */,
 				AA01000000000007 /* ModelContainerFactory.swift in Sources */,
 				AA01000000000009 /* StreakEngine.swift in Sources */,

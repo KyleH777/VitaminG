@@ -7,7 +7,7 @@ enum CommunitySegment: String, CaseIterable {
 }
 
 struct CommunityTabView: View {
-    @Binding var selectedTab: Int
+    @Binding var selectedTab: Tab
     @Query private var userChallenges: [UserChallenge]
     @State private var segment: CommunitySegment = .feed
 
@@ -70,7 +70,7 @@ struct CommunityTabView: View {
                 .foregroundStyle(VGTheme.textMuted)
                 .multilineTextAlignment(.center)
             Button("Explore Challenges") {
-                selectedTab = 3
+                selectedTab = .explore
             }
             .font(.body.weight(.semibold))
             .foregroundStyle(.white)
