@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Social Growth Engine
 status: ready_to_execute
-last_updated: "2026-05-17T15:45:00.000Z"
-last_activity: 2026-05-17 -- Phase 17 Plan 01 complete (auth gate scaffold)
+last_updated: "2026-05-17T16:15:00.000Z"
+last_activity: 2026-05-17 -- Phase 17 Plan 02 complete (TermsAndConditionsScreen + PDFPreviewView)
 progress:
   total_phases: 9
   completed_phases: 1
   total_plans: 7
-  completed_plans: 3
-  percent: 14
+  completed_plans: 4
+  percent: 19
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-05-15)
 ## Current Position
 
 Phase: 17 — Onboarding Overhaul
-Plan: 01 complete — next: 17-02-PLAN.md
-Status: In progress — 1/5 plans complete
-Last activity: 2026-05-17 -- Plan 17-01 complete (auth gate scaffold — WelcomeScreen, OnboardingStep enum, LoginScreen re-auth)
+Plan: 02 complete — next: 17-03-PLAN.md
+Status: In progress — 2/5 plans complete
+Last activity: 2026-05-17 -- Plan 17-02 complete (TermsAndConditionsScreen + PDFPreviewView + OnboardingView wired)
 
 ```
-v2.0 Progress: [==                  ] 14% (1/9 phases, 3/7 plans)
+v2.0 Progress: [===                 ] 19% (1/9 phases, 4/7 plans)
 ```
 
 ## Accumulated Context
@@ -52,6 +52,8 @@ v2.0 Progress: [==                  ] 14% (1/9 phases, 3/7 plans)
 | Widget phase is last (Phase 24) | Widgets are read-only consumers; schema must be stable before wiring WidgetCenter reloads |
 | NavigationDestination placeholder stubs for new OnboardingStep cases | Plans 2-5 replace Text placeholders; NavigationStack lazy-loads so stubs are safe |
 | CommunityGoalOnboardingScreen.advance() calls onSkip() | .createGoal removed per D-16; community goal is final onboarding step before app entry |
+| StepBarView(current:0, total:7) on T&C screen | T&C is step 0; total:7 follows PATTERNS.md over UI-SPEC §2 total:6 per plan interface section note |
+| if-let guard on termsURL (no force-unwrap) | T-17-02-02 mitigation: PDFPreviewView never constructed with nil URL; DEBUG assert surfaces missing bundle resource |
 
 ### Blockers
 
