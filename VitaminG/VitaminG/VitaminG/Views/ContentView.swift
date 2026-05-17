@@ -4,8 +4,7 @@ import SwiftData
 struct ContentView: View {
     @Environment(AppRouter.self) private var router
     @Query private var allUserChallenges: [UserChallenge]
-    @State private var selectedTab: Int = 0
-    @State private var challengesNavPath: NavigationPath = NavigationPath()
+    @State private var selectedTab: Tab = .home
 
     var body: some View {
         @Bindable var router = router
@@ -13,40 +12,25 @@ struct ContentView: View {
             NavigationStack {
                 HomeView()
             }
-            .tag(0)
+            .tag(Tab.home)
 
             goalsTab
-                .tag(1)
+                .tag(Tab.goals)
 
             NavigationStack {
-                CommunityTabView(selectedTab: $selectedTab)
-                    .navigationDestination(for: AppRoute.self) { route in
-                        switch route {
-                        case .communityFeed(let c): CommunityFeedView(userChallenge: c)
-                        case .communityGoals(let c): CommunityGoalsLandingView(userChallenge: c)
-                        default: EmptyView()
-                        }
-                    }
+                ExplorePlaceholderView()
             }
-            .tag(2)
+            .tag(Tab.explore)
 
-            NavigationStack(path: $challengesNavPath) {
-                ChallengeDiscoveryView(navigationPath: $challengesNavPath)
-                    .navigationDestination(for: AppRoute.self) { route in
-                        switch route {
-                        case .goalDetail(let goal): GoalDetailView(goal: goal)
-                        case .challengeDetail(let c): ChallengeDetailView(userChallenge: c)
-                        case .communityGoals(let c): CommunityGoalsLandingView(userChallenge: c)
-                        default: EmptyView()
-                        }
-                    }
+            NavigationStack {
+                CommunityPlaceholderView()
             }
-            .tag(3)
+            .tag(Tab.community)
 
             NavigationStack {
                 ProfileView()
             }
-            .tag(4)
+            .tag(Tab.profile)
         }
         .toolbar(.hidden, for: .tabBar)
         .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -77,15 +61,14 @@ struct ContentView: View {
                 .navigationDestination(for: AppRoute.self) { route in
                     switch route {
                     case .goalDetail(let goal): GoalDetailView(goal: goal)
-                    case .stats: StatsView()
                     case .settings: SettingsView()
                     case .profile: ProfileView()
                     case .publicProfile: EmptyView()
-                    case .wins: DailyWinsView()
                     case .challengeDetail(let c): ChallengeDetailView(userChallenge: c)
                     case .challengeCheckIn(let c): ChallengeCheckInView(userChallenge: c, viewModel: ChallengeViewModel())
                     case .communityFeed(let c): CommunityFeedView(userChallenge: c)
                     case .communityGoals(let c): CommunityGoalsLandingView(userChallenge: c)
+                    default: EmptyView()
                     }
                 }
         }
