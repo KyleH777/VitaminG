@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Social Growth Engine
 status: ready_to_execute
-last_updated: "2026-05-17T16:15:00.000Z"
-last_activity: 2026-05-17 -- Phase 17 Plan 02 complete (TermsAndConditionsScreen + PDFPreviewView)
+last_updated: "2026-05-17T22:30:12.000Z"
+last_activity: 2026-05-17 -- Phase 17 Plan 03 complete (UsernameLookupService + UsernameScreen + XCTest)
 progress:
   total_phases: 9
   completed_phases: 1
   total_plans: 7
-  completed_plans: 4
-  percent: 19
+  completed_plans: 5
+  percent: 24
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-05-15)
 ## Current Position
 
 Phase: 17 — Onboarding Overhaul
-Plan: 02 complete — next: 17-03-PLAN.md
-Status: In progress — 2/5 plans complete
-Last activity: 2026-05-17 -- Plan 17-02 complete (TermsAndConditionsScreen + PDFPreviewView + OnboardingView wired)
+Plan: 03 complete — next: 17-04-PLAN.md
+Status: In progress — 3/5 plans complete
+Last activity: 2026-05-17 -- Plan 17-03 complete (UsernameLookupService + UsernameScreen + 4 XCTests)
 
 ```
-v2.0 Progress: [===                 ] 19% (1/9 phases, 4/7 plans)
+v2.0 Progress: [====                ] 24% (1/9 phases, 5/7 plans)
 ```
 
 ## Accumulated Context
@@ -54,6 +54,9 @@ v2.0 Progress: [===                 ] 19% (1/9 phases, 4/7 plans)
 | CommunityGoalOnboardingScreen.advance() calls onSkip() | .createGoal removed per D-16; community goal is final onboarding step before app entry |
 | StepBarView(current:0, total:7) on T&C screen | T&C is step 0; total:7 follows PATTERNS.md over UI-SPEC §2 total:6 per plan interface section note |
 | if-let guard on termsURL (no force-unwrap) | T-17-02-02 mitigation: PDFPreviewView never constructed with nil URL; DEBUG assert surfaces missing bundle resource |
+| claimUsername posts writeUsername first, then countRecords post-save D-17 race check | Race condition detection at claim time; conflicting record deleted, false returned so UsernameScreen shows inline error |
+| ProfileSharingService.publishProfile username param defaults to nil | Backward compatible additive extension; completeOnboarding() passes stored username for write coordination |
+| UsernameCheckState falls back to .idle on CloudKit error (not .taken) | Silent fallback allows retry without false "taken" feedback on network failure |
 
 ### Blockers
 
@@ -63,6 +66,7 @@ None.
 
 - App Store Connect: configure 3 consumable IAP products (Small Coffee ~$0.99, Large Coffee ~$2.99, Supporter ~$4.99) before Phase 19 real-device testing
 - CloudKit Console: promote new public DB record types (UserPresence, Applause, Follow, extended PublicProfile) to Production before Phase 21
+- CloudKit Console: add Queryable index on "username" field in PublicProfile record type (iCloud.com.kyleharrington.VitaminG) before 17-03 real-device testing — required for username availability check (isUsernameTaken/countRecordsWithUsername)
 
 ## Deferred Items (from v1.0)
 

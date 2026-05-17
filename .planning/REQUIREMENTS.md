@@ -19,7 +19,7 @@
 
 - [ ] **AUTH-01**: Sign-in flow supports Apple Sign-In only — Google Sign-In removed entirely
 - [x] **AUTH-02**: Terms & Conditions PDF (Vitamin_G_Terms_and_Conditions.pdf) is linked and readable inline during onboarding; user must acknowledge before completing sign-up
-- [ ] **AUTH-03**: User claims a unique username during onboarding — uniqueness enforced via async CKQuery before write; race condition handled with first-write-wins and post-save verification prompt if displaced
+- [x] **AUTH-03**: User claims a unique username during onboarding — uniqueness enforced via async CKQuery before write; race condition handled with first-write-wins and post-save verification prompt if displaced
 - [ ] **AUTH-04**: User can upload a profile picture during onboarding (PHPickerViewController for library, UIImagePickerController for camera); step is skippable; image compressed to ≤512px / JPEG 0.75 before upload
 - [ ] **AUTH-05**: Notification permission priming slide shown before system alert — headline "Stay on track every day", body explains single daily reminder, primary "Turn on notifications" button, "Maybe later" secondary link
 - [ ] **AUTH-06**: Camera access permission priming slide shown in onboarding — headline "Share your journey", body explains profile picture and goal photos use

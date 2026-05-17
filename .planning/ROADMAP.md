@@ -74,7 +74,7 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
 Plans:
 - [x] 17-01-PLAN.md — Auth gate: WelcomeScreen Apple-only + OnboardingStep enum expansion + LoginScreen re-auth (AUTH-01, AUTH-07)
 - [x] 17-02-PLAN.md — T&C screen: TermsAndConditionsScreen + PDFPreviewView + PDF bundle (AUTH-02)
-- [ ] 17-03-PLAN.md — Username: UsernameLookupService + OnboardingViewModel debounce + UsernameScreen (AUTH-03)
+- [x] 17-03-PLAN.md — Username: UsernameLookupService + OnboardingViewModel debounce + UsernameScreen (AUTH-03)
 - [ ] 17-04-PLAN.md — Name pre-fill + ProfilePictureScreen + CameraPermissionScreen (AUTH-04, AUTH-05, AUTH-06)
 - [ ] 17-05-PLAN.md — Report/Block: BlockListService + PublicProfileView contextMenu + MFMailCompose/mailto report + UserDefaults block list (PROF-05)
 
