@@ -44,6 +44,7 @@ struct WelcomeScreen: View {
 
     @Binding var path: [OnboardingStep]
     let onSkip: () -> Void
+    var viewModel: OnboardingViewModel
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @AppStorage("vg_onboardingName") private var savedName: String = ""
@@ -173,7 +174,7 @@ struct WelcomeScreen: View {
                                 let uid = cred.user
                                 appleUserID = uid
                                 UserDefaults.standard.set(uid, forKey: "vg_appleUserID")
-                                // TODO Plan 4: pass cred.fullName to onboardingVM.appleFullName
+                                viewModel.appleFullName = cred.fullName
                             }
                             // D-03: returning user → .login; new user → .termsAndConditions
                             if !savedName.trimmingCharacters(in: .whitespaces).isEmpty {

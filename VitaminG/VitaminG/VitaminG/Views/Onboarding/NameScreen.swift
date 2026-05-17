@@ -8,6 +8,13 @@ struct NameScreen: View {
 
     @Binding var path: [OnboardingStep]
     let onSkip: () -> Void
+    let prefilledName: String?
+
+    init(path: Binding<[OnboardingStep]>, onSkip: @escaping () -> Void, prefilledName: String? = nil) {
+        self._path = path
+        self.onSkip = onSkip
+        self.prefilledName = prefilledName
+    }
 
     @AppStorage("vg_onboardingName") private var storedName: String = ""
     @State private var name: String = ""
@@ -31,7 +38,7 @@ struct NameScreen: View {
                 .padding(.bottom, 20)
 
                 // Step bar
-                StepBarView(current: 0, total: 4)
+                StepBarView(current: 1, total: 7)
                     .padding(.bottom, 28)
 
                 // Headline
@@ -102,7 +109,11 @@ struct NameScreen: View {
         }
         .navigationBarHidden(true)
         .onAppear {
-            name = storedName
+            if storedName.isEmpty, let prefill = prefilledName, !prefill.isEmpty {
+                name = prefill
+            } else {
+                name = storedName
+            }
             fieldFocused = true
         }
     }

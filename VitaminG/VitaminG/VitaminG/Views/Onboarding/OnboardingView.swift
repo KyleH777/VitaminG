@@ -28,11 +28,11 @@ struct OnboardingView: View {
 
     var body: some View {
         NavigationStack(path: $path) {
-            WelcomeScreen(path: $path, onSkip: finish)
+            WelcomeScreen(path: $path, onSkip: finish, viewModel: onboardingVM)
                 .navigationDestination(for: OnboardingStep.self) { step in
                     switch step {
                     case .name:
-                        NameScreen(path: $path, onSkip: finish)
+                        NameScreen(path: $path, onSkip: finish, prefilledName: onboardingVM.appleFullName.map { PersonNameComponentsFormatter().string(from: $0) }.flatMap { $0.isEmpty ? nil : $0 })
                     case .login:
                         LoginScreen(path: $path, onSkip: finish)
                     case .recovery:
