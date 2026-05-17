@@ -38,8 +38,7 @@ struct OnboardingView: View {
                     case .recovery:
                         RecoveryScreen(path: $path, onSkip: finish, onRestartOnboarding: restartOnboarding)
                     case .termsAndConditions:
-                        // Placeholder — real screen created in Plan 2
-                        Text("T&C — Plan 2")
+                        TermsAndConditionsScreen(path: $path, onSkip: finish)
                     case .username:
                         // Placeholder — real screen created in Plan 3
                         Text("Username — Plan 3")
