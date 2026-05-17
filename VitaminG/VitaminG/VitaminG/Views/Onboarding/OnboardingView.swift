@@ -7,10 +7,14 @@ enum OnboardingStep: Hashable {
     case name
     case login
     case recovery
-    case motivationCategories
+    case termsAndConditions  // NEW (Plan 1 — D-06)
+    case username            // NEW (Plan 1 — D-06)
+    case profilePicture      // NEW (Plan 1 — D-06)
     case notifications
+    case cameraPermission    // NEW (Plan 1 — D-06)
     case communityGoal
-    case createGoal
+    // .motivationCategories REMOVED (D-05)
+    // .createGoal REMOVED (D-16)
 }
 
 // MARK: - OnboardingView
@@ -33,14 +37,22 @@ struct OnboardingView: View {
                         LoginScreen(path: $path, onSkip: finish)
                     case .recovery:
                         RecoveryScreen(path: $path, onSkip: finish, onRestartOnboarding: restartOnboarding)
-                    case .motivationCategories:
-                        MotivationCategoryScreen(path: $path, onSkip: finish)
+                    case .termsAndConditions:
+                        // Placeholder — real screen created in Plan 2
+                        Text("T&C — Plan 2")
+                    case .username:
+                        // Placeholder — real screen created in Plan 3
+                        Text("Username — Plan 3")
+                    case .profilePicture:
+                        // Placeholder — real screen created in Plan 4
+                        Text("Profile Picture — Plan 4")
                     case .notifications:
                         NotificationOnboardingScreen(path: $path, onSkip: finish)
+                    case .cameraPermission:
+                        // Placeholder — real screen created in Plan 5
+                        Text("Camera Permission — Plan 5")
                     case .communityGoal:
                         CommunityGoalOnboardingScreen(path: $path, onSkip: finish)
-                    case .createGoal:
-                        GoalCreationWizardView(isOnboarding: true, onComplete: finish)
                     }
                 }
         }
