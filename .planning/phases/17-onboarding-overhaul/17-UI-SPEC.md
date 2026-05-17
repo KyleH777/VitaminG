@@ -5,6 +5,8 @@ status: draft
 shadcn_initialized: false
 preset: none
 created: 2026-05-16
+revised: 2026-05-16
+revision_reason: Typography (Issue 1 & 2) and Spacing blocking issues fixed by gsd-ui-researcher per checker report
 ---
 
 # Phase 17 — UI Design Contract
@@ -45,8 +47,8 @@ Vitamin G uses 4-pt multiples with 28pt horizontal page margins (established thr
 Exceptions:
 - Bottom CTA safe area inset: 36pt padding (NameScreen pattern), 44pt on LoginScreen / dark-bg screens
 - StepBarView bottom margin: 28pt (from NameScreen pattern)
-- Profile card padding: 14pt all sides (from LoginScreen)
-- Notification mock card horizontal padding: 18pt; bottom offset: 32pt (from NotificationOnboardingScreen)
+- Profile card padding: 16pt all sides (LoginScreen)
+- Notification mock card horizontal padding: 16pt; bottom offset: 32pt (from NotificationOnboardingScreen)
 - Touch targets: minimum 44pt height for all interactive elements
 
 Source: direct codebase read (NameScreen.swift, LoginScreen.swift, NotificationOnboardingScreen.swift)
@@ -57,21 +59,27 @@ Source: direct codebase read (NameScreen.swift, LoginScreen.swift, NotificationO
 
 All font calls must use `VGTheme.serif()`, `VGTheme.serifItalic()`, or `Font.custom()` directly — never `.largeTitle` / `.title` SwiftUI dynamic type for brand-critical text.
 
+### Type Scale (4 sizes, 2 weights)
+
 | Role | Size | Weight / Font | Line Height |
 |------|------|---------------|-------------|
-| Display Heading | 42pt | CormorantGaramond-Regular (or Georgia) | 1.2 (lineSpacing: 4) |
-| Large Field Input | 34pt | CormorantGaramond-Regular | default |
-| Section Heading | 24–36pt | CormorantGaramond-Regular | 1.2 (lineSpacing: 4) |
-| Body / Subtitle | 14pt | SF Pro weight .light | 1.5 (lineSpacing: 4) |
-| CTA Button | 17pt | SF Pro weight .semibold | n/a |
-| Label / Caption | 11–13pt | SF Pro weight .semibold (caps) or .regular | n/a |
+| Display Heading | 42pt | CormorantGaramond-Regular | 1.2 (lineSpacing: 4) |
+| CTA Button | 17pt | SF Pro .semibold | n/a |
+| Body / Subtitle / Secondary Links | 14pt | SF Pro .light | 1.5 (lineSpacing: 4) |
+| Label / Caption / State Indicators | 13pt | SF Pro .semibold (ALL CAPS labels) or .light (inline state text) | n/a |
 
-Typography rules:
+### Typography Rules
+
 - Display headings: CormorantGaramond-Regular at 42pt; italic emphasis within heading uses CormorantGaramond-Italic at same size in VGTheme.terraSoft
-- Field labels: 11pt SF Pro .semibold, ALL CAPS, kerning 1.5, VGTheme.muted
+- Field labels: 13pt SF Pro .semibold, ALL CAPS, kerning 1.5, VGTheme.muted
 - Body copy: 14pt SF Pro .light, lineSpacing 4, VGTheme.muted on light bg; VGTheme.sand.opacity(0.7) on dark bg
 - CTA buttons: 17pt SF Pro .semibold
-- Secondary links: 15pt SF Pro .regular; ghost/muted links at 13pt SF Pro .regular
+- Secondary links: 14pt SF Pro .light; ghost/muted links at 13pt SF Pro .light
+- Large field input (UsernameScreen, NameScreen): 34pt CormorantGaramond-Regular — this is a component-specific detail for text input fields only, not a scale entry. It does not add a fifth scale size; it uses the CormorantGaramond font (not SF Pro) and applies exclusively inside the input field component.
+- Username inline state indicators: 13pt SF Pro .light (Checking..., Available, Taken, Invalid)
+- Outlined picker buttons (ProfilePictureScreen, T&CScreen): 13pt SF Pro .semibold
+
+Note: `.regular` is not used. All SF Pro usage is either `.semibold` or `.light`. `.medium` is not used.
 
 Source: direct codebase read (NameScreen.swift, NotificationOnboardingScreen.swift, WelcomeScreen.swift, LoginScreen.swift)
 
@@ -131,13 +139,13 @@ Source: direct codebase read (VGTheme.swift, NameScreen.swift, NotificationOnboa
 
 **Background:** VGTheme.sandLight (light surface — matches NameScreen pattern)
 **Layout:**
-- Back arrow (top-left, chevron.left, 18pt .medium, VGTheme.clay)
+- Back arrow (top-left, chevron.left, 18pt .semibold, VGTheme.clay)
 - StepBarView(current: 0, total: 6) — step 1 of 6, terra fill
 - Headline (42pt CormorantGaramond, VGTheme.clay): "Before we begin"
 - Subtitle (14pt SF Pro .light, VGTheme.muted, lineSpacing 4): "Please read and agree to our Terms & Conditions to continue using Vitamin G."
-- "Read Terms" button: outlined capsule style (strokeBorder VGTheme.sandMid, VGTheme.clay text, 15pt .medium) — opens QuickLook sheet modal
+- "Read Terms" button: outlined capsule style (strokeBorder VGTheme.sandMid, VGTheme.clay text, 13pt .semibold) — opens QuickLook sheet modal
 - PDF sheet: `.sheet(isPresented:) { PDFPreviewView(url:).ignoresSafeArea() }` with `.presentationDetents([.large])`
-- Primary CTA: "I Agree — Continue" (terra fill, warmWhite text, 17pt .semibold, cornerRadius 14pt, full-width, 18pt vertical padding)
+- Primary CTA: "I Agree — Continue" (terra fill, warmWhite text, 17pt .semibold, cornerRadius 14pt, full-width, 16pt vertical padding)
 - Bottom padding: 36pt
 
 ### 3. NameScreen (modified)
@@ -154,14 +162,14 @@ Source: direct codebase read (VGTheme.swift, NameScreen.swift, NotificationOnboa
 - Back arrow + StepBarView(current: 2, total: 6)
 - Headline (42pt CormorantGaramond, VGTheme.clay): "Claim your\nusername"
 - Subtitle (14pt SF Pro .light, VGTheme.muted): "Choose a unique handle. This is how others find you."
-- Field label: "USERNAME" (11pt SF Pro .semibold, ALL CAPS, kerning 1.5, VGTheme.muted)
-- Text field: 34pt CormorantGaramond, VGTheme.clay, terra underline (2pt height Rectangle)
+- Field label: "USERNAME" (13pt SF Pro .semibold, ALL CAPS, kerning 1.5, VGTheme.muted)
+- Text field: 34pt CormorantGaramond-Regular, VGTheme.clay, terra underline (2pt height Rectangle) — see Typography note on 34pt component detail
 - Inline state indicator (beneath field, 8pt top margin):
   - `.idle` — no indicator shown
-  - `.checking` — 13pt SF Pro .regular, VGTheme.muted: "Checking..." with ProgressView inline
-  - `.available` — 13pt SF Pro .regular, VGTheme.accentSage: "✓ Available"
-  - `.taken` — 13pt SF Pro .regular, VGTheme.accentTerra: "✗ Already taken"
-  - `.invalid` — 13pt SF Pro .regular, VGTheme.accentTerra: "Only letters, numbers, and underscores"
+  - `.checking` — 13pt SF Pro .light, VGTheme.muted: "Checking..." with ProgressView inline
+  - `.available` — 13pt SF Pro .light, VGTheme.accentSage: "✓ Available"
+  - `.taken` — 13pt SF Pro .light, VGTheme.accentTerra: "✗ Already taken"
+  - `.invalid` — 13pt SF Pro .light, VGTheme.accentTerra: "Only letters, numbers, and underscores"
 - Continue button: terra fill when `.available`; VGTheme.sandMid fill + VGTheme.sandDeep text when not `.available` (disabled)
 - Bottom padding: 36pt
 
@@ -176,9 +184,9 @@ Source: CONTEXT.md D-07, Specifics section (sage for available, terra for taken)
 - Subtitle (14pt SF Pro .light, VGTheme.muted): "Help your community recognize you. You can always change this later."
 - Avatar preview: 96pt Circle; placeholder fills with VGTheme.sand + "G" initial (VGTheme.serifItalic(40), VGTheme.clay); if photo selected, shows compressed UIImage
 - Two picker buttons (side by side, 8pt gap):
-  - "Choose from Library" — outlined button (sandMid border, clay text, 15pt .medium, cornerRadius 12pt, 14pt vertical padding)
+  - "Choose from Library" — outlined button (sandMid border, clay text, 13pt .semibold, cornerRadius 12pt, 16pt vertical padding)
   - "Take Photo" — outlined button (same style)
-- "Skip for now" link (below buttons, 16pt top margin): 15pt SF Pro .regular, VGTheme.muted, centered
+- "Skip for now" link (below buttons, 16pt top margin): 14pt SF Pro .light, VGTheme.muted, centered
 - Continue button (enabled whether photo chosen or skipped): terra fill, 17pt .semibold, cornerRadius 14pt, full-width
 - Bottom padding: 36pt
 
@@ -200,8 +208,8 @@ Source: direct codebase read (NotificationOnboardingScreen.swift)
 - Headline (42pt Georgia/CormorantGaramond, VGTheme.sand, lineSpacing 4):
   "Share your\n[italic terra: journey.]"
 - Subtitle (14pt SF Pro .light, VGTheme.muted): "Your profile picture and goal photos help your community connect with your progress."
-- Primary CTA: "Allow Camera" (VGTheme.sand fill, VGTheme.clay text, 17pt .semibold, cornerRadius 14pt, 18pt vertical padding, full-width)
-- Secondary link: "Skip for now" (15pt SF Pro .regular, VGTheme.sand.opacity(0.55), full-width, 10pt vertical padding)
+- Primary CTA: "Allow Camera" (VGTheme.sand fill, VGTheme.clay text, 17pt .semibold, cornerRadius 14pt, 16pt vertical padding, full-width)
+- Secondary link: "Skip for now" (14pt SF Pro .light, VGTheme.sand.opacity(0.55), full-width, 8pt vertical padding)
 - Bottom padding: 12pt with VGTheme.clay background
 
 Source: CONTEXT.md Specifics, AUTH-06, RESEARCH.md Area 4
@@ -214,6 +222,7 @@ No visual changes. StepBarView total count update is handled internally by that 
 
 **Background:** VGTheme.sandLight (unchanged)
 **Existing elements:** All current elements preserved ("Good to see you again.", profile card, "Having trouble?", "This isn't me")
+**Profile card padding:** 16pt all sides
 **New element (D-11):** Sign in with Apple button added above the "Having trouble?" link
 - Style: `.signInWithAppleButtonStyle(.black)`, frame maxWidth .infinity, minHeight 54pt, cornerRadius 14pt
 - Vertical position: between the profile card and "Having trouble?" link
@@ -237,7 +246,7 @@ No visual changes. StepBarView total count update is handled internally by that 
 - "Cancel" button: role `.cancel`
 
 **Report button styling:**
-- Explicit button: 15pt SF Pro .regular, VGTheme.terra color (not fill), left-aligned or centered below profile card, padding 16pt top
+- Explicit button: 14pt SF Pro .light, VGTheme.terra color (not fill), left-aligned or centered below profile card, padding 16pt top
 
 **Visibility guard:** Context menu and explicit button only appear when viewing another user's profile. If ProfileView is self-only, the executor must locate the public profile view target (see RESEARCH.md Area 9 open question).
 
@@ -315,7 +324,7 @@ Source: CONTEXT.md D-08, D-09 — no PDF-read gate; AUTH-02 requires only acknow
 ### Apple Sign-In on LoginScreen
 - Shown as explicit CTA button (not conditional on credential state)
 - On success: calls `onSkip()` which sets `hasCompletedOnboarding = true`
-- On failure: inline error text below button (13pt SF Pro .regular, VGTheme.terra)
+- On failure: inline error text below button (13pt SF Pro .light, VGTheme.terra)
 
 ### Block List
 - Writes to `UserDefaults.standard` key `vg_blockedUserIDs` (JSON-encoded [String])
@@ -361,7 +370,7 @@ Not applicable. This is a native Swift/SwiftUI iOS project with no web package r
 
 ## Accessibility Contract
 
-- All interactive elements: minimum 44pt touch target height (enforced via `.padding(.vertical, 18)` on full-width buttons)
+- All interactive elements: minimum 44pt touch target height (enforced via `.padding(.vertical, 16)` on full-width buttons, or 54pt minHeight for Apple Sign-In)
 - Raining tablets animation: gated on `.accessibilityReduceMotion` (existing — preserve)
 - "Skip for now" links: must be reachable by VoiceOver as separate interactive elements (not hidden)
 - Context menu items: VoiceOver reads `Label("Report User", systemImage: "flag")` — no additional accessibility label needed
