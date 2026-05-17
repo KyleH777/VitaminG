@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Social Growth Engine
 status: ready_to_execute
-last_updated: "2026-05-17T00:00:00.000Z"
-last_activity: 2026-05-17 -- Phase 17 planned (5 plans, 2 waves)
+last_updated: "2026-05-17T15:45:00.000Z"
+last_activity: 2026-05-17 -- Phase 17 Plan 01 complete (auth gate scaffold)
 progress:
   total_phases: 9
   completed_phases: 1
   total_plans: 7
-  completed_plans: 2
-  percent: 11
+  completed_plans: 3
+  percent: 14
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-05-15)
 ## Current Position
 
 Phase: 17 — Onboarding Overhaul
-Plan: —
-Status: Ready to execute — 5 plans, 2 waves
-Last activity: 2026-05-17 -- Phase 17 planned (5 plans verified)
+Plan: 01 complete — next: 17-02-PLAN.md
+Status: In progress — 1/5 plans complete
+Last activity: 2026-05-17 -- Plan 17-01 complete (auth gate scaffold — WelcomeScreen, OnboardingStep enum, LoginScreen re-auth)
 
 ```
-v2.0 Progress: [==                  ] 11% (1/9 phases)
+v2.0 Progress: [==                  ] 14% (1/9 phases, 3/7 plans)
 ```
 
 ## Accumulated Context
@@ -50,6 +50,8 @@ v2.0 Progress: [==                  ] 11% (1/9 phases)
 | StoreKit 2 consumable IAPs only | No external payment links (App Store Guideline 3.1.1); Transaction.updates listener at VitaminGApp init |
 | StreakFreeze uses ISO8601 calendar | weekOfYear Monday reset requires Calendar(identifier: .iso8601), not .gregorian |
 | Widget phase is last (Phase 24) | Widgets are read-only consumers; schema must be stable before wiring WidgetCenter reloads |
+| NavigationDestination placeholder stubs for new OnboardingStep cases | Plans 2-5 replace Text placeholders; NavigationStack lazy-loads so stubs are safe |
+| CommunityGoalOnboardingScreen.advance() calls onSkip() | .createGoal removed per D-16; community goal is final onboarding step before app entry |
 
 ### Blockers
 
