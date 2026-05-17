@@ -158,6 +158,17 @@ enum CommunityService {
         return data
         #endif
     }
+
+    // MARK: - Resize and compress helper (AUTH-04)
+    /// Resizes the image to fit within maxDimension on its longest side, then compresses to JPEG.
+    /// Reduces resolution and file size before any persistence — T-17-04-01 mitigation.
+    static func resizeAndCompress(_ image: UIImage, maxDimension: CGFloat = 512, quality: CGFloat = 0.75) -> Data? {
+        let scale = min(maxDimension / image.size.width, maxDimension / image.size.height, 1.0)
+        let newSize = CGSize(width: image.size.width * scale, height: image.size.height * scale)
+        let renderer = UIGraphicsImageRenderer(size: newSize)
+        let resized = renderer.image { _ in image.draw(in: CGRect(origin: .zero, size: newSize)) }
+        return resized.jpegData(compressionQuality: quality)
+    }
 }
 
 // MARK: - Reaction received subscription (CHAL-24) — best-effort

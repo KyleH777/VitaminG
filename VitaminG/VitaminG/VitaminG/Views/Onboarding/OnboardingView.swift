@@ -42,8 +42,7 @@ struct OnboardingView: View {
                     case .username:
                         UsernameScreen(path: $path, onSkip: finish, viewModel: onboardingVM)
                     case .profilePicture:
-                        // Placeholder — real screen created in Plan 4
-                        Text("Profile Picture — Plan 4")
+                        ProfilePictureScreen(path: $path, onSkip: finish, viewModel: onboardingVM)
                     case .notifications:
                         NotificationOnboardingScreen(path: $path, onSkip: finish)
                     case .cameraPermission:
