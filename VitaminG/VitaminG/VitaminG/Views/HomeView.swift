@@ -59,6 +59,8 @@ struct HomeView: View {
                         checkInCTA(goal)
                             .padding(.top, 12)
                     }
+                    dailyWinsEntry
+                        .padding(.top, 12)
                     quickStatsRow
                     stayCloseSection
                     secondaryGoalsSection
@@ -262,22 +264,57 @@ struct HomeView: View {
     // MARK: - Quick Stats Row
 
     private var quickStatsRow: some View {
-        HStack(spacing: 8) {
-            statCell(
-                value: "\(goals.filter { !($0.isCompleted) }.count)",
-                label: "Active Goals"
-            )
-            statCell(
-                value: "\(completionEvents.count)",
-                label: "Check-ins"
-            )
-            statCell(
-                value: "\(goalVM.earnedBadgeCount(from: userChallenges))",
-                label: "Badges"
-            )
+        NavigationLink(value: AppRoute.stats) {
+            HStack(spacing: 8) {
+                statCell(
+                    value: "\(goals.filter { !($0.isCompleted) }.count)",
+                    label: "Active Goals"
+                )
+                statCell(
+                    value: "\(completionEvents.count)",
+                    label: "Check-ins"
+                )
+                statCell(
+                    value: "\(goalVM.earnedBadgeCount(from: userChallenges))",
+                    label: "Badges"
+                )
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(VGTheme.textMuted)
+                    .padding(.leading, 8)
+                    .accessibilityHidden(true)
+            }
         }
+        .buttonStyle(.plain)
         .padding(.horizontal, 24)
         .padding(.top, 16)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Stats: \(goals.filter { !($0.isCompleted) }.count) active goals, \(completionEvents.count) check-ins, \(goalVM.earnedBadgeCount(from: userChallenges)) badges")
+        .accessibilityHint("Opens your full statistics")
+    }
+
+    // MARK: - Daily Wins Entry
+
+    private var dailyWinsEntry: some View {
+        NavigationLink(value: AppRoute.wins) {
+            Text("See your wins →")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(
+                    LinearGradient(
+                        colors: [VGTheme.accentTerra, VGTheme.terra],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .padding(.horizontal, 24)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Daily Wins")
+        .accessibilityHint("Opens your gratitude and daily wins log")
     }
 
     // MARK: - Stay Close Section

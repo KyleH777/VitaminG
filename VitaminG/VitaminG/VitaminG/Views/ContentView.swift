@@ -11,6 +11,13 @@ struct ContentView: View {
         TabView(selection: $selectedTab) {
             NavigationStack {
                 HomeView()
+                    .navigationDestination(for: AppRoute.self) { route in
+                        switch route {
+                        case .stats: StatsView()
+                        case .wins: DailyWinsView()
+                        default: EmptyView()
+                        }
+                    }
             }
             .tag(AppTab.home)
 
