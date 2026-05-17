@@ -1,10 +1,13 @@
 ---
 phase: 18
 slug: home-tab-goals-flow
-status: draft
+status: approved
+reviewed_at: 2026-05-17
 shadcn_initialized: false
 preset: none
 created: 2026-05-17
+revised: 2026-05-17
+revision_reason: Typography collapsed to 4 sizes, Cormorant weights reduced to 2, non-multiples-of-4 spacing removed from scale
 ---
 
 # Phase 18 — UI Design Contract
@@ -38,16 +41,14 @@ Declared values (all multiples of 4 — mapped to SwiftUI `.padding` calls):
 |-------|-------|-------|
 | xs | 4pt | Icon gaps, capsule step-dot spacing (HStack spacing: 5 rounds to 4) |
 | sm | 8pt | Sub-element spacing, section header sub-labels |
-| md | 16pt | Default element padding (card inner padding top/bottom) |
-| lg | 24pt | Horizontal screen margins — `.padding(.horizontal, 24)` |
+| md | 16pt | Default element padding (card inner padding top/bottom), goalRow vertical padding |
+| lg | 24pt | Horizontal screen margins — `.padding(.horizontal, 24)` — primaryGoalCard internal padding |
 | xl | 32pt | Bottom scroll spacer, sheet bottom padding |
 | 2xl | 48pt | Bottom button safe-area padding on celebration screen |
 | 3xl | 64pt | Not used in Phase 18 |
 
 **Exceptions:**
 - Touch targets: minimum 44pt height for all tappable rows and buttons (`.frame(minHeight: 44)`)
-- Goal row cards: 14pt vertical padding (existing `goalRow` pattern — preserve for consistency)
-- Card internal padding: 22pt (existing `primaryGoalCard` pattern — preserve for consistency)
 - Day grid cells: 36pt minimum touch target per cell (GOAL2-05 — date circles must be tappable)
 - Choice screen path cards: 56pt minimum height per card (3-path entry sheet)
 
@@ -55,21 +56,20 @@ Declared values (all multiples of 4 — mapped to SwiftUI `.padding` calls):
 
 ## Typography
 
-All sizes and weights are absolute values for SwiftUI `.font()` modifiers.
+All sizes and weights are absolute values for SwiftUI `.font()` modifiers. Exactly 4 sizes, 2 weights per font family.
 
 | Role | Font | Size | Weight | Line Height / Notes | Source |
 |------|------|------|--------|---------------------|--------|
-| Display / step header | Cormorant Garamond Regular | 34pt | Regular | lineSpacing: 2 | VGTheme.serif(34) — existing Step1 pattern |
-| Section heading | Cormorant Garamond SemiBold | 20pt | SemiBold | default | VGTheme.serif(20, weight: .semibold) |
-| Card serif title | Cormorant Garamond Medium | 20pt | Medium | lineLimit: 3 | VGTheme.serif(20, weight: .medium) |
-| Body | SF Pro | 16pt | Regular | lineSpacing: 4 (quote card) / default elsewhere | .font(.system(size: 16)) |
-| Label / supporting | SF Pro | 13pt | Regular or Semibold | default | .font(.system(size: 13)) |
-| Caption / overline | SF Pro | 10–11pt | Semibold | kerning: 1.2–1.4, .textCase(.uppercase) | Existing "MY GOALS", "TODAY'S DOSE" labels |
-| Quote italic | Cormorant Garamond Italic | 16pt | — | lineSpacing: 4 | VGTheme.serifItalic(16) |
-| Stat numeric | Cormorant Garamond Regular | 18pt | Regular | monospaced only for streak count | VGTheme.serif(18) |
-| Streak count in header | SF Pro Monospaced | 13pt | Semibold | inline with flame emoji | .font(.system(size: 13, weight: .semibold, design: .monospaced)) |
+| Display / step header | Cormorant Garamond | 34pt | Regular | lineSpacing: 2 | VGTheme.serif(34) — existing Step1 pattern |
+| Section heading / card serif title | Cormorant Garamond | 20pt | SemiBold | lineLimit: 3 (card title) / default (section heading) | VGTheme.serif(20, weight: .semibold) |
+| Body / stat numeric / quote italic | SF Pro / Cormorant Garamond Italic | 16pt | Regular | lineSpacing: 4 (quote card) / default elsewhere; serifItalic style is a variant of Regular weight, not a third weight | .font(.system(size: 16)) / VGTheme.serifItalic(16) |
+| Label / supporting / caption / overline | SF Pro | 13pt | Regular or Semibold | Uppercase captions use kerning 1.2–1.4, .textCase(.uppercase); streak count uses .design(.monospaced) | .font(.system(size: 13)) |
 
-**Weight constraint:** Regular (400) and Semibold (600) only for system font. Cormorant Garamond uses Regular / Medium / SemiBold per VGTheme.serif() variants.
+**Cormorant Garamond weight constraint:** Regular (400) and SemiBold (600) only. Italic is a style variant of Regular — `VGTheme.serifItalic()` is Regular weight in italic style, not a separate weight entry. Medium weight is not used in Phase 18; any prior "Medium" usage maps to SemiBold.
+
+**SF Pro weight constraint:** Regular (400) and Semibold (600) only.
+
+**Component-local sizes (not named scale entries):** Sheet titles ("Start your goal", pre-made goals header) and celebration heading are rendered at 34pt Cormorant Regular or system equivalent — these reuse the Display scale entry and do not introduce additional named sizes.
 
 ---
 
@@ -109,7 +109,7 @@ All values reference VGTheme semantic tokens (adaptive light/dark). Raw hex show
 #### GoalEntryChoiceView (sheet)
 - Presentation: `.sheet` (medium detent, grabber visible)
 - Sheet background: VGTheme.sandLight
-- Title: "Start your goal" — Cormorant Garamond Regular 28pt, VGTheme.clay
+- Title: "Start your goal" — Cormorant Garamond Regular 34pt (Display scale), VGTheme.clay
 - 3 path cards stacked vertically, full-width, spacing 12pt
 - Each card: VGTheme.surface background, cornerRadius 16, strokeBorder VGTheme.separator 1pt
 - Card layout: HStack — leading SF Symbol icon (28pt, accentTerra) + VStack(title 16pt semibold / subtitle 13pt muted) + trailing chevron.right
@@ -119,8 +119,8 @@ All values reference VGTheme semantic tokens (adaptive light/dark). Raw hex show
 
 #### PremadeGoalsListView (NavigationStack push from GoalEntryChoiceView)
 - Background: VGTheme.sandLight
-- Header: "My goals, your journey starts here…" — Cormorant Garamond Regular 28pt, VGTheme.clay
-- Section headers: GoalCategory name — SF Pro 11pt Semibold Uppercase, kerning 1.2, VGTheme.muted
+- Header: "My goals, your journey starts here…" — Cormorant Garamond Regular 34pt (Display scale), VGTheme.clay
+- Section headers: GoalCategory name — SF Pro 13pt Semibold Uppercase, kerning 1.2, VGTheme.muted
 - Goal rows: List rows with category color dot (8pt circle) + goal title (16pt Regular) + "Add" button (13pt accentTerra)
 - "Add" button: no background, accentTerra text, minimum 44pt touch target
 
@@ -129,23 +129,23 @@ All values reference VGTheme semantic tokens (adaptive light/dark). Raw hex show
 - Confetti: SwiftUI Canvas + TimelineView pattern (60 particles, hue-varied, golden-angle scatter) — same implementation as MilestoneCelebrationView
 - Center card: VStack spacing 24pt
   - "checkmark.circle.fill" SF Symbol, 64pt, accentSage color (positive completion)
-  - Heading: "You showed up." — SF Pro Rounded 28pt Semibold, white
+  - Heading: "You showed up." — SF Pro Rounded 34pt Semibold, white (uses Display scale size)
   - Streak line: "🔥 {N} day streak" — SF Pro Monospaced 20pt Semibold, accentTerra (light) / terraGlow (dark)
-  - Sub-label: "Keep showing up." — SF Pro 15pt Regular, white @ 0.7 opacity
+  - Sub-label: "Keep showing up." — SF Pro 16pt Regular, white @ 0.7 opacity
 - Auto-dismiss: 2 seconds after appear (DispatchQueue.main.asyncAfter(deadline: .now() + 2.0))
 - Manual dismiss button: "Back to Goals" — SF Pro 16pt Semibold, maxWidth: .infinity, minHeight: 44, background accentTerra, white foreground, cornerRadius 12, padding horizontal 24pt, padding bottom 48pt
 - Accessibility: reduceMotion suppresses confetti animation; UIAccessibility.post(.announcement, "Check-in complete! \(N) day streak")
 
 #### GoalDayGridView (embedded in GoalDetailView)
 - Layout: LazyVGrid, 7 columns (Mon–Sun), spacing 8pt
-- Column header row: M T W T F S S — SF Pro 10pt Semibold Uppercase, VGTheme.textMuted, centered
+- Column header row: M T W T F S S — SF Pro 13pt Semibold Uppercase, VGTheme.textMuted, centered
 - Day cells: Circle, 32pt diameter
   - Completed day: fill accentSage, white "checkmark" SF Symbol 10pt inside
   - Today (not yet completed): strokeBorder accentTerra 2pt, terra fill @ 0.15
   - Future / missed: fill VGTheme.surface, strokeBorder VGTheme.separator 1pt
   - Padding between cells is the LazyVGrid spacing (8pt)
-- Month header: "May 2026" — Cormorant Garamond SemiBold 18pt, VGTheme.textPrimary
-- Month navigation (Claude's discretion — use chevron buttons): HStack with "<" / ">" — 28pt hit target minimum, accentTerra, placed above grid
+- Month header: "May 2026" — Cormorant Garamond SemiBold 20pt (Section heading scale), VGTheme.textPrimary
+- Month navigation (Claude's discretion — use chevron buttons): HStack with chevron.left / chevron.right SF Symbol buttons — minimum 28pt hit target, accentTerra color, placed above grid; `.accessibilityLabel("Previous month")` on the leading chevron and `.accessibilityLabel("Next month")` on the trailing chevron
 - Section background: VGTheme.surface, cornerRadius 14, padding 16pt
 
 ### Modified Components
@@ -153,24 +153,25 @@ All values reference VGTheme semantic tokens (adaptive light/dark). Raw hex show
 #### HomeView — Header Section
 - Layout: HStack — leading greeting VStack + trailing streak badge
 - Greeting format: `"{Good morning/afternoon/evening} ☀️"` — SF Pro 13pt Regular, VGTheme.textMuted
-- Name line: display name — Cormorant Garamond Regular 26pt, VGTheme.sand
+- Name line: display name — Cormorant Garamond Regular 34pt (Display scale), VGTheme.sand
+- **Primary visual anchor:** The user's display name rendered in Cormorant Garamond Regular 34pt on the heroBackground clay surface is the focal point of the Home screen. All other Home elements support this anchor — the streak badge, quote, and goal cards draw the eye downward from this fixed point.
 - **New per D-03:** Streak count inline with greeting on same HStack:
   - Keep existing `streakBadge` capsule component (accentTerra, 🔥 replaced with ◉ — keep as-is per existing code)
   - Streak value sourced from `StreakEngine` overall app streak, not `goal.completionEvents.count`
 
 #### HomeView — Community Goal Card (new section, D-01)
 - Placement: between quoteSection and My Goals section
-- Section label: "COMMUNITY GOAL" — SF Pro 10pt Semibold Uppercase, kerning 1.2, VGTheme.muted
+- Section label: "COMMUNITY GOAL" — SF Pro 13pt Semibold Uppercase, kerning 1.2, VGTheme.muted
 - Card: VStack spacing 12pt, background Color.white.opacity(0.07), cornerRadius 20, strokeBorder Color.white.opacity(0.1) 1pt, padding 20pt
-- Community goal title: Cormorant Garamond Medium 18pt, VGTheme.sand, lineLimit 2
-- Community stat line: "N people participating" — SF Pro 12pt, VGTheme.textMuted
+- Community goal title: Cormorant Garamond SemiBold 20pt (Section heading scale), VGTheme.sand, lineLimit 2
+- Community stat line: "N people participating" — SF Pro 13pt, VGTheme.textMuted
 - Progress bar: Capsule, full-width, height 6pt, background VGTheme.surface2, overlay fill accentTerra (width proportional to completion %)
-- Completion label: "{N}% complete" — SF Pro 12pt Semibold, accentTerra, trailing-aligned
+- Completion label: "{N}% complete" — SF Pro 13pt Semibold, accentTerra, trailing-aligned
 
 #### HomeView — Stats Navigation Row (promoted, D-02)
 - Keep existing `quickStatsRow` with `NavigationLink(value: AppRoute.stats)`
 - Remove embedded `statCell` sub-cells; replace with single tappable card:
-  - HStack: "chart.bar.fill" icon (accentTerra, 18pt) + "Your Stats" label (16pt Medium, VGTheme.textPrimary) + chevron.right (VGTheme.textMuted)
+  - HStack: "chart.bar.fill" icon (accentTerra, 16pt) + "Your Stats" label (16pt Regular, VGTheme.textPrimary) + chevron.right (VGTheme.textMuted)
   - Background: VGTheme.surface, cornerRadius 14, strokeBorder VGTheme.separator 1pt
   - Padding vertical 16pt, horizontal 24pt (as outer padding)
 - Accessibility: `.accessibilityLabel("View your statistics")`
@@ -181,7 +182,7 @@ All values reference VGTheme semantic tokens (adaptive light/dark). Raw hex show
   - Tapping "+add" presents GoalEntryChoiceView as `.sheet`
 - Goal rows: existing `goalRow` pattern — preserve as-is
 - **New per D-11:** Flame icon on rows where per-goal consecutive streak >= 3 days
-  - Inline in goal row trailing slot, before chevron: "🔥" text (SF Pro 14pt) or `flame.fill` SF Symbol (accentGold, 14pt)
+  - Inline in goal row trailing slot, before chevron: `flame.fill` SF Symbol (accentGold, 16pt)
   - Only show when consecutive days >= 3 per StreakEngine calculation
 
 #### GoalListView — "+add" trigger (D-05)
@@ -252,7 +253,7 @@ All values reference VGTheme semantic tokens (adaptive light/dark). Raw hex show
 
 ### GoalDayGridView Month Navigation
 - Default: current calendar month
-- Navigation: leading/trailing `<` `>` buttons (Text or Image(systemName: "chevron.left/right"))
+- Navigation: leading/trailing chevron.left / chevron.right SF Symbol buttons with `.accessibilityLabel("Previous month")` and `.accessibilityLabel("Next month")` respectively
 - Cannot navigate past current month into future
 - Cannot navigate before goal's `startDate` month
 - State: `@State private var displayedMonth: Date` — local to GoalDetailView or GoalDayGridView
@@ -285,6 +286,7 @@ No third-party component registries. All components are native SwiftUI + VGTheme
 4. **StreakEngine** — the streak count shown in the Home header and the celebration screen is the **overall app streak** (longest or current streak across all goals), not a per-goal value. Source from `StreakEngine`.
 5. **GoalDayGridView** — `LazyVGrid` with 7 columns and `GridItem(.fixed(36))` ensures uniform 36pt circles. Use `Date` arithmetic to populate only days within the current displayed month; pad leading cells for the week offset of the 1st.
 6. **Accessibility** — every interactive element must have `.accessibilityLabel`. Confetti and decorative elements use `.accessibilityHidden(true)`.
+7. **Preserved spacing values (not design tokens):** The existing `goalRow` pattern uses 14pt vertical padding and the existing `primaryGoalCard` pattern uses 22pt internal padding. These are legacy implementation values — do NOT create named design tokens for them. Preserve them in code as literal constants (`14`, `22`) to maintain visual consistency with existing rendered cards. Do not list them in the spacing scale or exceptions table.
 
 ---
 
