@@ -3,9 +3,9 @@
 > **Audit trail only.** Do not use as input to planning, research, or execution agents.
 > Decisions are captured in CONTEXT.md — this log preserves the alternatives considered.
 
-**Date:** 2026-05-16
+**Date:** 2026-05-16 (updated 2026-05-16)
 **Phase:** 17-onboarding-overhaul
-**Areas discussed:** Auth + Welcome screen, Onboarding step sequence, T&C acknowledgment design, PROF-05 report/block scope
+**Areas discussed:** Auth + Welcome screen, Onboarding step sequence, T&C acknowledgment design, PROF-05 report/block scope, GoalCreationWizardView in flow, Username race condition UX, T&C PDF asset, Report mechanism (session 2)
 
 ---
 
@@ -188,14 +188,64 @@
 
 ## Claude's Discretion
 
-- Whether `GoalCreationWizardView(isOnboarding: true)` remains as the final onboarding step or is removed — planner decides given Phase 18 redesigns goal creation wizard.
-- Exact visual layout of the T&C screen (headline, subtitle, PDF preview card) — planner follows Vitamin G brand spec.
-- StepBarView `total:` count update to match new step count.
-- Whether to use `MFMailComposeViewController` or `mailto:` URL fallback for Report action.
+- Exact visual layout of the T&C screen (headline, subtitle, PDF preview card) — planner follows Vitamin G brand spec (clay/sand palette, Georgia serif, VGTheme).
+- StepBarView `total:` count — confirmed as 7 (T&C, Name, Username, ProfilePicture, Notifications, Camera, CommunityGoal).
+
+## Session 2 — Decisions Locked (2026-05-16)
+
+### GoalCreationWizardView in flow (D-16)
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Remove the enum case entirely | Delete `.createGoal` case and its `navigationDestination` block. Phase 18 redesigns — no dead code. | ✓ |
+| Keep the case, just don't route to it | Leave in enum but remove from sequence. Lower-risk but leaves dead code. | |
+| Keep it as-is, adjust in Phase 18 | Don't touch in Phase 17. Phase 18 decides. | |
+
+**User's choice:** Remove the enum case entirely
+**Notes:** `.createGoal` case removed along with `.motivationCategories`. `GoalCreationWizardView(isOnboarding: true)` call removed.
+
+---
+
+### Username race condition UX (D-17)
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Inline error on UsernameScreen | Delete conflicting record, clear field, show "That username was just taken — try another." No alert. | ✓ |
+| Alert, then return to UsernameScreen | System alert, user dismisses, field cleared. | |
+| Silent retry on a derived username | Auto-append random suffix, only prompt if retry fails. | |
+
+**User's choice:** Inline error on UsernameScreen
+**Notes:** Consistent with the debounce inline feedback UX. No blocking modal.
+
+---
+
+### T&C PDF asset (D-18)
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Add existing PDF to Xcode target | Copy to Resources/, add to app target. File already exists at project root. | ✓ |
+| Embed a placeholder, update later | Placeholder PDF for testing; real PDF before submission. | |
+| Link to hosted URL instead | SFSafariViewController + live URL. No bundle change. | |
+
+**User's choice:** Add existing PDF to Xcode target
+**Notes:** `Vitamin_G_Terms_and_Conditions.pdf` confirmed at `~/Desktop/AI/Vitamin G/`. Target destination: `VitaminG/VitaminG/VitaminG/Resources/`.
+
+---
+
+### Report mechanism confirmation (D-14 locked)
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| MFMailCompose with mailto: fallback | `canSendMail()` check; rich sheet if true; mailto: URL if false. | ✓ |
+| mailto: URL only | Always open via URL. Simpler but body params unreliable on some mail apps. | |
+
+**User's choice:** MFMailComposeViewController with mailto: fallback
+**Notes:** D-14 was already the stated approach; now explicitly locked out of "Claude's Discretion."
+
+---
 
 ## Deferred Ideas
 
 - Block list management in Settings (view blocked users, unblock) — Phase 19 Settings page.
 - CloudKit-backed block list sync across devices — v3.0.
 - Report reason picker before email — deferred; plain pre-filled email sufficient for App Store compliance.
-- GoalCreationWizardView onboarding integration — Phase 18 redesigns goal creation wizard; planner decides.
