@@ -32,7 +32,7 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
 
 ### v2.0 Social Growth Engine
 
-- [ ] **Phase 16: Tab Restructuring + AppRoute Updates** - Correct 5-tab navigation with stable Tab enum; Stats/Wins demoted to NavigationLink destinations
+- [x] **Phase 16: Tab Restructuring + AppRoute Updates** - Correct 5-tab navigation with stable Tab enum; Stats/Wins demoted to NavigationLink destinations
 - [ ] **Phase 17: Onboarding Overhaul** - Apple Sign-In only, unique username, profile picture upload, permission priming slides, Welcome Back screen, report/block moderation
 - [ ] **Phase 18: Home Tab + Goals Flow Enhancements** - New Home dashboard + enhanced goal creation wizard + goal detail page
 - [ ] **Phase 19: Tip Jar + About Page + Settings** - StoreKit 2 consumable tip jar, About page with founder bio, Settings page, notification picker
@@ -56,8 +56,8 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
   3. A deep link or widget intent encoded with a tab name routes to the correct screen after the index swap (no routing regression)
   4. The Explore and Community tabs exist in the bar as empty placeholder screens (no crashes on tap)
 **Plans**: 2 plans
-- [ ] 16-01-PLAN.md — Tab enum + 5-tab restructure + Community/Explore swap + placeholder views (TAB-01, TAB-04)
-- [ ] 16-02-PLAN.md — HomeView Stats and Daily Wins entry points + Home-tab navigationDestination (TAB-02, TAB-03)
+- [x] 16-01-PLAN.md — Tab enum + 5-tab restructure + Community/Explore swap + placeholder views (TAB-01, TAB-04)
+- [x] 16-02-PLAN.md — HomeView Stats and Daily Wins entry points + Home-tab navigationDestination (TAB-02, TAB-03)
 
 ### Phase 17: Onboarding Overhaul
 **Goal**: New users complete onboarding with Apple Sign-In, a unique username, optional profile picture, and permission priming; returning signed-out users see a Welcome Back screen; every public profile has a report/block action
