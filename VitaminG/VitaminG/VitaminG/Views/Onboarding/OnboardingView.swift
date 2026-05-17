@@ -46,8 +46,7 @@ struct OnboardingView: View {
                     case .notifications:
                         NotificationOnboardingScreen(path: $path, onSkip: finish)
                     case .cameraPermission:
-                        // Placeholder — real screen created in Plan 5
-                        Text("Camera Permission — Plan 5")
+                        CameraPermissionScreen(path: $path, onSkip: finish)
                     case .communityGoal:
                         CommunityGoalOnboardingScreen(path: $path, onSkip: finish)
                     }
