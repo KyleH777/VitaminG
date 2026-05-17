@@ -4,7 +4,7 @@ import SwiftData
 struct ContentView: View {
     @Environment(AppRouter.self) private var router
     @Query private var allUserChallenges: [UserChallenge]
-    @State private var selectedTab: Tab = .home
+    @State private var selectedTab: AppTab = .home
 
     var body: some View {
         @Bindable var router = router
@@ -12,25 +12,25 @@ struct ContentView: View {
             NavigationStack {
                 HomeView()
             }
-            .tag(Tab.home)
+            .tag(AppTab.home)
 
             goalsTab
-                .tag(Tab.goals)
+                .tag(AppTab.goals)
 
             NavigationStack {
                 ExplorePlaceholderView()
             }
-            .tag(Tab.explore)
+            .tag(AppTab.explore)
 
             NavigationStack {
                 CommunityPlaceholderView()
             }
-            .tag(Tab.community)
+            .tag(AppTab.community)
 
             NavigationStack {
                 ProfileView()
             }
-            .tag(Tab.profile)
+            .tag(AppTab.profile)
         }
         .toolbar(.hidden, for: .tabBar)
         .safeAreaInset(edge: .bottom, spacing: 0) {

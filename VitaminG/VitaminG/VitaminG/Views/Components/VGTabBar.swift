@@ -1,10 +1,10 @@
 import SwiftUI
 
 struct VGTabBar: View {
-    @Binding var selection: Tab
+    @Binding var selection: AppTab
     @Environment(\.colorScheme) private var colorScheme
 
-    // Tab icon mapping — 1:1 with Tab.allCases order (home/goals/explore/community/profile).
+    // AppTab icon mapping — 1:1 with AppTab.allCases order (home/goals/explore/community/profile).
     // D-07: Community and Explore positions swapped; "Me" renamed to "Profile".
     private let tabs: [(label: String, icon: String)] = [
         ("Home",      "house"),
@@ -16,7 +16,7 @@ struct VGTabBar: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            ForEach(Array(zip(Tab.allCases, tabs)), id: \.0) { tabCase, tab in
+            ForEach(Array(zip(AppTab.allCases, tabs)), id: \.0) { tabCase, tab in
                 tabItem(tab: tabCase, label: tab.label, icon: tab.icon)
             }
         }
@@ -33,7 +33,7 @@ struct VGTabBar: View {
         .background(.ultraThinMaterial)
     }
 
-    private func tabItem(tab: Tab, label: String, icon: String) -> some View {
+    private func tabItem(tab: AppTab, label: String, icon: String) -> some View {
         let isActive = selection == tab
         return Button {
             withAnimation(.easeInOut(duration: 0.15)) { selection = tab }

@@ -7,7 +7,7 @@ enum CommunitySegment: String, CaseIterable {
 }
 
 struct CommunityTabView: View {
-    @Binding var selectedTab: Tab
+    @Binding var selectedTab: AppTab
     @Query private var userChallenges: [UserChallenge]
     @State private var segment: CommunitySegment = .feed
 
