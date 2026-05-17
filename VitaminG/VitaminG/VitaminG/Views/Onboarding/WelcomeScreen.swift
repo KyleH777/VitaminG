@@ -48,7 +48,6 @@ struct WelcomeScreen: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @AppStorage("vg_onboardingName") private var savedName: String = ""
     @AppStorage("vg_appleUserID") private var appleUserID: String = ""
-    @State private var showGoogleComingSoon = false
 
     private let tablets: [TabletConfig] = [
         TabletConfig(id: 0,  leftFraction: 0.05, duration: 2.8, delay: 0.0, size: 32, color1: VGTheme.terraSoft, color2: VGTheme.terra,   rotation: 15,  pileOffsetX: 18,  pileRotation: -22),
@@ -130,6 +129,13 @@ struct WelcomeScreen: View {
                     .clipShape(Capsule())
                     .padding(.bottom, 20)
 
+                    // Tagline — moved above app icon per D-02
+                    Text("GOALS. GROWTH. COMMUNITY.")
+                        .font(.system(size: 13, weight: .light))
+                        .foregroundStyle(VGTheme.muted)
+                        .kerning(2)
+                        .padding(.bottom, 16)
+
                     // App icon
                     RoundedRectangle(cornerRadius: 30)
                         .fill(VGTheme.sand)
@@ -151,31 +157,13 @@ struct WelcomeScreen: View {
                         .font(Font.custom("Georgia", size: 48))
                         .foregroundStyle(VGTheme.sand)
 
-                    // Tagline
-                    Text("GOALS. GROWTH. COMMUNITY.")
-                        .font(.system(size: 13, weight: .light))
-                        .foregroundStyle(VGTheme.muted)
-                        .kerning(2)
-                        .padding(.top, 10)
-
                     Spacer()
                 }
                 .padding(.horizontal, 28)
 
-                // Bottom buttons
+                // Bottom buttons — Sign in with Apple only (per D-01, AUTH-01)
                 VStack(spacing: 12) {
-                    // Button 1: Create account (terra fill)
-                    Button { path.append(.name) } label: {
-                        Text("Create account")
-                            .font(.system(size: 17, weight: .semibold))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 18)
-                            .background(VGTheme.terra)
-                            .foregroundStyle(VGTheme.warmWhite)
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
-                    }
-
-                    // Button 2: Sign in with Apple (functional)
+                    // Sign in with Apple (sole auth CTA)
                     SignInWithAppleButton(.signIn, onRequest: { request in
                         request.requestedScopes = [.fullName, .email]
                     }, onCompletion: { result in
@@ -185,11 +173,13 @@ struct WelcomeScreen: View {
                                 let uid = cred.user
                                 appleUserID = uid
                                 UserDefaults.standard.set(uid, forKey: "vg_appleUserID")
+                                // TODO Plan 4: pass cred.fullName to onboardingVM.appleFullName
                             }
+                            // D-03: returning user → .login; new user → .termsAndConditions
                             if !savedName.trimmingCharacters(in: .whitespaces).isEmpty {
-                                onSkip()
+                                path.append(.login)
                             } else {
-                                path.append(.name)
+                                path.append(.termsAndConditions)
                             }
                         case .failure:
                             break
@@ -198,53 +188,11 @@ struct WelcomeScreen: View {
                     .signInWithAppleButtonStyle(.black)
                     .frame(maxWidth: .infinity, minHeight: 54)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
-
-                    // Button 3: Google stub (coming soon alert)
-                    Button { showGoogleComingSoon = true } label: {
-                        HStack(spacing: 10) {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.white)
-                                    .frame(width: 20, height: 20)
-                                Text("G")
-                                    .font(.system(size: 13, weight: .semibold))
-                                    .foregroundStyle(Color(red: 0.255, green: 0.522, blue: 0.957))
-                            }
-                            Text("Continue with Google")
-                                .font(.system(size: 17, weight: .semibold))
-                                .foregroundStyle(.black)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(Color.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                    }
-
-                    // Button 4: I'll set this up later (ghost)
-                    Button(action: {
-                        if !savedName.trimmingCharacters(in: .whitespaces).isEmpty {
-                            path.append(.login)
-                        } else {
-                            onSkip()
-                        }
-                    }) {
-                        Text("I'll set this up later")
-                            .font(.system(size: 17, weight: .medium))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 18)
-                            .foregroundStyle(VGTheme.sand)
-                            .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(Color.white.opacity(0.2), lineWidth: 1.5))
-                    }
                 }
                 .padding(.horizontal, 28)
                 .padding(.bottom, 44)
             }
         }
         .navigationBarHidden(true)
-        .alert("Coming Soon", isPresented: $showGoogleComingSoon) {
-            Button("Got it", role: .cancel) {}
-        } message: {
-            Text("Google Sign-In is coming soon.")
-        }
     }
 }

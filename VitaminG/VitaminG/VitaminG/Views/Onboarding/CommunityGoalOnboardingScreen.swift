@@ -166,6 +166,6 @@ struct CommunityGoalOnboardingScreen: View {
     }
 
     private func advance() {
-        path.append(.createGoal)
+        onSkip()
     }
 }

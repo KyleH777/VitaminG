@@ -111,7 +111,7 @@ struct NameScreen: View {
         let trimmed = name.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return }
         storedName = String(trimmed.prefix(50))
-        path.append(.motivationCategories)
+        path.append(.username)
     }
 }
 

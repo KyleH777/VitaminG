@@ -51,7 +51,7 @@ struct TiersScreen: View {
 
                     // MARK: Continue CTA
                     Button {
-                        path.append(.createGoal)
+                        path.append(.communityGoal)
                     } label: {
                         Text("Continue")
                             .font(.body.weight(.semibold))
