@@ -6,7 +6,7 @@ shadcn_initialized: false
 preset: none
 created: 2026-05-16
 revised: 2026-05-16
-revision_reason: Typography (Issue 1 & 2) and Spacing blocking issues fixed by gsd-ui-researcher per checker report
+revision_reason: Typography (Issue 1 & 2) and Spacing blocking issues fixed by gsd-ui-researcher per checker report; 34pt removed from Typography Rules; 28pt and 40pt moved from Scale Tokens to Exceptions
 ---
 
 # Phase 17 — UI Design Contract
@@ -34,17 +34,20 @@ Source: `VGTheme.swift` (codebase), CONTEXT.md D-02
 
 Vitamin G uses 4-pt multiples with 28pt horizontal page margins (established throughout codebase).
 
+### Scale Tokens
+
 | Token | Value | Usage |
 |-------|-------|-------|
 | xs | 4pt | Icon gaps, inline spacing |
 | sm | 8pt | Label-to-field gaps, tight element pairs |
 | md | 16pt | Default vertical element spacing |
 | lg | 24pt | Section breaks, padding after headlines |
-| xl | 28pt | Horizontal page margins (all screens) |
-| 2xl | 40pt | Spacer before CTAs |
 | 3xl | 48pt | Large section separator |
 
-Exceptions:
+### Spacing Exceptions
+
+- 28pt horizontal page margins (all screens): Established horizontal page margin from existing codebase (NameScreen, LoginScreen, NotificationOnboardingScreen) — changing would require reskinning 6+ existing views outside Phase 17 scope. See Exceptions justification.
+- 40pt pre-CTA vertical spacer: Pre-CTA vertical spacer from LoginScreen pattern — aligns with existing screen rhythm; nearest standard value (48pt) would require layout rework outside Phase 17 scope. See Exceptions justification.
 - Bottom CTA safe area inset: 36pt padding (NameScreen pattern), 44pt on LoginScreen / dark-bg screens
 - StepBarView bottom margin: 28pt (from NameScreen pattern)
 - Profile card padding: 16pt all sides (LoginScreen)
@@ -75,11 +78,12 @@ All font calls must use `VGTheme.serif()`, `VGTheme.serifItalic()`, or `Font.cus
 - Body copy: 14pt SF Pro .light, lineSpacing 4, VGTheme.muted on light bg; VGTheme.sand.opacity(0.7) on dark bg
 - CTA buttons: 17pt SF Pro .semibold
 - Secondary links: 14pt SF Pro .light; ghost/muted links at 13pt SF Pro .light
-- Large field input (UsernameScreen, NameScreen): 34pt CormorantGaramond-Regular — this is a component-specific detail for text input fields only, not a scale entry. It does not add a fifth scale size; it uses the CormorantGaramond font (not SF Pro) and applies exclusively inside the input field component.
 - Username inline state indicators: 13pt SF Pro .light (Checking..., Available, Taken, Invalid)
 - Outlined picker buttons (ProfilePictureScreen, T&CScreen): 13pt SF Pro .semibold
 
 Note: `.regular` is not used. All SF Pro usage is either `.semibold` or `.light`. `.medium` is not used.
+
+Note on large text input fields (UsernameScreen, NameScreen): the text input field renders user-typed text at 34pt CormorantGaramond-Regular. This is a component-level rendering detail applied inside the UITextField/TextEditor component only. It is NOT a typography scale entry, does NOT add a fifth size to the scale above, and must not appear in any scale table or scale summary.
 
 Source: direct codebase read (NameScreen.swift, NotificationOnboardingScreen.swift, WelcomeScreen.swift, LoginScreen.swift)
 
@@ -133,7 +137,7 @@ Source: direct codebase read (VGTheme.swift, NameScreen.swift, NotificationOnboa
 **Layout change (D-02):** Move "GOALS. GROWTH. COMMUNITY." tagline **above** the app icon block (above the RoundedRectangle "G" icon). Keep font: 13pt SF Pro .light, VGTheme.muted, kerning 2.
 **Button area (D-01):** Single Sign in with Apple button only. Remove "Create account" button, remove Google stub button, remove "I'll set this up later" ghost button.
 - Sign in with Apple button: `.signInWithAppleButtonStyle(.black)`, maxWidth .infinity, minHeight 54pt, cornerRadius 14pt
-- Horizontal padding: 28pt; bottom padding: 44pt
+- Horizontal padding: 28pt (exception — see Spacing Exceptions); bottom padding: 44pt
 
 ### 2. T&CScreen (new)
 
@@ -163,7 +167,7 @@ Source: direct codebase read (VGTheme.swift, NameScreen.swift, NotificationOnboa
 - Headline (42pt CormorantGaramond, VGTheme.clay): "Claim your\nusername"
 - Subtitle (14pt SF Pro .light, VGTheme.muted): "Choose a unique handle. This is how others find you."
 - Field label: "USERNAME" (13pt SF Pro .semibold, ALL CAPS, kerning 1.5, VGTheme.muted)
-- Text field: 34pt CormorantGaramond-Regular, VGTheme.clay, terra underline (2pt height Rectangle) — see Typography note on 34pt component detail
+- Text field: 34pt CormorantGaramond-Regular rendered inside input component, VGTheme.clay, terra underline (2pt height Rectangle) — this is component-level rendering, not a scale entry; see Typography note on large input fields
 - Inline state indicator (beneath field, 8pt top margin):
   - `.idle` — no indicator shown
   - `.checking` — 13pt SF Pro .light, VGTheme.muted: "Checking..." with ProgressView inline
@@ -204,7 +208,7 @@ Source: direct codebase read (NotificationOnboardingScreen.swift)
 - Mock preview card (same glassmorphism treatment: .ultraThinMaterial.opacity(0.3), Color.white.opacity(0.11), strokeBorder Color.white.opacity(0.14)):
   - App icon: terra-fill RoundedRectangle(cornerRadius: 9), 34x34pt, "G" Georgia-Italic 16pt warmWhite
   - Simulated camera viewfinder: show a cropped landscape photo placeholder card or the mock notification card with camera icon overlay
-  - Horizontal padding: 28pt
+  - Horizontal padding: 28pt (exception — see Spacing Exceptions)
 - Headline (42pt Georgia/CormorantGaramond, VGTheme.sand, lineSpacing 4):
   "Share your\n[italic terra: journey.]"
 - Subtitle (14pt SF Pro .light, VGTheme.muted): "Your profile picture and goal photos help your community connect with your progress."
