@@ -12,11 +12,18 @@ enum ProfileSharingService {
     /// Returns the recordID.recordName string for storage in UserProfile.cloudKitPublicRecordID.
     /// If cloudKitPublicRecordID already exists, updates the existing record instead of creating a new one.
     ///
-    /// SECURITY: Only displayName and avatarColorHex are written. photoData, goal descriptions,
+    /// SECURITY: Only displayName, avatarColorHex, and username are written. photoData, goal descriptions,
     /// inspiration text, and completion data are never included (T-07-08).
+    ///
+    /// WRITE PATH COORDINATION (Plan 17-03): When username is non-nil, this function writes the username
+    /// field to the same PublicProfile record targeted by UsernameLookupService.writeUsername (both use
+    /// CKRecord.ID(recordName: appleUserID) as the record name). Call this AFTER writeUsername to confirm
+    /// the claim. Passing username: nil for existing call sites that do not set a username is safe —
+    /// the field is simply not updated.
     static func publishProfile(
         displayName: String?,
         avatarColorHex: String?,
+        username: String? = nil,
         existingRecordID: String?
     ) async throws -> String {
         let container = CKContainer(identifier: containerID)
@@ -32,9 +39,14 @@ enum ProfileSharingService {
             record = CKRecord(recordType: recordType)
         }
 
-        // Explicit field allowlist — only these two fields are ever written to the public record
+        // Explicit field allowlist — only these fields are ever written to the public record
         record["displayName"] = (displayName ?? "") as CKRecordValue
         record["avatarColorHex"] = (avatarColorHex ?? "") as CKRecordValue
+
+        // Write username if provided (Plan 17-03: username claim coordination)
+        if let username = username {
+            record["username"] = username.lowercased() as CKRecordValue
+        }
 
         let savedRecord = try await publicDB.save(record)
         return savedRecord.recordID.recordName
