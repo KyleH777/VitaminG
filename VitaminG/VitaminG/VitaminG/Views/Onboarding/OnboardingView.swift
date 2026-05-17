@@ -40,8 +40,7 @@ struct OnboardingView: View {
                     case .termsAndConditions:
                         TermsAndConditionsScreen(path: $path, onSkip: finish)
                     case .username:
-                        // Placeholder — real screen created in Plan 3
-                        Text("Username — Plan 3")
+                        UsernameScreen(path: $path, onSkip: finish, viewModel: onboardingVM)
                     case .profilePicture:
                         // Placeholder — real screen created in Plan 4
                         Text("Profile Picture — Plan 4")
