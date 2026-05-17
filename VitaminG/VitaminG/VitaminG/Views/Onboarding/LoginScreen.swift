@@ -1,5 +1,6 @@
 // VitaminG/Views/Onboarding/LoginScreen.swift
 import SwiftUI
+import AuthenticationServices
 
 struct LoginScreen: View {
 
@@ -7,6 +8,7 @@ struct LoginScreen: View {
     let onSkip: () -> Void
 
     @AppStorage("vg_onboardingName") private var savedName: String = ""
+    @State private var reAuthFailed: Bool = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -121,6 +123,31 @@ struct LoginScreen: View {
 
     private var bottomButtons: some View {
         VStack(spacing: 0) {
+            // Apple re-auth button (AUTH-07, D-11) — above "Having trouble?" link
+            SignInWithAppleButton(.signIn, onRequest: { request in
+                request.requestedScopes = [.fullName, .email]
+            }, onCompletion: { result in
+                switch result {
+                case .success:
+                    reAuthFailed = false
+                    onSkip()
+                case .failure:
+                    reAuthFailed = true
+                }
+            })
+            .signInWithAppleButtonStyle(.black)
+            .frame(maxWidth: .infinity, minHeight: 54)
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .padding(.horizontal, 28)
+            .padding(.bottom, 12)
+
+            if reAuthFailed {
+                Text("Sign in failed. Please try again.")
+                    .font(.system(size: 13, weight: .light))
+                    .foregroundStyle(VGTheme.terra)
+                    .padding(.horizontal, 28)
+            }
+
             Button(action: { path.append(.recovery) }) {
                 Text("Having trouble?")
                     .font(.system(size: 13))
