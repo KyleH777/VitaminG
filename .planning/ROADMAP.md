@@ -70,7 +70,13 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
   4. Onboarding shows a notification permission priming slide and a camera permission priming slide before any system permission dialog appears
   5. Returning user who is not signed in sees a "Welcome Back" screen with a Sign in with Apple button
   6. Every public profile view shows a Report and Block action accessible to the viewer
-**Plans**: TBD
+**Plans**: 5 plans
+Plans:
+- [ ] 17-01-PLAN.md — Auth gate: WelcomeScreen Apple-only + OnboardingStep enum expansion + LoginScreen re-auth (AUTH-01, AUTH-07)
+- [ ] 17-02-PLAN.md — T&C screen: TermsAndConditionsScreen + PDFPreviewView + PDF bundle (AUTH-02)
+- [ ] 17-03-PLAN.md — Username: UsernameLookupService + OnboardingViewModel debounce + UsernameScreen (AUTH-03)
+- [ ] 17-04-PLAN.md — Name pre-fill + ProfilePictureScreen + CameraPermissionScreen (AUTH-04, AUTH-05, AUTH-06)
+- [ ] 17-05-PLAN.md — Report/Block: BlockListService + PublicProfileView + ProfileView contextMenu (PROF-05)
 **UI hint**: yes
 
 ### Phase 18: Home Tab + Goals Flow Enhancements
@@ -183,8 +189,8 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
 | 13. Challenge Platform — Core Engine | v1.0 | 9/9 | Complete | 2026-05-07 |
 | 14. Challenge Platform — Community & Modules | v1.0 | 10/10 | Complete | 2026-05-13 |
 | 15. UI Additions & Fixes | v1.0 | 9/9 | Complete | 2026-05-15 |
-| 16. Tab Restructuring + AppRoute Updates | v2.0 | 0/2 | Not started | - |
-| 17. Onboarding Overhaul | v2.0 | 0/? | Not started | - |
+| 16. Tab Restructuring + AppRoute Updates | v2.0 | 2/2 | Complete | 2026-05-17 |
+| 17. Onboarding Overhaul | v2.0 | 0/5 | Not started | - |
 | 18. Home Tab + Goals Flow Enhancements | v2.0 | 0/? | Not started | - |
 | 19. Tip Jar + About Page + Settings | v2.0 | 0/? | Not started | - |
 | 20. Explore Tab | v2.0 | 0/? | Not started | - |
