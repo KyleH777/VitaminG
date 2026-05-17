@@ -33,7 +33,7 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
 ### v2.0 Social Growth Engine
 
 - [x] **Phase 16: Tab Restructuring + AppRoute Updates** - Correct 5-tab navigation with stable Tab enum; Stats/Wins demoted to NavigationLink destinations
-- [ ] **Phase 17: Onboarding Overhaul** - Apple Sign-In only, unique username, profile picture upload, permission priming slides, Welcome Back screen, report/block moderation
+- [x] **Phase 17: Onboarding Overhaul** - Apple Sign-In only, unique username, profile picture upload, permission priming slides, Welcome Back screen, report/block moderation
 - [ ] **Phase 18: Home Tab + Goals Flow Enhancements** - New Home dashboard + enhanced goal creation wizard + goal detail page
 - [ ] **Phase 19: Tip Jar + About Page + Settings** - StoreKit 2 consumable tip jar, About page with founder bio, Settings page, notification picker
 - [ ] **Phase 20: Explore Tab** - Shake/tap daily goal gifter, mood prompt, Vitamin Shelf, Trending Now, 3 Gifts for Stuck Days
@@ -75,8 +75,8 @@ Plans:
 - [x] 17-01-PLAN.md — Auth gate: WelcomeScreen Apple-only + OnboardingStep enum expansion + LoginScreen re-auth (AUTH-01, AUTH-07)
 - [x] 17-02-PLAN.md — T&C screen: TermsAndConditionsScreen + PDFPreviewView + PDF bundle (AUTH-02)
 - [x] 17-03-PLAN.md — Username: UsernameLookupService + OnboardingViewModel debounce + UsernameScreen (AUTH-03)
-- [ ] 17-04-PLAN.md — Name pre-fill + ProfilePictureScreen + CameraPermissionScreen (AUTH-04, AUTH-05, AUTH-06)
-- [ ] 17-05-PLAN.md — Report/Block: BlockListService + PublicProfileView contextMenu + MFMailCompose/mailto report + UserDefaults block list (PROF-05)
+- [x] 17-04-PLAN.md — Name pre-fill + ProfilePictureScreen + CameraPermissionScreen (AUTH-04, AUTH-05, AUTH-06)
+- [x] 17-05-PLAN.md — Report/Block: BlockListService + PublicProfileView contextMenu + MFMailCompose/mailto report + UserDefaults block list (PROF-05)
 
 **Wave 1** *(17-02 and 17-03 blocked on 17-01 completion)*
 **Wave 2 *(blocked on Wave 1 completion)***

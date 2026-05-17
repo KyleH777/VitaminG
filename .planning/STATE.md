@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Social Growth Engine
-status: ready_to_execute
-last_updated: "2026-05-17T22:30:12.000Z"
-last_activity: 2026-05-17 -- Phase 17 Plan 03 complete (UsernameLookupService + UsernameScreen + XCTest)
+status: ready_to_verify
+last_updated: "2026-05-17T23:59:00.000Z"
+last_activity: 2026-05-17 -- Phase 17 all 5 plans complete (onboarding overhaul — AUTH-01..07 + PROF-05)
 progress:
   total_phases: 9
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 7
-  completed_plans: 5
-  percent: 24
+  completed_plans: 7
+  percent: 22
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-05-15)
 ## Current Position
 
 Phase: 17 — Onboarding Overhaul
-Plan: 03 complete — next: 17-04-PLAN.md
-Status: In progress — 3/5 plans complete
-Last activity: 2026-05-17 -- Plan 17-03 complete (UsernameLookupService + UsernameScreen + 4 XCTests)
+Plan: 05 complete — all plans done, ready to verify
+Status: Phase 17 complete — ready for verification
+Last activity: 2026-05-17 -- Phase 17 all 5/5 plans done (NameScreen pre-fill, ProfilePictureScreen, CameraPermissionScreen, BlockListService, PublicProfileView Report/Block)
 
 ```
-v2.0 Progress: [====                ] 24% (1/9 phases, 5/7 plans)
+v2.0 Progress: [====                ] 22% (2/9 phases, 7/7 plans)
 ```
 
 ## Accumulated Context
