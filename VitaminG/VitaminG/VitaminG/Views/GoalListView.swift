@@ -8,7 +8,10 @@ struct GoalListView: View {
     @Query private var userChallenges: [UserChallenge]
 
     @State private var viewModel = GoalViewModel()
-    @State private var showingAddGoal = false
+    @State private var showingGoalEntryChoice = false
+    @State private var showingWizard = false
+    @State private var wizardStartStep: Int = 0
+    @State private var pendingPremadeGoal: (title: String, category: GoalCategory)? = nil
     @State private var goalToDelete: Goal?
     @State private var showingDeleteConfirmation = false
     @State private var sortOption: SortOption = .byTier
@@ -27,7 +30,7 @@ struct GoalListView: View {
             if hasAnyGoals {
                 goalScrollView
             } else {
-                EmptyStateView { showingAddGoal = true }
+                EmptyStateView { showingGoalEntryChoice = true }
             }
         }
         .background(VGTheme.background)
@@ -46,7 +49,29 @@ struct GoalListView: View {
                 .accessibilityLabel("Sort goals")
             }
         }
-        .sheet(isPresented: $showingAddGoal) { GoalCreationWizardView() }
+        .sheet(isPresented: $showingGoalEntryChoice) {
+            GoalEntryChoiceView(
+                onSelectWizard: { step in
+                    wizardStartStep = step
+                    pendingPremadeGoal = nil
+                    showingGoalEntryChoice = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                        showingWizard = true
+                    }
+                },
+                onSelectPremade: { title, category in
+                    wizardStartStep = 2
+                    pendingPremadeGoal = (title, category)
+                    showingGoalEntryChoice = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                        showingWizard = true
+                    }
+                }
+            )
+        }
+        .sheet(isPresented: $showingWizard) {
+            GoalCreationWizardView(startAtStep: wizardStartStep, premadeGoal: pendingPremadeGoal)
+        }
         .confirmationDialog("Delete this goal?", isPresented: $showingDeleteConfirmation, titleVisibility: .visible) {
             Button("Delete", role: .destructive) {
                 if let goal = goalToDelete { viewModel.delete(goal: goal, context: modelContext) }
@@ -76,7 +101,7 @@ struct GoalListView: View {
                         .foregroundStyle(VGTheme.clay)
                     Spacer()
                     Button {
-                        showingAddGoal = true
+                        showingGoalEntryChoice = true
                     } label: {
                         Text("+ New goal")
                             .font(.system(size: 12, weight: .semibold))
@@ -116,7 +141,7 @@ struct GoalListView: View {
                         if tieredGoals.isEmpty {
                             EmptyTierView(tier: tier) {
                                 viewModel.draftTier = tier
-                                showingAddGoal = true
+                                showingGoalEntryChoice = true
                             }
                             .padding(.horizontal, 16)
                         } else {
