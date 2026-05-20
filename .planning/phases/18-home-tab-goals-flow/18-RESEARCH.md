@@ -194,7 +194,7 @@ Views/
 ├── GoalDetailView.swift                    (modify — add GoalDayGridView + check-in CTA)
 ├── GoalListView.swift                      (modify — "+add" → GoalEntryChoiceView sheet)
 ├── GoalCreation/
-│   ├── GoalCreationWizardView.swift        (modify — add startAtStep param)
+│   ├── GoalCreationWizardView.swift        (modify — add startAtStep + premadeGoal init params)
 │   ├── GoalEntryChoiceView.swift           (NEW)
 │   ├── PremadeGoalsListView.swift          (NEW)
 │   └── Step3DetailsScreen.swift           (modify — add duration field)
@@ -202,7 +202,7 @@ Views/
 └── Components/
     └── GoalDayGridView.swift              (NEW)
 ViewModels/
-└── GoalCreationWizardViewModel.swift      (modify — add configure(from premadeGoal:))
+└── GoalCreationWizardViewModel.swift      (modify — add draftDurationDays + configure(from premadeGoal:))
 ViewModels/GoalViewModel.swift             (modify — add addCheckIn(for:context:))
 ```
 
@@ -296,23 +296,61 @@ private var daysInMonth: [Date?] {
 - Cannot navigate past current month into the future: `displayedMonth <= Calendar.current.startOfDay(for: Date())`
 - Cannot navigate before `goal.startDate ?? goal.creationDate`
 
-### Pattern 5: GoalEntryChoiceView Sheet Routing
+### Pattern 5: GoalEntryChoiceView Sheet Routing (Callback Pattern)
 
-**What:** Medium-detent sheet with 3 path cards. Each path card presents a different destination.
+**What:** Medium-detent sheet with 3 path cards. Each path card emits a typed selection back to the parent via callback. The parent view owns all sheet presentation state for the downstream wizard, so child views never own orphaned ViewModels whose state is later thrown away.
 **When to use:** "+add" trigger from HomeView.secondaryGoalsSection and GoalListView.
 
 ```swift
-// Source: CONTEXT.md D-05, UI-SPEC §GoalEntryChoiceView
-// GoalEntryChoiceView routing (inside a NavigationStack within the sheet):
-// Path 1 — "Need ideas":
-//   NavigationLink within sheet's NavigationStack → PremadeGoalsListView
-// Path 2 — "Already have a goal":
-//   Dismiss sheet, then show GoalCreationWizardView(startAtStep: 1)
-// Path 3 — "Build my own goal":
-//   Dismiss sheet, then show GoalCreationWizardView() from step 0
+// Source: CONTEXT.md D-05/D-06/D-08, UI-SPEC §GoalEntryChoiceView
+// Parent view (HomeView / GoalListView) state:
+@State private var showingGoalEntryChoice = false
+@State private var showingWizard = false
+@State private var wizardStartStep: Int = 0
+@State private var pendingPremadeGoal: (title: String, category: GoalCategory)? = nil
+
+// GoalEntryChoiceView signature:
+struct GoalEntryChoiceView: View {
+    let onSelectWizard: (Int) -> Void
+    let onSelectPremade: (String, GoalCategory) -> Void
+    // Path 1 ("Need ideas"): NavigationLink inside the sheet pushes
+    //   PremadeGoalsListView(onSelect: { title, category in
+    //     onSelectPremade(title, category); dismiss()
+    //   })
+    // Path 2 ("Already have a goal"): Button → onSelectWizard(1); dismiss()
+    // Path 3 ("Build my own goal"): Button → onSelectWizard(0); dismiss()
+}
+
+// PremadeGoalsListView signature (no orphan VM):
+struct PremadeGoalsListView: View {
+    let onSelect: (String, GoalCategory) -> Void
+    // Row tap: onSelect(premadeGoal.title, premadeGoal.category)
+}
+
+// Parent sheet wiring:
+// .sheet(isPresented: $showingGoalEntryChoice) {
+//   GoalEntryChoiceView(
+//     onSelectWizard: { step in
+//       wizardStartStep = step
+//       pendingPremadeGoal = nil
+//       showingGoalEntryChoice = false
+//       DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { showingWizard = true }
+//     },
+//     onSelectPremade: { title, category in
+//       wizardStartStep = 2
+//       pendingPremadeGoal = (title, category)
+//       showingGoalEntryChoice = false
+//       DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { showingWizard = true }
+//     })
+// }
+// .sheet(isPresented: $showingWizard) {
+//   GoalCreationWizardView(startAtStep: wizardStartStep, premadeGoal: pendingPremadeGoal)
+// }
 ```
 
-**Sheet navigation strategy:** Use a `NavigationStack` inside the sheet. Paths 2 and 3 dismiss the sheet then present `GoalCreationWizardView` as a separate sheet from the parent view. Track these with `@State private var showingWizard = false` and `@State private var wizardStartStep: Int = 0` on the parent view.
+**Why callbacks (not local VMs):** A `@State` ViewModel inside `PremadeGoalsListView` would be a *different instance* from the one inside the wizard sheet that the parent later presents. Pre-fill writes to the orphan VM are discarded. The callback pattern lets the parent inject the selection into the wizard's own VM via the wizard init.
+
+**Sheet navigation strategy:** `GoalEntryChoiceView` wraps a `NavigationStack` so `PremadeGoalsListView` can be pushed inline. Paths 2/3/Premade all dismiss the sheet first; the parent then presents `GoalCreationWizardView` as its own sheet (preventing nested NavigationStacks per Pitfall 4).
 
 ### Pattern 6: CheckInCelebrationView — Replicate MilestoneCelebrationView
 
@@ -337,7 +375,7 @@ private var daysInMonth: [Date?] {
 
 ### Pattern 7: PremadeGoalsListView — Using GoalCategory.suggestions
 
-**What:** Hardcoded pre-made goals sourced from `GoalCategory.suggestions`. Each category provides 4–5 goal strings. Tapping a goal pre-fills the wizard.
+**What:** Hardcoded pre-made goals sourced from `GoalCategory.suggestions`. Each category provides 4–5 goal strings. Tapping a goal emits the selection upward via callback (the parent handles wizard pre-fill — see Pattern 5).
 
 ```swift
 // Source: VitaminG/Models/GoalCategory.swift — GoalCategory.suggestions property
@@ -357,30 +395,39 @@ let premadeGoals: [PremadeGoal] = GoalCategory.allCases
     .flatMap { cat in cat.suggestions.map { PremadeGoal(title: $0, category: cat) } }
 ```
 
-**GoalCreationWizardViewModel extension:** Add `configure(fromPremade premadeGoal: PremadeGoal)` that sets `selectedCategory = premadeGoal.category`, `draftTitle = premadeGoal.title`, and `currentStep = 2` (jumping to Step 3).
+**GoalCreationWizardViewModel extension:** Add `configure(fromPremade title: String, category: GoalCategory)` that sets `selectedCategory = category`, `draftTitle = title`, and `currentStep = 2` (jumping to Step 3). The **wizard view itself** (not a child of the picker) owns the VM and invokes this in `.onAppear` when its new `premadeGoal:` init parameter is non-nil.
 
-### Pattern 8: GoalCreationWizardView — startAtStep Parameter
+### Pattern 8: GoalCreationWizardView — startAtStep + premadeGoal Parameters
 
-**What:** Add optional `startAtStep: Int = 0` init param so "Already have a goal" path can open at step 1 (name) and pre-made goal path jumps to step 2 (details).
+**What:** Add optional `startAtStep: Int = 0` AND optional `premadeGoal: (title: String, category: GoalCategory)? = nil` init params so "Already have a goal" path can open at step 1 (name) and pre-made goal path jumps to step 2 (details) with pre-fill applied to the wizard's OWN internal VM.
 
 ```swift
 // Source: GoalCreationWizardView.swift (project codebase) — existing init pattern
 init(isOnboarding: Bool = false,
      editingGoal: Goal? = nil,
-     startAtStep: Int = 0,        // NEW
+     startAtStep: Int = 0,                                            // NEW
+     premadeGoal: (title: String, category: GoalCategory)? = nil,     // NEW
      onComplete: (() -> Void)? = nil) {
     self.isOnboarding = isOnboarding
     self.editingGoal = editingGoal
     self.startAtStep = startAtStep
+    self.premadeGoal = premadeGoal
     self.onComplete = onComplete
 }
 
-// In .onAppear:
+// In .onAppear (priority: editingGoal > premadeGoal > startAtStep):
 .onAppear {
-    if let goal = editingGoal { wizardVM.configure(from: goal) }
-    else if startAtStep > 0 { wizardVM.currentStep = startAtStep }
+    if let goal = editingGoal {
+        wizardVM.configure(from: goal)
+    } else if let pg = premadeGoal {
+        wizardVM.configure(fromPremade: pg.title, category: pg.category)
+    } else if startAtStep > 0 {
+        wizardVM.currentStep = startAtStep
+    }
 }
 ```
+
+**Why both params:** `premadeGoal` carries the pre-fill payload because the wizard's `wizardVM` is created fresh when the wizard sheet opens — there is no upstream VM to share. `startAtStep` covers the "Already have a goal" path (no pre-fill, just step jump).
 
 ### Pattern 9: Community Goal Card — Placeholder Using ChallengeTemplate
 
@@ -402,6 +449,7 @@ private var communityProgress: Double {
 - **Using `toggleCompletion()` for the "Check in for today" CTA:** `toggleCompletion` sets `goal.isCompleted = true` permanently. A daily check-in must only insert a `CompletionEvent`, not flip the isCompleted flag. Needs a new `addCheckIn(for:context:)` method.
 - **Using `goals.compactMap { $0.completionEvents?.count }.max()` for streak:** This gives the max completion count of any single goal, not a streak of consecutive days. Always use `StreakEngine.currentStreak(from: allEvents)`.
 - **Nested NavigationStack inside GoalCreationWizardView sheet:** The wizard already conditionally wraps itself in a NavigationStack when not in onboarding mode. Do not add another NavigationStack in the GoalEntryChoiceView that presents the wizard — dismiss the sheet first, then present the wizard as a new sheet from the parent view.
+- **Orphaned `@State` ViewModels in picker/list views:** Never create a `@State private var wizardVM = GoalCreationWizardViewModel()` inside `PremadeGoalsListView` or similar picker views. The wizard sheet, when presented later by the parent, creates its OWN VM — writes to the picker's local VM are discarded. Use callbacks (Pattern 5) to emit the selection upward and let the parent inject the pre-fill via the wizard's `premadeGoal:` init param (Pattern 8).
 - **Adding `@Attribute(.unique)` to new model fields:** CloudKit does not support atomic uniqueness. Per CLAUDE.md, never use this attribute.
 - **Force-unwrapping `goal.completionEvents`:** The relationship is optional in SwiftData/CloudKit. Always use `goal.completionEvents ?? []`.
 - **Hard-coding VGTheme hex values:** All color references must use `VGTheme.*` tokens (not raw `Color(red:green:blue:)` values). VGTheme handles light/dark mode adaptation.
@@ -467,6 +515,12 @@ private var communityProgress: Double {
 **Why it happens:** GOAL2-01 requires duration in step 3, but the existing `GoalInput` struct and `Goal` model don't have a duration field.
 **How to avoid:** The planner must include a task to extend `Goal` (SchemaV9 or additive nil-default field on SchemaV8-compatible approach) with `durationDays: Int?` and extend `GoalInput` and `GoalCreationWizardViewModel` accordingly. Check if a lightweight migration (nil-default optional) is acceptable vs. requiring a new schema version.
 **Warning signs:** Duration picker appears in UI but saved goals have no duration recorded.
+
+### Pitfall 8: Orphan ViewModel in PremadeGoalsListView
+**What goes wrong:** `PremadeGoalsListView` declares `@State private var wizardVM = GoalCreationWizardViewModel()` and calls `wizardVM.configure(fromPremade:)` on row tap. The user dismisses to the wizard sheet — but the wizard creates its OWN fresh `GoalCreationWizardViewModel` internally. Pre-fill writes (selectedCategory, draftTitle) on the picker's VM are silently discarded. The wizard opens blank on Step 3.
+**Why it happens:** SwiftUI `@State` ownership: each view that holds `@State var vm = ...` instantiates a new copy. `PremadeGoalsListView` and `GoalCreationWizardView` are sibling sheets — they cannot share a `@State` VM.
+**How to avoid:** Use Pattern 5 callbacks. `PremadeGoalsListView` takes `onSelect: (String, GoalCategory) -> Void` and emits the selection upward. The parent dismisses the picker, then presents the wizard with a new `premadeGoal:` init parameter (Pattern 8). The wizard's `.onAppear` calls `wizardVM.configure(fromPremade:)` on its own internal VM.
+**Warning signs:** User taps a pre-made goal → wizard appears but Step 3 shows no category and an empty title field.
 
 ---
 
@@ -629,27 +683,31 @@ func configure(fromPremade title: String, category: GoalCategory) {
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Does `durationDays` require a new schema version (SchemaV9)?**
    - What we know: Goal model is at SchemaV6.Goal (aliased); adding an optional field with nil default qualifies for lightweight migration.
    - What's unclear: Whether the planner wants to bump to SchemaV9 or treat the field as purely UI state (stored in GoalCreationWizardViewModel but not persisted on Goal yet).
    - Recommendation: Add `durationDays: Int?` to SchemaV6.Goal as a lightweight additive migration. This avoids a full schema version bump while keeping data persistent.
+   - **RESOLVED:** Plan 02 Task 1 adds `var durationDays: Int? = nil` to `SchemaV6.Goal` as an additive nil-default field (lightweight migration). No SchemaV9 bump. Confirmed by `acceptance_criteria` "No new Schema file created (! ls VitaminG/VitaminG/VitaminG/Models/SchemaV9.swift is true)".
 
 2. **What happens to `stayCloseSection` (About Us / Contact Us / FAQ) in HomeView?**
    - What we know: HomeView currently has this horizontal scroll section. CONTEXT.md and UI-SPEC are silent on it.
    - What's unclear: Whether it stays, moves, or is removed in the Phase 18 restructure.
    - Recommendation: Keep it below the My Goals section as a non-blocking scroll element — it doesn't conflict with any Phase 18 requirement.
+   - **RESOLVED:** Plan 04 leaves `stayCloseSection` intact per the recommendation. Section order in Plan 04 `<interfaces>`: header → quote → community → quickStatsRow → secondaryGoalsSection → stayCloseSection. Documented in Plan 04 Task 1 instruction "Do NOT modify in this task: ... stayCloseSection."
 
 3. **Does the "Check in for today" button in GoalDetailView replace or coexist with "Mark as Complete"?**
    - What we know: GOAL2-05 specifies a "Check in for today" action. GoalDetailView currently has a "Mark as Complete" button (permanent completion).
    - What's unclear: Whether both CTAs exist side-by-side or "Check in for today" replaces "Mark as Complete".
    - Recommendation: Both coexist. "Check in for today" (new, creates CompletionEvent) lives in the day grid section. "Mark as Complete" (existing, permanent) stays in `actionsSection`. They are semantically different actions.
+   - **RESOLVED:** Plan 05 Task 3 implements coexistence. Acceptance criterion: `grep -c "Mark as Complete" >= 1` (existing CTA preserved). New "Check in for today" CTA lives in the day grid section and calls `addCheckIn` (not `toggleCompletion`).
 
 4. **How does the VGQuoteBank get used for daily rotation (HOME-02)?**
    - What we know: `VGQuoteBank` has 6 static category arrays. HomeView currently uses a 4-item hardcoded array rotating by day-of-month.
    - What's unclear: Whether to flatten all VGQuoteBank arrays into one pool or keep per-category.
    - Recommendation: Add a computed static `var all: [VGQuote]` to `VGQuoteBank` that concatenates all category arrays. Use `Calendar.current.component(.dayOfYear, from: Date()) % all.count` for daily rotation. This ensures the same quote is shown all day.
+   - **RESOLVED:** Plan 02 Task 3 adds `static var all: [VGQuote]` as a deterministic concatenation. Plan 04 Task 1 wires HomeView's `quoteSection` to use `Calendar.current.ordinality(of: .day, in: .year, for: Date())` modulo `VGQuoteBank.all.count`. Plan 01 Task 2 covers determinism with `Phase18QuoteBankTests.test_VGQuoteBank_all_isDeterministic` and `test_dailyQuoteSelection_isStableWithinSameDay`.
 
 ---
 
@@ -753,8 +811,9 @@ No external tools, services, or package managers required. Phase 18 is a pure Sw
 **Confidence breakdown:**
 - Standard stack: HIGH — all stack verified from project files
 - Architecture: HIGH — patterns sourced from existing codebase implementations
-- Pitfalls: HIGH — pitfalls 1–4 confirmed by reading actual code; 5–7 by API-level knowledge
+- Pitfalls: HIGH — pitfalls 1–4 confirmed by reading actual code; 5–8 by API-level knowledge
 - Community goal source: MEDIUM — A5 assumption that UserChallenge is the Phase 18 bridge
 
 **Research date:** 2026-05-17
+**Last revised:** 2026-05-18 (Pattern 5 / Pattern 8 reshaped to callback + premadeGoal init param; Pitfall 8 added; Open Questions marked RESOLVED)
 **Valid until:** 2026-06-17 (stable codebase; no external dependencies to drift)
