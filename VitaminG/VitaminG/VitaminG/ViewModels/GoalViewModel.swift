@@ -138,6 +138,34 @@ final class GoalViewModel {
         reloadWidgetTimelines()
     }
 
+    /// Adds a daily check-in event for a goal without marking the goal as permanently completed.
+    /// - Parameters:
+    ///   - goal: The goal to check in for.
+    ///   - context: The SwiftData model context.
+    ///
+    /// This is the daily tracking path: "I did this today" vs. `toggleCompletion` which is
+    /// "I've achieved this goal permanently". Per GOAL2-04 / D-12.
+    ///
+    /// Same-day dedup: if a CompletionEvent already exists for today, this is a no-op (Pitfall 3).
+    /// Does NOT set `goal.isCompleted` (Pitfall 2).
+    func addCheckIn(for goal: Goal, context: ModelContext) {
+        // Same-day dedup guard (T-18-02-02, Pitfall 3)
+        let alreadyCheckedInToday = goal.completionEvents?.contains { event in
+            Calendar.current.isDateInToday(event.completedAt ?? .distantPast)
+        } ?? false
+        guard !alreadyCheckedInToday else { return }
+
+        let event = CompletionEvent()
+        event.completedAt = Date()
+        event.tierRawValue = goal.tierRawValue
+        context.insert(event)
+        event.goal = goal
+
+        // Keep notifications and widgets fresh after the check-in
+        rescheduleNotification(context: context)
+        reloadWidgetTimelines()
+    }
+
     func updateGoal(_ goal: Goal, context: ModelContext) throws {
         let cleanTitle       = sanitize(draftTitle)
         let cleanDescription = sanitize(draftDescription)
@@ -165,6 +193,7 @@ final class GoalViewModel {
         goal.reminderTime = input.reminderTime
         goal.isPublic     = !input.isPrivate
         goal.startDate    = input.startDate
+        goal.durationDays = input.durationDays
 
         context.insert(goal)
         rescheduleNotification(context: context)

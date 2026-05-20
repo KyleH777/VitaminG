@@ -57,6 +57,9 @@ enum SchemaV6: VersionedSchema {
         var reminderTime: Date?
         /// Goal start date for scheduling and progress tracking.
         var startDate: Date?
+        /// Optional goal duration in days (e.g. 30-day challenge). nil means open-ended.
+        /// Added as lightweight additive migration — optional with nil default per CLAUDE.md.
+        var durationDays: Int?
 
         @Relationship(deleteRule: .cascade, inverse: \SchemaV2.CompletionEvent.goal)
         var completionEvents: [SchemaV2.CompletionEvent]?
@@ -65,7 +68,8 @@ enum SchemaV6: VersionedSchema {
             title: String,
             goalDescription: String = "",
             tier: GoalTier = .immediate,
-            associatedInspiration: String = ""
+            associatedInspiration: String = "",
+            durationDays: Int? = nil
         ) {
             self.id = UUID()
             self.title = title
@@ -76,6 +80,7 @@ enum SchemaV6: VersionedSchema {
             self.associatedInspiration = associatedInspiration
             self.completionEvents = []
             self.isPublic = false
+            self.durationDays = durationDays
         }
 
         /// Computed accessor for the GoalTier enum.
