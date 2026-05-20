@@ -11,6 +11,12 @@ struct HomeView: View {
     @AppStorage("vg_onboardingName") private var storedName: String = ""
     @State private var goalVM = GoalViewModel()
 
+    // Goal entry sheet state
+    @State private var showingGoalEntryChoice = false
+    @State private var showingWizard = false
+    @State private var wizardStartStep: Int = 0
+    @State private var pendingPremadeGoal: (title: String, category: GoalCategory)? = nil
+
     private var displayName: String {
         storedName.trimmingCharacters(in: .whitespaces).isEmpty ? "You" : storedName
     }
@@ -22,6 +28,27 @@ struct HomeView: View {
         return "Good evening"
     }
 
+    // HOME-01: app streak sourced from StreakEngine — not goal.completionEvents?.count
+    private var appStreak: Int {
+        StreakEngine.currentStreak(from: completionEvents)
+    }
+
+    // HOME-02: daily quote from VGQuoteBank.all rotated by day-of-year
+    private var todaysQuote: VGQuote {
+        let all = VGQuoteBank.all
+        guard !all.isEmpty else {
+            return VGQuote(text: "Small steps, taken daily, build the life you've been dreaming of.", attribution: "Vitamin G")
+        }
+        let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 1
+        let index = (dayOfYear - 1) % all.count
+        return all[index]
+    }
+
+    // HOME-03: active community challenge
+    private var primaryChallenge: UserChallenge? {
+        userChallenges.first(where: { ($0.statusRaw ?? "") == "active" })
+    }
+
     private var primaryGoal: Goal? {
         goals.first(where: { !$0.isCompleted && $0.tier == .lifeGoal })
             ?? goals.first(where: { !$0.isCompleted && $0.tier == .longTerm })
@@ -29,14 +56,7 @@ struct HomeView: View {
     }
 
     private var secondaryGoals: [Goal] {
-        goals.filter { !$0.isCompleted && $0.id != primaryGoal?.id }.prefix(3).map { $0 }
-    }
-
-    private var todayCheckedIn: Bool {
-        completionEvents.contains(where: {
-            guard let at = $0.completedAt else { return false }
-            return Calendar.current.isDateInToday(at)
-        })
+        goals.filter { !$0.isCompleted }.prefix(3).map { $0 }
     }
 
     var body: some View {
@@ -52,23 +72,39 @@ struct HomeView: View {
                 VStack(spacing: 0) {
                     headerSection
                     quoteSection
-                    if let goal = primaryGoal {
-                        primaryGoalCard(goal)
+                    // HOME-03: community goal card — hidden when no active challenge
+                    if let challenge = primaryChallenge {
+                        communityGoalCard(challenge)
                     }
-                    if let goal = primaryGoal, !todayCheckedIn {
-                        checkInCTA(goal)
-                            .padding(.top, 12)
-                    }
-                    dailyWinsEntry
-                        .padding(.top, 12)
+                    // HOME-05: reshaped Stats nav row
                     quickStatsRow
-                    stayCloseSection
+                    // HOME-04: My Goals section with inline +add and flame icons
                     secondaryGoalsSection
+                    stayCloseSection
+                    // HOME-06 dropped per D-04 (no gratitude entry on Home in Phase 18)
                     Spacer(minLength: 32)
                 }
             }
         }
         .navigationBarHidden(true)
+        .sheet(isPresented: $showingGoalEntryChoice) {
+            GoalEntryChoiceView(
+                onSelectWizard: { step in
+                    wizardStartStep = step
+                    showingGoalEntryChoice = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { showingWizard = true }
+                },
+                onSelectPremade: { title, category in
+                    pendingPremadeGoal = (title: title, category: category)
+                    wizardStartStep = 2
+                    showingGoalEntryChoice = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { showingWizard = true }
+                }
+            )
+        }
+        .sheet(isPresented: $showingWizard, onDismiss: { pendingPremadeGoal = nil }) {
+            GoalCreationWizardView(startAtStep: wizardStartStep, premadeGoal: pendingPremadeGoal)
+        }
     }
 
     // MARK: - Header
@@ -101,7 +137,7 @@ struct HomeView: View {
                 .font(.system(size: 13))
                 .foregroundStyle(VGTheme.accentTerra)
                 .shadow(color: colorScheme == .dark ? VGTheme.accentTerra.opacity(0.6) : .clear, radius: 4)
-            Text("\(currentStreak)")
+            Text("\(appStreak)")
                 .font(.system(size: 13, weight: .semibold, design: .monospaced))
                 .foregroundStyle(VGTheme.accentTerra)
             Text("day streak")
@@ -113,6 +149,7 @@ struct HomeView: View {
         .background(VGTheme.surface)
         .clipShape(Capsule())
         .overlay(Capsule().strokeBorder(VGTheme.separator, lineWidth: 1))
+        .accessibilityLabel("\(appStreak) day streak")
     }
 
     private var bellButton: some View {
@@ -131,28 +168,16 @@ struct HomeView: View {
         }
     }
 
-    private var currentStreak: Int {
-        goals.compactMap { $0.completionEvents?.count }.max() ?? 0
-    }
-
-    // MARK: - Quote
+    // MARK: - Quote (HOME-02: VGQuoteBank.all with day-of-year rotation)
 
     private var quoteSection: some View {
-        let quotes = [
-            "Small steps, taken daily, build the life you've been dreaming of.",
-            "Progress, not perfection.",
-            "Every day is a chance to be better than yesterday.",
-            "You don't have to be great to start, but you have to start to be great.",
-        ]
-        let quote = quotes[Calendar.current.component(.day, from: Date()) % quotes.count]
-
-        return VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 6) {
             Text("TODAY'S DOSE")
                 .font(.system(size: 9, weight: .semibold))
                 .kerning(1.4)
                 .textCase(.uppercase)
                 .foregroundStyle(VGTheme.textMuted)
-            Text(quote)
+            Text(todaysQuote.text)
                 .font(VGTheme.serifItalic(16))
                 .foregroundStyle(VGTheme.textSecondary)
                 .lineSpacing(4)
@@ -170,151 +195,105 @@ struct HomeView: View {
         .padding(.top, 20)
     }
 
-    // MARK: - Primary Goal Card
+    // MARK: - Community Goal Card (HOME-03 / D-01)
 
-    private func primaryGoalCard(_ goal: Goal) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("PRIMARY GOAL")
-                .font(.system(size: 10, weight: .bold))
+    private func communityGoalCard(_ challenge: UserChallenge) -> some View {
+        let communityProgress: Double = min(
+            1.0,
+            Double(challenge.totalCheckIns) / Double(max(1, challenge.template?.durationDays ?? 90))
+        )
+        let percent = Int((communityProgress * 100).rounded())
+        let participantCount = challenge.template?.communitySize ?? 0
+
+        return VStack(alignment: .leading, spacing: 12) {
+            Text("COMMUNITY GOAL")
+                .font(.system(size: 13, weight: .semibold))
                 .kerning(1.2)
+                .textCase(.uppercase)
                 .foregroundStyle(VGTheme.muted)
 
-            HStack(spacing: 20) {
-                ProgressRingView(
-                    progress: goalProgress(goal),
-                    tier: goal.tier,
-                    isCompleted: goal.isCompleted
-                )
+            Text(challenge.template?.title ?? "Community Challenge")
+                .font(VGTheme.serif(20, weight: .semibold))
+                .foregroundStyle(VGTheme.sand)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
 
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(goal.title ?? "Untitled")
-                        .font(VGTheme.serif(20, weight: .medium))
-                        .foregroundStyle(VGTheme.sand)
-                        .lineLimit(3)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    Text(goal.tier.displayName)
-                        .font(.system(size: 12))
-                        .foregroundStyle(VGTheme.muted)
-
-                    HStack(spacing: 4) {
-                        Circle()
-                            .fill(VGTheme.sage)
-                            .frame(width: 6, height: 6)
-                        Text("In progress")
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundStyle(VGTheme.sage)
-                    }
-                }
-                Spacer()
+            if participantCount > 0 {
+                Text("\(participantCount) people participating")
+                    .font(.system(size: 13))
+                    .foregroundStyle(VGTheme.textMuted)
             }
 
-            HStack(spacing: 10) {
-                statCell(value: "\(goal.completionEvents?.count ?? 0)", label: "Check-ins")
-                statCell(value: goal.tier.displayName, label: "Tier")
-                statCell(value: goal.isPublic ? "Public" : "Private", label: "Visibility")
+            // Progress bar
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(VGTheme.surface2)
+                        .frame(height: 6)
+                    Capsule()
+                        .fill(VGTheme.accentTerra)
+                        .frame(width: geo.size.width * communityProgress, height: 6)
+                }
+            }
+            .frame(height: 6)
+
+            HStack {
+                Spacer()
+                Text("\(percent)% complete")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(VGTheme.accentTerra)
             }
         }
         .padding(22)
         .background(Color.white.opacity(0.07))
+        .clipShape(RoundedRectangle(cornerRadius: 20))
         .overlay(
             RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                .strokeBorder(Color.white.opacity(0.1), lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: 20))
         .padding(.horizontal, 24)
         .padding(.top, 20)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(challenge.template?.title ?? "Community Challenge") — \(percent)% complete")
     }
 
-    private func checkInCTA(_ goal: Goal) -> some View {
-        NavigationLink(destination: GoalDetailView(goal: goal)) {
-            Text("Log today's check-in →")
-                .font(.system(size: 16, weight: .semibold))
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(
-                    LinearGradient(
-                        colors: [VGTheme.accentTerra, VGTheme.terra],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .foregroundStyle(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-                .padding(.horizontal, 24)
-        }
-    }
-
-    private func statCell(value: String, label: String) -> some View {
-        VStack(spacing: 2) {
-            Text(value)
-                .font(VGTheme.serif(18))
-                .foregroundStyle(VGTheme.sand)
-            Text(label)
-                .font(.system(size: 10))
-                .kerning(0.5)
-                .foregroundStyle(VGTheme.muted)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 10)
-        .background(Color.white.opacity(0.06))
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-    }
-
-    // MARK: - Quick Stats Row
+    // MARK: - Quick Stats Row (HOME-05 / D-02: single tappable nav card)
 
     private var quickStatsRow: some View {
         NavigationLink(value: AppRoute.stats) {
-            HStack(spacing: 8) {
-                statCell(
-                    value: "\(goals.filter { !($0.isCompleted) }.count)",
-                    label: "Active Goals"
-                )
-                statCell(
-                    value: "\(completionEvents.count)",
-                    label: "Check-ins"
-                )
-                statCell(
-                    value: "\(goalVM.earnedBadgeCount(from: userChallenges))",
-                    label: "Badges"
-                )
+            HStack(spacing: 14) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(VGTheme.accentTerra.opacity(0.15))
+                        .frame(width: 40, height: 40)
+                    Image(systemName: "chart.bar.fill")
+                        .font(.system(size: 18))
+                        .foregroundStyle(VGTheme.accentTerra)
+                }
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Your Stats")
+                        .font(.system(size: 16, weight: .regular))
+                        .foregroundStyle(VGTheme.textPrimary)
+                    Text("Active goals, streaks, badges")
+                        .font(.system(size: 12))
+                        .foregroundStyle(VGTheme.textMuted)
+                }
+                Spacer()
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(VGTheme.textMuted)
-                    .padding(.leading, 8)
-                    .accessibilityHidden(true)
             }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 14)
+            .background(VGTheme.surface)
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(VGTheme.separator, lineWidth: 1))
         }
         .buttonStyle(.plain)
         .padding(.horizontal, 24)
         .padding(.top, 16)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Stats: \(goals.filter { !($0.isCompleted) }.count) active goals, \(completionEvents.count) check-ins, \(goalVM.earnedBadgeCount(from: userChallenges)) badges")
-        .accessibilityHint("Opens your full statistics")
-    }
-
-    // MARK: - Daily Wins Entry
-
-    private var dailyWinsEntry: some View {
-        NavigationLink(value: AppRoute.wins) {
-            Text("See your wins →")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(
-                    LinearGradient(
-                        colors: [VGTheme.accentTerra, VGTheme.terra],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-                .padding(.horizontal, 24)
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel("Daily Wins")
-        .accessibilityHint("Opens your gratitude and daily wins log")
+        .accessibilityLabel("View your statistics")
+        .accessibilityHint("Active goals, streaks, badges")
     }
 
     // MARK: - Stay Close Section
@@ -402,36 +381,69 @@ struct HomeView: View {
         )
     }
 
-    // MARK: - Secondary Goals
+    // MARK: - Secondary Goals (HOME-04 / D-11: +add button + flame icons)
 
     private var secondaryGoalsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("MY GOALS")
-                    .font(.system(size: 13, weight: .semibold))
-                    .kerning(0.6)
+                    .font(.system(size: 10, weight: .bold))
+                    .kerning(1.2)
                     .foregroundStyle(VGTheme.muted)
                 Spacer()
-                NavigationLink(value: "goals") {
-                    Text("See all")
-                        .font(.system(size: 13))
-                        .foregroundStyle(VGTheme.terra)
+                Button {
+                    showingGoalEntryChoice = true
+                } label: {
+                    Text("+ Add")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(VGTheme.accentTerra)
                 }
+                .frame(minHeight: 44)
+                .accessibilityLabel("Add a new goal")
             }
+            .padding(.horizontal, 24)
 
-            if secondaryGoals.isEmpty && primaryGoal == nil {
-                Text("No active goals yet. Add one to get started.")
-                    .font(.system(size: 14))
-                    .foregroundStyle(VGTheme.muted)
-                    .padding(.vertical, 8)
+            if goals.filter({ !$0.isCompleted }).isEmpty {
+                // Empty state
+                VStack(spacing: 12) {
+                    Text("Ready to start?")
+                        .font(VGTheme.serif(20, weight: .semibold))
+                        .foregroundStyle(VGTheme.sand)
+                    Text("Tap + Add to set your first goal — small steps, taken daily.")
+                        .font(.system(size: 14))
+                        .foregroundStyle(VGTheme.textMuted)
+                        .multilineTextAlignment(.center)
+                    Button {
+                        showingGoalEntryChoice = true
+                    } label: {
+                        Text("Add a goal")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(VGTheme.accentTerra)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    .padding(.horizontal, 24)
+                    .accessibilityLabel("Add a goal")
+                }
+                .padding(.vertical, 16)
+                .padding(.horizontal, 24)
             } else {
                 ForEach(secondaryGoals) { goal in
                     goalRow(goal)
+                        .padding(.horizontal, 24)
                 }
             }
         }
-        .padding(.horizontal, 24)
         .padding(.top, 20)
+    }
+
+    // MARK: - Goal Row Helpers
+
+    private func goalStreak(_ goal: Goal) -> Int {
+        let goalEvents = completionEvents.filter { $0.goal?.id == goal.id }
+        return StreakEngine.currentStreak(from: goalEvents)
     }
 
     private func goalRow(_ goal: Goal) -> some View {
@@ -459,6 +471,13 @@ struct HomeView: View {
                 }
             }
             Spacer()
+            // D-11: flame icon on goals with 3+ consecutive day streak
+            if goalStreak(goal) >= 3 {
+                Image(systemName: "flame.fill")
+                    .font(.system(size: 14))
+                    .foregroundStyle(VGTheme.accentGold)
+                    .accessibilityLabel("\(goalStreak(goal)) day streak — on fire!")
+            }
             Image(systemName: "chevron.right")
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(VGTheme.textMuted)
