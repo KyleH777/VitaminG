@@ -13,6 +13,7 @@ struct GoalDetailView: View {
     @State private var showingEditGoal = false
     @State private var showingDeleteConfirmation = false
     @State private var showingStartDatePicker = false
+    @State private var showingCheckInCelebration = false
     @State private var viewModel = GoalViewModel()
 
     @Environment(\.modelContext) private var modelContext
@@ -27,6 +28,7 @@ struct GoalDetailView: View {
                 headerSection
                 publicToggleSection
                 quoteCardSection
+                checkInSection
                 progressSection
                 notesSection
                 actionsSection
@@ -47,6 +49,9 @@ struct GoalDetailView: View {
         }
         .sheet(isPresented: $showingEditGoal) {
             GoalCreationWizardView(editingGoal: goal)
+        }
+        .fullScreenCover(isPresented: $showingCheckInCelebration) {
+            CheckInCelebrationView(streakCount: appStreak, onDismiss: { showingCheckInCelebration = false })
         }
         .sheet(isPresented: $showingStartDatePicker) {
             NavigationStack {
@@ -136,10 +141,23 @@ struct GoalDetailView: View {
                 .padding(.vertical, 5)
                 .background(goal.tier.color.opacity(0.12), in: Capsule())
 
-            // Goal title
-            Text(goal.title ?? "Untitled")
-                .font(.title2.weight(.semibold)).fontDesign(.rounded)
-                .foregroundStyle(.primary)
+            // Goal title row with optional flame icon (D-11 + GOAL2-05)
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text(goal.title ?? "Untitled")
+                    .font(.title2.weight(.semibold)).fontDesign(.rounded)
+                    .foregroundStyle(.primary)
+
+                if goalStreak >= 3 {
+                    HStack(spacing: 4) {
+                        Image(systemName: "flame.fill")
+                            .foregroundStyle(VGTheme.accentGold)
+                        Text("\(goalStreak)")
+                            .font(.system(size: 14, weight: .semibold, design: .monospaced))
+                            .foregroundStyle(VGTheme.accentGold)
+                    }
+                    .accessibilityLabel("\(goalStreak) day streak — on fire!")
+                }
+            }
 
             // Creation date
             if let date = goal.creationDate {
@@ -220,12 +238,80 @@ struct GoalDetailView: View {
         }
     }
 
-    // MARK: - Progress Section (PROG-02, PROG-04)
+    // MARK: - Check-in Computed Helpers (GOAL2-04, GOAL2-05)
 
-    /// Live-queried events for this goal — guaranteed to reflect completions added during the session.
+    /// Per-goal events filtered from the live allEvents query.
+    /// Re-declared here for clarity; also defined below in Progress Section.
     private var goalEvents: [CompletionEvent] {
         allEvents.filter { $0.goal?.id == goal.id }
     }
+
+    /// Per-goal consecutive day streak (for flame icon and inline streak display).
+    private var goalStreak: Int {
+        StreakEngine.currentStreak(from: goalEvents)
+    }
+
+    /// Overall app streak across all events — passed to CheckInCelebrationView per D-12.
+    private var appStreak: Int {
+        StreakEngine.currentStreak(from: allEvents)
+    }
+
+    /// True when a CompletionEvent for today already exists for this goal.
+    /// Force-unwrap on completedAt guarded by ?? .distantPast per threat T-18-05-01.
+    private var isCheckedInToday: Bool {
+        goalEvents.contains(where: { Calendar.current.isDateInToday($0.completedAt ?? .distantPast) })
+    }
+
+    // MARK: - Check-in Section (GOAL2-05)
+
+    private var checkInSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("YOUR MONTH")
+                    .font(.system(size: 10, weight: .bold))
+                    .kerning(1.2)
+                    .foregroundStyle(VGTheme.muted)
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+
+            GoalDayGridView(goal: goal, completionEvents: allEvents)
+                .padding(.horizontal, 16)
+
+            Button {
+                viewModel.addCheckIn(for: goal, context: modelContext)
+                showingCheckInCelebration = true
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: isCheckedInToday ? "checkmark.circle.fill" : "checkmark.circle")
+                    Text(isCheckedInToday ? "Checked in today" : "Check in for today")
+                }
+                .font(.system(.body, design: .rounded).weight(.semibold))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(VGTheme.accentSage)
+            .disabled(isCheckedInToday)
+            .padding(.horizontal, 16)
+            .accessibilityLabel(isCheckedInToday ? "Already checked in today" : "Check in for today")
+
+            if goalStreak > 0 {
+                HStack(spacing: 6) {
+                    Text("🔥 \(goalStreak) day streak")
+                        .font(.system(size: 14, weight: .semibold, design: .monospaced))
+                        .foregroundStyle(VGTheme.accentTerra)
+                }
+                .padding(.horizontal, 16)
+            }
+        }
+        .padding(.vertical, 8)
+        .background(Color(.systemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(.horizontal, 16)
+    }
+
+    // MARK: - Progress Section (PROG-02, PROG-04)
 
     /// Total cumulative completion count for the goal.
     private var totalCompletions: Int {
