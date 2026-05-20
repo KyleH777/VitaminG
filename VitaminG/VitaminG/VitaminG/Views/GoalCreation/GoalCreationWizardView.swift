@@ -4,6 +4,8 @@ import SwiftData
 struct GoalCreationWizardView: View {
     let isOnboarding: Bool
     let editingGoal: Goal?
+    let startAtStep: Int
+    let premadeGoal: (title: String, category: GoalCategory)?
     let onComplete: (() -> Void)?
 
     @State private var wizardVM = GoalCreationWizardViewModel()
@@ -13,16 +15,28 @@ struct GoalCreationWizardView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
 
-    init(isOnboarding: Bool = false, editingGoal: Goal? = nil, onComplete: (() -> Void)? = nil) {
+    init(isOnboarding: Bool = false,
+         editingGoal: Goal? = nil,
+         startAtStep: Int = 0,
+         premadeGoal: (title: String, category: GoalCategory)? = nil,
+         onComplete: (() -> Void)? = nil) {
         self.isOnboarding = isOnboarding
         self.editingGoal = editingGoal
+        self.startAtStep = startAtStep
+        self.premadeGoal = premadeGoal
         self.onComplete = onComplete
     }
 
     var body: some View {
         wizardContent
             .onAppear {
-                if let goal = editingGoal { wizardVM.configure(from: goal) }
+                if let goal = editingGoal {
+                    wizardVM.configure(from: goal)
+                } else if let pg = premadeGoal {
+                    wizardVM.configure(fromPremade: pg.title, category: pg.category)
+                } else if startAtStep > 0 {
+                    wizardVM.currentStep = startAtStep
+                }
             }
             .alert("Validation Error", isPresented: $showingValidationAlert, presenting: validationError) { _ in
                 Button("OK", role: .cancel) {}

@@ -4,10 +4,39 @@ struct Step3DetailsScreen: View {
     @Bindable var wizardVM: GoalCreationWizardViewModel
     let onSave: () -> Void
 
+    // MARK: - Duration picker state
+
+    private enum DurationOption: CaseIterable {
+        case week, month, threeMonths, custom
+
+        var label: String {
+            switch self {
+            case .week:        return "1 week"
+            case .month:       return "1 month"
+            case .threeMonths: return "3 months"
+            case .custom:      return "Custom"
+            }
+        }
+
+        var days: Int? {
+            switch self {
+            case .week:        return 7
+            case .month:       return 30
+            case .threeMonths: return 90
+            case .custom:      return nil
+            }
+        }
+    }
+
+    @State private var durationSelection: DurationOption = .month
+    @State private var customDurationText: String = ""
+    @State private var customDurationError: String? = nil
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 headerText
+                durationSection
                 tierSection
                 frequencySection
                 if wizardVM.selectedFrequency != .onetime { reminderSection }
@@ -21,6 +50,20 @@ struct Step3DetailsScreen: View {
         }
         .background(VGTheme.sandLight.ignoresSafeArea())
         .safeAreaInset(edge: .bottom) { saveButton }
+        .onAppear {
+            // Sync duration picker from existing draftDurationDays (edit mode or premade pre-fill)
+            switch wizardVM.draftDurationDays {
+            case 7:  durationSelection = .week
+            case 30: durationSelection = .month
+            case 90: durationSelection = .threeMonths
+            case let d where d != nil:
+                durationSelection = .custom
+                customDurationText = "\(d!)"
+            default:
+                durationSelection = .month
+                wizardVM.draftDurationDays = 30
+            }
+        }
     }
 
     private var headerText: some View {
@@ -40,6 +83,88 @@ struct Step3DetailsScreen: View {
                     .frame(width: i == 2 ? 22 : 8, height: 8)
             }
         }
+    }
+
+    // MARK: - Duration section
+
+    private var durationSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            sectionLabel("HOW LONG?")
+
+            Picker("Duration", selection: $durationSelection) {
+                ForEach(DurationOption.allCases, id: \.self) { option in
+                    Text(option.label).tag(option)
+                }
+            }
+            .pickerStyle(.segmented)
+            .onChange(of: durationSelection) { _, newOption in
+                customDurationError = nil
+                if let days = newOption.days {
+                    wizardVM.draftDurationDays = days
+                    customDurationText = ""
+                } else {
+                    // Custom: clear until user enters a value
+                    wizardVM.draftDurationDays = nil
+                }
+            }
+
+            if durationSelection == .custom {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 8) {
+                        TextField("e.g. 45", text: $customDurationText)
+                            .keyboardType(.numberPad)
+                            .font(.system(size: 16))
+                            .foregroundStyle(VGTheme.textPrimary)
+                            .onChange(of: customDurationText) { _, text in
+                                validateAndApplyCustomDuration(text)
+                            }
+                        Text("days")
+                            .font(.system(size: 14))
+                            .foregroundStyle(VGTheme.textMuted)
+                    }
+                    .padding(14)
+                    .background(Color.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .shadow(color: Color.black.opacity(0.05), radius: 6, y: 2)
+
+                    if let error = customDurationError {
+                        Text(error)
+                            .font(.system(size: 12))
+                            .foregroundStyle(Color.red)
+                            .padding(.leading, 4)
+                    }
+                }
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .animation(.easeInOut(duration: 0.2), value: durationSelection)
+            }
+        }
+    }
+
+    private func validateAndApplyCustomDuration(_ text: String) {
+        guard !text.isEmpty else {
+            wizardVM.draftDurationDays = nil
+            customDurationError = nil
+            return
+        }
+        if let days = Int(text) {
+            if days >= 1 && days <= 365 {
+                wizardVM.draftDurationDays = days
+                customDurationError = nil
+            } else {
+                wizardVM.draftDurationDays = nil
+                customDurationError = "Enter a value between 1 and 365 days"
+            }
+        } else {
+            wizardVM.draftDurationDays = nil
+            customDurationError = "Enter a whole number"
+        }
+    }
+
+    private var isDurationValid: Bool {
+        if durationSelection == .custom {
+            return customDurationError == nil && wizardVM.draftDurationDays != nil
+        }
+        return wizardVM.draftDurationDays != nil
     }
 
     private var tierSection: some View {
@@ -149,7 +274,7 @@ struct Step3DetailsScreen: View {
             Text("🎉").font(.largeTitle)
             VStack(alignment: .leading, spacing: 4) {
                 Text("You're about to set a goal.")
-                    .font(.custom("CormorantGaramond-Medium", size: 16)).foregroundStyle(VGTheme.clay)
+                    .font(.custom("CormorantGaramond-SemiBold", size: 16)).foregroundStyle(VGTheme.clay)
                 Text("That's already further than most people get. We're rooting for you.")
                     .font(.caption).foregroundStyle(VGTheme.muted)
             }
@@ -166,10 +291,11 @@ struct Step3DetailsScreen: View {
                 .font(.headline)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
-                .background(VGTheme.terra)
+                .background(isDurationValid ? VGTheme.terra : VGTheme.terra.opacity(0.4))
                 .foregroundStyle(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 14))
         }
+        .disabled(!isDurationValid)
         .padding(.horizontal, 24)
         .padding(.bottom, 20)
     }
@@ -189,7 +315,7 @@ private struct TierOptionCard: View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 4) {
                 Label(tier.displayName, systemImage: tier.icon)
-                    .font(.custom("CormorantGaramond-Medium", size: 15))
+                    .font(.custom("CormorantGaramond-SemiBold", size: 15))
                     .foregroundStyle(isSelected ? tier.color : VGTheme.clay)
                 Text(tier.description)
                     .font(.caption2).foregroundStyle(VGTheme.muted).lineLimit(1)
@@ -215,7 +341,7 @@ private struct FrequencyCard: View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(frequency.rawValue)
-                    .font(.custom("CormorantGaramond-Medium", size: 16))
+                    .font(.custom("CormorantGaramond-SemiBold", size: 16))
                     .foregroundStyle(isSelected ? VGTheme.terra : VGTheme.clay)
                 Text(frequency.subtitle).font(.caption2).foregroundStyle(VGTheme.muted)
             }
