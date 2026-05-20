@@ -24,6 +24,10 @@ final class GoalCreationWizardViewModel {
     // MARK: - Step 3
 
     var draftTier: GoalTier = .immediate
+    /// Optional goal duration in days. nil means open-ended. Source of truth for Step 3 "How long?" picker.
+    /// Loaded from Goal in edit mode (configure(from:)). Reset to nil by reset().
+    /// Flushed into GoalInput.durationDays by buildGoalInput() on save.
+    var draftDurationDays: Int? = nil
     var selectedFrequency: GoalFrequency = .daily
     var reminderEnabled: Bool = true
     var draftReminderTime: Date = GoalCreationWizardViewModel.defaultReminderTime
@@ -55,7 +59,8 @@ final class GoalCreationWizardViewModel {
             frequency: selectedFrequency,
             reminderTime: reminder,
             isPrivate: isPrivate,
-            startDate: isLegacy ? draftStartDate : nil
+            startDate: isLegacy ? draftStartDate : nil,
+            durationDays: draftDurationDays
         )
     }
 
@@ -79,6 +84,22 @@ final class GoalCreationWizardViewModel {
         isPrivate = !goal.isPublic
         isLegacy = goal.startDate != nil
         draftStartDate = goal.startDate ?? .now
+        draftDurationDays = goal.durationDays
+    }
+
+    // MARK: - Pre-fill from premade goal (Need-ideas path, D-06)
+
+    /// Pre-fills the wizard for the "Need ideas" premade goal path.
+    /// Resets all draft state, then sets the category and title from the premade suggestion,
+    /// and jumps directly to Step 3 (details screen) since category + name are already supplied.
+    /// - Parameters:
+    ///   - title: The premade goal title string.
+    ///   - category: The GoalCategory associated with this premade goal.
+    func configure(fromPremade title: String, category: GoalCategory) {
+        reset()                          // clear any prior draft state first
+        selectedCategory = category
+        draftTitle = title
+        currentStep = 2                  // jump straight to Step 3 (details)
     }
 
     // MARK: - Reset
@@ -88,6 +109,7 @@ final class GoalCreationWizardViewModel {
         selectedCategory = .other
         draftTitle = ""
         draftTier = .immediate
+        draftDurationDays = nil
         selectedFrequency = .daily
         reminderEnabled = true
         draftReminderTime = GoalCreationWizardViewModel.defaultReminderTime
