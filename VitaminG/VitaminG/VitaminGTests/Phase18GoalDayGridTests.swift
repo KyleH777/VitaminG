@@ -1,7 +1,7 @@
-// Phase 18 Wave 0 — RED tests. Will go GREEN as Plans 02 & 05 land implementations.
+// Phase 18 Wave 0 — RED tests (now GREEN as Plan 05 lands implementations).
 // Tests GOAL2-05: day grid filled/empty cell logic, Monday-first weekday offset, month bounds.
-// NOTE: GoalDayGridCalendar.daysInMonth and completedDays helper are intentionally
-// forward-referenced. Plan 05 adds these. This file will FAIL TO COMPILE until Plan 05 lands.
+// NOTE: Tests reference GoalDayGridView static helpers (production naming).
+// Updated in Plan 05 per plan instruction: "production naming wins".
 
 import XCTest
 import SwiftData
@@ -40,14 +40,12 @@ final class Phase18GoalDayGridTests: XCTestCase {
     /// May 2026 starts on a Friday (weekday 5 in Monday-first: Mon=1, Fri=5).
     /// So the first 4 entries [0...3] must be nil padding (Mon, Tue, Wed, Thu),
     /// and index 4 must be 2026-05-01 (Friday).
-    /// RED: GoalDayGridCalendar.daysInMonth is not yet defined — Plan 05 adds it.
     func test_daysInMonth_paddsLeadingForMondayStart() {
         var cal = Calendar(identifier: .gregorian)
         cal.firstWeekday = 2  // Monday = 2 in Gregorian Calendar.weekday
         let may2026 = makeDate(year: 2026, month: 5, day: 1, calendar: cal)
 
-        // RED: GoalDayGridCalendar is not yet defined — Plan 05 adds this helper
-        let days = GoalDayGridCalendar.daysInMonth(for: may2026, calendar: cal)
+        let days = GoalDayGridView.daysInMonth(for: may2026, calendar: cal)
 
         // May 1, 2026 is a Friday. In Mon-first grid: Mon=pad, Tue=pad, Wed=pad, Thu=pad, Fri=May 1
         XCTAssertNil(days[0], "GOAL2-05 Mon: index 0 (Mon) must be nil padding before May 1")
@@ -65,12 +63,10 @@ final class Phase18GoalDayGridTests: XCTestCase {
     // MARK: - GOAL2-05: All days of month included
 
     /// GOAL2-05: For a 31-day month (e.g., January 2026), the total non-nil entries must be 31.
-    /// RED: GoalDayGridCalendar.daysInMonth is not yet defined — Plan 05 adds it.
     func test_daysInMonth_includesAllDaysOfMonth() {
         let jan2026 = makeDate(year: 2026, month: 1, day: 1)
 
-        // RED: GoalDayGridCalendar is not yet defined — Plan 05 adds this helper
-        let days = GoalDayGridCalendar.daysInMonth(for: jan2026, calendar: .current)
+        let days = GoalDayGridView.daysInMonth(for: jan2026, calendar: .current)
 
         let nonNilCount = days.compactMap { $0 }.count
         XCTAssertEqual(nonNilCount, 31, "GOAL2-05: January has 31 days — all must appear as non-nil entries")
@@ -79,13 +75,11 @@ final class Phase18GoalDayGridTests: XCTestCase {
     // MARK: - GOAL2-05: No days from following month
 
     /// GOAL2-05: The last non-nil entry must belong to the displayed month, not the next.
-    /// RED: GoalDayGridCalendar.daysInMonth is not yet defined — Plan 05 adds it.
     func test_daysInMonth_doesNotIncludeFollowingMonth() {
         let apr2026 = makeDate(year: 2026, month: 4, day: 1)
         let cal = Calendar.current
 
-        // RED: GoalDayGridCalendar is not yet defined — Plan 05 adds this helper
-        let days = GoalDayGridCalendar.daysInMonth(for: apr2026, calendar: cal)
+        let days = GoalDayGridView.daysInMonth(for: apr2026, calendar: cal)
 
         let nonNilDays = days.compactMap { $0 }
         guard let lastDay = nonNilDays.last else {
@@ -104,7 +98,6 @@ final class Phase18GoalDayGridTests: XCTestCase {
     /// GOAL2-05: Per-goal completedDays Set must contain only events whose goal matches the
     /// target goal. Events from other goals must be excluded.
     /// Uses Calendar.startOfDay per RESEARCH.md Pattern 4.
-    /// RED: GoalDayGridCalendar.completedDays is not yet defined — Plan 05 adds it.
     func test_completedDaysSet_filtersByGoalId() throws {
         // Create two goals
         let goalA = Goal(title: "Goal A", tier: .immediate)
@@ -133,8 +126,7 @@ final class Phase18GoalDayGridTests: XCTestCase {
 
         let allEvents = [eventA1, eventA2, eventB1]
 
-        // RED: GoalDayGridCalendar.completedDays is not yet defined — Plan 05 adds this
-        let completedSet = GoalDayGridCalendar.completedDays(for: goalA, from: allEvents, calendar: cal)
+        let completedSet = GoalDayGridView.completedDays(for: goalA, from: allEvents, calendar: cal)
 
         XCTAssertEqual(completedSet.count, 2,
             "GOAL2-05: completedDays for goalA must contain 2 entries (today + yesterday)")
@@ -148,13 +140,11 @@ final class Phase18GoalDayGridTests: XCTestCase {
 
     /// GOAL2-05 (D-10): Forward navigation must be disabled when the displayed month
     /// equals the current calendar month. Users can't navigate to future months.
-    /// RED: GoalDayGridCalendar.canNavigateForward is not yet defined — Plan 05 adds it.
     func test_canNavigateForward_falseWhenAlreadyAtCurrentMonth() {
         let cal = Calendar.current
         let currentMonthStart = cal.date(from: cal.dateComponents([.year, .month], from: Date()))!
 
-        // RED: GoalDayGridCalendar.canNavigateForward is not yet defined — Plan 05 adds it
-        let canForward = GoalDayGridCalendar.canNavigateForward(
+        let canForward = GoalDayGridView.canNavigateForward(
             displayedMonth: currentMonthStart,
             calendar: cal
         )
