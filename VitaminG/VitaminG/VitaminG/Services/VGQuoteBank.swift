@@ -93,6 +93,8 @@ enum VGQuoteBank {
     ]
 
     // MARK: - All quotes combined
+
+    /// Flattened list of every quote across all categories. Stable order across calls. Used by daily quote rotation in HomeView.
     static let all: [VGQuote] = action + resilience + mindset + selfWorth + excellence
 
     // MARK: - Daily quote selection
