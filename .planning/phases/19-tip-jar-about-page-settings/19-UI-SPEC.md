@@ -148,7 +148,7 @@ Existing components modified:
 
 **Floating sticky footer:**
 - Background: `VGTheme.sandLight` (matches page background — creates a blended "dock" effect)
-- Button: full-width, 18pt vertical padding, `VGTheme.accentTerra` fill, `VGTheme.warmWhite` text, cornerRadius 14pt
+- Button: full-width, 16pt vertical padding, `VGTheme.accentTerra` fill, `VGTheme.warmWhite` text, cornerRadius 14pt
 - Label: "Tip the Developer ☕"
 - Destination: `NavigationLink(destination: TipJarView())` — push, not sheet
 - The footer does NOT overlap content — ScrollView has `.padding(.bottom, 100)` on its content to leave space
@@ -274,7 +274,7 @@ Step position: Step 7 of 8 (only when shown). `StepBarView(current: 6, total: 8)
 **Save behavior:** Selecting a chip or changing the DatePicker updates `@State private var selectedHour` and `@State private var selectedMinute`. Calling `NotificationPreferences.save(hour:minute:)` and `NotificationScheduler.shared.reschedule(activeGoals:)` happen on the primary CTA tap (not on every chip tap).
 
 **Footer (`.safeAreaInset(edge: .bottom)`):**
-- Primary CTA: "Set my nudge time" — `.system(size: 17, weight: .semibold)`, full-width, `VGTheme.accentTerra` fill, warmWhite text, cornerRadius 14pt, 18pt vertical padding, 24pt horizontal padding
+- Primary CTA: "Set my nudge time" — `.system(size: 17, weight: .semibold)`, full-width, `VGTheme.accentTerra` fill, warmWhite text, cornerRadius 14pt, 16pt vertical padding, 24pt horizontal padding
 - Secondary link: "Skip for now" — `.system(size: 15, weight: .regular)`, `VGTheme.textMuted` color, full-width, 8pt vertical padding
 - Both actions advance to `.cameraPermission` step
 - "Set my nudge time" also calls `NotificationPreferences.save(hour:minute:)` and `reschedule(activeGoals:)`
