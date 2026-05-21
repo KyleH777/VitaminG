@@ -49,7 +49,7 @@ Exceptions:
 - **Horizontal insets on AboutView / TipJarView / NudgeTimePickerScreen:** 24pt (`padding(.horizontal, 24)`) — matches established non-Form screen pattern in codebase (NotificationOnboardingScreen uses 28pt; ClayMid screens use 24–28pt)
 - **Floating sticky footer bottom clearance:** 12pt below the CTA button within `.safeAreaInset`, with 100pt `.padding(.bottom, 100)` on the ScrollView content so the last bio paragraph is never occluded (RESEARCH.md Pattern 4)
 - **Minimum touch target height:** 44pt on all tappable rows and buttons (iOS HIG; enforced via `minHeight: 44` on Button frames)
-- **Chip horizontal padding:** 16pt / vertical 10pt (RESEARCH.md time chip pattern)
+- **Chip horizontal padding:** 16pt / vertical 8pt (RESEARCH.md time chip pattern)
 - **Card corner radius:** 12pt for IAP tier cards; 14pt for primary CTA buttons; 18pt for notification preview card in onboarding
 
 Source: codebase patterns verified in SettingsView.swift, NotificationOnboardingScreen.swift, MilestoneCelebrationView.swift; RESEARCH.md Patterns 4, 6.
@@ -66,9 +66,10 @@ All type roles listed with the exact SwiftUI font modifier and VGTheme helper to
 | Heading | 28pt | SemiBold (600) | 1.2 | CormorantGaramond-SemiBold via `VGTheme.serif(28, weight: .semibold)` | TipJarView section heading "Support the Developer" |
 | Body | 17pt | Regular (400) | 1.5 | `.font(.system(size: 17))` | Founder bio body text on AboutView; tip tier names on TipJarView |
 | Label | 15pt | Regular (400) | 1.4 | `.font(.system(size: 15))` | Secondary labels, "Skip for now" link, version string on AboutView, Settings footnotes |
-| Caption | 13pt | Light (300) | 1.3 | `.font(.system(size: 13, weight: .light))` | IAP tier price sub-label, SettingsView footnotes (existing `.font(.footnote)` maps here) |
 
-Weights: exactly 2 declared — Regular (400) and SemiBold (600). Light (300) is used only for decorative sub-labels (caption role) following existing codebase usage in NotificationOnboardingScreen.
+Weights: exactly 2 declared — Regular (400) and SemiBold (600).
+
+Elements previously using a Caption role (IAP tier price sub-labels, SettingsView footnotes, inline purchase error copy) use `.font(.footnote)` — the system style that renders at approximately 13pt and scales correctly with Dynamic Type. No custom size or weight declaration is needed for these elements.
 
 Interactive button text always uses `.font(.system(size: 17, weight: .semibold))` for primary CTAs and `.font(.system(size: 15, weight: .regular))` for secondary links — matches the safeAreaInset button pattern established in NotificationOnboardingScreen.
 
@@ -169,7 +170,7 @@ Existing components modified:
 - `ScrollView` with 24pt horizontal padding
 - Three tier cards in a `VStack(spacing: 16)`:
   - Each card: `VGTheme.surface` background, `RoundedRectangle(cornerRadius: 12)`, 16pt inner padding
-  - Card content: emoji (48pt font), tier name (body 17pt semibold), description (caption 13pt muted), price (`product.displayPrice`, body 17pt semibold accentTerra), "Buy" button (accentTerra, capsule shape, 36pt height)
+  - Card content: emoji (48pt font), tier name (body 17pt semibold), description (`.font(.footnote)` muted), price (`product.displayPrice`, body 17pt semibold accentTerra), "Buy" button (accentTerra, capsule shape, 36pt height)
   - Tier order (ascending price): Small Coffee ☕ / Large Coffee ☕☕ / Supporter 💛
 - Loading state: `ProgressView()` centered while `TipStore.isLoading == true`
 - Error state: `Text("Couldn't load tips. Try again.")` centered with `.foregroundStyle(VGTheme.textMuted)`
@@ -179,7 +180,7 @@ Existing components modified:
 - Button shows `.disabled(true)` while purchase is in-flight (prevent double-tap)
 - On `.success(.verified)`: `showThankYou = true` triggers `.fullScreenCover(isPresented:)` presenting `ThankYouView`
 - On `.userCancelled`: no UI change (purchase sheet dismissed, nothing shown)
-- On `.pending` or error: show inline error below the tapped card: "Purchase pending" or `store.purchaseError` in caption 13pt red
+- On `.pending` or error: show inline error below the tapped card: "Purchase pending" or `store.purchaseError` in `.font(.footnote)` red
 
 **Consumable UX:**
 - No "already purchased" state — consumables are always shown as purchasable (D-07)
@@ -264,7 +265,7 @@ Step position: Step 7 of 8 (only when shown). `StepBarView(current: 6, total: 8)
   - Chip row: `HStack(spacing: 8)` wrapping 5 chips — "6 AM", "7 AM", "8 AM", "9 AM", "10 AM"
     - Selected chip: `VGTheme.accentTerra` background, `VGTheme.warmWhite` text
     - Unselected chip: `VGTheme.surface` background, `VGTheme.textPrimary` text
-    - Chip shape: `Capsule()`, 16pt horizontal / 10pt vertical padding, body 15pt font
+    - Chip shape: `Capsule()`, 16pt horizontal / 8pt vertical padding, body 15pt font
     - Default pre-selected: "8 AM" (matches `NotificationPreferences.defaultHour == 8`)
   - 24pt gap
   - "Custom time" toggle row: `Toggle("Custom time", isOn: $showCustomPicker)` — when ON, reveals a `DatePicker` with `.datePickerStyle(.compact)` and `.datePickerStyle(.graphical)` alternative; when OFF, hides the picker and uses chip selection
@@ -274,7 +275,7 @@ Step position: Step 7 of 8 (only when shown). `StepBarView(current: 6, total: 8)
 
 **Footer (`.safeAreaInset(edge: .bottom)`):**
 - Primary CTA: "Set my nudge time" — `.system(size: 17, weight: .semibold)`, full-width, `VGTheme.accentTerra` fill, warmWhite text, cornerRadius 14pt, 18pt vertical padding, 24pt horizontal padding
-- Secondary link: "Skip for now" — `.system(size: 15, weight: .regular)`, `VGTheme.textMuted` color, full-width, 10pt vertical padding
+- Secondary link: "Skip for now" — `.system(size: 15, weight: .regular)`, `VGTheme.textMuted` color, full-width, 8pt vertical padding
 - Both actions advance to `.cameraPermission` step
 - "Set my nudge time" also calls `NotificationPreferences.save(hour:minute:)` and `reschedule(activeGoals:)`
 
