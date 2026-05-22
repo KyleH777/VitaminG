@@ -35,7 +35,7 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
 - [x] **Phase 16: Tab Restructuring + AppRoute Updates** - Correct 5-tab navigation with stable Tab enum; Stats/Wins demoted to NavigationLink destinations
 - [x] **Phase 17: Onboarding Overhaul** - Apple Sign-In only, unique username, profile picture upload, permission priming slides, Welcome Back screen, report/block moderation
 - [x] **Phase 18: Home Tab + Goals Flow Enhancements** - New Home dashboard + enhanced goal creation wizard + goal detail page (completed 2026-05-20)
-- [ ] **Phase 19: Tip Jar + About Page + Settings** - StoreKit 2 consumable tip jar, About page with founder bio, Settings page, notification picker
+- [x] **Phase 19: Tip Jar + About Page + Settings** - StoreKit 2 consumable tip jar, About page with founder bio, Settings page, notification picker (completed 2026-05-22)
 - [ ] **Phase 20: Explore Tab** - Shake/tap daily goal gifter, mood prompt, Vitamin Shelf, Trending Now, 3 Gifts for Stuck Days
 - [ ] **Phase 21: Community Tab Redesign** - Today's Glimpses carousel, Active Today, Glowing This Week, community feed with reactions/replies/photos, applause system
 - [ ] **Phase 22: Public Profile + Follow + Discover** - Public profile redesign, follow/cheer system, Discover page with goal search and people search
@@ -143,14 +143,14 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1; 02/03/05/06 run in parallel)*
 
-- [ ] 19-02-PLAN.md — VitaminGApp foundation: .preferredColorScheme on WindowGroup, Transaction.updates listener, launch reschedule (SET-04, MON-03)
-- [ ] 19-03-PLAN.md — Tip jar: TipStore StoreKit 2 ViewModel + TipJarView + TipThankYouView (MON-02, MON-03, MON-04)
-- [ ] 19-05-PLAN.md — Rotating notification copy: NotificationScheduler.makeContent overhaul + test update (NOTIF-02)
-- [ ] 19-06-PLAN.md — Onboarding nudge-time step: NudgeTimePickerScreen + conditional OnboardingStep routing (NOTIF-01)
+- [x] 19-02-PLAN.md — VitaminGApp foundation: .preferredColorScheme on WindowGroup, Transaction.updates listener, launch reschedule (SET-04, MON-03)
+- [x] 19-03-PLAN.md — Tip jar: TipStore StoreKit 2 ViewModel + TipJarView + TipThankYouView (MON-02, MON-03, MON-04)
+- [x] 19-05-PLAN.md — Rotating notification copy: NotificationScheduler.makeContent overhaul + test update (NOTIF-02)
+- [x] 19-06-PLAN.md — Onboarding nudge-time step: NudgeTimePickerScreen + conditional OnboardingStep routing (NOTIF-01)
 
 **Wave 3** *(blocked on 19-02 + 19-03)*
 
-- [ ] 19-04-PLAN.md — AboutView + SettingsView expansion: founder bio, Appearance/Privacy/Support sections (MON-01, SET-01..SET-05, NOTIF-02)
+- [x] 19-04-PLAN.md — AboutView + SettingsView expansion: founder bio, Appearance/Privacy/Support sections (MON-01, SET-01..SET-05, NOTIF-02)
 
 **UI hint**: yes
 
@@ -256,7 +256,7 @@ Plans:
 | 16. Tab Restructuring + AppRoute Updates | v2.0 | 2/2 | Complete | 2026-05-17 |
 | 17. Onboarding Overhaul | v2.0 | 2/5 | In progress | - |
 | 18. Home Tab + Goals Flow Enhancements | v2.0 | 5/5 | Complete   | 2026-05-20 |
-| 19. Tip Jar + About Page + Settings | v2.0 | 1/6 | In Progress|  |
+| 19. Tip Jar + About Page + Settings | v2.0 | 6/6 | Complete   | 2026-05-22 |
 | 20. Explore Tab | v2.0 | 0/? | Not started | - |
 | 21. Community Tab Redesign | v2.0 | 0/? | Not started | - |
 | 22. Public Profile + Follow + Discover | v2.0 | 0/? | Not started | - |
