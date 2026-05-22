@@ -2,13 +2,28 @@ import XCTest
 @testable import VitaminG
 
 // MARK: - AboutContentTests
-// Wave 0 stub for Plan 04. Will verify:
-//   - The founder bio constant is non-empty
-//   - The app version string is formatted "Version X (Y)"
+// Plan 19-04: Verifies AboutContent constants are correctly populated.
+// D-03: founderBio must be stored verbatim — tests guard against empty/nil bio.
 
 final class AboutContentTests: XCTestCase {
 
-    func test_stub_implementedInPlan04() throws {
-        throw XCTSkip("Wave 0 stub — implemented in Plan 04")
+    func test_founderBio_isNonEmpty() {
+        let trimmed = AboutContent.founderBio.trimmingCharacters(in: .whitespacesAndNewlines)
+        XCTAssertFalse(trimmed.isEmpty, "founderBio must not be empty after trimming")
+    }
+
+    func test_appVersionString_matchesExpectedPattern() {
+        let versionString = AboutContent.appVersionString
+        // Expected format: "Version <something> (<something>)"
+        let pattern = #"^Version .+ \(.+\)$"#
+        let range = versionString.range(of: pattern, options: .regularExpression)
+        XCTAssertNotNil(
+            range,
+            "appVersionString '\(versionString)' does not match expected pattern 'Version X (Y)'"
+        )
+    }
+
+    func test_appName_equalsVitaminG() {
+        XCTAssertEqual(AboutContent.appName, "Vitamin G")
     }
 }
