@@ -120,11 +120,17 @@ struct NotificationOnboardingScreen: View {
     }
 
     private func allow() {
-        Task { await NotificationScheduler.shared.requestAuthorization() }
-        path.append(.communityGoal)
+        Task {
+            let granted = await NotificationScheduler.shared.requestAuthorization()
+            if granted {
+                path.append(.nudgeTimePicker)
+            } else {
+                path.append(.cameraPermission)
+            }
+        }
     }
 
     private func skip() {
-        path.append(.communityGoal)
+        path.append(.cameraPermission)
     }
 }
