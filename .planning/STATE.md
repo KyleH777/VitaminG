@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Social Growth Engine
 status: executing
-last_updated: "2026-05-22T00:00:00.000Z"
-last_activity: 2026-05-22 -- Phase 19 Plan 03 complete (tip jar StoreKit 2 ViewModel + views)
+last_updated: "2026-05-22T17:15:00.000Z"
+last_activity: 2026-05-22 -- Phase 19 Plan 04 complete (About page + Settings expansion)
 progress:
   total_phases: 9
   completed_phases: 3
   total_plans: 18
-  completed_plans: 16
+  completed_plans: 18
   percent: 33
 ---
 
@@ -25,9 +25,9 @@ See: .planning/PROJECT.md (updated 2026-05-15)
 ## Current Position
 
 Phase: 19 (tip-jar-about-page-settings) — EXECUTING
-Plan: 4 of 6
+Plan: 4 of 6 complete (awaiting Task 5 human-verify checkpoint)
 Status: Executing Phase 19
-Last activity: 2026-05-22 -- Phase 19 Plan 03 complete (tip jar StoreKit 2 ViewModel + views)
+Last activity: 2026-05-22 -- Phase 19 Plan 04 complete (About page + Settings expansion)
 
 ```
 v2.0 Progress: [====                ] 22% (2/9 phases, 7/7 plans)
@@ -59,6 +59,8 @@ v2.0 Progress: [====                ] 22% (2/9 phases, 7/7 plans)
 | UsernameCheckState falls back to .idle on CloudKit error (not .taken) | Silent fallback allows retry without false "taken" feedback on network failure |
 | VerificationResult.unverified returns (false,false) — never triggers showThankYou | T-19-03-01: tampered/forged receipt yields no user-visible consequence; StoreKit 2 JWS auto-verified |
 | interactiveDismissDisabled applied at TipJarView presenter, not inside TipThankYouView | Keeps TipThankYouView self-contained and dismiss-agnostic |
+| SettingsView.supportMailtoURLString extracted as static let | Allows SettingsViewTests to reference authoritative URL string without instantiating the view |
+| profileVM.toggleProfilePublic delegates isPublic write in SettingsView Privacy toggle | Reuses existing CloudKit-aware write/delete path — Settings adds no new write logic (T-19-04-03) |
 
 ### Blockers
 
