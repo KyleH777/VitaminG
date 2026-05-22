@@ -10,7 +10,7 @@ import Foundation
 /// Testing: in-memory store with no App Group or CloudKit binding.
 enum ModelContainerFactory {
     static func makeContainer(inMemory: Bool = false) throws -> ModelContainer {
-        let schema = Schema(SchemaV7.models, version: SchemaV7.versionIdentifier)
+        let schema = Schema(SchemaV8.models, version: SchemaV8.versionIdentifier)
 
         // Check at runtime whether the App Group is provisioned.
         // On Simulator and on device with a free personal team, this returns nil — fall back to
@@ -35,6 +35,15 @@ enum ModelContainerFactory {
             config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: inMemory)
         }
 
+        // In-memory stores and test runs start fresh — no existing data to migrate.
+        // Skip the migration plan to avoid iOS 26 SwiftData "Duplicate version checksums"
+        // validation that fires when the same model type (e.g. SchemaV6.Goal) appears in
+        // multiple lightweight migration stages (V6→V7 and V7→V8).
+        // See: NSStagedMigrationManager._findCurrentMigrationStageFromModelChecksum crash.
+        let isTestEnvironment = ProcessInfo.processInfo.environment["XCTestSessionIdentifier"] != nil
+        if inMemory || isTestEnvironment {
+            return try ModelContainer(for: schema, configurations: config)
+        }
         return try ModelContainer(for: schema, migrationPlan: VitaminGMigrationPlan.self, configurations: config)
     }
 
@@ -43,7 +52,7 @@ enum ModelContainerFactory {
     /// Pitfall 2 from RESEARCH.md: widget must use cloudKitDatabase: .none.
     /// Must use same schema + migration plan as makeContainer to avoid store mismatch crash (T-07-02).
     static func makeWidgetContainer() throws -> ModelContainer {
-        let schema = Schema(SchemaV7.models, version: SchemaV7.versionIdentifier)
+        let schema = Schema(SchemaV8.models, version: SchemaV8.versionIdentifier)
 
         let appGroupAvailable = FileManager.default.containerURL(
             forSecurityApplicationGroupIdentifier: "group.com.kyleharrington.VitaminG"
