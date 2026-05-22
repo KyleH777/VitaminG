@@ -1,0 +1,61 @@
+import SwiftUI
+import SwiftData
+
+struct ExploreView: View {
+    @State private var viewModel = ExploreViewModel()
+    @State private var goalVM = GoalViewModel()
+    @Environment(\.modelContext) private var modelContext
+    @Query private var allGoals: [Goal]
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                // Section 1: Daily Goal Gifter (EXPLORE-01, EXPLORE-02)
+                sectionLabel("Today's Gift")
+                GoalGifterCard(viewModel: viewModel)
+
+                // Plans 20-02 and 20-03 insert sections here in Wave 2.
+                // Plans 20-04 inserts Trending Now and Stuck Day Gifts sections in Wave 3.
+            }
+            .padding(.top, 8)
+            .padding(.bottom, 24)
+        }
+        .background(VGTheme.background.ignoresSafeArea())
+        .navigationTitle("Explore")
+        .toolbar {
+            if todayGiftedCount > 0 {
+                ToolbarItem(placement: .topBarTrailing) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "star.circle.fill")
+                            .foregroundStyle(VGTheme.accentTerra)
+                        Text("\(todayGiftedCount) done")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(VGTheme.accentTerra)
+                    }
+                }
+            }
+        }
+        .background(
+            ShakeDetectorView(onShake: { viewModel.onGifterActivated() })
+                .frame(width: 0, height: 0)
+        )
+    }
+
+    // Counts goals *added* via the gifter today (not check-in events) — intentional given the
+    // one-per-day gifter constraint means this value is always 0 or 1, so add ≡ accomplish.
+    private var todayGiftedCount: Int {
+        let today = Calendar.current.startOfDay(for: Date())
+        return allGoals.filter {
+            $0.associatedInspiration == "vg_gifter" &&
+            ($0.creationDate ?? .distantPast) >= today
+        }.count
+    }
+
+    private func sectionLabel(_ text: String) -> some View {
+        Text(text.uppercased())
+            .font(.system(size: 13, weight: .semibold))
+            .kerning(0.4)
+            .foregroundStyle(VGTheme.textMuted)
+            .padding(.horizontal, 16)
+    }
+}

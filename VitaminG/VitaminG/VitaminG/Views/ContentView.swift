@@ -25,7 +25,7 @@ struct ContentView: View {
                 .tag(AppTab.goals)
 
             NavigationStack {
-                ExplorePlaceholderView()
+                ExploreView()
             }
             .tag(AppTab.explore)
 
