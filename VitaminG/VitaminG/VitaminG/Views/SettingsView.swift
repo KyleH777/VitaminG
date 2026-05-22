@@ -7,12 +7,22 @@ import UserNotifications
 /// Notification settings screen allowing the user to change the daily reminder time (NOTIF-06).
 /// Time change triggers immediate reschedule of the notification (NOTIF-06, NOTIF-02).
 /// Uses @Query to fetch active goals so the rescheduled notification body stays current (NOTIF-03).
+/// Plan 19-04: Adds Appearance (dark mode picker), Privacy (public profile toggle),
+/// and Support (contact mailto + About navigation) sections (SET-03, SET-04, SET-05).
 ///
 /// Authorization flow:
 /// - .notDetermined → "Enable Notifications" button that triggers system permission dialog.
 /// - .denied        → "Open Settings" button that deep-links to the system Settings app.
 /// - .authorized    → DatePicker active; shows "Enabled" status row.
 struct SettingsView: View {
+
+    // MARK: - Static Constants
+
+    /// T-19-04-01: mailto URL string extracted as static let so tests can reference it without
+    /// instantiating the view. The URL is always guarded with `if let` before use — no force-unwrap.
+    static let supportMailtoURLString = "mailto:VitaminG.info@gmail.com?subject=Vitamin%20G%20Support"
+
+    // MARK: - Queries and Environment
 
     @Query(filter: #Predicate<Goal> { $0.isCompleted == false })
     private var activeGoals: [Goal]
@@ -22,6 +32,8 @@ struct SettingsView: View {
     private var globalStreak: Int {
         StreakEngine.currentStreak(from: allEvents)
     }
+
+    // MARK: - State
 
     @State private var notificationTime: Date = {
         var components = DateComponents()
@@ -40,8 +52,19 @@ struct SettingsView: View {
     /// Full authorization status so the UI can distinguish notDetermined / denied / authorized.
     @State private var authStatus: UNAuthorizationStatus = .notDetermined
 
+    /// ProfileViewModel for Privacy toggle — loads/creates profile in .onAppear (Pitfall 7).
+    @State private var profileVM = ProfileViewModel()
+
+    // MARK: - App Storage and Environment
+
+    /// SET-04: appearance preference bound to segmented picker; applied app-wide by VitaminGApp.
+    @AppStorage("vg_colorScheme") private var colorSchemePref: ColorSchemePreference = .system
+
     /// SwiftUI environment URL opener — avoids importing UIKit for openSettingsURLString.
     @Environment(\.openURL) private var openURL
+
+    /// SwiftData model context for ProfileViewModel calls.
+    @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         Form {
@@ -133,6 +156,49 @@ struct SettingsView: View {
                     .font(.footnote).fontDesign(.rounded)
                     .foregroundStyle(.secondary)
             }
+
+            // SET-04: Appearance section — segmented picker bound to vg_colorScheme @AppStorage.
+            // Picker change applies immediately app-wide via VitaminGApp.preferredColorScheme.
+            Section("Appearance") {
+                Picker("Appearance", selection: $colorSchemePref) {
+                    ForEach(ColorSchemePreference.allCases, id: \.self) { pref in
+                        Text(pref.displayName).tag(pref)
+                    }
+                }
+                .pickerStyle(.segmented)
+            }
+
+            // SET-03: Privacy section — toggles profile.isPublic via ProfileViewModel.
+            // If profile is nil (still loading), renders a disabled placeholder row.
+            Section("Privacy") {
+                if let profile = profileVM.profile {
+                    Toggle("Public Profile", isOn: Binding(
+                        get: { profile.isPublic },
+                        set: { _ in
+                            profileVM.toggleProfilePublic(context: modelContext)
+                        }
+                    ))
+                } else {
+                    Toggle("Public Profile", isOn: .constant(false))
+                        .disabled(true)
+                }
+            }
+
+            // SET-05: Support section — contact mailto (T-19-04-01: guarded if let)
+            // and NavigationLink to AboutView (D-01, D-12).
+            Section("Support") {
+                Button("Contact Support") {
+                    // T-19-04-01: never force-unwrap the mailto URL — always use if let
+                    if let url = URL(string: Self.supportMailtoURLString) {
+                        openURL(url)
+                    }
+                }
+                .foregroundStyle(VGTheme.accentTerra)
+
+                NavigationLink("About Vitamin G") {
+                    AboutView()
+                }
+            }
         }
         .navigationTitle("Settings")
         .onAppear {
@@ -142,6 +208,8 @@ struct SettingsView: View {
                 hour: components.hour ?? NotificationPreferences.defaultHour,
                 minute: components.minute ?? NotificationPreferences.defaultMinute
             )
+            // Load or create the user profile for the Privacy toggle (Pitfall 7)
+            profileVM.loadOrCreateProfile(context: modelContext)
         }
         .task {
             await refreshAuthStatus()
