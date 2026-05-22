@@ -41,15 +41,16 @@ final class GoalCreationWizardViewModelTests: XCTestCase {
     // MARK: suggestions
 
     func test_suggestions_bodyCategory_containsWalk() {
-        XCTAssertTrue(GoalCategory.body.suggestions.contains("Walk 10,000 steps"))
+        XCTAssertTrue(GoalCategory.body.suggestions.contains("Walk 8,000 steps every day"))
     }
 
     func test_suggestions_mindCategory_containsRead() {
-        XCTAssertTrue(GoalCategory.mind.suggestions.contains("Read 20 pages daily"))
+        XCTAssertTrue(GoalCategory.mind.suggestions.contains("Read 20 pages every night before sleep"))
     }
 
     func test_suggestions_allCategories_haveAtLeastTwo() {
-        for cat in GoalCategory.allCases {
+        // .other intentionally has no premade suggestions (filtered in PremadeGoalsListView)
+        for cat in GoalCategory.allCases where !cat.suggestions.isEmpty {
             XCTAssertGreaterThanOrEqual(cat.suggestions.count, 2,
                 "\(cat.rawValue) needs ≥ 2 suggestions")
         }
