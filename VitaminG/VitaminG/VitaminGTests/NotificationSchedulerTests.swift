@@ -31,10 +31,10 @@ final class NotificationSchedulerTests: XCTestCase {
         context.insert(g3)
 
         let content = scheduler.makeContent(activeGoals: [g1, g2, g3])
-        XCTAssertEqual(content.title, "Your Vitamin G for today")
-        XCTAssertTrue(content.body.contains("Run 5k"), "Body should contain first goal title")
-        XCTAssertTrue(content.body.contains("Read daily"), "Body should contain second goal title")
-        XCTAssertTrue(content.body.contains("Learn Swift"), "Body should contain third goal title")
+        XCTAssertEqual(content.title, "Good morning")
+        XCTAssertTrue(content.body.contains("\n"), "Body should contain newline between message and top goal")
+        XCTAssertTrue(content.body.contains("Run 5k"), "Body should contain the top (first) goal title")
+        XCTAssertFalse(content.body.contains("Read daily"), "Body should only show the top goal, not others")
     }
 
     func test_makeContent_limitsToThreeGoals() throws {
@@ -43,15 +43,18 @@ final class NotificationSchedulerTests: XCTestCase {
         goals.forEach { context.insert($0) }
 
         let content = scheduler.makeContent(activeGoals: goals)
-        // Body should contain exactly 2 separators (middle dot · between 3 titles)
-        let separatorCount = content.body.components(separatedBy: "\u{00B7}").count - 1
-        XCTAssertEqual(separatorCount, 2, "Body should have exactly 2 separators for 3 titles")
+        // New format: one inspirational message + top goal only — exactly one newline, no separators
+        let newlineCount = content.body.components(separatedBy: "\n").count - 1
+        XCTAssertEqual(newlineCount, 1, "Body should have exactly one newline (message + top goal only)")
+        XCTAssertFalse(content.body.contains("\u{00B7}"), "Body should not use middle-dot separators")
     }
 
     func test_makeContent_noActiveGoals_fallbackMessage() {
         let content = scheduler.makeContent(activeGoals: [])
-        XCTAssertEqual(content.body, "Check in on your goals today.",
-                       "Empty goal list should produce fallback message")
+        XCTAssertFalse(content.body.isEmpty, "Empty goal list should produce an inspirational message")
+        XCTAssertFalse(content.body.contains("\n"), "No-goal body should be the message alone — no newline")
+        XCTAssertTrue(NotificationScheduler.inspirationalMessages.contains(content.body),
+                      "Body should be one of the 7 inspirational messages")
     }
 
     func test_makeContent_completedGoalsExcluded() throws {
@@ -82,7 +85,8 @@ final class NotificationSchedulerTests: XCTestCase {
         context.insert(g2)
 
         let content = scheduler.makeContent(activeGoals: [g1, g2])
-        XCTAssertEqual(content.body, "Valid", "Nil title should be skipped, body should only contain valid title")
+        XCTAssertTrue(content.body.contains("Valid"), "Nil title should be skipped; valid title should appear")
+        XCTAssertFalse(content.body.contains("WillBeNilledOut"), "Nil title should not appear")
     }
 
     func test_makeContent_emptyTitle_skipped() throws {
@@ -107,8 +111,10 @@ final class NotificationSchedulerTests: XCTestCase {
         context.insert(g2)
 
         let content = scheduler.makeContent(activeGoals: [g1, g2])
-        XCTAssertEqual(content.body, "Check in on your goals today.",
-                       "All-completed goals should produce fallback message")
+        XCTAssertFalse(content.body.isEmpty, "All-completed goals should still produce an inspirational message")
+        XCTAssertFalse(content.body.contains("\n"), "All-completed body should be message alone — no goal title newline")
+        XCTAssertTrue(NotificationScheduler.inspirationalMessages.contains(content.body),
+                      "Body should be one of the 7 inspirational messages")
     }
 
     func test_makeContent_sound_isDefault() {

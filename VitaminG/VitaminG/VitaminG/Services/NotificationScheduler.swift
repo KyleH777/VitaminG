@@ -20,23 +20,38 @@ final class NotificationScheduler {
 
     // MARK: - Content
 
-    /// Builds notification content with up to 3 active goal titles (NOTIF-03).
-    /// Completed goals are excluded. Nil/empty titles are skipped.
-    /// Falls back to a generic message when no active goals have valid titles.
+    /// Seven rotating inspirational messages — seeded by day-of-year so the same message
+    /// is shown all day and changes each calendar day (D-16).
+    internal static let inspirationalMessages: [String] = [
+        "You got this! 💪",
+        "Take your daily Vitamin G 💊",
+        "Your goals are waiting ☀️",
+        "One step closer today 🌱",
+        "Make it happen 🔥",
+        "Progress, not perfection 🌿",
+        "Small steps, big results ⭐"
+    ]
+
+    /// Builds notification content with a day-rotated inspirational message and the top active goal
+    /// title (D-16 / D-17). Completed goals are excluded. Nil/empty titles are skipped.
+    /// Body: "{message}\n{topGoalTitle}" when an active goal exists, else the message alone.
     func makeContent(activeGoals: [Goal]) -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
-        content.title = "Your Vitamin G for today"
+        content.title = "Good morning"
 
-        let titles = activeGoals
+        let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 1
+        let message = Self.inspirationalMessages[(dayOfYear - 1) % Self.inspirationalMessages.count]
+
+        let topGoalTitle = activeGoals
             .filter { !$0.isCompleted }
-            .prefix(3)
             .compactMap { $0.title }
             .filter { !$0.isEmpty }
+            .first
 
-        if titles.isEmpty {
-            content.body = "Check in on your goals today."
+        if let topGoalTitle {
+            content.body = "\(message)\n\(topGoalTitle)"
         } else {
-            content.body = titles.joined(separator: " \u{00B7} ")
+            content.body = message
         }
 
         content.sound = .default
