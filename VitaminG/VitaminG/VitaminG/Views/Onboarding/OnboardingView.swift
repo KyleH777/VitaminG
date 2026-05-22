@@ -11,6 +11,7 @@ enum OnboardingStep: Hashable {
     case username            // NEW (Plan 1 — D-06)
     case profilePicture      // NEW (Plan 1 — D-06)
     case notifications
+    case nudgeTimePicker     // NEW (Phase 19 — D-13)
     case cameraPermission    // NEW (Plan 1 — D-06)
     case communityGoal
     // .motivationCategories REMOVED (D-05)
@@ -45,6 +46,8 @@ struct OnboardingView: View {
                         ProfilePictureScreen(path: $path, onSkip: finish, viewModel: onboardingVM)
                     case .notifications:
                         NotificationOnboardingScreen(path: $path, onSkip: finish)
+                    case .nudgeTimePicker:
+                        NudgeTimePickerScreen(path: $path, onSkip: finish)
                     case .cameraPermission:
                         CameraPermissionScreen(path: $path, onSkip: finish)
                     case .communityGoal:

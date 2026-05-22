@@ -2,13 +2,45 @@ import XCTest
 @testable import VitaminG
 
 // MARK: - OnboardingFlowTests
-// Wave 0 stub for Plan 06. Will verify:
-//   - The OnboardingStep enum contains a .nudgeTimePicker case
-//   - (added when Plan 06 implements the conditional onboarding step — D-13)
+// Verifies the OnboardingStep.nudgeTimePicker case (NOTIF-01 / D-13) and
+// the NotificationPreferences round-trip used by NudgeTimePickerScreen.save().
 
 final class OnboardingFlowTests: XCTestCase {
 
-    func test_stub_implementedInPlan06() throws {
-        throw XCTSkip("Wave 0 stub — implemented in Plan 06")
+    // MARK: - OnboardingStep enum tests
+
+    func test_nudgeTimePickerCase_isConstructible() {
+        // The enum case exists and is Hashable
+        let step: OnboardingStep = .nudgeTimePicker
+        XCTAssertEqual(step, .nudgeTimePicker)
+    }
+
+    func test_nudgeTimePickerCase_isDistinctFromCameraPermission() {
+        let nudge: OnboardingStep = .nudgeTimePicker
+        let camera: OnboardingStep = .cameraPermission
+        XCTAssertNotEqual(nudge, camera)
+    }
+
+    func test_nudgeTimePickerCase_isDistinctFromNotifications() {
+        let nudge: OnboardingStep = .nudgeTimePicker
+        let notifications: OnboardingStep = .notifications
+        XCTAssertNotEqual(nudge, notifications)
+    }
+
+    // MARK: - NotificationPreferences round-trip test
+
+    func test_notificationPreferences_saveAndReadBack() {
+        // Restore default after test so state does not leak
+        defer { NotificationPreferences.save(hour: NotificationPreferences.defaultHour,
+                                             minute: NotificationPreferences.defaultMinute) }
+
+        let testHour = 7
+        let testMinute = 0
+        NotificationPreferences.save(hour: testHour, minute: testMinute)
+
+        XCTAssertEqual(NotificationPreferences.hour, testHour,
+                       "hour read-back should equal the saved non-default value")
+        XCTAssertEqual(NotificationPreferences.minute, testMinute,
+                       "minute read-back should equal the saved value")
     }
 }
