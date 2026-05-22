@@ -1,0 +1,122 @@
+{
+  "identifier" : "VitaminGTips",
+  "nonConsumableProducts" : [
+
+  ],
+  "consumableProducts" : [
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "com.kyleharrington.VitaminG.tip.small",
+      "introductoryOffer" : null,
+      "localizations" : [
+        {
+          "description" : "Buy the developer a small coffee",
+          "displayName" : "Small Coffee",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.kyleharrington.VitaminG.tip.small",
+      "recurringSubscriptionPeriod" : null,
+      "referenceName" : "Small Coffee",
+      "subscriptionGroupID" : null,
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "com.kyleharrington.VitaminG.tip.large",
+      "introductoryOffer" : null,
+      "localizations" : [
+        {
+          "description" : "Buy the developer a large coffee",
+          "displayName" : "Large Coffee",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.kyleharrington.VitaminG.tip.large",
+      "recurringSubscriptionPeriod" : null,
+      "referenceName" : "Large Coffee",
+      "subscriptionGroupID" : null,
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "com.kyleharrington.VitaminG.tip.supporter",
+      "introductoryOffer" : null,
+      "localizations" : [
+        {
+          "description" : "Support the developer as a Vitamin G Supporter",
+          "displayName" : "Supporter",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.kyleharrington.VitaminG.tip.supporter",
+      "recurringSubscriptionPeriod" : null,
+      "referenceName" : "Supporter",
+      "subscriptionGroupID" : null,
+      "type" : "Consumable"
+    }
+  ],
+  "autoRenewableSubscriptions" : [
+
+  ],
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "settings" : {
+    "_applicationInternalID" : "com.kyleharrington.VitaminG",
+    "_developerTeamID" : "",
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Updates"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Win-Back Offer Eligibility"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Introductory Offer Eligibility"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Promotional Offer Eligibility"
+      }
+    ]
+  },
+  "version" : {
+    "major" : 3,
+    "minor" : 0,
+    "patch" : 0
+  }
+}
