@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Social Growth Engine
 status: executing
-last_updated: "2026-05-22T00:22:12.857Z"
-last_activity: 2026-05-22 -- Phase 19 execution started
+last_updated: "2026-05-22T00:00:00.000Z"
+last_activity: 2026-05-22 -- Phase 19 Plan 03 complete (tip jar StoreKit 2 ViewModel + views)
 progress:
   total_phases: 9
   completed_phases: 3
   total_plans: 18
-  completed_plans: 12
+  completed_plans: 16
   percent: 33
 ---
 
@@ -25,9 +25,9 @@ See: .planning/PROJECT.md (updated 2026-05-15)
 ## Current Position
 
 Phase: 19 (tip-jar-about-page-settings) — EXECUTING
-Plan: 1 of 6
+Plan: 4 of 6
 Status: Executing Phase 19
-Last activity: 2026-05-22 -- Phase 19 execution started
+Last activity: 2026-05-22 -- Phase 19 Plan 03 complete (tip jar StoreKit 2 ViewModel + views)
 
 ```
 v2.0 Progress: [====                ] 22% (2/9 phases, 7/7 plans)
@@ -57,6 +57,8 @@ v2.0 Progress: [====                ] 22% (2/9 phases, 7/7 plans)
 | claimUsername posts writeUsername first, then countRecords post-save D-17 race check | Race condition detection at claim time; conflicting record deleted, false returned so UsernameScreen shows inline error |
 | ProfileSharingService.publishProfile username param defaults to nil | Backward compatible additive extension; completeOnboarding() passes stored username for write coordination |
 | UsernameCheckState falls back to .idle on CloudKit error (not .taken) | Silent fallback allows retry without false "taken" feedback on network failure |
+| VerificationResult.unverified returns (false,false) — never triggers showThankYou | T-19-03-01: tampered/forged receipt yields no user-visible consequence; StoreKit 2 JWS auto-verified |
+| interactiveDismissDisabled applied at TipJarView presenter, not inside TipThankYouView | Keeps TipThankYouView self-contained and dismiss-agnostic |
 
 ### Blockers
 
