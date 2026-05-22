@@ -139,7 +139,7 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 19-01-PLAN.md — Wave 0 scaffolding: ColorSchemePreference enum, 6 test files, VitaminGTips.storekit config (SET-04)
+- [x] 19-01-PLAN.md — Wave 0 scaffolding: ColorSchemePreference enum, 6 test files, VitaminGTips.storekit config (SET-04)
 
 **Wave 2** *(blocked on Wave 1; 02/03/05/06 run in parallel)*
 
@@ -256,7 +256,7 @@ Plans:
 | 16. Tab Restructuring + AppRoute Updates | v2.0 | 2/2 | Complete | 2026-05-17 |
 | 17. Onboarding Overhaul | v2.0 | 2/5 | In progress | - |
 | 18. Home Tab + Goals Flow Enhancements | v2.0 | 5/5 | Complete   | 2026-05-20 |
-| 19. Tip Jar + About Page + Settings | v2.0 | 0/6 | Planned | - |
+| 19. Tip Jar + About Page + Settings | v2.0 | 1/6 | In Progress|  |
 | 20. Explore Tab | v2.0 | 0/? | Not started | - |
 | 21. Community Tab Redesign | v2.0 | 0/? | Not started | - |
 | 22. Public Profile + Follow + Discover | v2.0 | 0/? | Not started | - |
