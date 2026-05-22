@@ -34,7 +34,7 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
 
 - [x] **Phase 16: Tab Restructuring + AppRoute Updates** - Correct 5-tab navigation with stable Tab enum; Stats/Wins demoted to NavigationLink destinations
 - [x] **Phase 17: Onboarding Overhaul** - Apple Sign-In only, unique username, profile picture upload, permission priming slides, Welcome Back screen, report/block moderation
-- [ ] **Phase 18: Home Tab + Goals Flow Enhancements** - New Home dashboard + enhanced goal creation wizard + goal detail page
+- [x] **Phase 18: Home Tab + Goals Flow Enhancements** - New Home dashboard + enhanced goal creation wizard + goal detail page (completed 2026-05-20)
 - [ ] **Phase 19: Tip Jar + About Page + Settings** - StoreKit 2 consumable tip jar, About page with founder bio, Settings page, notification picker
 - [ ] **Phase 20: Explore Tab** - Shake/tap daily goal gifter, mood prompt, Vitamin Shelf, Trending Now, 3 Gifts for Stuck Days
 - [ ] **Phase 21: Community Tab Redesign** - Today's Glimpses carousel, Active Today, Glowing This Week, community feed with reactions/replies/photos, applause system
@@ -108,17 +108,17 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 18-01-PLAN.md — Wave 0 test scaffolding (6 XCTest files; RED stubs for HOME-01/02, GOAL2-01/02/04/05)
-- [ ] 18-02-PLAN.md — Foundation: Goal.durationDays + GoalInput + GoalViewModel.addCheckIn + GoalCreationWizardViewModel.configure(fromPremade:) + VGQuoteBank.all (HOME-01, HOME-02, GOAL2-01, GOAL2-02, GOAL2-04)
+- [x] 18-01-PLAN.md — Wave 0 test scaffolding (6 XCTest files; RED stubs for HOME-01/02, GOAL2-01/02/04/05)
+- [x] 18-02-PLAN.md — Foundation: Goal.durationDays + GoalInput + GoalViewModel.addCheckIn + GoalCreationWizardViewModel.configure(fromPremade:) + VGQuoteBank.all (HOME-01, HOME-02, GOAL2-01, GOAL2-02, GOAL2-04)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 18-03-PLAN.md — Goal creation flow: GoalEntryChoiceView + PremadeGoalsListView + Wizard startAtStep + Step3 duration field + GoalListView +add wiring (GOAL2-01, GOAL2-02, GOAL2-03)
+- [x] 18-03-PLAN.md — Goal creation flow: GoalEntryChoiceView + PremadeGoalsListView + Wizard startAtStep + Step3 duration field + GoalListView +add wiring (GOAL2-01, GOAL2-02, GOAL2-03)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 18-04-PLAN.md — Home dashboard restructure: streak fix, quote bank, community goal card, Stats nav, +add hookup, flame icons, drop Daily Wins (HOME-01..06)
-- [ ] 18-05-PLAN.md — Goal Detail + Day Grid + Check-in Celebration: GoalDayGridView, CheckInCelebrationView, addCheckIn wiring, flame in header (GOAL2-04, GOAL2-05)
+- [x] 18-04-PLAN.md — Home dashboard restructure: streak fix, quote bank, community goal card, Stats nav, +add hookup, flame icons, drop Daily Wins (HOME-01..06)
+- [x] 18-05-PLAN.md — Goal Detail + Day Grid + Check-in Celebration: GoalDayGridView, CheckInCelebrationView, addCheckIn wiring, flame in header (GOAL2-04, GOAL2-05)
 
 **UI hint**: yes
 
@@ -135,7 +135,23 @@ Plans:
   4. User changes dark mode preference in Settings and the app immediately applies the chosen appearance (System/Light/Dark) without a restart
   5. User selects a daily nudge time in Settings and the app reschedules the existing notification to that time
 
-**Plans**: TBD
+**Plans**: 6 plans
+Plans:
+**Wave 1**
+
+- [ ] 19-01-PLAN.md — Wave 0 scaffolding: ColorSchemePreference enum, 6 test files, VitaminGTips.storekit config (SET-04)
+
+**Wave 2** *(blocked on Wave 1; 02/03/05/06 run in parallel)*
+
+- [ ] 19-02-PLAN.md — VitaminGApp foundation: .preferredColorScheme on WindowGroup, Transaction.updates listener, launch reschedule (SET-04, MON-03)
+- [ ] 19-03-PLAN.md — Tip jar: TipStore StoreKit 2 ViewModel + TipJarView + TipThankYouView (MON-02, MON-03, MON-04)
+- [ ] 19-05-PLAN.md — Rotating notification copy: NotificationScheduler.makeContent overhaul + test update (NOTIF-02)
+- [ ] 19-06-PLAN.md — Onboarding nudge-time step: NudgeTimePickerScreen + conditional OnboardingStep routing (NOTIF-01)
+
+**Wave 3** *(blocked on 19-02 + 19-03)*
+
+- [ ] 19-04-PLAN.md — AboutView + SettingsView expansion: founder bio, Appearance/Privacy/Support sections (MON-01, SET-01..SET-05, NOTIF-02)
+
 **UI hint**: yes
 
 ### Phase 20: Explore Tab
@@ -239,8 +255,8 @@ Plans:
 | 15. UI Additions & Fixes | v1.0 | 9/9 | Complete | 2026-05-15 |
 | 16. Tab Restructuring + AppRoute Updates | v2.0 | 2/2 | Complete | 2026-05-17 |
 | 17. Onboarding Overhaul | v2.0 | 2/5 | In progress | - |
-| 18. Home Tab + Goals Flow Enhancements | v2.0 | 0/5 | In progress | - |
-| 19. Tip Jar + About Page + Settings | v2.0 | 0/? | Not started | - |
+| 18. Home Tab + Goals Flow Enhancements | v2.0 | 5/5 | Complete   | 2026-05-20 |
+| 19. Tip Jar + About Page + Settings | v2.0 | 0/6 | Planned | - |
 | 20. Explore Tab | v2.0 | 0/? | Not started | - |
 | 21. Community Tab Redesign | v2.0 | 0/? | Not started | - |
 | 22. Public Profile + Follow + Discover | v2.0 | 0/? | Not started | - |
