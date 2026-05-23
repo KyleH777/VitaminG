@@ -70,6 +70,27 @@ final class CommunityFeedViewModelTests: XCTestCase {
         XCTAssertEqual(capturedType, .thumbsUp)
     }
 
+    // COMM-07 — photo imageData is passed through to createOverride (not dropped)
+    func test_submitPost_withPhoto_passesImageDataToService() async throws {
+        let fakeImageData = Data([0xFF, 0xD8, 0xFF]) // minimal JPEG header bytes
+        var capturedImageData: Data?
+        sut.createOverride = { _, imageData, _, _, _ in
+            capturedImageData = imageData
+            let r = CKRecord(recordType: CommunityService.postRecordType)
+            return r
+        }
+        let result = await sut.submitPost(
+            text: "Check out this photo!",
+            imageData: fakeImageData,
+            category: "fitness",
+            authorDisplayName: "Kyle",
+            authorColorHex: nil
+        )
+        XCTAssertTrue(result)
+        XCTAssertNotNil(capturedImageData, "imageData must be passed to service when non-nil")
+        XCTAssertEqual(capturedImageData, fakeImageData, "imageData must match what was supplied")
+    }
+
     // CHAL-15
     func test_reportPost_deduplicatesReporters() async throws {
         let recordID = CKRecord.ID(recordName: "test-post-2")

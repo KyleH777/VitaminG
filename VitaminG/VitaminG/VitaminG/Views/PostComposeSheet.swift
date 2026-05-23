@@ -1,5 +1,6 @@
 import SwiftUI
 import PhotosUI
+import UIKit
 
 struct PostComposeSheet: View {
     let category: String
@@ -15,6 +16,9 @@ struct PostComposeSheet: View {
     @State private var isSubmitting = false
     @State private var localProfanityFlagged = false
     @State private var showAlert = false
+    @State private var showPhotoSourceDialog = false
+    @State private var showLibraryPicker = false
+    @State private var showCamera = false
 
     private static let maxChars = 500
     private static let placeholder = "How's your challenge going? Share a win or encouragement..."
@@ -75,8 +79,10 @@ struct PostComposeSheet: View {
 
                     // 3. Photo picker row + preview
                     VStack(alignment: .leading, spacing: 8) {
-                        PhotosPicker(selection: $selectedItem, matching: .images) {
-                            Label("Add Photo", systemImage: "photo.fill")
+                        Button {
+                            showPhotoSourceDialog = true
+                        } label: {
+                            Label("Add Photo", systemImage: "camera.fill")
                                 .font(.body).fontDesign(.rounded)
                                 .foregroundStyle(VGTheme.clay)
                                 .padding(.horizontal, 16)
@@ -84,6 +90,11 @@ struct PostComposeSheet: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .background(Color(.secondarySystemGroupedBackground))
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .confirmationDialog("Add Photo", isPresented: $showPhotoSourceDialog) {
+                            Button("Photo Library") { showLibraryPicker = true }
+                            Button("Camera") { showCamera = true }
+                            Button("Cancel", role: .cancel) {}
                         }
                         .onChange(of: selectedItem) { _, newItem in
                             Task {
@@ -99,6 +110,7 @@ struct PostComposeSheet: View {
                                     .resizable().scaledToFill()
                                     .frame(width: 80, height: 80)
                                     .clipShape(RoundedRectangle(cornerRadius: 8))
+                                    .transition(.opacity)
                                 Button("Remove") {
                                     selectedImageData = nil
                                     selectedItem = nil
@@ -131,6 +143,13 @@ struct PostComposeSheet: View {
                    isPresented: $showAlert) {
                 Button("OK", role: .none) {}
             }
+            .photosPicker(isPresented: $showLibraryPicker, selection: $selectedItem, matching: .images)
+            .sheet(isPresented: $showCamera) {
+                ImagePickerRepresentable(sourceType: .camera) { data in
+                    selectedImageData = data
+                }
+                .ignoresSafeArea()
+            }
         }
     }
 
@@ -155,6 +174,45 @@ struct PostComposeSheet: View {
             localProfanityFlagged = true  // show inline profanity UI, not the network-error alert
         } else if viewModel.submitError != nil {
             showAlert = true
+        }
+    }
+}
+
+// MARK: - UIImagePickerController representable (camera source)
+// Matches ProfileView.swift camera pattern (T-21-04-02 — camera permission gated by AVFoundation).
+
+struct ImagePickerRepresentable: UIViewControllerRepresentable {
+    let sourceType: UIImagePickerController.SourceType
+    let onImagePicked: (Data) -> Void
+
+    func makeCoordinator() -> Coordinator { Coordinator(onImagePicked: onImagePicked) }
+
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.sourceType = sourceType
+        picker.delegate = context.coordinator
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+
+    final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        let onImagePicked: (Data) -> Void
+        init(onImagePicked: @escaping (Data) -> Void) { self.onImagePicked = onImagePicked }
+
+        func imagePickerController(
+            _ picker: UIImagePickerController,
+            didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+        ) {
+            if let image = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage,
+               let data = image.jpegData(compressionQuality: 0.8) {
+                onImagePicked(data)
+            }
+            picker.dismiss(animated: true)
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            picker.dismiss(animated: true)
         }
     }
 }
