@@ -73,4 +73,40 @@ final class ExploreViewModelTests: XCTestCase {
         vm.selectMood(.good)
         XCTAssertTrue(vm.hasMoodSelectedToday, "After selectMood, hasMoodSelectedToday must be true")
     }
+
+    // EXPLORE-06: todaysStuckDayGifts returns exactly 3 items
+    func testStuckDayGiftCount() {
+        XCTAssertEqual(ExploreContent.todaysStuckDayGifts.count, 3)
+    }
+
+    // EXPLORE-06: same call twice returns the same gifts (determinism)
+    func testStuckDayGiftDeterminism() {
+        let first = ExploreContent.todaysStuckDayGifts.map(\.id)
+        let second = ExploreContent.todaysStuckDayGifts.map(\.id)
+        XCTAssertEqual(first, second)
+    }
+
+    // EXPLORE-06: marking a gift hidden returns true on next check
+    func testStuckDayHideGate() {
+        let vm = ExploreViewModel()
+        let gift = ExploreContent.stuckDayGiftsPool[0]
+        // Clean up before test
+        UserDefaults.standard.removeObject(forKey: "vg_explore_stuckHidden_\(gift.id)")
+        XCTAssertFalse(vm.isStuckGiftHidden(for: gift))
+        vm.markStuckGiftHidden(gift)
+        XCTAssertTrue(vm.isStuckGiftHidden(for: gift))
+        // Clean up after test
+        UserDefaults.standard.removeObject(forKey: "vg_explore_stuckHidden_\(gift.id)")
+    }
+
+    // EXPLORE-06: yesterday's hide gate does not block today
+    func testStuckDayHideGateReset() {
+        let gift = ExploreContent.stuckDayGiftsPool[0]
+        let key = "vg_explore_stuckHidden_\(gift.id)"
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+        UserDefaults.standard.set(yesterday, forKey: key)
+        let vm = ExploreViewModel()
+        XCTAssertFalse(vm.isStuckGiftHidden(for: gift), "Yesterday's gate must not hide today's card")
+        UserDefaults.standard.removeObject(forKey: key)
+    }
 }

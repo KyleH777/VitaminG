@@ -11,6 +11,11 @@ final class ExploreViewModel {
     private enum Keys {
         static let gifterDate = "vg_explore_gifterDate"
         static let moodDate   = "vg_explore_moodDate"
+
+        // Per stuck-day card: key is "vg_explore_stuckHidden_\(gift.id)"
+        static func stuckHiddenKey(for giftID: String) -> String {
+            "vg_explore_stuckHidden_\(giftID)"
+        }
     }
 
     // MARK: - Daily Gifter State
@@ -66,5 +71,37 @@ final class ExploreViewModel {
     func selectMood(_ mood: MoodOption) {
         UserDefaults.standard.set(Date(), forKey: Keys.moodDate)
         // hasMoodSelectedToday is computed; no stored property to update.
+    }
+
+    // MARK: - Trending Now State (EXPLORE-05)
+
+    /// Loaded async from CloudKit. Empty until fetch completes.
+    var trendingGoals: [TrendingGoalItem] = []
+    /// True while CloudKit fetch is in-flight.
+    var isFetchingTrending: Bool = false
+
+    /// Called from TrendingNowSection.task. Falls back to static data on CloudKit error.
+    func fetchTrending() async {
+        isFetchingTrending = true
+        let live = await ExploreService.fetchTrendingGoals()
+        trendingGoals = live.isEmpty ? ExploreContent.staticTrendingGoals : live
+        isFetchingTrending = false
+    }
+
+    // MARK: - Stuck Day Gifts State (EXPLORE-06)
+
+    /// Returns true if this gift's card should be hidden today.
+    func isStuckGiftHidden(for gift: StuckDayGift) -> Bool {
+        let key = Keys.stuckHiddenKey(for: gift.id)
+        guard let stored = UserDefaults.standard.object(forKey: key) as? Date else {
+            return false
+        }
+        return Calendar.current.isDateInToday(stored)
+    }
+
+    /// Call after successfully adding a stuck-day gift goal. Hides the card for today.
+    func markStuckGiftHidden(_ gift: StuckDayGift) {
+        let key = Keys.stuckHiddenKey(for: gift.id)
+        UserDefaults.standard.set(Date(), forKey: key)
     }
 }

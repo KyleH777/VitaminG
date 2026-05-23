@@ -22,7 +22,13 @@ struct ExploreView: View {
                 sectionLabel("Vitamin Shelf")
                 VitaminShelfSection()
 
-                // Plans 20-04 inserts Trending Now and Stuck Day Gifts sections in Wave 3.
+                // Section 4: Trending Now (EXPLORE-05) — inserted by Plan 20-04
+                sectionLabel("Trending Now")
+                TrendingNowSection(viewModel: viewModel)
+
+                // Section 5: Gifts for Stuck Days (EXPLORE-06) — inserted by Plan 20-04
+                sectionLabel("Gifts for Stuck Days")
+                StuckDayGiftsSection(viewModel: viewModel)
             }
             .padding(.top, 8)
             .padding(.bottom, 24)
