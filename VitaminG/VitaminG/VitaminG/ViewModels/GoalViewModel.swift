@@ -142,13 +142,17 @@ final class GoalViewModel {
     /// - Parameters:
     ///   - goal: The goal to check in for.
     ///   - context: The SwiftData model context.
+    ///   - username: The current user's display name (for GoalGlimpse write). Defaults to "".
+    ///   - colorHex: The current user's avatar color hex (for GoalGlimpse write). Defaults to "".
     ///
     /// This is the daily tracking path: "I did this today" vs. `toggleCompletion` which is
     /// "I've achieved this goal permanently". Per GOAL2-04 / D-12.
     ///
     /// Same-day dedup: if a CompletionEvent already exists for today, this is a no-op (Pitfall 3).
     /// Does NOT set `goal.isCompleted` (Pitfall 2).
-    func addCheckIn(for goal: Goal, context: ModelContext) {
+    ///
+    /// Injects a fire-and-forget GoalGlimpse upsert to CloudKit when username is non-empty (D-01).
+    func addCheckIn(for goal: Goal, context: ModelContext, username: String = "", colorHex: String = "") {
         // Same-day dedup guard (T-18-02-02, Pitfall 3)
         let alreadyCheckedInToday = goal.completionEvents?.contains { event in
             Calendar.current.isDateInToday(event.completedAt ?? .distantPast)
@@ -164,6 +168,25 @@ final class GoalViewModel {
         // Keep notifications and widgets fresh after the check-in
         rescheduleNotification(context: context)
         reloadWidgetTimelines()
+
+        // Fire-and-forget GoalGlimpse upsert (D-01 / COMM-01).
+        // Progress percent = completionEvents count / durationDays (clamped 0–100).
+        // If durationDays is nil or zero, progressPercent defaults to 0.
+        if !username.isEmpty {
+            let completionCount = (goal.completionEvents?.count ?? 0) + 1  // +1 for the just-inserted event
+            let durationDays = goal.durationDays ?? 0
+            let progressPercent: Int = durationDays > 0
+                ? min(100, (completionCount * 100) / durationDays)
+                : 0
+            Task {
+                await CommunityService.writeGlimpse(
+                    username: username,
+                    goalTitle: goal.title ?? "",
+                    progressPercent: progressPercent,
+                    authorColorHex: colorHex
+                )
+            }
+        }
     }
 
     func updateGoal(_ goal: Goal, context: ModelContext) throws {

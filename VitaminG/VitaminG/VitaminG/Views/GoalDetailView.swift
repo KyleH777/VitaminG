@@ -21,6 +21,8 @@ struct GoalDetailView: View {
 
     // Live query so completions added during this session update the progress section immediately (CR-02).
     @Query private var allEvents: [CompletionEvent]
+    // Current user profile — used to pass username/colorHex to GoalGlimpse write (D-01).
+    @Query private var profiles: [UserProfile]
 
     var body: some View {
         ScrollView {
@@ -279,7 +281,12 @@ struct GoalDetailView: View {
                 .padding(.horizontal, 16)
 
             Button {
-                viewModel.addCheckIn(for: goal, context: modelContext)
+                viewModel.addCheckIn(
+                    for: goal,
+                    context: modelContext,
+                    username: profiles.first?.displayName ?? "",
+                    colorHex: profiles.first?.avatarColorHex ?? ""
+                )
                 showingCheckInCelebration = true
             } label: {
                 HStack(spacing: 8) {
