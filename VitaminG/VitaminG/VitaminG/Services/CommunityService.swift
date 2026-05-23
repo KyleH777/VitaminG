@@ -393,23 +393,34 @@ extension CommunityService {
     /// Writes a flat reply to a community post.
     /// Returns false if the text contains profanity or if the CloudKit save ultimately fails.
     /// Returns true on successful save.
+    ///
+    /// `saveOverride` — test-only closure; pass nil in production. When non-nil, replaces the
+    /// real `db.save(record)` call so tests never hit CloudKit. Pattern mirrors
+    /// CommunityFeedViewModel.createOverride.
     @discardableResult
     static func writeReply(
         parentPostID: String,
         text: String,
         authorDisplayName: String?,
-        authorColorHex: String?
+        authorColorHex: String?,
+        saveOverride: ((CKRecord) async throws -> CKRecord)? = nil
     ) async throws -> Bool {
-        // Profanity gate — T-21-02-02 mitigation
+        // Profanity gate — T-21-04-01 mitigation
         guard !ProfanityFilter.containsProfanity(text) else { return false }
 
-        let db = CKContainer.default().publicCloudDatabase
         let record = CKRecord(recordType: replyRecordType)
         record["parentPostID"] = InputSanitizer.sanitizeForPublic(parentPostID) as CKRecordValue
         record["text"] = InputSanitizer.sanitizeForPublic(text) as CKRecordValue
         record["authorDisplayName"] = InputSanitizer.sanitizeForPublic(authorDisplayName ?? "Anonymous") as CKRecordValue
         record["authorColorHex"] = InputSanitizer.sanitizeForPublic(authorColorHex ?? "") as CKRecordValue
 
+        if let override = saveOverride {
+            // Test path: call override directly, never touch CloudKit
+            _ = try await override(record)
+            return true
+        }
+
+        let db = CKContainer.default().publicCloudDatabase
         do {
             _ = try await db.save(record)
             return true
