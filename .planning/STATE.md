@@ -4,7 +4,7 @@ milestone: v2.0
 milestone_name: Social Growth Engine
 status: completed
 last_updated: "2026-05-23T16:44:21.724Z"
-last_activity: "2026-05-23 -- Phase 21 context gathered (Community Tab Redesign: Glimpses, Applause, global feed, photo compose)"
+last_activity: "2026-05-23 -- Phase 21 UI-SPEC approved (Community Tab Redesign: Glimpses, Applause, global feed, photo compose)"
 progress:
   total_phases: 9
   completed_phases: 5
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-15)
 
 **Core value:** Every morning, the user is reminded of their goals — making progress feel inevitable, not accidental.
-**Current focus:** Phase 20 complete — next up Phase 21 (Community Tab)
+**Current focus:** Phase 21 UI-SPEC approved — ready to plan
 
 ## Current Position
 
