@@ -45,7 +45,9 @@ Declared values (SwiftUI points, 1pt = 1px on non-Retina baseline; all multiples
 **Exceptions:**
 - Touch targets for all tappable cards (Glimpse cards, Active Today avatars, applause button): minimum 44pt height — per Apple HIG accessibility requirement.
 - `CommunityGoalCard` (COMM-01) top padding from navigation bar: 20pt (matches existing `CommunityTabView` header pattern — verified line 24).
-- Glimpse card internal padding: 12pt vertical / 16pt horizontal — consistent with `CommunityPostCard` line 109–110.
+- Glimpse card internal padding: 12pt vertical / 16pt horizontal — matches `CommunityPostCard.swift` lines 109–110 pattern.
+- `ActiveTodaySection` avatar-to-avatar spacing: 12pt — matches `CommunityPostCard.swift` lines 109–110 pattern.
+- `GlowingSpotlightSection` allcaps label tracking: 0.5pt — visual detail only, not a layout spacing value; 12pt used as vertical margin between allcaps label and username — matches `CommunityPostCard.swift` lines 109–110 pattern.
 - `GlowingSpotlightSection` hero card: 24pt internal padding on all sides to convey elevated status.
 
 **Source:** Verified from `CommunityPostCard.swift` lines 109–110, `CommunityTabView.swift` lines 24–26.
@@ -56,13 +58,14 @@ Declared values (SwiftUI points, 1pt = 1px on non-Retina baseline; all multiples
 
 Two type families used. Exact values derived from existing codebase usage (VGTheme.swift lines 142–156, grep across Views/).
 
+Maximum 4 distinct sizes. Caption text is visually differentiated from Label/Secondary using `VGTheme.textMuted` color only — no separate size tier.
+
 | Role | Size | Family / Weight | Line Height | Usage |
 |------|------|-----------------|-------------|-------|
 | Tab Heading | 28pt | Cormorant Garamond Regular (`VGTheme.serif(28)`) | 1.2 | "Community" tab title at top of scroll — matches existing pattern (CommunityTabView line 22) |
 | Section Heading | 20pt | SF Pro Rounded Semibold (`.system(size: 20, weight: .semibold).fontDesign(.rounded)`) | 1.2 | Section labels: "Today's Glimpses", "Active Today", "Glowing This Week", community feed header |
 | Body | 17pt | SF Pro Rounded Regular (`.system(size: 17).fontDesign(.rounded)`) | 1.5 | Post body text, reply text, goal title on Glimpse cards, Glowing spotlight bio |
-| Label / Secondary | 14pt | SF Pro Rounded Regular (`.system(size: 14).fontDesign(.rounded)`) | 1.4 | Username labels on Glimpse cards, Active Today names, reaction counts, progress percentage |
-| Caption | 12pt | SF Pro Rounded Regular (`.system(size: 12).fontDesign(.rounded)`) | 1.3 | Relative timestamps on posts ("3 min ago"), applause float username label, "once per day" limit label |
+| Label / Secondary | 14pt | SF Pro Rounded Regular (`.system(size: 14).fontDesign(.rounded)`) | 1.4 | Username labels on Glimpse cards, Active Today names, reaction counts, progress percentage, relative timestamps ("3 min ago"), applause float username label, "once per day" limit label, "Glowing This Week" allcaps label, progress % labels, reply character counter — use `VGTheme.textMuted` color to distinguish secondary/caption roles from primary label roles |
 
 **Two weights max:**
 - Regular (400): body text, labels, captions
@@ -80,12 +83,12 @@ All tokens are from `VGTheme.swift`. Values given as light-mode hex; dark-mode a
 |------|--------------|-----------|----------|-------|
 | Dominant (60%) | `VGTheme.background` | #FAF5EE (sandLight) | #16110C (inkDeep) | Tab background, scroll area surface |
 | Secondary (30%) | `VGTheme.surface` / `VGTheme.backgroundSecondary` | #FDFAF6 (warmWhite) | frosted warm tint | Cards (Glimpse cards, Active Today row, post cards), compose sheet |
-| Accent — Terra (10%) | `VGTheme.accentTerra` | #C4673A | #FF8A5C | Primary CTA buttons ("Post", "Compose"), active reaction pills, progress circle fill on Glimpse cards |
+| Accent — Terra (10%) | `VGTheme.accentTerra` | #C4673A | #FF8A5C | Primary CTA buttons ("Post Update", "Compose"), active reaction pills, progress circle fill on Glimpse cards |
 | Accent — Gold | `VGTheme.accentGold` | #C4A459 | #E8D070 | Applause float emoji + username text, "Glowing This Week" spotlight card border/glow ring |
 | Separator | `VGTheme.separator` | #E8D9C4 (sandMid) | hairline warm | Card borders, section dividers |
 | Text Primary | `VGTheme.textPrimary` | #3D2F1E (clay) | #F2E8D9 (sand) | All primary text (headings, body, usernames) |
 | Text Secondary | `VGTheme.textSecondary` | clay @ 75% | sand @ 62% | Goal titles in Glimpse cards, post preview text |
-| Text Muted | `VGTheme.textMuted` | #9A8A78 | sand @ 42% | Timestamps, progress % secondary labels, "once per day" notice, reply count |
+| Text Muted | `VGTheme.textMuted` | #9A8A78 | sand @ 42% | Timestamps, progress % secondary labels, "once per day" notice, reply count, allcaps section labels in spotlight card — used to distinguish caption-role Label/Secondary text from primary Label/Secondary text |
 | Destructive | `.red` (system) | system red | system red | Report post confirmation button only (uses SwiftUI `.role: .destructive` on `.confirmationDialog`) |
 
 **Accent reserved for:**
@@ -139,13 +142,13 @@ New components declared in RESEARCH.md §Recommended Project Structure. Design c
 | Component | Background | Border | Padding | Notes |
 |-----------|-----------|--------|---------|-------|
 | `GlimpsesCarouselSection` | transparent (scroll passes through) | none | 16pt horizontal, 0pt top | Height: 180pt fixed — enough for AvatarView + goal title + progress |
-| `GlimpseCard` (individual card) | `VGTheme.surface` | none, `clipShape(RoundedRectangle(cornerRadius: 16))` | 12pt vertical / 16pt horizontal | Shows AvatarView(size:40), username (14pt semibold), goal title (14pt regular), progress % (12pt muted), optional photo thumbnail (44x44pt), 👏 button if canApplaud |
-| `ActiveTodaySection` | transparent | none | 16pt horizontal | Horizontal scroll of AvatarView(size:44) + username (12pt) pairs; spacing 12pt between avatars |
-| `GlowingSpotlightSection` | `VGTheme.heroBackground` | gold ring (2pt, accentGold) | 24pt all sides | Full-width hero card. Rounded corners: 20pt. Contains: "Glowing This Week" label (12pt muted allcaps tracking 0.5), username (20pt serif), goal title (17pt body), progress indicator, 👏 button |
+| `GlimpseCard` (individual card) | `VGTheme.surface` | none, `clipShape(RoundedRectangle(cornerRadius: 16))` | 12pt vertical / 16pt horizontal | Shows AvatarView(size:40), username (14pt semibold), goal title (14pt regular), progress % (14pt `VGTheme.textMuted`), optional photo thumbnail (44x44pt), 👏 button if canApplaud |
+| `ActiveTodaySection` | transparent | none | 16pt horizontal | Horizontal scroll of AvatarView(size:44) + username (14pt `VGTheme.textMuted`) pairs; spacing 12pt between avatars |
+| `GlowingSpotlightSection` | `VGTheme.heroBackground` | gold ring (2pt, accentGold) | 24pt all sides | Full-width hero card. Rounded corners: 20pt. Contains: "Glowing This Week" label (14pt `VGTheme.textMuted` allcaps tracking 0.5), username (20pt serif), goal title (17pt body), progress indicator, 👏 button |
 | `GlobalFeedSection` | transparent | none | 0 | `LazyVStack` wrapping `CommunityPostCard` items; spacing 10pt between cards |
-| `CommunityReplySheetView` | `VGTheme.background` | none (sheet) | 16pt horizontal | Text field (17pt body), character counter (12pt muted), "Post Reply" button (accentTerra fill) |
+| `CommunityReplySheetView` | `VGTheme.background` | none (sheet) | 16pt horizontal | Text field (17pt body), character counter (14pt `VGTheme.textMuted`), "Post Reply" button (accentTerra fill) |
 | `ApplauseButtonView` | transparent | none | 0 (embedded in card) | See Interaction States above |
-| `CommunityGoalCard` (COMM-01) | `VGTheme.surface` | none, RoundedRectangle(cornerRadius:12) | 16pt all | Progress circle (80pt diameter, accentTerra ring), participant count (17pt semibold), days remaining (14pt muted), % remaining (12pt muted) |
+| `CommunityGoalCard` (COMM-01) | `VGTheme.surface` | none, RoundedRectangle(cornerRadius:12) | 16pt all | Progress circle (80pt diameter, accentTerra ring), participant count (17pt semibold), days remaining (14pt muted), % remaining (14pt `VGTheme.textMuted`) |
 
 ---
 
@@ -168,7 +171,7 @@ Section label top padding: 24pt. Section label bottom padding: 8pt.
 
 | Element | Copy |
 |---------|------|
-| Primary CTA — Post | "Post" |
+| Primary CTA — Post | "Post Update" |
 | Primary CTA — Compose | "Share a moment" (floating button accessibilityLabel) |
 | Primary CTA — Applaud | "👏" (button label is the emoji itself; accessibilityLabel: "Applaud [username]") |
 | Primary CTA — Reply | "Post Reply" |
@@ -180,13 +183,13 @@ Section label top padding: 24pt. Section label bottom padding: 8pt.
 | Empty state — Glowing spotlight | "Check back later — someone will be glowing this week." |
 | Empty state — COMM-01 (no challenge) | "Join a community goal" (button navigating to ExploreView) |
 | Applause already given | "Already applauded today" (accessibilityLabel on disabled button) |
-| Applause daily limit notice | "Come back tomorrow to applaud again." (shown as caption below disabled button) |
+| Applause daily limit notice | "Come back tomorrow to applaud again." (shown as label below disabled button) |
 | Error state — feed load failure | "Couldn't load the feed. Pull down to try again." |
 | Error state — post submit failure | "Post failed. Check your connection and try again." |
 | Error state — reply submit failure | "Reply failed. Check your connection and try again." |
 | Error state — photo load failure | Silently show placeholder `Color(.tertiarySystemGroupedBackground)` — no error copy; consistent with existing `CommunityPostCard` pattern |
 | Destructive — Report post | Confirmation title: "Report this post?" / Confirm button: "Report" (destructive role) / body message: "This will send a report. The post will be hidden from your feed after 3 reports from different users." — matches existing `CommunityPostCard.swift` lines 113–122 |
-| Reply character limit notice | "[N]/300" — shown as trailing caption in compose field when over 250 characters |
+| Reply character limit notice | "[N]/300" — shown as trailing label in compose field when over 250 characters |
 | Photo source dialog title | "Add Photo" |
 | Photo source dialog options | "Photo Library" / "Camera" / "Cancel" |
 
