@@ -184,7 +184,16 @@ Plans:
   5. User creates a community post with a photo from their library or camera; the post appears in the community feed with the photo visible
   6. User reacts to a post with ❤️, 🔥, or 👍 and the reaction count updates; user can reply to a post
 
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+- [ ] 21-01-PLAN.md — Wave 0 scaffolding: CommunityHubModels value types + 4 RED test stub files (COMM-02, COMM-04, COMM-05, COMM-06, SOC-01)
+- [ ] 21-02-PLAN.md — CommunityService 9 new CloudKit methods + ReactionType.fire + GoalViewModel.addCheckIn injection (COMM-01–07, SOC-01–03)
+- [ ] 21-03-PLAN.md — CommunityHubViewModel + ApplauseButtonView + ApplauseStreamOverlay; 3 test files GREEN (COMM-02, COMM-04, COMM-05, SOC-01, SOC-02, SOC-03)
+- [ ] 21-04-PLAN.md — PostComposeSheet camera/confirmationDialog extension + CommunityReplySheetView; Phase21ReplyTests GREEN (COMM-06, COMM-07, SOC-01)
+- [ ] 21-05-PLAN.md — GlimpsesCarouselSection, ActiveTodaySection, GlowingSpotlightSection, GlobalFeedSection (COMM-02–07, SOC-01–03)
+- [ ] 21-06-PLAN.md — CommunityTabView rebuild + ContentView swap + CommunityPostCard 🔥 + ExploreView challenge migration + ProfileView SOC-02; human verify (COMM-01–07, SOC-01–03)
+
 **UI hint**: yes
 
 ### Phase 22: Public Profile + Follow + Discover
