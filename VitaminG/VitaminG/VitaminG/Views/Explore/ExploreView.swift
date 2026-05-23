@@ -14,7 +14,11 @@ struct ExploreView: View {
                 sectionLabel("Today's Gift")
                 GoalGifterCard(viewModel: viewModel)
 
-                // Plans 20-02 and 20-03 insert sections here in Wave 2.
+                // Section 2: Mood Prompt (EXPLORE-03) — inserted by Plan 20-02
+                sectionLabel("Daily Mood")
+                MoodPromptCard(viewModel: viewModel)
+
+                // Plans 20-03 inserts sections here in Wave 2.
                 // Plans 20-04 inserts Trending Now and Stuck Day Gifts sections in Wave 3.
             }
             .padding(.top, 8)
