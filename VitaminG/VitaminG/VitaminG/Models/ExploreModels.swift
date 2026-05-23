@@ -43,3 +43,25 @@ enum ExploreContent {
         return gifterPool[index]
     }
 }
+
+// MARK: - MoodOption
+
+enum MoodOption: String, CaseIterable, Identifiable {
+    case amazing = "Amazing"
+    case good    = "Good"
+    case okay    = "Okay"
+    case low     = "Low"
+    case push    = "Push"
+
+    var id: String { rawValue }
+
+    var emoji: String {
+        switch self {
+        case .amazing: return "🤩"
+        case .good:    return "😊"
+        case .okay:    return "😐"
+        case .low:     return "😔"
+        case .push:    return "💪"
+        }
+    }
+}

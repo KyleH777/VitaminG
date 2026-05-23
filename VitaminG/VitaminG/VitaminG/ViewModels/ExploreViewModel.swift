@@ -10,6 +10,7 @@ final class ExploreViewModel {
 
     private enum Keys {
         static let gifterDate = "vg_explore_gifterDate"
+        static let moodDate   = "vg_explore_moodDate"
     }
 
     // MARK: - Daily Gifter State
@@ -49,5 +50,21 @@ final class ExploreViewModel {
     /// Call after successfully inserting the gifted goal into SwiftData.
     func markGiftedToday() {
         UserDefaults.standard.set(Date(), forKey: Keys.gifterDate)
+    }
+
+    // MARK: - Mood Prompt State
+
+    /// Whether the user has selected a mood today (card is collapsed).
+    var hasMoodSelectedToday: Bool {
+        guard let stored = UserDefaults.standard.object(forKey: Keys.moodDate) as? Date else {
+            return false
+        }
+        return Calendar.current.isDateInToday(stored)
+    }
+
+    /// Call when user taps any mood chip. Collapses the card for today.
+    func selectMood(_ mood: MoodOption) {
+        UserDefaults.standard.set(Date(), forKey: Keys.moodDate)
+        // hasMoodSelectedToday is computed; no stored property to update.
     }
 }

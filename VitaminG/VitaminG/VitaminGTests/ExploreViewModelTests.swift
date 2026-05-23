@@ -65,4 +65,12 @@ final class ExploreViewModelTests: XCTestCase {
     func testGifterPoolSize() {
         XCTAssertEqual(ExploreContent.gifterPool.count, 20)
     }
+
+    // EXPLORE-03: selectMood collapses the card for today
+    func testMoodGate() {
+        let vm = ExploreViewModel()
+        XCTAssertFalse(vm.hasMoodSelectedToday, "Mood must not be selected before action")
+        vm.selectMood(.good)
+        XCTAssertTrue(vm.hasMoodSelectedToday, "After selectMood, hasMoodSelectedToday must be true")
+    }
 }
