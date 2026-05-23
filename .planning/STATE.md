@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Social Growth Engine
 status: executing
-last_updated: "2026-05-22T23:52:12Z"
-last_activity: 2026-05-22 -- Phase 20 Plan 01 complete (ExploreView scaffold + daily goal gifter)
+last_updated: "2026-05-23T00:00:00Z"
+last_activity: 2026-05-23 -- Phase 20 COMPLETE (all 4 plans done — full Explore tab)
 progress:
   total_phases: 9
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 22
-  completed_plans: 19
-  percent: 47
+  completed_plans: 22
+  percent: 60
 ---
 
 # Project State
@@ -20,17 +20,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-15)
 
 **Core value:** Every morning, the user is reminded of their goals — making progress feel inevitable, not accidental.
-**Current focus:** Phase 19 complete — next up Phase 20 (Explore Tab)
+**Current focus:** Phase 20 complete — next up Phase 21 (Community Tab)
 
 ## Current Position
 
-Phase: 20 (explore-tab) — IN PROGRESS
-Plan: 1/4 complete
-Status: executing
-Last activity: 2026-05-22 -- Phase 20 Plan 01 complete (ExploreView scaffold + daily goal gifter)
+Phase: 20 (explore-tab) — COMPLETE
+Plan: 4/4 complete
+Status: phase complete — ready for Phase 21
+Last activity: 2026-05-23 -- Phase 20 complete (Explore tab: gifter, mood, vitamin shelf, trending, stuck-day gifts)
 
 ```
-v2.0 Progress: [=========           ] 47% (4/9 phases, 19/22 plans)
+v2.0 Progress: [============        ] 60% (5/9 phases, 22/22 plans)
 ```
 
 ## Accumulated Context
@@ -64,6 +64,10 @@ v2.0 Progress: [=========           ] 47% (4/9 phases, 19/22 plans)
 | associatedInspiration = "vg_gifter" set post-insert on gifted goals | Enables @Query filter in ExploreView to count daily accomplishments without a schema migration |
 | Daily gifter gate stored as Date in UserDefaults (vg_explore_gifterDate) | Lightweight persistence for one-per-day gate; Calendar.current.isDateInToday() check is timezone-safe |
 | ShakeDetectorView becomeFirstResponder in viewDidAppear (not viewDidLoad) | Re-acquires first-responder after NavigationStack push/pop; viewDidLoad only fires once per controller lifetime |
+| navigationDestination(for: GoalCategory.self) placed on ScrollView in ExploreView | Keeps navigation logic local to Explore tab; GoalCategory is a new nav value type — no conflict with ContentView destinations |
+| TrendingGoal CKRecord schema uses silent fallback | TrendingGoal record type not yet deployed to CloudKit — ExploreService catches CKError and returns staticTrendingGoals |
+| StuckDayGift.id is a stable String (not UUID()) | Reproducible UserDefaults hide key across sessions; changing IDs would break hide gates |
+| StuckDayGift.description renamed to .subtitle | Avoids CustomStringConvertible protocol conflict with Swift's built-in description property |
 
 ### Blockers
 
@@ -74,6 +78,7 @@ None.
 - App Store Connect: configure 3 consumable IAP products (Small Coffee ~$0.99, Large Coffee ~$2.99, Supporter ~$4.99) before Phase 19 real-device testing
 - CloudKit Console: promote new public DB record types (UserPresence, Applause, Follow, extended PublicProfile) to Production before Phase 21
 - CloudKit Console: add Queryable index on "username" field in PublicProfile record type (iCloud.com.kyleharrington.VitaminG) before 17-03 real-device testing — required for username availability check (isUsernameTaken/countRecordsWithUsername)
+- CloudKit Console: create TrendingGoal record type (title/String, category/String, participantCount/Int64, completedCount/Int64, createdAt/DateTime) + Queryable index on participantCount + deploy to Production + seed records before real-device Explore tab testing
 
 ## Deferred Items (from v1.0)
 
