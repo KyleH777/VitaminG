@@ -49,6 +49,7 @@ Declared values (SwiftUI points, 1pt = 1px on non-Retina baseline; all multiples
 - `ActiveTodaySection` avatar-to-avatar spacing: 12pt — matches `CommunityPostCard.swift` lines 109–110 pattern.
 - `GlowingSpotlightSection` allcaps label tracking: 0.5pt — visual detail only, not a layout spacing value; 12pt used as vertical margin between allcaps label and username — matches `CommunityPostCard.swift` lines 109–110 pattern.
 - `GlowingSpotlightSection` hero card: 24pt internal padding on all sides to convey elevated status.
+- `GlobalFeedSection` LazyVStack inter-card spacing: 12pt — matches `CommunityPostCard.swift` lines 109–110 inter-card rhythm pattern.
 
 **Source:** Verified from `CommunityPostCard.swift` lines 109–110, `CommunityTabView.swift` lines 24–26.
 
@@ -145,7 +146,7 @@ New components declared in RESEARCH.md §Recommended Project Structure. Design c
 | `GlimpseCard` (individual card) | `VGTheme.surface` | none, `clipShape(RoundedRectangle(cornerRadius: 16))` | 12pt vertical / 16pt horizontal | Shows AvatarView(size:40), username (14pt semibold), goal title (14pt regular), progress % (14pt `VGTheme.textMuted`), optional photo thumbnail (44x44pt), 👏 button if canApplaud |
 | `ActiveTodaySection` | transparent | none | 16pt horizontal | Horizontal scroll of AvatarView(size:44) + username (14pt `VGTheme.textMuted`) pairs; spacing 12pt between avatars |
 | `GlowingSpotlightSection` | `VGTheme.heroBackground` | gold ring (2pt, accentGold) | 24pt all sides | Full-width hero card. Rounded corners: 20pt. Contains: "Glowing This Week" label (14pt `VGTheme.textMuted` allcaps tracking 0.5), username (20pt serif), goal title (17pt body), progress indicator, 👏 button |
-| `GlobalFeedSection` | transparent | none | 0 | `LazyVStack` wrapping `CommunityPostCard` items; spacing 10pt between cards |
+| `GlobalFeedSection` | transparent | none | 0 | `LazyVStack` wrapping `CommunityPostCard` items; spacing 12pt between cards |
 | `CommunityReplySheetView` | `VGTheme.background` | none (sheet) | 16pt horizontal | Text field (17pt body), character counter (14pt `VGTheme.textMuted`), "Post Reply" button (accentTerra fill) |
 | `ApplauseButtonView` | transparent | none | 0 (embedded in card) | See Interaction States above |
 | `CommunityGoalCard` (COMM-01) | `VGTheme.surface` | none, RoundedRectangle(cornerRadius:12) | 16pt all | Progress circle (80pt diameter, accentTerra ring), participant count (17pt semibold), days remaining (14pt muted), % remaining (14pt `VGTheme.textMuted`) |
@@ -178,7 +179,7 @@ Section label top padding: 24pt. Section label bottom padding: 8pt.
 | Empty state — Glimpses heading | "No glimpses yet today" |
 | Empty state — Glimpses body | "Check in on a goal to appear here." |
 | Empty state — Active Today | "Nobody active in the last 2 hours. Be the first — open the app!" |
-| Empty state — Global feed heading | "Nothing here yet" |
+| Empty state — Global feed heading | "Community is quiet right now" |
 | Empty state — Global feed body | "Be the first to share today." |
 | Empty state — Glowing spotlight | "Check back later — someone will be glowing this week." |
 | Empty state — COMM-01 (no challenge) | "Join a community goal" (button navigating to ExploreView) |
