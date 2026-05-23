@@ -18,11 +18,17 @@ struct ExploreView: View {
                 sectionLabel("Daily Mood")
                 MoodPromptCard(viewModel: viewModel)
 
-                // Plans 20-03 inserts sections here in Wave 2.
+                // Section 3: Vitamin Shelf (EXPLORE-04) — inserted by Plan 20-03
+                sectionLabel("Vitamin Shelf")
+                VitaminShelfSection()
+
                 // Plans 20-04 inserts Trending Now and Stuck Day Gifts sections in Wave 3.
             }
             .padding(.top, 8)
             .padding(.bottom, 24)
+        }
+        .navigationDestination(for: GoalCategory.self) { category in
+            CategoryGoalListView(category: category)
         }
         .background(VGTheme.background.ignoresSafeArea())
         .navigationTitle("Explore")
