@@ -632,22 +632,22 @@ enum ReactionType: String {
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **COMM-01 card data source when user has no active UserChallenge**
    - What we know: `CommunityGoalsLandingView` requires a `UserChallenge` parameter
    - What's unclear: Does the COMM-01 card always show the "featured" community challenge regardless of membership, or only when the user is enrolled?
-   - Recommendation: Show the card for any user; if no `UserChallenge` exists, show a simplified progress card using a `TrendingGoal` from CloudKit or a static featured goal. This matches the spirit of COMM-01 ("participant count, days remaining, % remaining").
+   - RESOLVED: Show the card for any user; if no `UserChallenge` exists, show a simplified progress card using a `TrendingGoal` from CloudKit or a static featured goal. This matches the spirit of COMM-01 ("participant count, days remaining, % remaining").
 
 2. **`fireCount` field on existing CommunityPost records in CloudKit**
    - What we know: `ReactionType.fire` is new; existing CKRecord posts don't have this field
    - What's unclear: Will `record["fireCount"] as? Int` return nil or 0 for old records?
-   - Recommendation: Default to 0 when nil — `let fireCount = (record["fireCount"] as? Int) ?? 0`. CloudKit returns nil for missing fields, so this is safe.
+   - RESOLVED: Default to 0 when nil — `let fireCount = (record["fireCount"] as? Int) ?? 0`. CloudKit returns nil for missing fields, so this is safe.
 
 3. **GoalGlimpse upsert concurrency**
    - What we know: D-01 says "upsert" (one per user per day, overwrites)
    - What's unclear: CloudKit has no native upsert. The implementation must fetch-or-create.
-   - Recommendation: Fetch by `NSPredicate(format: "username == %@ AND dayKey == %@", username, todayKey)`. If found, fetch the record ID and save an updated version. If not found, create new. Wrap in a `do/catch CKError.serverRecordChanged` retry per existing pattern.
+   - RESOLVED: Fetch by `NSPredicate(format: "username == %@ AND dayKey == %@", username, todayKey)`. If found, fetch the record ID and save an updated version. If not found, create new. Wrap in a `do/catch CKError.serverRecordChanged` retry per existing pattern.
 
 ---
 
