@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Social Growth Engine
-status: idle
-last_updated: "2026-05-22T17:30:00.000Z"
-last_activity: 2026-05-22 -- Phase 19 complete (Tip Jar + About Page + Settings — all 6 plans verified)
+status: executing
+last_updated: "2026-05-22T23:52:12Z"
+last_activity: 2026-05-22 -- Phase 20 Plan 01 complete (ExploreView scaffold + daily goal gifter)
 progress:
   total_phases: 9
   completed_phases: 4
-  total_plans: 18
-  completed_plans: 18
-  percent: 44
+  total_plans: 22
+  completed_plans: 19
+  percent: 47
 ---
 
 # Project State
@@ -24,13 +24,13 @@ See: .planning/PROJECT.md (updated 2026-05-15)
 
 ## Current Position
 
-Phase: 19 (tip-jar-about-page-settings) — COMPLETE
-Plan: 6/6 complete
-Status: Idle — awaiting next phase
-Last activity: 2026-05-22 -- Phase 19 complete (all 6 plans verified, human approval received)
+Phase: 20 (explore-tab) — IN PROGRESS
+Plan: 1/4 complete
+Status: executing
+Last activity: 2026-05-22 -- Phase 20 Plan 01 complete (ExploreView scaffold + daily goal gifter)
 
 ```
-v2.0 Progress: [========            ] 44% (4/9 phases, 18/18 plans)
+v2.0 Progress: [=========           ] 47% (4/9 phases, 19/22 plans)
 ```
 
 ## Accumulated Context
@@ -61,6 +61,9 @@ v2.0 Progress: [========            ] 44% (4/9 phases, 18/18 plans)
 | interactiveDismissDisabled applied at TipJarView presenter, not inside TipThankYouView | Keeps TipThankYouView self-contained and dismiss-agnostic |
 | SettingsView.supportMailtoURLString extracted as static let | Allows SettingsViewTests to reference authoritative URL string without instantiating the view |
 | profileVM.toggleProfilePublic delegates isPublic write in SettingsView Privacy toggle | Reuses existing CloudKit-aware write/delete path — Settings adds no new write logic (T-19-04-03) |
+| associatedInspiration = "vg_gifter" set post-insert on gifted goals | Enables @Query filter in ExploreView to count daily accomplishments without a schema migration |
+| Daily gifter gate stored as Date in UserDefaults (vg_explore_gifterDate) | Lightweight persistence for one-per-day gate; Calendar.current.isDateInToday() check is timezone-safe |
+| ShakeDetectorView becomeFirstResponder in viewDidAppear (not viewDidLoad) | Re-acquires first-responder after NavigationStack push/pop; viewDidLoad only fires once per controller lifetime |
 
 ### Blockers
 
