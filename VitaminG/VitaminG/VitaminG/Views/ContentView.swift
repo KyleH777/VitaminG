@@ -30,7 +30,7 @@ struct ContentView: View {
             .tag(AppTab.explore)
 
             NavigationStack {
-                CommunityPlaceholderView()
+                CommunityTabView(selectedTab: $selectedTab)
             }
             .tag(AppTab.community)
 

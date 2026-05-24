@@ -19,6 +19,7 @@ struct CommunityPostCard: View {
     }
     private var thumbsUpCount: Int { (post["thumbsUpCount"] as? Int) ?? 0 }
     private var heartCount: Int { (post["heartCount"] as? Int) ?? 0 }
+    private var fireCount: Int { (post["fireCount"] as? Int) ?? 0 }
     private var photoAsset: CKAsset? { post["photoAsset"] as? CKAsset }
     private var creationDate: Date { post.creationDate ?? Date() }
 
@@ -91,6 +92,13 @@ struct CommunityPostCard: View {
                     isActive: currentUserReaction == .heart,
                     accentColor: accentColor,
                     action: { onReact(.heart) }
+                )
+                ReactionPill(
+                    emoji: "🔥",
+                    count: fireCount,
+                    isActive: currentUserReaction == .fire,
+                    accentColor: accentColor,
+                    action: { onReact(.fire) }
                 )
                 if let onComment {
                     Button { onComment() } label: {
