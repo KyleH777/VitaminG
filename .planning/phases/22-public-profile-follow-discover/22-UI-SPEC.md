@@ -1,11 +1,12 @@
 ---
 phase: 22
 slug: public-profile-follow-discover
-status: draft
+status: approved
 design_system: VGTheme (native SwiftUI — no shadcn/web components)
 shadcn_initialized: false
 preset: not applicable
 created: 2026-05-24
+reviewed_at: 2026-05-24
 ---
 
 # Phase 22 — UI Design Contract
@@ -56,23 +57,22 @@ All values in points (iOS pt, not CSS px). Multiples of 4pt enforced.
 
 ## Typography
 
-All iOS pt sizes. Two weights maximum per the design system.
+All iOS pt sizes. Two weights maximum per the design system. Exactly 4 sizes declared.
 
 | Role | Size | Weight | Font | Line Height | Usage |
 |------|------|--------|------|-------------|-------|
 | Display | 28pt | Regular (400) | `VGTheme.serif(28)` | 1.2 | PublicProfileView section heading "Jordan Kim" display name |
-| Heading | 20pt | Semibold (600) | `.system(size:20, weight:.semibold).fontDesign(.rounded)` | 1.25 | Section labels (uppercased + 0.4 kerning), card titles |
-| Body | 16pt | Regular (400) | `.system(size:16).fontDesign(.rounded)` | 1.5 | Motto/bio text, goal descriptions in cards |
-| Label | 13pt | Semibold (600) | `.system(size:13, weight:.semibold).fontDesign(.rounded)` | 1.3 | Stat values, follower counts, category tags, section eyebrow labels |
-| Caption | 12pt | Regular (400) | `.system(size:12).fontDesign(.rounded)` | 1.4 | Username prefix in cards (`@username`), timestamp hints, "Shared via Vitamin G" footer |
+| Heading | 20pt | Semibold (600) | `.system(size:20, weight:.semibold).fontDesign(.rounded)` | 1.25 | Section labels (uppercased + 0.4 kerning), card titles, stat figures |
+| Body | 16pt | Regular (400) | `.system(size:16).fontDesign(.rounded)` | 1.5 | Motto/bio text, goal descriptions in cards, username hints, button labels, empty state heading (semibold), empty state body |
+| Label | 13pt | Semibold (600) | `.system(size:13, weight:.semibold).fontDesign(.rounded)` | 1.3 | Stat labels, follower counts, category tags, section eyebrow labels, username captions, timestamp hints, footer text |
 
 **Typography rules:**
 - Section eyebrow labels (e.g., "MY PUBLIC GOALS", "DISCOVER"): 13pt semibold, `.kerning(0.4)`, `.textCase(.uppercase)`, `VGTheme.textMuted` color
 - Stat figures (streak count, goal count, cheers given): 20pt semibold serif (`VGTheme.serif(20, weight: .semibold)`)
-- Stat labels beneath figures: 12pt regular SF Rounded, `VGTheme.textMuted`
+- Stat labels beneath figures: 13pt regular SF Rounded, `VGTheme.textMuted`
 - Search placeholder text: system default `.searchable` modifier — do not override font
 - Empty state heading: 16pt semibold SF Rounded
-- Empty state body: 14pt regular SF Rounded, `VGTheme.textSecondary`
+- Empty state body: 16pt regular SF Rounded, `VGTheme.textSecondary`
 
 ---
 
@@ -230,8 +230,8 @@ Toggleable follow button with three states: idle, loading, and followed.
 |----------|-------|
 | Corner radius | 20pt (pill shape) |
 | Horizontal padding | 20pt |
-| Vertical padding | 10pt |
-| Font | 15pt semibold SF Rounded |
+| Vertical padding | 8pt |
+| Font | 16pt semibold SF Rounded |
 | Minimum touch target | 44×44pt |
 | Transition animation | `.spring(response: 0.35, dampingFraction: 0.75)` on background color + label swap |
 | Accessibility label | "Follow {username}" / "Unfollow {username}" |
@@ -258,7 +258,7 @@ Toggleable follow button with three states: idle, loading, and followed.
 | Property | Value |
 |----------|-------|
 | Glyph | "👏" emoji at 28pt, OR `Image(systemName: "hands.clap.fill")` in SF Symbols tinted `VGTheme.accentGold` |
-| Label font | 15pt semibold SF Rounded |
+| Label font | 16pt semibold SF Rounded |
 | Label color | `VGTheme.accentGold` (available) / `VGTheme.textMuted` (used) |
 | Layout | VStack, glyph above label, spacing 4pt |
 | Float animation | Reuse `ApplauseButtonView` floating mechanic: `👏` + giverUsername rises -80pt, `.easeOut(duration: 1.0)`, opacity fades to 0 |
@@ -292,10 +292,10 @@ Compact card for Discover goal search results (DISC-01).
 | Ring arc color | `VGTheme.accentTerra` |
 | Ring track color | `VGTheme.accentTerra.opacity(0.15)` |
 | Ring stroke width | 3pt |
-| Goal title font | 15pt regular SF Rounded, `VGTheme.textPrimary`, line limit 1 |
+| Goal title font | 16pt regular SF Rounded, `VGTheme.textPrimary`, line limit 1 |
 | Metadata font | 13pt regular SF Rounded, `VGTheme.textMuted` |
 | Metadata format | "@{creator} · {Category} · {N} people" |
-| Join button | 13pt semibold, `VGTheme.accentTerra`, background `VGTheme.accentTerra.opacity(0.12)`, cornerRadius 8pt, padding H:12 V:6 |
+| Join button | 13pt semibold, `VGTheme.accentTerra`, background `VGTheme.accentTerra.opacity(0.12)`, cornerRadius 8pt, padding H:12 V:8 |
 | Join button — joined | Label "Joined", background `VGTheme.accentSage.opacity(0.12)`, foreground `VGTheme.accentSage`, disabled |
 | Spacing (ring→text block) | 12pt |
 | Spacing (text block→join) | auto (Spacer in HStack) |
@@ -321,7 +321,7 @@ Card for Discover People segment results (DISC-02).
 | Horizontal padding | 16pt |
 | Vertical padding | 12pt |
 | Avatar size | 40pt — use existing `AvatarView(size: 40)` |
-| Username font | 15pt semibold SF Rounded, `VGTheme.textPrimary` |
+| Username font | 16pt semibold SF Rounded, `VGTheme.textPrimary` |
 | Username format | "@{username}" |
 | Metadata font | 13pt regular SF Rounded, `VGTheme.textMuted` |
 | Metadata format | "{N} goals · {N} cheers given" |
@@ -363,14 +363,14 @@ ScrollView (VGTheme.background)
   ├── Hero header (padding top: 24pt)
   │     AvatarView(size: 80)
   │     Display name — VGTheme.serif(28)
-  │     @username — 14pt regular, VGTheme.textMuted
-  │     Motto/bio — 15pt regular SF Rounded, VGTheme.textSecondary, maxLines 3
+  │     @username — 13pt regular, VGTheme.textMuted
+  │     Motto/bio — 16pt regular SF Rounded, VGTheme.textSecondary, maxLines 3
   │
   ├── Stats row (padding H: 24, V: 16)
   │     [Streak value + "day streak"] | [Goals value + "goals"] | [Cheers value + "cheers given"]
   │     Three cells, equal width, centered, dividers between
   │     Value font: VGTheme.serif(20, weight: .semibold)
-  │     Label font: 12pt regular SF Rounded, VGTheme.textMuted
+  │     Label font: 13pt regular SF Rounded, VGTheme.textMuted
   │
   ├── Action row (padding H: 24, top: 16, bottom: 24)
   │     HStack(spacing: 16)
@@ -387,8 +387,8 @@ ScrollView (VGTheme.background)
   ├── Separator (VGTheme.separator, H: 16)
   │
   └── Footer (padding H: 16, top: 16, bottom: 24)
-        "Report or Block" — 13pt light, VGTheme.terra (link button)
-        "Shared via Vitamin G" — 12pt, VGTheme.textFaint, below
+        "Report or Block" — 13pt regular, VGTheme.terra (link button)
+        "Shared via Vitamin G" — 13pt, VGTheme.textFaint, below
 ```
 
 **State handling:**
@@ -552,8 +552,8 @@ No registry vetting gate required. All components are implemented natively in Sw
 - [ ] Dimension 1 Copywriting: PASS
 - [ ] Dimension 2 Visuals: PASS
 - [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: REVISED — FollowButton vertical padding 10pt→8pt; GoalSearchResultCard Join button V padding 6pt→8pt; all spacing values verified as multiples of 4pt
 - [ ] Dimension 6 Registry Safety: PASS
 
 **Approval:** pending
