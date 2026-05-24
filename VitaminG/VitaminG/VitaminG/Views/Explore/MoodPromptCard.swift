@@ -81,13 +81,14 @@ struct MoodPromptCard: View {
     }
 
     private func dismiss() {
-        // Dismiss via checkmark button without selecting a mood — still marks date gate
+        // Dismiss via checkmark button without selecting a mood — marks date gate only,
+        // no mood value stored (distinguishable from a real .okay selection).
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         if reduceMotion {
-            viewModel.selectMood(.okay)  // use .okay as the "dismissed without selection" sentinel
+            viewModel.dismissMoodPrompt()
         } else {
             withAnimation(.easeOut(duration: 0.3)) {
-                viewModel.selectMood(.okay)
+                viewModel.dismissMoodPrompt()
             }
         }
     }

@@ -79,6 +79,14 @@ final class ExploreViewModel {
         // hasMoodSelectedToday is computed; no stored property to update.
     }
 
+    /// Call when user dismisses the mood prompt without selecting a mood.
+    /// Writes the date gate so the card collapses for today without recording
+    /// a mood enum value — distinguishable from a real .okay selection by
+    /// the absence of a stored mood value.
+    func dismissMoodPrompt() {
+        UserDefaults.standard.set(Date(), forKey: Keys.moodDate)
+    }
+
     // MARK: - Trending Now State (EXPLORE-05)
 
     /// Loaded async from CloudKit. Empty until fetch completes.
