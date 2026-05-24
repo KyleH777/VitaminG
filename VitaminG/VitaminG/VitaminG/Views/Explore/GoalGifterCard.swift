@@ -114,9 +114,9 @@ struct GoalGifterCard: View {
         )
         if let inserted = try? goalVM.addGoal(input: input, context: modelContext) {
             inserted.associatedInspiration = "vg_gifter"
+            viewModel.markGiftedToday()
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            withAnimation { showingConfetti = true }
         }
-        viewModel.markGiftedToday()
-        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        withAnimation { showingConfetti = true }
     }
 }
