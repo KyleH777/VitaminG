@@ -36,7 +36,7 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
 - [x] **Phase 17: Onboarding Overhaul** - Apple Sign-In only, unique username, profile picture upload, permission priming slides, Welcome Back screen, report/block moderation
 - [x] **Phase 18: Home Tab + Goals Flow Enhancements** - New Home dashboard + enhanced goal creation wizard + goal detail page (completed 2026-05-20)
 - [x] **Phase 19: Tip Jar + About Page + Settings** - StoreKit 2 consumable tip jar, About page with founder bio, Settings page, notification picker (completed 2026-05-22)
-- [ ] **Phase 20: Explore Tab** - Shake/tap daily goal gifter, mood prompt, Vitamin Shelf, Trending Now, 3 Gifts for Stuck Days
+- [x] **Phase 20: Explore Tab** - Shake/tap daily goal gifter, mood prompt, Vitamin Shelf, Trending Now, 3 Gifts for Stuck Days (completed 2026-05-24)
 - [x] **Phase 21: Community Tab Redesign** - Today's Glimpses carousel, Active Today, Glowing This Week, community feed with reactions/replies/photos, applause system (completed 2026-05-24)
 - [ ] **Phase 22: Public Profile + Follow + Discover** - Public profile redesign, follow/cheer system, Discover page with goal search and people search
 - [ ] **Phase 23: Milestone Features + Streak Freeze** - Streak freeze, achievement unlocked screens, achievement sharing, goal completed celebration
