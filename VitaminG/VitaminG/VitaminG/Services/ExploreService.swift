@@ -21,12 +21,14 @@ enum ExploreService {
                 guard
                     let rawTitle = record["title"] as? String,
                     let categoryStr = record["category"] as? String,
-                    let participantCount = record["participantCount"] as? Int,
-                    let completedCount = record["completedCount"] as? Int,
                     let category = GoalCategory(rawValue: categoryStr)
                 else { return nil }
-                // ASVS V5 — sanitize CloudKit string before display
-                let title = InputSanitizer.sanitize(rawTitle)
+                // ASVS V5 — sanitize CloudKit string for HTML injection chars, cap length
+                let title = String(InputSanitizer.sanitizeForPublic(rawTitle).prefix(150))
+                // Clamp crowd counts to prevent integer-formatting surprises and floating-point
+                // precision loss in communityProgress when values approach Int.max
+                let participantCount = min(record["participantCount"] as? Int ?? 0, 10_000_000)
+                let completedCount   = min(record["completedCount"]   as? Int ?? 0, participantCount)
                 return TrendingGoalItem(
                     id: record.recordID.recordName,
                     title: title,
