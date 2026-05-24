@@ -15,6 +15,9 @@ struct PublicProfileView: View {
     @State private var reportMailSubject: String = ""
     @State private var reportMailBody: String = ""
 
+    // MARK: - SOC-03: Cheers given counter
+    @State private var cheersGivenCount: Int = 0
+
     @AppStorage("vg_appleUserID") private var myAppleUserID: String = ""
 
     var body: some View {
@@ -37,6 +40,9 @@ struct PublicProfileView: View {
         }
         .onAppear {
             viewModel.fetchProfile(recordID: recordID)
+        }
+        .task {
+            cheersGivenCount = (try? await CommunityService.fetchApplauseGivenCount(giverUsername: recordID)) ?? 0
         }
         .accessibilityHint("Read-only view of a shared profile.")
         .alert("Block this user?", isPresented: $showBlockConfirm) {
@@ -117,6 +123,12 @@ struct PublicProfileView: View {
                     .fontDesign(.rounded)
                     .foregroundStyle(.secondary)
                     .padding(.bottom, 8)
+
+                Text("\(cheersGivenCount) cheers given")
+                    .font(.system(size: 14))
+                    .fontDesign(.rounded)
+                    .foregroundStyle(VGTheme.textMuted)
+                    .accessibilityLabel("\(cheersGivenCount) cheers given to others")
 
                 Button(action: { showBlockConfirm = true }) {
                     Text("Report or Block")

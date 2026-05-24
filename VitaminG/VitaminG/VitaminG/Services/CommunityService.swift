@@ -340,6 +340,17 @@ extension CommunityService {
         }
     }
 
+    /// Returns the count of Applause records given BY giverUsername (SOC-03).
+    /// Read-only, no sort descriptor needed — only the count is required.
+    static func fetchApplauseGivenCount(giverUsername: String) async throws -> Int {
+        let db = CKContainer.default().publicCloudDatabase
+        let sanitized = InputSanitizer.sanitizeForPublic(giverUsername)
+        let predicate = NSPredicate(format: "giverUsername == %@", sanitized)
+        let query = CKQuery(recordType: applauseRecordType, predicate: predicate)
+        let (results, _) = try await db.records(matching: query, resultsLimit: 500)
+        return results.filter { (try? $0.1.get()) != nil }.count
+    }
+
     /// Fetches Applause records received by recipientUsername (most recent first).
     static func fetchReceivedApplause(recipientUsername: String) async throws -> [ApplauseItem] {
         let db = CKContainer.default().publicCloudDatabase
