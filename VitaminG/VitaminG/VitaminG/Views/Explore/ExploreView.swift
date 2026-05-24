@@ -3,7 +3,6 @@ import SwiftData
 
 struct ExploreView: View {
     @State private var viewModel = ExploreViewModel()
-    @State private var goalVM = GoalViewModel()
     @Environment(\.modelContext) private var modelContext
     @Query private var allGoals: [Goal]
 
