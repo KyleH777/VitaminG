@@ -218,7 +218,20 @@ Plans:
   5. User switches to the People segment in Discover search and finds users by username prefix; each result shows a Follow button
   6. User taps Join on a goal in Discover results; the goal appears in their goal list and the participant count increments
 
-**Plans**: TBD
+**Plans**: 5 plans
+Plans:
+
+- [ ] 22-01-PLAN.md — Wave 0: SchemaV9 (motto + cloudKitPublicGoalRecordID), CommunityHubModels Phase 22 structs, 5 RED test files, CloudKit Console deployment (PROF-01, PROF-02, PROF-04, DISC-01, DISC-02, DISC-04)
+- [ ] 22-02-PLAN.md — Services: ProfileSharingService expansion (publish/fetch/follow) + new PublicGoalService (CRUD + search + increment + backfill + sync) (PROF-01, PROF-02, PROF-04, DISC-01, DISC-02, DISC-04)
+- [ ] 22-03-PLAN.md — ViewModels + 5 Components: PublicProfileViewModel + DiscoverViewModel + PublicGoalCard/FollowButton/CheerButton/GoalSearchResultCard/PeopleSearchResultCard (PROF-01, PROF-02, PROF-03, PROF-04, DISC-01, DISC-02, DISC-04)
+- [ ] 22-04-PLAN.md — Launch + check-in hooks + ProfileEditSheet motto field (D-07, D-08, D-11, D-12) (PROF-01)
+- [ ] 22-05-PLAN.md — Screen integration: PublicProfileView redesign + ExploreView .searchable + DiscoverOverlayView + human verify (PROF-01, PROF-02, PROF-03, PROF-04, DISC-01, DISC-02, DISC-03, DISC-04)
+
+**Wave 1**: 22-01 (test scaffolding + SchemaV9 + CloudKit Console human checkpoint)
+**Wave 2**: 22-02 (services — depends on 22-01)
+**Wave 3**: 22-03 and 22-04 run in parallel (no overlapping files; both depend on 22-02)
+**Wave 4**: 22-05 (UI integration + human verify — depends on 22-03 and 22-04)
+
 **UI hint**: yes
 
 ### Phase 23: Milestone Features + Streak Freeze
