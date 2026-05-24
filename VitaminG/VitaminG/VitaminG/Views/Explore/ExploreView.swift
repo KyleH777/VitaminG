@@ -29,6 +29,17 @@ struct ExploreView: View {
                 // Section 5: Gifts for Stuck Days (EXPLORE-06) — inserted by Plan 20-04
                 sectionLabel("Gifts for Stuck Days")
                 StuckDayGiftsSection(viewModel: viewModel)
+
+                // Section 6: Discover Challenges (D-06) — migrated from CommunityTabView
+                Divider()
+                    .padding(.horizontal, 16)
+                Text("DISCOVER CHALLENGES")
+                    .font(.system(size: 20, weight: .semibold))
+                    .fontDesign(.rounded)
+                    .foregroundStyle(VGTheme.textPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 24)
+                ChallengeDiscoveryView()
             }
             .padding(.top, 8)
             .padding(.bottom, 24)

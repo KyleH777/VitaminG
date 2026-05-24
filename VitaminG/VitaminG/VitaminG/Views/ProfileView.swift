@@ -12,6 +12,7 @@ struct ProfileView: View {
     @State private var showingPhotoPicker = false
     @State private var cameraPermissionDenied = false
     @State private var selectedPhotoItem: PhotosPickerItem? = nil
+    @State private var receivedApplause: [ApplauseItem] = []
 
     @Query private var goals: [Goal]
     @Query private var completionEvents: [CompletionEvent]
@@ -59,11 +60,20 @@ struct ProfileView: View {
                 shareAndSettings
             }
         }
+        .overlay(alignment: .bottom) {
+            ApplauseStreamOverlay(receivedApplause: receivedApplause)
+                .ignoresSafeArea()
+        }
         .background(VGTheme.background)
         .toolbar(.hidden, for: .navigationBar)
         .onAppear {
             viewModel.loadOrCreateProfile(context: modelContext)
             Task { await viewModel.loadReactionCount() }
+        }
+        .task {
+            if let username = viewModel.profile?.displayName, !username.isEmpty {
+                receivedApplause = (try? await CommunityService.fetchReceivedApplause(recipientUsername: username)) ?? []
+            }
         }
         .sheet(isPresented: $viewModel.showingEditSheet) {
             ProfileEditSheet(viewModel: viewModel)
