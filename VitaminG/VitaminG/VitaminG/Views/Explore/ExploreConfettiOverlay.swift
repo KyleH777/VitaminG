@@ -27,6 +27,10 @@ struct ExploreConfettiOverlay: View {
         }
         .background(Color.black.opacity(0.3).ignoresSafeArea())
         .onTapGesture { onDismiss() }
+        .task {
+            try? await Task.sleep(for: .seconds(4))
+            onDismiss()
+        }
     }
 
     private var confettiView: some View {
