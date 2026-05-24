@@ -198,6 +198,65 @@ final class CommunityHubViewModel {
         ApplauseGate.markApplauseGiven(to: recipientUsername, defaults: defaults)
     }
 
+    // MARK: - Toggle reaction (delegates to CommunityFeedViewModel pattern)
+
+    /// Delegates reaction toggling to CommunityService.toggleReaction.
+    /// Returns the updated CKRecord on success, nil on failure.
+    @discardableResult
+    func toggleReaction(
+        recordID: CKRecord.ID,
+        reactionType: ReactionType,
+        add: Bool
+    ) async -> CKRecord? {
+        do {
+            return try await CommunityService.toggleReaction(
+                recordID: recordID,
+                reactionType: reactionType,
+                add: add
+            )
+        } catch {
+            return nil
+        }
+    }
+
+    // MARK: - Report post
+
+    /// Delegates post reporting to CommunityService.reportPost.
+    /// Returns new report count on success, -1 on failure.
+    func reportPost(recordID: CKRecord.ID, reporterID: String) async -> Int {
+        do {
+            return try await CommunityService.reportPost(
+                recordID: recordID,
+                reporterID: reporterID
+            )
+        } catch {
+            return -1
+        }
+    }
+
+    // MARK: - Write reply
+
+    /// Delegates reply writing to CommunityService.writeReply.
+    /// Returns true on successful write, false on profanity rejection or service error.
+    @discardableResult
+    func writeReply(
+        parentPostID: String,
+        text: String,
+        authorDisplayName: String?,
+        authorColorHex: String?
+    ) async -> Bool {
+        do {
+            return try await CommunityService.writeReply(
+                parentPostID: parentPostID,
+                text: text,
+                authorDisplayName: authorDisplayName,
+                authorColorHex: authorColorHex
+            )
+        } catch {
+            return false
+        }
+    }
+
     // MARK: - Write applause
 
     /// Writes an applause record to CloudKit and marks the daily gate, only when
