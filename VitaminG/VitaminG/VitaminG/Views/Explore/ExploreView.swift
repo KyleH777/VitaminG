@@ -44,9 +44,6 @@ struct ExploreView: View {
             .padding(.top, 8)
             .padding(.bottom, 24)
         }
-        .navigationDestination(for: GoalCategory.self) { category in
-            CategoryGoalListView(category: category)
-        }
         .background(VGTheme.background.ignoresSafeArea())
         .navigationTitle("Explore")
         .toolbar {

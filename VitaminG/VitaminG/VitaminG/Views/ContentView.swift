@@ -26,6 +26,9 @@ struct ContentView: View {
 
             NavigationStack {
                 ExploreView()
+                    .navigationDestination(for: GoalCategory.self) { category in
+                        CategoryGoalListView(category: category)
+                    }
             }
             .tag(AppTab.explore)
 
