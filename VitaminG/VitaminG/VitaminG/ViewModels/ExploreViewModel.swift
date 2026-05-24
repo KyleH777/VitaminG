@@ -26,6 +26,9 @@ final class ExploreViewModel {
     /// The goal shown after activation. nil = not yet activated today OR already gifted.
     var dispensedGoal: GifterGoal? = nil
 
+    /// Tracks last activation time for debounce guard — not persisted.
+    private var lastActivationDate: Date? = nil
+
     /// True if the gifter was activated today (one-per-day gate).
     var hasGiftedToday: Bool {
         guard let stored = UserDefaults.standard.object(forKey: Keys.gifterDate) as? Date else {
@@ -37,10 +40,13 @@ final class ExploreViewModel {
     // MARK: - Actions
 
     /// Called by ShakeDetectorView and by the "Surprise me" button. Enforces one-per-day gate.
-    /// Returns the GifterGoal to add, or nil if already used today.
+    /// Returns the GifterGoal to add, or nil if already used today or within debounce window.
     @discardableResult
     func onGifterActivated() -> GifterGoal? {
         guard !hasGiftedToday else { return nil }
+        // Debounce: ignore activations within 500 ms of each other (shake + drag overlap)
+        if let last = lastActivationDate, Date().timeIntervalSince(last) < 0.5 { return nil }
+        lastActivationDate = Date()
         let goal = ExploreContent.todaysGifterGoal
         dispensedGoal = goal
         withAnimation(.interpolatingSpring(stiffness: 300, damping: 10)) {
