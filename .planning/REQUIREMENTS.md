@@ -53,19 +53,19 @@
 
 ### Community Tab Redesign (COMM)
 
-- [ ] **COMM-01**: Community goal landing page shows a large progress circle with completion % in the center, count of people participating, days remaining, and percentage remaining to complete
-- [ ] **COMM-02**: "Today's Glimpses" carousel shows cycling community member goal cards (auto-advance every 5 seconds); each card shows avatar, username, goal title, progress %, and optional photo; pauses auto-advance on manual swipe
-- [ ] **COMM-03**: Tapping a Today's Glimpses card opens that user's public goal page — shows their goal details, comments, and photos
-- [ ] **COMM-04**: "Active Today" section shows users who were active in the last 2 hours (single `lastActive` write at app open — not a live heartbeat); tapping a user opens their profile
-- [ ] **COMM-05**: "Glowing This Week" spotlight shows one featured user per week (deterministic weekly selection; consistent across all clients via `weekOfYear % eligibleCount`); viewer can applaud them
-- [ ] **COMM-06**: Community feed shows active users at top, then most liked today, then most recent, then a random community goal comment; user can scroll, react (❤️🔥👍), or reply
-- [ ] **COMM-07**: Community posts support photo attachment — user can add a photo from library or camera when creating a post; photos stored as CKAsset in CloudKit public DB
+- [x] **COMM-01**: Community goal landing page shows a large progress circle with completion % in the center, count of people participating, days remaining, and percentage remaining to complete
+- [x] **COMM-02**: "Today's Glimpses" carousel shows cycling community member goal cards (auto-advance every 5 seconds); each card shows avatar, username, goal title, progress %, and optional photo; pauses auto-advance on manual swipe
+- [x] **COMM-03**: Tapping a Today's Glimpses card opens that user's public goal page — shows their goal details, comments, and photos
+- [x] **COMM-04**: "Active Today" section shows users who were active in the last 2 hours (single `lastActive` write at app open — not a live heartbeat); tapping a user opens their profile
+- [x] **COMM-05**: "Glowing This Week" spotlight shows one featured user per week (deterministic weekly selection; consistent across all clients via `weekOfYear % eligibleCount`); viewer can applaud them
+- [x] **COMM-06**: Community feed shows active users at top, then most liked today, then most recent, then a random community goal comment; user can scroll, react (❤️🔥👍), or reply
+- [x] **COMM-07**: Community posts support photo attachment — user can add a photo from library or camera when creating a post; photos stored as CKAsset in CloudKit public DB
 
 ### Applause System (SOC)
 
-- [ ] **SOC-01**: User can give 👏 applause to another user — limited to once per day per recipient; applause emoji animates floating upward with the giver's username label beneath it in SwiftUI
-- [ ] **SOC-02**: Profile owner sees an ambient stream of floating username+👏 pairs on their own profile view for recent received applause; applause giver's username also appears on the goal they applauded
-- [ ] **SOC-03**: "Cheers given" counter displayed on the user's public profile card (how many applause they have sent)
+- [x] **SOC-01**: User can give 👏 applause to another user — limited to once per day per recipient; applause emoji animates floating upward with the giver's username label beneath it in SwiftUI
+- [x] **SOC-02**: Profile owner sees an ambient stream of floating username+👏 pairs on their own profile view for recent received applause; applause giver's username also appears on the goal they applauded
+- [x] **SOC-03**: "Cheers given" counter displayed on the user's public profile card (how many applause they have sent)
 
 ### Public Profile (PROF)
 
@@ -190,16 +190,16 @@
 | EXPLORE-04 | Phase 20 | Pending |
 | EXPLORE-05 | Phase 20 | Pending |
 | EXPLORE-06 | Phase 20 | Pending |
-| COMM-01 | Phase 21 | Pending |
-| COMM-02 | Phase 21 | Pending |
-| COMM-03 | Phase 21 | Pending |
-| COMM-04 | Phase 21 | Pending |
-| COMM-05 | Phase 21 | Pending |
-| COMM-06 | Phase 21 | Pending |
-| COMM-07 | Phase 21 | Pending |
-| SOC-01 | Phase 21 | Pending |
-| SOC-02 | Phase 21 | Pending |
-| SOC-03 | Phase 21 | Pending |
+| COMM-01 | Phase 21 | Complete |
+| COMM-02 | Phase 21 | Complete |
+| COMM-03 | Phase 21 | Complete |
+| COMM-04 | Phase 21 | Complete |
+| COMM-05 | Phase 21 | Complete |
+| COMM-06 | Phase 21 | Complete |
+| COMM-07 | Phase 21 | Complete |
+| SOC-01 | Phase 21 | Complete |
+| SOC-02 | Phase 21 | Complete |
+| SOC-03 | Phase 21 | Complete |
 | PROF-01 | Phase 22 | Pending |
 | PROF-02 | Phase 22 | Pending |
 | PROF-03 | Phase 22 | Pending |

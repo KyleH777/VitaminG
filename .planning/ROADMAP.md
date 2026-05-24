@@ -37,7 +37,7 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
 - [x] **Phase 18: Home Tab + Goals Flow Enhancements** - New Home dashboard + enhanced goal creation wizard + goal detail page (completed 2026-05-20)
 - [x] **Phase 19: Tip Jar + About Page + Settings** - StoreKit 2 consumable tip jar, About page with founder bio, Settings page, notification picker (completed 2026-05-22)
 - [ ] **Phase 20: Explore Tab** - Shake/tap daily goal gifter, mood prompt, Vitamin Shelf, Trending Now, 3 Gifts for Stuck Days
-- [ ] **Phase 21: Community Tab Redesign** - Today's Glimpses carousel, Active Today, Glowing This Week, community feed with reactions/replies/photos, applause system
+- [x] **Phase 21: Community Tab Redesign** - Today's Glimpses carousel, Active Today, Glowing This Week, community feed with reactions/replies/photos, applause system (completed 2026-05-24)
 - [ ] **Phase 22: Public Profile + Follow + Discover** - Public profile redesign, follow/cheer system, Discover page with goal search and people search
 - [ ] **Phase 23: Milestone Features + Streak Freeze** - Streak freeze, achievement unlocked screens, achievement sharing, goal completed celebration
 - [ ] **Phase 24: Widget Enhancements** - Update widgets for v2.0 data, wire WidgetCenter.reloadAllTimelines() to all new state changes
@@ -189,18 +189,18 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 21-01-PLAN.md — Wave 0 scaffolding: CommunityHubModels value types + 4 RED test stub files (COMM-02, COMM-04, COMM-05, COMM-06, SOC-01)
-- [ ] 21-02-PLAN.md — CommunityService 9 new CloudKit methods + ReactionType.fire + GoalViewModel.addCheckIn injection (COMM-01–07, SOC-01–03)
+- [x] 21-01-PLAN.md — Wave 0 scaffolding: CommunityHubModels value types + 4 RED test stub files (COMM-02, COMM-04, COMM-05, COMM-06, SOC-01)
+- [x] 21-02-PLAN.md — CommunityService 9 new CloudKit methods + ReactionType.fire + GoalViewModel.addCheckIn injection (COMM-01–07, SOC-01–03)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 21-03-PLAN.md — CommunityHubViewModel + ApplauseButtonView + ApplauseStreamOverlay; 3 test files GREEN (COMM-02, COMM-04, COMM-05, SOC-01, SOC-02, SOC-03)
-- [ ] 21-04-PLAN.md — PostComposeSheet camera/confirmationDialog extension + CommunityReplySheetView; Phase21ReplyTests GREEN (COMM-06, COMM-07, SOC-01)
+- [x] 21-03-PLAN.md — CommunityHubViewModel + ApplauseButtonView + ApplauseStreamOverlay; 3 test files GREEN (COMM-02, COMM-04, COMM-05, SOC-01, SOC-02, SOC-03)
+- [x] 21-04-PLAN.md — PostComposeSheet camera/confirmationDialog extension + CommunityReplySheetView; Phase21ReplyTests GREEN (COMM-06, COMM-07, SOC-01)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 21-05-PLAN.md — GlimpsesCarouselSection, ActiveTodaySection, GlowingSpotlightSection, GlobalFeedSection (COMM-02–07, SOC-01–03)
-- [ ] 21-06-PLAN.md — CommunityTabView rebuild + ContentView swap + CommunityPostCard 🔥 + ExploreView challenge migration + ProfileView SOC-02; human verify (COMM-01–07, SOC-01–03)
+- [x] 21-05-PLAN.md — GlimpsesCarouselSection, ActiveTodaySection, GlowingSpotlightSection, GlobalFeedSection (COMM-02–07, SOC-01–03)
+- [x] 21-06-PLAN.md — CommunityTabView rebuild + ContentView swap + CommunityPostCard 🔥 + ExploreView challenge migration + ProfileView SOC-02; human verify (COMM-01–07, SOC-01–03)
 
 **UI hint**: yes
 
@@ -275,7 +275,7 @@ Plans:
 | 18. Home Tab + Goals Flow Enhancements | v2.0 | 5/5 | Complete   | 2026-05-20 |
 | 19. Tip Jar + About Page + Settings | v2.0 | 6/6 | Complete   | 2026-05-22 |
 | 20. Explore Tab | v2.0 | 0/? | Not started | - |
-| 21. Community Tab Redesign | v2.0 | 0/? | Not started | - |
+| 21. Community Tab Redesign | v2.0 | 6/6 | Complete   | 2026-05-24 |
 | 22. Public Profile + Follow + Discover | v2.0 | 0/? | Not started | - |
 | 23. Milestone Features + Streak Freeze | v2.0 | 0/? | Not started | - |
 | 24. Widget Enhancements | v2.0 | 0/? | Not started | - |
