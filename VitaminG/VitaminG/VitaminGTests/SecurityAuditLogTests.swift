@@ -4,16 +4,15 @@ import XCTest
 
 final class SecurityAuditLogTests: XCTestCase {
 
-    private let key = "vg_audit_log"
     private let log = SecurityAuditLog.shared
 
     override func setUp() {
         super.setUp()
-        UserDefaults.standard.removeObject(forKey: key)
+        log.clearForTesting()
     }
 
     override func tearDown() {
-        UserDefaults.standard.removeObject(forKey: key)
+        log.clearForTesting()
         super.tearDown()
     }
 
@@ -68,7 +67,7 @@ final class SecurityAuditLogTests: XCTestCase {
     }
 
     func testLog_corruptedDefaults_startsClean() {
-        UserDefaults.standard.set("not-json".data(using: .utf8), forKey: key)
+        UserDefaults.standard.set("not-json".data(using: .utf8), forKey: log.defaultsKey)
         log.log(AuditEvent(eventType: .appLaunch))
         let events = log.recentEvents()
         XCTAssertEqual(events.count, 1)

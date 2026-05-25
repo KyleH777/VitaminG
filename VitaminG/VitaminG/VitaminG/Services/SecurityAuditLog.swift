@@ -38,7 +38,7 @@ final class SecurityAuditLog {
     static let shared = SecurityAuditLog()
 
     private let maxEntries = 500
-    private let defaultsKey = "vg_audit_log"
+    let defaultsKey = "vg_audit_log"
     private let queue = DispatchQueue(label: "com.vg.audit", qos: .utility)
 
     private init() {}
@@ -70,6 +70,14 @@ final class SecurityAuditLog {
             return json
         }
     }
+
+    #if DEBUG
+    func clearForTesting() {
+        queue.sync {
+            UserDefaults.standard.removeObject(forKey: defaultsKey)
+        }
+    }
+    #endif
 
     private func loadEvents() -> [AuditEvent] {
         guard let data = UserDefaults.standard.data(forKey: defaultsKey) else { return [] }
