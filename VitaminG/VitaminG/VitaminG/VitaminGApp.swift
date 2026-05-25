@@ -14,6 +14,7 @@ struct VitaminGApp: App {
     /// Stored as a `let` property so the Task is never deallocated (D-08, T-19-02-04).
     /// A local variable would be released when `init()` returns, stopping the listener.
     private let transactionUpdatesTask: Task<Void, Never>
+    private let biometricService = BiometricLockService.shared
 
     init() {
         // Step 1: Create and store AppRouter before anything else.
@@ -69,6 +70,7 @@ struct VitaminGApp: App {
 
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage("vg_colorScheme") private var colorSchemePref: ColorSchemePreference = .system
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
@@ -111,6 +113,17 @@ struct VitaminGApp: App {
                 // Sets pendingChallengeCheckInID; ContentView sheet binding resolves UserChallenge from SwiftData.
                 else if let challengeID = DeepLinkParser.challengeCheckInID(from: url) {
                     router.pendingChallengeCheckInID = challengeID
+                }
+            }
+            .fullScreenCover(isPresented: Binding(
+                get: { biometricService.isLocked },
+                set: { _ in }
+            )) {
+                LockScreen()
+            }
+            .onChange(of: scenePhase) { _, newPhase in
+                if newPhase == .background || newPhase == .inactive {
+                    biometricService.lockIfEnabled()
                 }
             }
         }
