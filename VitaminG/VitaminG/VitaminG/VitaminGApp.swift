@@ -86,6 +86,7 @@ struct VitaminGApp: App {
             // presented sheets (D-11, 19-RESEARCH.md Pitfall 3). nil = .system (OS decides).
             .preferredColorScheme(colorSchemePref.colorScheme)
             .task {
+                SecurityAuditLog.shared.log(AuditEvent(eventType: .appLaunch))
                 // Schedule win reminder on launch (Phase 11, D-12)
                 // CR-01: Guard on authorization status — mirror SettingsView pattern.
                 // Calling UNUserNotificationCenter.add without permission is a no-op on the

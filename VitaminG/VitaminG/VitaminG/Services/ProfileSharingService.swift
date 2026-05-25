@@ -49,6 +49,7 @@ enum ProfileSharingService {
         }
 
         let savedRecord = try await publicDB.save(record)
+        SecurityAuditLog.shared.log(AuditEvent(eventType: .profileEdited))
         return savedRecord.recordID.recordName
     }
 
