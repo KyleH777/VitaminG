@@ -99,6 +99,8 @@ CloudKit imposes its own server-side rate limits per container. When the server 
 | Duplicate Cheer writes | ApplauseGate (once/day per recipient) | Phase 21 |
 | CloudKit quota exhaustion | Server-side CKError.requestRateLimited handling | Phase 22 |
 | Participant count drift | Accepted risk — cosmetic; requires real Join action | Accepted |
+| No incident reconstruction | SecurityAuditLog 500-event ring buffer | Phase 22+ |
+| Device sharing / shoulder surfing | BiometricLockService opt-in gate | Phase 22+ |
 
 ---
 
@@ -107,6 +109,43 @@ CloudKit imposes its own server-side rate limits per container. When the server 
 - **Per-phase:** Verify this document is updated before executing any phase that adds new CloudKit write paths.
 - **Pre-release:** Run `grep -rn "InputSanitizer" VitaminG/VitaminG/VitaminG/Services/` and confirm every new String CKRecord write is covered.
 - **Post-release:** Monitor CloudKit Console for `requestRateLimited` spikes. If sustained > 1% of requests, tighten client-side limits.
+
+---
+
+## 10. Audit Event Logging
+
+`SecurityAuditLog.shared.log(_:)` is called at all security-relevant call sites. Events are
+written to a UserDefaults JSON ring-buffer (key: `vg_audit_log`, max 500 entries) on a private
+serial queue. Events survive app restart within the 500-entry window. Not synced to iCloud.
+
+| Event | Call Site |
+|-------|-----------|
+| `.appLaunch` | `VitaminGApp` `.task` |
+| `.userBlocked` | `BlockListService.blockUser(appleUserID:)` |
+| `.userUnblocked` | `BlockListService.unblockUser(appleUserID:)` |
+| `.profileEdited` | `ProfileSharingService.publishProfile()` on success |
+| `.followWritten` | `ProfileSharingService.writeFollow()` on success (Phase 22) |
+| `.followRateLimitHit` | `ProfileSharingService.writeFollow()` on 429 throw (Phase 22) |
+| `.searchRateLimitHit` | `DiscoverViewModel.onSearchTextChanged` on cap hit (Phase 22) |
+| `.biometricUnlock` | `BiometricLockService.authenticate()` on success |
+| `.biometricFailed` | `BiometricLockService.authenticate()` on LAError |
+
+**Control:** `SecurityAuditLog` (Services/SecurityAuditLog.swift)
+**Verify:** `grep -c "SecurityAuditLog.shared.log" VitaminG/VitaminG/VitaminG/Services/BlockListService.swift` ≥ 2
+
+---
+
+## 11. Biometric App Lock
+
+`BiometricLockService` (Services/BiometricLockService.swift) provides an opt-in Face ID / Touch ID
+lock gate. When enabled (UserDefaults key: `vg_biometric_lock_enabled`), `VitaminGApp` calls
+`lockIfEnabled()` on `scenePhase` becoming `.background` or `.inactive`. `LockScreen` is
+presented via `.fullScreenCover` while `isLocked == true`. Uses
+`LAPolicy.deviceOwnerAuthentication` — falls back to device passcode if biometrics unavailable.
+Defaults to OFF.
+
+**Control:** `BiometricLockService` singleton + `VitaminGApp` scene phase observer.
+**Verify:** Settings → Privacy → "Require Face ID / Touch ID" toggle visible. Enable → background → foreground → auth prompt appears.
 
 ---
 
