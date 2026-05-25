@@ -2,6 +2,9 @@
 import XCTest
 @testable import VitaminG
 
+// [Rule 3 - Blocking] Fixed Swift 6 actor isolation errors: BiometricLockService is @MainActor;
+// added @MainActor to the test class so all accesses occur on the correct actor.
+@MainActor
 final class BiometricLockServiceTests: XCTestCase {
 
     private let service = BiometricLockService.shared
