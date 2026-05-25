@@ -79,7 +79,7 @@ completed: 2026-05-25
 - **Duration:** ~75 min
 - **Started:** 2026-05-25T18:10:00Z
 - **Completed:** 2026-05-25T19:25:44Z
-- **Tasks:** 3 of 4 (Task 4 is checkpoint:human-verify — CloudKit Console deployment pending)
+- **Tasks:** 4 of 4 (Task 4 human-verified: CloudKit schema deployed to Production)
 - **Files modified:** 10
 
 ## Accomplishments
@@ -149,11 +149,9 @@ Each task was committed atomically:
 
 ## Checkpoint: Task 4 — CloudKit Console Deployment
 
-**Status:** PENDING — human action required
+**Status:** COMPLETE — human-verified 2026-05-25
 
-Task 4 is a `checkpoint:human-verify` gate requiring deployment of `PublicGoal` and `Follow` record types to CloudKit Production via CloudKit Console. The code is fully ready — plans 02-05 can execute once this deployment is confirmed. See Task 4 in the plan for the exact CloudKit Console steps.
-
-**Resume signal:** Type "deployed" when both record types and PublicProfile field additions are live in Production.
+Task 4 `checkpoint:human-verify` gate satisfied. Both `PublicGoal` and `Follow` record types are live in CloudKit Production. New `PublicProfile` fields (`streakLength`, `goalCount`, `motto`) and the Queryable index on `username` are deployed and active.
 
 ## Known Stubs
 
