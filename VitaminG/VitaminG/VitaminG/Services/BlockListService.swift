@@ -37,6 +37,7 @@ enum BlockListService {
         if let data = try? JSONEncoder().encode(Array(ids)) {
             UserDefaults.standard.set(data, forKey: key)
         }
+        SecurityAuditLog.shared.log(AuditEvent(eventType: .userBlocked, targetUserID: appleUserID))
     }
 
     /// Removes the given Apple User ID from the block list and persists the result.
@@ -46,5 +47,6 @@ enum BlockListService {
         if let data = try? JSONEncoder().encode(Array(ids)) {
             UserDefaults.standard.set(data, forKey: key)
         }
+        SecurityAuditLog.shared.log(AuditEvent(eventType: .userUnblocked, targetUserID: appleUserID))
     }
 }
