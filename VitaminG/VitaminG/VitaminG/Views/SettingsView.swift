@@ -182,6 +182,10 @@ struct SettingsView: View {
                     Toggle("Public Profile", isOn: .constant(false))
                         .disabled(true)
                 }
+
+                let bioService = BiometricLockService.shared
+                @Bindable var bindableBioService = bioService
+                Toggle("Require Face ID / Touch ID", isOn: $bindableBioService.isEnabled)
             }
 
             // SET-05: Support section — contact mailto (T-19-04-01: guarded if let)
