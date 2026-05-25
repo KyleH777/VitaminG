@@ -2,6 +2,7 @@ import Foundation
 import LocalAuthentication
 import Observation
 
+@MainActor
 @Observable
 final class BiometricLockService {
     static let shared = BiometricLockService()
@@ -12,7 +13,7 @@ final class BiometricLockService {
         didSet { UserDefaults.standard.set(isEnabled, forKey: enabledKey) }
     }
 
-    var isLocked: Bool = false
+    private(set) var isLocked: Bool = false
 
     private init() {
         isEnabled = UserDefaults.standard.bool(forKey: enabledKey)
@@ -23,6 +24,14 @@ final class BiometricLockService {
             isLocked = true
         }
     }
+
+    #if DEBUG
+    func resetForTesting() {
+        isLocked = false
+        isEnabled = false
+        UserDefaults.standard.removeObject(forKey: enabledKey)
+    }
+    #endif
 
     func authenticate() async {
         let context = LAContext()

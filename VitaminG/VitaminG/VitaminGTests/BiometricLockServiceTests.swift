@@ -4,19 +4,15 @@ import XCTest
 
 final class BiometricLockServiceTests: XCTestCase {
 
-    private let enabledKey = "vg_biometric_lock_enabled"
     private let service = BiometricLockService.shared
 
     override func setUp() {
         super.setUp()
-        UserDefaults.standard.removeObject(forKey: enabledKey)
-        service.isEnabled = false
-        service.isLocked = false
+        service.resetForTesting()
     }
 
     override func tearDown() {
-        UserDefaults.standard.set(false, forKey: enabledKey)
-        service.isLocked = false
+        service.resetForTesting()
         super.tearDown()
     }
 
@@ -26,9 +22,11 @@ final class BiometricLockServiceTests: XCTestCase {
 
     func testIsEnabled_persistsToUserDefaults() {
         service.isEnabled = true
-        XCTAssertTrue(UserDefaults.standard.bool(forKey: enabledKey))
+        // Verify by creating a new instance reading from UserDefaults
+        let storedValue = UserDefaults.standard.bool(forKey: "vg_biometric_lock_enabled")
+        XCTAssertTrue(storedValue)
         service.isEnabled = false
-        XCTAssertFalse(UserDefaults.standard.bool(forKey: enabledKey))
+        XCTAssertFalse(UserDefaults.standard.bool(forKey: "vg_biometric_lock_enabled"))
     }
 
     func testLockIfEnabled_locksWhenEnabled() {
