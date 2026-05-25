@@ -563,22 +563,25 @@ enum SchemaV9: VersionedSchema {
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **ExploreView NavigationStack ownership**
    - What we know: ExploreView renders inside the Explore tab of `ContentView`; `.searchable` must be on a `NavigationStack` ancestor.
    - What's unclear: Whether the Explore tab already wraps `ExploreView` in its own `NavigationStack` in `ContentView.swift` (not read during research), or whether `.searchable` must be added at the tab level.
    - Recommendation: Planner reads `ContentView.swift` to locate the Explore tab's `NavigationStack`. If present, add `.searchable` there. If not, add a `NavigationStack` wrapper for the Explore tab first.
+   - **RESOLVED:** ContentView already wraps ExploreView in a NavigationStack (per `<interfaces>` block in Plan 22-05 — lines 27–33 of ContentView.swift). Plan 22-05 Task 2 adds `.searchable(text:placement:prompt:)` to that existing NavigationStack with `@State private var exploreSearchText` on ContentView, forwarded to ExploreView. ExploreView reads `@Environment(\.isSearching)` to branch its body.
 
 2. **`ProfileView` motto text field placement**
    - What we know: D-07 requires motto editing in `ProfileView`. The current `ProfileView` has `ProfileEditSheet` for name/username editing.
    - What's unclear: Whether motto should go into `ProfileEditSheet` (existing sheet) or directly inline in `ProfileView`.
    - Recommendation: Add motto to `ProfileEditSheet` alongside existing display name / username fields. Consistent with existing edit-then-save pattern. Planner should confirm by reading `ProfileEditSheet.swift`.
+   - **RESOLVED:** Motto is added to `ProfileEditSheet` as a sibling Section after the existing username Section (Plan 22-04 Task 3). It mirrors the existing username TextField pattern verbatim with a 100-char cap (`ProfileViewModel.maxMottoLength = 100`) and `.onChange` clamp. Footer copy: "A short bio shown on your public profile." On save, `ProfileViewModel` persists `userProfile.motto` and calls `ProfileSharingService.publishProfile(... motto: draftMotto ...)`.
 
 3. **AppStorage key for current user's Apple ID in CheerButton context**
    - What we know: `PublicProfileView` already reads `@AppStorage("vg_appleUserID")` for report email context. `PublicProfileViewModel` needs the current user's username to write applause.
    - What's unclear: Whether `PublicProfileViewModel` should accept username as init parameter or read it from `@AppStorage` directly.
    - Recommendation: Accept `myUsername: String` as an init/method parameter on `PublicProfileViewModel` (injected from the view), same as `ApplauseButtonView` accepts `giverUsername`. Keeps ViewModel testable without `@AppStorage` coupling.
+   - **RESOLVED:** `PublicProfileViewModel.onCheer(recipientUsername:giverUsername:defaults:)` accepts `giverUsername` as a method parameter (not from @AppStorage). The View (PublicProfileView in Plan 22-05) reads `@AppStorage("vg_username") private var myUsername` and passes it into each call: `viewModel.onCheer(recipientUsername: profile.username ?? "", giverUsername: myUsername)`. Same pattern applies to `onFollow(followerUsername:followeeUsername:)`. ViewModel remains testable without @AppStorage coupling.
 
 ---
 

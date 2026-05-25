@@ -47,7 +47,7 @@ Redesign `PublicProfileView` from the minimal Phase 17 avatar+name stub into a f
 - `PublicGoalCard` on `PublicProfileView`: uses a local `Circle().trim()` implementation (per UI-SPEC §1) rather than the existing `ProgressRingView` which requires `GoalTier`.
 - `PublicProfileViewModel` state enum expands from `loaded(displayName, avatarColorHex)` to `loaded(profile: PublicProfileData)` where `PublicProfileData` is a lightweight struct carrying all PROF-01 fields.
 - `ProfileSharingService.fetchProfile()` expands to return a `PublicProfileData` struct instead of the current `(displayName, avatarColorHex)` tuple — same call site, additive return type.
-- The `motto` field on the SwiftData `UserProfile` model: add as `var motto: String? = nil` with `@Attribute` on SchemaV3 (new schema version for Phase 22, lightweight migration).
+- The `motto` field on the SwiftData `UserProfile` model: add as `var motto: String? = nil` with `@Attribute` on SchemaV9 (new schema version for Phase 22, lightweight migration).
 
 </decisions>
 
@@ -88,7 +88,7 @@ Redesign `PublicProfileView` from the minimal Phase 17 avatar+name stub into a f
 - `VitaminG/VitaminG/VitaminG/VGTheme.swift` — color system (accentTerra for Follow/Join, accentSage for "Following" state, accentGold for CheerButton), typography, spacing
 
 ### State Decisions
-- `.planning/STATE.md` — `CKAsset fileURL must be copied immediately` constraint; `No SchemaV9 required` decision (still applies — new fields use lightweight migration); daily gate UserDefaults pattern
+- `.planning/STATE.md` — `CKAsset fileURL must be copied immediately` constraint; ~~`No SchemaV9 required` decision~~ (superseded — Phase 22 introduces SchemaV9 with two optional fields via lightweight migration: `UserProfile.motto`, `Goal.cloudKitPublicGoalRecordID`); daily gate UserDefaults pattern
 
 </canonical_refs>
 
