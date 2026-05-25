@@ -7,14 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		01C75244FFC14F149F900A8A /* VGWatchTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F14914B850E9BBD7B191228 /* VGWatchTheme.swift */; };
-		0215FC4236B8ED097AB98DAE /* CommunityGlanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2950BF6AA140B86F98641 /* CommunityGlanceView.swift */; };
-		20E780CBADA4CD49AC80520B /* CheckInSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58C6E3734DD7FE511BCECAA1 /* CheckInSuccessView.swift */; };
+		01C75244FFC14F149F900A8A /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F14914B850E9BBD7B191228 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift */; };
+		0215FC4236B8ED097AB98DAE /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CommunityGlanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2950BF6AA140B86F98641 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CommunityGlanceView.swift */; };
+		20E780CBADA4CD49AC80520B /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CheckInSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58C6E3734DD7FE511BCECAA1 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CheckInSuccessView.swift */; };
 		22E9180E646E4AF848C4269E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98B4B54F3AA3B9B1BDD0064C /* Foundation.framework */; };
-		4830C81AB9A5088ADABD9A3E /* WatchNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EDC2BC95349143CF9058C5C /* WatchNotificationView.swift */; };
-		50B4C2F0FF5C2483A279F568 /* VGRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E104D2642E124CAD573B3E59 /* VGRingView.swift */; };
-		6C16CAAE24EF220E13675194 /* TodayGlanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3235BA87AACE9E48C01626A6 /* TodayGlanceView.swift */; };
-		7534C0A7296FD8F19123BF4B /* VGWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ABE9DE82BC061C5F8C367C3 /* VGWatchApp.swift */; };
+		4830C81AB9A5088ADABD9A3E /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EDC2BC95349143CF9058C5C /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchNotificationView.swift */; };
+		50B4C2F0FF5C2483A279F568 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E104D2642E124CAD573B3E59 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGRingView.swift */; };
+		6C16CAAE24EF220E13675194 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/TodayGlanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3235BA87AACE9E48C01626A6 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/TodayGlanceView.swift */; };
+		7534C0A7296FD8F19123BF4B /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ABE9DE82BC061C5F8C367C3 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchApp.swift */; };
 		AA01000000000001 /* WidgetDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000002 /* WidgetDataProvider.swift */; };
 		AA01000000000003 /* SchemaV1.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000004 /* SchemaV1.swift */; };
 		AA01000000000005 /* Goal.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000006 /* Goal.swift */; };
@@ -29,10 +29,10 @@
 		AA01000000000024 /* SchemaV6.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000025 /* SchemaV6.swift */; };
 		AA01000000000026 /* SchemaV7.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000027 /* SchemaV7.swift */; };
 		AA01000000000028 /* SchemaV8.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000029 /* SchemaV8.swift */; };
-		AB9F27FB36585F710CEEA962 /* WatchGoalListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DACF533C0B03D58A400FC17C /* WatchGoalListView.swift */; };
-		D3ACF8349A85FE3FDA0C420F /* WatchFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A628728AB6A382F84838BD /* WatchFaceView.swift */; };
+		AB9F27FB36585F710CEEA962 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchGoalListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DACF533C0B03D58A400FC17C /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchGoalListView.swift */; };
+		D3ACF8349A85FE3FDA0C420F /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A628728AB6A382F84838BD /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchFaceView.swift */; };
 		DD04BB4BA3E52507CA04FDAF /* VitaminGWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = FE1F435DB8E0A94466A6CF07 /* VitaminGWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		E43D5202EC5362DF0E7BBA5A /* VGWatchContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A10481FE8195C75F9889B99 /* VGWatchContentView.swift */; };
+		E43D5202EC5362DF0E7BBA5A /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A10481FE8195C75F9889B99 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchContentView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +63,7 @@
 		AA0100000000000F /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			dstPath = "";
+			dstSubfolder = None;
 			files = (
 				AA0100000000000B /* VitaminGWidgetExtension.appex in Embed Foundation Extensions */,
 			);
@@ -70,29 +71,27 @@
 		};
 		B23A039B6754C2FA4720F1BD /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 16;
+			dstSubfolder = Product;
 			files = (
 				DD04BB4BA3E52507CA04FDAF /* VitaminGWatch.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1EDC2BC95349143CF9058C5C /* WatchNotificationView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchNotificationView.swift"; sourceTree = "<absolute>"; };
-		2CC2950BF6AA140B86F98641 /* CommunityGlanceView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CommunityGlanceView.swift"; sourceTree = "<absolute>"; };
-		3235BA87AACE9E48C01626A6 /* TodayGlanceView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/TodayGlanceView.swift"; sourceTree = "<absolute>"; };
-		58C6E3734DD7FE511BCECAA1 /* CheckInSuccessView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CheckInSuccessView.swift"; sourceTree = "<absolute>"; };
+		1EDC2BC95349143CF9058C5C /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchNotificationView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchNotificationView.swift"; sourceTree = "<absolute>"; };
+		2CC2950BF6AA140B86F98641 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CommunityGlanceView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CommunityGlanceView.swift"; sourceTree = "<absolute>"; };
+		3235BA87AACE9E48C01626A6 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/TodayGlanceView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/TodayGlanceView.swift"; sourceTree = "<absolute>"; };
+		58C6E3734DD7FE511BCECAA1 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CheckInSuccessView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CheckInSuccessView.swift"; sourceTree = "<absolute>"; };
 		591E4AE72F8097D500CE6C31 /* VitaminG.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VitaminG.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		591E4AF82F8097D700CE6C31 /* VitaminGTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VitaminGTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		591E4B022F8097D700CE6C31 /* VitaminGUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VitaminGUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		5A10481FE8195C75F9889B99 /* VGWatchContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchContentView.swift"; sourceTree = "<absolute>"; };
-		5F14914B850E9BBD7B191228 /* VGWatchTheme.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift"; sourceTree = "<absolute>"; };
+		5A10481FE8195C75F9889B99 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchContentView.swift"; sourceTree = "<absolute>"; };
+		5F14914B850E9BBD7B191228 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift"; sourceTree = "<absolute>"; };
 		98B4B54F3AA3B9B1BDD0064C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS11.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		9ABE9DE82BC061C5F8C367C3 /* VGWatchApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchApp.swift"; sourceTree = "<absolute>"; };
+		9ABE9DE82BC061C5F8C367C3 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchApp.swift"; sourceTree = "<absolute>"; };
 		AA01000000000002 /* WidgetDataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WidgetDataProvider.swift; path = VitaminG/Services/WidgetDataProvider.swift; sourceTree = SOURCE_ROOT; };
 		AA01000000000004 /* SchemaV1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV1.swift; path = VitaminG/Models/SchemaV1.swift; sourceTree = SOURCE_ROOT; };
 		AA01000000000006 /* Goal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Goal.swift; path = VitaminG/Models/Goal.swift; sourceTree = SOURCE_ROOT; };
@@ -107,10 +106,10 @@
 		AA01000000000025 /* SchemaV6.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV6.swift; path = VitaminG/Models/SchemaV6.swift; sourceTree = SOURCE_ROOT; };
 		AA01000000000027 /* SchemaV7.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV7.swift; path = VitaminG/Models/SchemaV7.swift; sourceTree = SOURCE_ROOT; };
 		AA01000000000029 /* SchemaV8.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV8.swift; path = VitaminG/Models/SchemaV8.swift; sourceTree = SOURCE_ROOT; };
-		DACF533C0B03D58A400FC17C /* WatchGoalListView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchGoalListView.swift"; sourceTree = "<absolute>"; };
-		E104D2642E124CAD573B3E59 /* VGRingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGRingView.swift"; sourceTree = "<absolute>"; };
-		E2A628728AB6A382F84838BD /* WatchFaceView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchFaceView.swift"; sourceTree = "<absolute>"; };
-		FE1F435DB8E0A94466A6CF07 /* VitaminGWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = VitaminGWatch.app; path = VitaminGWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DACF533C0B03D58A400FC17C /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchGoalListView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchGoalListView.swift"; sourceTree = "<absolute>"; };
+		E104D2642E124CAD573B3E59 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGRingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGRingView.swift"; sourceTree = "<absolute>"; };
+		E2A628728AB6A382F84838BD /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchFaceView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchFaceView.swift"; sourceTree = "<absolute>"; };
+		FE1F435DB8E0A94466A6CF07 /* VitaminGWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VitaminGWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FONT000000000001 /* CormorantGaramond-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; name = "CormorantGaramond-Regular.ttf"; path = "VitaminG/Resources/Fonts/CormorantGaramond-Regular.ttf"; sourceTree = SOURCE_ROOT; };
 		FONT000000000002 /* CormorantGaramond-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; name = "CormorantGaramond-Italic.ttf"; path = "VitaminG/Resources/Fonts/CormorantGaramond-Italic.ttf"; sourceTree = SOURCE_ROOT; };
 		FONT000000000003 /* CormorantGaramond-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; name = "CormorantGaramond-Medium.ttf"; path = "VitaminG/Resources/Fonts/CormorantGaramond-Medium.ttf"; sourceTree = SOURCE_ROOT; };
@@ -124,9 +123,7 @@
 				Info.plist,
 			);
 			platformFiltersByRelativePath = {
-				Views/ProfileView.swift = (
-					ios,
-				);
+				Views/ProfileView.swift = (ios, );
 			};
 			target = 591E4AE62F8097D500CE6C31 /* VitaminG */;
 		};
@@ -150,15 +147,11 @@
 		};
 		591E4AFB2F8097D700CE6C31 /* VitaminGTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = VitaminGTests;
 			sourceTree = "<group>";
 		};
 		591E4B052F8097D700CE6C31 /* VitaminGUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = VitaminGUITests;
 			sourceTree = "<group>";
 		};
@@ -190,11 +183,9 @@
 		};
 		79E296D8DE66F2D94D25751B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				22E9180E646E4AF848C4269E /* Foundation.framework in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		AA010000000000012 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -266,16 +257,16 @@
 		88174B3F1ABE25EE46011E8A /* VitaminGWatch */ = {
 			isa = PBXGroup;
 			children = (
-				58C6E3734DD7FE511BCECAA1 /* CheckInSuccessView.swift */,
-				2CC2950BF6AA140B86F98641 /* CommunityGlanceView.swift */,
-				3235BA87AACE9E48C01626A6 /* TodayGlanceView.swift */,
-				E2A628728AB6A382F84838BD /* WatchFaceView.swift */,
-				DACF533C0B03D58A400FC17C /* WatchGoalListView.swift */,
-				1EDC2BC95349143CF9058C5C /* WatchNotificationView.swift */,
-				E104D2642E124CAD573B3E59 /* VGRingView.swift */,
-				5F14914B850E9BBD7B191228 /* VGWatchTheme.swift */,
-				9ABE9DE82BC061C5F8C367C3 /* VGWatchApp.swift */,
-				5A10481FE8195C75F9889B99 /* VGWatchContentView.swift */,
+				58C6E3734DD7FE511BCECAA1 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CheckInSuccessView.swift */,
+				2CC2950BF6AA140B86F98641 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CommunityGlanceView.swift */,
+				3235BA87AACE9E48C01626A6 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/TodayGlanceView.swift */,
+				E2A628728AB6A382F84838BD /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchFaceView.swift */,
+				DACF533C0B03D58A400FC17C /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchGoalListView.swift */,
+				1EDC2BC95349143CF9058C5C /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchNotificationView.swift */,
+				E104D2642E124CAD573B3E59 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGRingView.swift */,
+				5F14914B850E9BBD7B191228 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift */,
+				9ABE9DE82BC061C5F8C367C3 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchApp.swift */,
+				5A10481FE8195C75F9889B99 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchContentView.swift */,
 			);
 			name = VitaminGWatch;
 			path = ../VitaminGWatch;
@@ -301,8 +292,6 @@
 				F23CE073C28BD7963BDC2124 /* Resources */,
 			);
 			buildRules = (
-			);
-			dependencies = (
 			);
 			name = VitaminGWatch;
 			productName = VitaminGWatch;
@@ -384,8 +373,6 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			fileSystemSynchronizedGroups = (
 				AA010000000000011 /* VitaminGWidget */,
 			);
@@ -466,30 +453,26 @@
 		};
 		F23CE073C28BD7963BDC2124 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		239F3B33497F60EC87D92B5E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
-				20E780CBADA4CD49AC80520B /* CheckInSuccessView.swift in Sources */,
-				0215FC4236B8ED097AB98DAE /* CommunityGlanceView.swift in Sources */,
-				6C16CAAE24EF220E13675194 /* TodayGlanceView.swift in Sources */,
-				D3ACF8349A85FE3FDA0C420F /* WatchFaceView.swift in Sources */,
-				AB9F27FB36585F710CEEA962 /* WatchGoalListView.swift in Sources */,
-				4830C81AB9A5088ADABD9A3E /* WatchNotificationView.swift in Sources */,
-				50B4C2F0FF5C2483A279F568 /* VGRingView.swift in Sources */,
-				01C75244FFC14F149F900A8A /* VGWatchTheme.swift in Sources */,
-				7534C0A7296FD8F19123BF4B /* VGWatchApp.swift in Sources */,
-				E43D5202EC5362DF0E7BBA5A /* VGWatchContentView.swift in Sources */,
+				20E780CBADA4CD49AC80520B /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CheckInSuccessView.swift in Sources */,
+				0215FC4236B8ED097AB98DAE /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CommunityGlanceView.swift in Sources */,
+				6C16CAAE24EF220E13675194 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/TodayGlanceView.swift in Sources */,
+				D3ACF8349A85FE3FDA0C420F /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchFaceView.swift in Sources */,
+				AB9F27FB36585F710CEEA962 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchGoalListView.swift in Sources */,
+				4830C81AB9A5088ADABD9A3E /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchNotificationView.swift in Sources */,
+				50B4C2F0FF5C2483A279F568 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGRingView.swift in Sources */,
+				01C75244FFC14F149F900A8A /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift in Sources */,
+				7534C0A7296FD8F19123BF4B /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchApp.swift in Sources */,
+				E43D5202EC5362DF0E7BBA5A /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchContentView.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		591E4AE32F8097D500CE6C31 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -545,7 +528,7 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		18C0CFDFE72008DAE0102A71 /* Release */ = {
+		18C0CFDFE72008DAE0102A71 /* Release configuration for PBXNativeTarget "VitaminGWatch" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -563,7 +546,7 @@
 			};
 			name = Release;
 		};
-		591E4B0C2F8097D700CE6C31 /* Debug */ = {
+		591E4B0C2F8097D700CE6C31 /* Debug configuration for PBXNativeTarget "VitaminG" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -625,7 +608,7 @@
 			};
 			name = Debug;
 		};
-		591E4B0D2F8097D700CE6C31 /* Release */ = {
+		591E4B0D2F8097D700CE6C31 /* Release configuration for PBXNativeTarget "VitaminG" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -687,7 +670,7 @@
 			};
 			name = Release;
 		};
-		591E4B0E2F8097D700CE6C31 /* Debug */ = {
+		591E4B0E2F8097D700CE6C31 /* Debug configuration for PBXProject "VitaminG" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -750,7 +733,7 @@
 			};
 			name = Debug;
 		};
-		591E4B0F2F8097D700CE6C31 /* Release */ = {
+		591E4B0F2F8097D700CE6C31 /* Release configuration for PBXProject "VitaminG" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -805,7 +788,7 @@
 			};
 			name = Release;
 		};
-		591E4B112F8097D700CE6C31 /* Debug */ = {
+		591E4B112F8097D700CE6C31 /* Debug configuration for PBXNativeTarget "VitaminGTests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -834,7 +817,7 @@
 			};
 			name = Debug;
 		};
-		591E4B122F8097D700CE6C31 /* Release */ = {
+		591E4B122F8097D700CE6C31 /* Release configuration for PBXNativeTarget "VitaminGTests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -863,7 +846,7 @@
 			};
 			name = Release;
 		};
-		591E4B142F8097D700CE6C31 /* Debug */ = {
+		591E4B142F8097D700CE6C31 /* Debug configuration for PBXNativeTarget "VitaminGUITests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -889,7 +872,7 @@
 			};
 			name = Debug;
 		};
-		591E4B152F8097D700CE6C31 /* Release */ = {
+		591E4B152F8097D700CE6C31 /* Release configuration for PBXNativeTarget "VitaminGUITests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -915,7 +898,7 @@
 			};
 			name = Release;
 		};
-		AA010000000000017 /* Debug */ = {
+		AA010000000000017 /* Debug configuration for PBXNativeTarget "VitaminGWidgetExtension" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -943,7 +926,7 @@
 			};
 			name = Debug;
 		};
-		AA010000000000018 /* Release */ = {
+		AA010000000000018 /* Release configuration for PBXNativeTarget "VitaminGWidgetExtension" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -971,7 +954,7 @@
 			};
 			name = Release;
 		};
-		BFA54E4B842020A663C44C4F /* Debug */ = {
+		BFA54E4B842020A663C44C4F /* Debug configuration for PBXNativeTarget "VitaminGWatch" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -994,49 +977,48 @@
 		019B3AF2C5741336082F0D78 /* Build configuration list for PBXNativeTarget "VitaminGWatch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				18C0CFDFE72008DAE0102A71 /* Release */,
-				BFA54E4B842020A663C44C4F /* Debug */,
+				18C0CFDFE72008DAE0102A71 /* Release configuration for PBXNativeTarget "VitaminGWatch" */,
+				BFA54E4B842020A663C44C4F /* Debug configuration for PBXNativeTarget "VitaminGWatch" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		591E4AE22F8097D500CE6C31 /* Build configuration list for PBXProject "VitaminG" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				591E4B0E2F8097D700CE6C31 /* Debug */,
-				591E4B0F2F8097D700CE6C31 /* Release */,
+				591E4B0E2F8097D700CE6C31 /* Debug configuration for PBXProject "VitaminG" */,
+				591E4B0F2F8097D700CE6C31 /* Release configuration for PBXProject "VitaminG" */,
 			);
 			defaultConfigurationName = Release;
 		};
 		591E4B0B2F8097D700CE6C31 /* Build configuration list for PBXNativeTarget "VitaminG" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				591E4B0C2F8097D700CE6C31 /* Debug */,
-				591E4B0D2F8097D700CE6C31 /* Release */,
+				591E4B0C2F8097D700CE6C31 /* Debug configuration for PBXNativeTarget "VitaminG" */,
+				591E4B0D2F8097D700CE6C31 /* Release configuration for PBXNativeTarget "VitaminG" */,
 			);
 			defaultConfigurationName = Release;
 		};
 		591E4B102F8097D700CE6C31 /* Build configuration list for PBXNativeTarget "VitaminGTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				591E4B112F8097D700CE6C31 /* Debug */,
-				591E4B122F8097D700CE6C31 /* Release */,
+				591E4B112F8097D700CE6C31 /* Debug configuration for PBXNativeTarget "VitaminGTests" */,
+				591E4B122F8097D700CE6C31 /* Release configuration for PBXNativeTarget "VitaminGTests" */,
 			);
 			defaultConfigurationName = Release;
 		};
 		591E4B132F8097D700CE6C31 /* Build configuration list for PBXNativeTarget "VitaminGUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				591E4B142F8097D700CE6C31 /* Debug */,
-				591E4B152F8097D700CE6C31 /* Release */,
+				591E4B142F8097D700CE6C31 /* Debug configuration for PBXNativeTarget "VitaminGUITests" */,
+				591E4B152F8097D700CE6C31 /* Release configuration for PBXNativeTarget "VitaminGUITests" */,
 			);
 			defaultConfigurationName = Release;
 		};
 		AA010000000000014 /* Build configuration list for PBXNativeTarget "VitaminGWidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AA010000000000017 /* Debug */,
-				AA010000000000018 /* Release */,
+				AA010000000000017 /* Debug configuration for PBXNativeTarget "VitaminGWidgetExtension" */,
+				AA010000000000018 /* Release configuration for PBXNativeTarget "VitaminGWidgetExtension" */,
 			);
 			defaultConfigurationName = Release;
 		};
