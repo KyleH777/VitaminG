@@ -39,7 +39,7 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
 - [x] **Phase 20: Explore Tab** - Shake/tap daily goal gifter, mood prompt, Vitamin Shelf, Trending Now, 3 Gifts for Stuck Days (completed 2026-05-24)
 - [x] **Phase 21: Community Tab Redesign** - Today's Glimpses carousel, Active Today, Glowing This Week, community feed with reactions/replies/photos, applause system (completed 2026-05-24)
 - [x] **Phase 22: Public Profile + Follow + Discover** - Public profile redesign, follow/cheer system, Discover page with goal search and people search (completed 2026-05-26)
-- [ ] **Phase 23: Milestone Features + Streak Freeze** - Streak freeze, achievement unlocked screens, achievement sharing, goal completed celebration
+- [x] **Phase 23: Milestone Features + Streak Freeze** - Streak freeze, achievement unlocked screens, achievement sharing, goal completed celebration (completed 2026-05-26)
 - [ ] **Phase 24: Widget Enhancements** - Update widgets for v2.0 data, wire WidgetCenter.reloadAllTimelines() to all new state changes
 
 ---
@@ -254,7 +254,7 @@ Plans:
 - [x] 23-01-PLAN.md — SchemaV10 migration + StreakFreezeService weekly ISO8601 reset + StreakMilestoneGate service (MILE-01, MILE-03, MILE-04)
 - [x] 23-02-PLAN.md — StatsViewModel frozen sentinel + HeatmapView ❄️ glyph + GoalViewModel per-goal milestone detection (MILE-01, MILE-03, MILE-04)
 - [x] 23-03-PLAN.md — GoalStreakMilestoneView + GoalCompletionCelebrationView + GoalDetailView/GoalListView wiring (MILE-04, MILE-06)
-- [ ] 23-04-PLAN.md — Global streak-at-risk notification + CommunityService achievement post + feed integration + human verify (MILE-02, MILE-05)
+- [x] 23-04-PLAN.md — Global streak-at-risk notification + CommunityService achievement post + feed integration + human verify (MILE-02, MILE-05)
 
 **UI hint**: yes
 
@@ -298,5 +298,5 @@ Plans:
 | 20. Explore Tab | v2.0 | 0/? | Not started | - |
 | 21. Community Tab Redesign | v2.0 | 6/6 | Complete   | 2026-05-24 |
 | 22. Public Profile + Follow + Discover | v2.0 | 5/5 | Complete   | 2026-05-26 |
-| 23. Milestone Features + Streak Freeze | v2.0 | 3/4 | In Progress|  |
+| 23. Milestone Features + Streak Freeze | v2.0 | 4/4 | Complete   | 2026-05-26 |
 | 24. Widget Enhancements | v2.0 | 0/? | Not started | - |
