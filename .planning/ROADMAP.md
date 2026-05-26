@@ -247,7 +247,14 @@ Plans:
   4. Shared achievements appear in the Community main page feed alongside regular posts
   5. User who completes all days of a goal sees a "You did it" page with an animated checkmark, their goal streak count, confetti, and share/back-to-goals actions
 
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 23-01-PLAN.md — SchemaV10 migration + StreakFreezeService weekly ISO8601 reset + StreakMilestoneGate service (MILE-01, MILE-03, MILE-04)
+- [ ] 23-02-PLAN.md — StatsViewModel frozen sentinel + HeatmapView ❄️ glyph + GoalViewModel per-goal milestone detection (MILE-01, MILE-03, MILE-04)
+- [ ] 23-03-PLAN.md — GoalStreakMilestoneView + GoalCompletionCelebrationView + GoalDetailView/GoalListView wiring (MILE-04, MILE-06)
+- [ ] 23-04-PLAN.md — Global streak-at-risk notification + CommunityService achievement post + feed integration + human verify (MILE-02, MILE-05)
+
 **UI hint**: yes
 
 ### Phase 24: Widget Enhancements
