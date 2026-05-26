@@ -250,7 +250,8 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 23-01-PLAN.md — SchemaV10 migration + StreakFreezeService weekly ISO8601 reset + StreakMilestoneGate service (MILE-01, MILE-03, MILE-04)
+
+- [x] 23-01-PLAN.md — SchemaV10 migration + StreakFreezeService weekly ISO8601 reset + StreakMilestoneGate service (MILE-01, MILE-03, MILE-04)
 - [ ] 23-02-PLAN.md — StatsViewModel frozen sentinel + HeatmapView ❄️ glyph + GoalViewModel per-goal milestone detection (MILE-01, MILE-03, MILE-04)
 - [ ] 23-03-PLAN.md — GoalStreakMilestoneView + GoalCompletionCelebrationView + GoalDetailView/GoalListView wiring (MILE-04, MILE-06)
 - [ ] 23-04-PLAN.md — Global streak-at-risk notification + CommunityService achievement post + feed integration + human verify (MILE-02, MILE-05)
@@ -297,5 +298,5 @@ Plans:
 | 20. Explore Tab | v2.0 | 0/? | Not started | - |
 | 21. Community Tab Redesign | v2.0 | 6/6 | Complete   | 2026-05-24 |
 | 22. Public Profile + Follow + Discover | v2.0 | 5/5 | Complete   | 2026-05-26 |
-| 23. Milestone Features + Streak Freeze | v2.0 | 0/? | Not started | - |
+| 23. Milestone Features + Streak Freeze | v2.0 | 1/4 | In Progress|  |
 | 24. Widget Enhancements | v2.0 | 0/? | Not started | - |
