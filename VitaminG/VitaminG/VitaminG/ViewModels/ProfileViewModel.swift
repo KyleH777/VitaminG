@@ -16,6 +16,7 @@ final class ProfileViewModel {
     // MARK: - Constants
 
     static let maxDisplayNameLength = 50
+    static let maxMottoLength = 100
 
     /// Warm, gratitude-toned avatar color palette (D-01, D-02).
     /// Six colors designed to feel personal and positive — drawn from the app's tier tone system.
@@ -35,6 +36,8 @@ final class ProfileViewModel {
 
     /// Edit sheet binding — populated when user taps pencil button.
     var draftDisplayName: String = ""
+    /// Motto edit binding (Phase 22 D-07). Clamped to maxMottoLength in ProfileEditSheet onChange.
+    var draftMotto: String = ""
 
     var showingEditSheet: Bool = false
     var showingValidationAlert: Bool = false
@@ -56,6 +59,7 @@ final class ProfileViewModel {
         if let existing = results.first {
             self.profile = existing
             draftUsername = existing.username ?? ""
+            draftMotto = existing.motto ?? ""
         } else {
             let newProfile = UserProfile()
             // Assign random avatar color — persisted, never re-randomized (D-02)
@@ -119,9 +123,16 @@ final class ProfileViewModel {
             : String(sanitized.prefix(Self.maxDisplayNameLength))
 
         profile?.displayName = capped
+
+        // Phase 22 D-07: persist motto alongside displayName on each save.
+        // Trim whitespace; store nil when blank so the CloudKit "only write if non-nil" guard
+        // prevents overwriting an existing motto with an empty value (T-22-04-06).
+        let trimmedMotto = draftMotto.trimmingCharacters(in: .whitespacesAndNewlines)
+        profile?.motto = trimmedMotto.isEmpty ? nil : trimmedMotto
+
         try? context.save()
 
-        // Sync updated display name to CloudKit public record if profile is public
+        // Sync updated display name (and motto) to CloudKit public record if profile is public
         updatePublicRecordIfNeeded(context: context)
 
         return true
@@ -175,11 +186,14 @@ final class ProfileViewModel {
     /// Called after validateAndSaveDisplayName succeeds. Silently ignores failures (best-effort sync).
     func updatePublicRecordIfNeeded(context: ModelContext) {
         guard let profile, profile.isPublic, profile.cloudKitPublicRecordID != nil else { return }
+        // Capture motto before the async Task to avoid data races on @Observable state.
+        let mottoValue = draftMotto.trimmingCharacters(in: .whitespacesAndNewlines)
         Task {
             _ = try? await ProfileSharingService.publishProfile(
                 displayName: profile.displayName,
                 avatarColorHex: profile.avatarColorHex,
-                existingRecordID: profile.cloudKitPublicRecordID
+                existingRecordID: profile.cloudKitPublicRecordID,
+                motto: mottoValue.isEmpty ? nil : mottoValue
             )
         }
     }

@@ -82,6 +82,30 @@ struct ProfileEditSheet: View {
                         .font(.caption)
                         .fontDesign(.rounded)
                 }
+
+                Section {
+                    VStack(alignment: .leading, spacing: 4) {
+                        TextField("Your motto", text: $viewModel.draftMotto, axis: .vertical)
+                            .font(.body).fontDesign(.rounded)
+                            .lineLimit(3...5)
+                            .onChange(of: viewModel.draftMotto) { _, newValue in
+                                if newValue.count > ProfileViewModel.maxMottoLength {
+                                    viewModel.draftMotto = String(newValue.prefix(ProfileViewModel.maxMottoLength))
+                                }
+                            }
+                        HStack {
+                            Spacer()
+                            Text("\(viewModel.draftMotto.count)/\(ProfileViewModel.maxMottoLength)")
+                                .font(.caption).fontDesign(.rounded)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                } header: {
+                    Text("Motto")
+                } footer: {
+                    Text("A short bio shown on your public profile.")
+                        .font(.caption).fontDesign(.rounded)
+                }
             }
             .navigationTitle("Edit Profile")
             .navigationBarTitleDisplayMode(.inline)
