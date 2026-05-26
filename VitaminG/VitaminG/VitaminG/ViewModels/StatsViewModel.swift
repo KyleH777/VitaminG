@@ -50,19 +50,29 @@ final class StatsViewModel {
             tierGoalCounts[tier] = tierGoals.count
         }
 
-        heatmapData = buildHeatmapData(from: events)
+        heatmapData = buildHeatmapData(from: events, frozenDates: frozenDates)
     }
 
     // MARK: - Heatmap Data Builder
 
     /// Builds a [startOfDay: count] dictionary from completion events.
     /// T-03-05: `guard let` skips nil completedAt values — invalid dates produce empty cells, not crashes.
-    private func buildHeatmapData(from events: [CompletionEvent]) -> [Date: Int] {
+    /// MILE-03: Frozen dates with no real check-in write sentinel value -1.
+    ///          A frozen day WITH a check-in retains its real count (>= 1) — sentinel never overwrites.
+    private func buildHeatmapData(from events: [CompletionEvent], frozenDates: [Date] = []) -> [Date: Int] {
         var dict: [Date: Int] = [:]
         for event in events {
             guard let date = event.completedAt else { continue }
             let day = Calendar.current.startOfDay(for: date)
             dict[day, default: 0] += 1
+        }
+        // Write sentinel -1 for frozen dates that have no real check-in.
+        // The nil check is mandatory: a frozen day WITH a check-in must NOT become -1.
+        for frozen in frozenDates {
+            let day = Calendar.current.startOfDay(for: frozen)
+            if dict[day] == nil {
+                dict[day] = -1
+            }
         }
         return dict
     }
