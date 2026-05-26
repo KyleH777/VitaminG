@@ -38,7 +38,7 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
 - [x] **Phase 19: Tip Jar + About Page + Settings** - StoreKit 2 consumable tip jar, About page with founder bio, Settings page, notification picker (completed 2026-05-22)
 - [x] **Phase 20: Explore Tab** - Shake/tap daily goal gifter, mood prompt, Vitamin Shelf, Trending Now, 3 Gifts for Stuck Days (completed 2026-05-24)
 - [x] **Phase 21: Community Tab Redesign** - Today's Glimpses carousel, Active Today, Glowing This Week, community feed with reactions/replies/photos, applause system (completed 2026-05-24)
-- [ ] **Phase 22: Public Profile + Follow + Discover** - Public profile redesign, follow/cheer system, Discover page with goal search and people search
+- [x] **Phase 22: Public Profile + Follow + Discover** - Public profile redesign, follow/cheer system, Discover page with goal search and people search (completed 2026-05-26)
 - [ ] **Phase 23: Milestone Features + Streak Freeze** - Streak freeze, achievement unlocked screens, achievement sharing, goal completed celebration
 - [ ] **Phase 24: Widget Enhancements** - Update widgets for v2.0 data, wire WidgetCenter.reloadAllTimelines() to all new state changes
 
@@ -225,7 +225,7 @@ Plans:
 - [x] 22-02-PLAN.md — Services: ProfileSharingService expansion (publish/fetch/follow) + new PublicGoalService (CRUD + search + increment + backfill + sync) (PROF-01, PROF-02, PROF-04, DISC-01, DISC-02, DISC-04)
 - [x] 22-03-PLAN.md — ViewModels + 5 Components: PublicProfileViewModel + DiscoverViewModel + PublicGoalCard/FollowButton/CheerButton/GoalSearchResultCard/PeopleSearchResultCard (PROF-01, PROF-02, PROF-03, PROF-04, DISC-01, DISC-02, DISC-04)
 - [x] 22-04-PLAN.md — Launch + check-in hooks + ProfileEditSheet motto field (D-07, D-08, D-11, D-12) (PROF-01)
-- [ ] 22-05-PLAN.md — Screen integration: PublicProfileView redesign + ExploreView .searchable + DiscoverOverlayView + human verify (PROF-01, PROF-02, PROF-03, PROF-04, DISC-01, DISC-02, DISC-03, DISC-04)
+- [x] 22-05-PLAN.md — Screen integration: PublicProfileView redesign + ExploreView .searchable + DiscoverOverlayView + human verify (PROF-01, PROF-02, PROF-03, PROF-04, DISC-01, DISC-02, DISC-03, DISC-04)
 
 **Wave 1**: 22-01 (test scaffolding + SchemaV9 + CloudKit Console human checkpoint)
 **Wave 2**: 22-02 (services — depends on 22-01)
@@ -289,6 +289,6 @@ Plans:
 | 19. Tip Jar + About Page + Settings | v2.0 | 6/6 | Complete   | 2026-05-22 |
 | 20. Explore Tab | v2.0 | 0/? | Not started | - |
 | 21. Community Tab Redesign | v2.0 | 6/6 | Complete   | 2026-05-24 |
-| 22. Public Profile + Follow + Discover | v2.0 | 4/5 | In Progress|  |
+| 22. Public Profile + Follow + Discover | v2.0 | 5/5 | Complete   | 2026-05-26 |
 | 23. Milestone Features + Streak Freeze | v2.0 | 0/? | Not started | - |
 | 24. Widget Enhancements | v2.0 | 0/? | Not started | - |

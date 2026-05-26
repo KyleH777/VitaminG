@@ -88,7 +88,7 @@
 
 - [x] **DISC-01**: Discover page has a search bar that queries public goals by keyword (case-insensitive substring match, debounced 500ms); results show goal card with creator username, category, participant count, and progress circle
 - [x] **DISC-02**: Discover search supports a "People" segment that queries user profiles by username (case-insensitive prefix match); results show profile cards with Follow button
-- [ ] **DISC-03**: Trending Challenges section displayed on Discover when search is empty — reuses existing ChallengeDiscoveryView components from v1.0 Phase 15
+- [x] **DISC-03**: Trending Challenges section displayed on Discover when search is empty — reuses existing ChallengeDiscoveryView components from v1.0 Phase 15
 - [x] **DISC-04**: User can join a public goal from Discover results — "Join" adds the goal to the user's local goal list and increments the public goal's participant count
 
 ### Notification Enhancements (NOTIF)
@@ -206,7 +206,7 @@
 | PROF-04 | Phase 22 | Complete |
 | DISC-01 | Phase 22 | Complete |
 | DISC-02 | Phase 22 | Complete |
-| DISC-03 | Phase 22 | Pending |
+| DISC-03 | Phase 22 | Complete |
 | DISC-04 | Phase 22 | Complete |
 | MILE-01 | Phase 23 | Pending |
 | MILE-02 | Phase 23 | Pending |
