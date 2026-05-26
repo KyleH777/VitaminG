@@ -62,6 +62,20 @@ final class GoalViewModel {
     /// Pure-Swift progress arithmetic delegate. Stateless; no allocation cost.
     private let progressVM = ProgressViewModel()
 
+    /// Streak freeze service used to obtain frozen dates for per-goal streak computation.
+    private let freezeService = StreakFreezeService()
+
+    // MARK: - Per-Goal Milestone Detection (MILE-04)
+
+    /// Set when addCheckIn detects the per-goal streak just crossed a milestone threshold.
+    /// Threshold values: [7, 14, 30, 60, 90, 365] (StreakMilestoneGate.goalStreakThresholds).
+    /// Consumed by GoalListView/GoalDetailView via .onChange. View clears after consumption.
+    var pendingGoalMilestone: (goalID: UUID, threshold: Int)? = nil
+
+    /// Set when addCheckIn detects completionEvents.count >= durationDays on a non-completed goal.
+    /// Consumed by GoalDetailView to present GoalCompletionCelebrationView (MILE-06).
+    var pendingGoalCompletion: UUID? = nil
+
     // MARK: - Input Sanitization
 
     /// Delegates to the shared InputSanitizer utility.
@@ -164,6 +178,32 @@ final class GoalViewModel {
         event.tierRawValue = goal.tierRawValue
         context.insert(event)
         event.goal = goal
+
+        // MILE-04: Per-goal streak milestone detection.
+        // currentStreak reads goal.completionEvents which now includes the just-inserted event
+        // (SwiftData updates the relationship graph synchronously on @MainActor).
+        let goalStreak = StreakEngine.currentStreak(
+            from: goal.completionEvents ?? [],
+            frozenDates: freezeService.frozenDates
+        )
+        for threshold in StreakMilestoneGate.goalStreakThresholds {
+            if goalStreak >= threshold
+                && goalStreak - 1 < threshold
+                && !StreakMilestoneGate.hasShown(goalID: goal.id, threshold: threshold) {
+                pendingGoalMilestone = (goalID: goal.id, threshold: threshold)
+                break
+            }
+        }
+
+        // MILE-06: Auto-completion detection.
+        // Fires when cumulative check-ins reach the goal's durationDays and the goal is not
+        // yet marked permanently complete. View layer sets goal.isCompleted after showing UI.
+        if let duration = goal.durationDays,
+           duration > 0,
+           (goal.completionEvents?.count ?? 0) >= duration,
+           goal.isCompleted == false {
+            pendingGoalCompletion = goal.id
+        }
 
         // Keep notifications and widgets fresh after the check-in
         rescheduleNotification(context: context)
