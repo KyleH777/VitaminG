@@ -29,17 +29,28 @@ struct HeatmapView: View {
             spacing: 3
         ) {
             ForEach(days, id: \.self) { day in
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(cellColor(for: data[day] ?? 0))
-                    .frame(width: 12, height: 12)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(cellColor(for: data[day] ?? 0))
+                        .frame(width: 12, height: 12)
+                    if data[day] == -1 {
+                        Image(systemName: "snowflake")
+                            .font(.system(size: 7))
+                            .foregroundStyle(Color.blue)
+                            .accessibilityLabel("Streak freeze")
+                    }
+                }
             }
         }
     }
 
     // MARK: - Color Intensity
 
+    /// Returns the fill color for a heatmap cell.
+    /// MILE-03: Sentinel value -1 indicates a streak-freeze day (blue tint).
     private func cellColor(for count: Int) -> Color {
         switch count {
+        case -1:      return Color.blue.opacity(0.25)
         case 0:       return Color(.systemFill)
         case 1:       return .green.opacity(0.3)
         case 2:       return .green.opacity(0.6)
