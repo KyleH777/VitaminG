@@ -2,24 +2,24 @@ import XCTest
 import SwiftData
 @testable import VitaminG
 
-// RED/SKIP — Wave 0 stub. Tests reference DiscoverViewModel which ships in Plan 04.
-// All tests XCTSkip until Plan 04 ships the DiscoverViewModel implementation.
-//
-// COMPILE-GATE blocks (#if false) contain the real assertions once DiscoverViewModel exists.
+// Phase 22 Plan 03 — DiscoverViewModel tests.
+// All tests are now LIVE — DiscoverViewModel ships in Plan 03.
 
 @MainActor
 final class Phase22DiscoverViewModelTests: XCTestCase {
 
-    // MARK: - DiscoverViewModel Tests (XCTSkip until Plan 04)
+    var sut: DiscoverViewModel!
+
+    override func setUp() async throws {
+        sut = DiscoverViewModel()
+    }
+
+    override func tearDown() async throws {
+        sut = nil
+    }
 
     // DISC-01: onSearchTextChanged("") clears results immediately (no debounce on empty text).
-    // Expected: goalResults and peopleResults are empty immediately after clearing.
-    // Wave 0: SKIP — DiscoverViewModel not yet implemented.
     func test_onSearchTextChanged_emptyText_clearsResults_immediately() async throws {
-        throw XCTSkip("Wave 0 stub — DiscoverViewModel implemented in Plan 04")
-
-        // COMPILE-GATE: Enable in Plan 04 when DiscoverViewModel ships.
-        #if false
         let sut = DiscoverViewModel()
         // Seed some results to verify clearing
         sut.goalResults = [
@@ -30,17 +30,10 @@ final class Phase22DiscoverViewModelTests: XCTestCase {
         // Empty text must clear results immediately without debounce
         XCTAssertTrue(sut.goalResults.isEmpty, "Empty text must clear goalResults immediately")
         XCTAssertTrue(sut.peopleResults.isEmpty, "Empty text must clear peopleResults immediately")
-        #endif
     }
 
     // DISC-01: onSearchTextChanged with non-empty text debounces by 500ms.
-    // Expected: results are not populated until after 500ms delay.
-    // Wave 0: SKIP — DiscoverViewModel not yet implemented.
     func test_onSearchTextChanged_nonEmpty_debouncesBy500ms() async throws {
-        throw XCTSkip("Wave 0 stub — DiscoverViewModel implemented in Plan 04")
-
-        // COMPILE-GATE: Enable in Plan 04.
-        #if false
         let sut = DiscoverViewModel()
         var searchCalled = false
         sut.searchGoalsOverride = { _ in
@@ -56,45 +49,24 @@ final class Phase22DiscoverViewModelTests: XCTestCase {
         // After 600ms: search must have fired
         try await Task.sleep(nanoseconds: 600_000_000)
         XCTAssertTrue(searchCalled, "Search must fire after 500ms debounce elapses")
-        #endif
     }
 
     // DISC-01/DISC-02: selectedSegment defaults to .goals.
-    // Expected: freshly created DiscoverViewModel has selectedSegment == .goals.
-    // Wave 0: SKIP — DiscoverViewModel not yet implemented.
     func test_selectedSegment_defaultsToGoals() async throws {
-        throw XCTSkip("Wave 0 stub — DiscoverViewModel implemented in Plan 04")
-
-        // COMPILE-GATE: Enable in Plan 04.
-        #if false
         let sut = DiscoverViewModel()
         XCTAssertEqual(sut.selectedSegment, SearchSegment.goals,
             "selectedSegment must default to .goals (Goals segment shown first)")
-        #endif
     }
 
     // DISC-04 / Pitfall 5: isJoined returns false initially for any goalID.
-    // Expected: isJoined("uuid-1") == false before any joinGoal call.
-    // Wave 0: SKIP — DiscoverViewModel not yet implemented.
     func test_isJoined_returnsFalseInitially() async throws {
-        throw XCTSkip("Wave 0 stub — DiscoverViewModel implemented in Plan 04")
-
-        // COMPILE-GATE: Enable in Plan 04.
-        #if false
         let sut = DiscoverViewModel()
         XCTAssertFalse(sut.isJoined(goalID: "uuid-1"),
             "isJoined must return false before any joinGoal call")
-        #endif
     }
 
     // DISC-04: joinGoal creates a local SwiftData Goal with isPublic = false and marks joined.
-    // Expected: after joinGoal, a Goal exists in context and isJoined returns true.
-    // Wave 0: SKIP — DiscoverViewModel.joinGoal not yet implemented.
     func test_joinGoal_insertsLocalGoalAndMarksJoined() async throws {
-        throw XCTSkip("Wave 0 stub — DiscoverViewModel.joinGoal implemented in Plan 04")
-
-        // COMPILE-GATE: Enable in Plan 04.
-        #if false
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(for: SchemaV9.Goal.self, configurations: config)
         let context = ModelContext(container)
@@ -107,7 +79,7 @@ final class Phase22DiscoverViewModelTests: XCTestCase {
             id: "uuid-1", title: "Run 5K", category: "Health",
             creatorUsername: "alice", participantCount: 10, progressPercent: 0
         )
-        sut.joinGoal(result, tier: .daily, context: context)
+        sut.joinGoal(result, tier: .immediate, context: context)
 
         // Verify joined state
         XCTAssertTrue(sut.isJoined(goalID: "uuid-1"), "joinGoal must mark goalID as joined")
@@ -118,17 +90,10 @@ final class Phase22DiscoverViewModelTests: XCTestCase {
         XCTAssertEqual(goals.count, 1, "joinGoal must insert exactly one Goal into context")
         XCTAssertEqual(goals.first?.title, "Run 5K")
         XCTAssertFalse(goals.first?.isPublic ?? true, "Joined goal must have isPublic = false (D-15)")
-        #endif
     }
 
     // DISC-04 / Pitfall 5: joinGoal is idempotent — repeat tap inserts only one Goal.
-    // Expected: calling joinGoal twice for the same goalID inserts only one local Goal.
-    // Wave 0: SKIP — DiscoverViewModel.joinGoal not yet implemented.
     func test_joinGoal_isIdempotentOnRepeatTap() async throws {
-        throw XCTSkip("Wave 0 stub — DiscoverViewModel.joinGoal implemented in Plan 04")
-
-        // COMPILE-GATE: Enable in Plan 04 (Pitfall 5 dedup via Set<String>).
-        #if false
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(for: SchemaV9.Goal.self, configurations: config)
         let context = ModelContext(container)
@@ -149,6 +114,28 @@ final class Phase22DiscoverViewModelTests: XCTestCase {
         let descriptor = FetchDescriptor<SchemaV9.Goal>()
         let goals = try context.fetch(descriptor)
         XCTAssertEqual(goals.count, 1, "joinGoal must be idempotent — repeat tap must not create duplicate Goals (Pitfall 5)")
-        #endif
+    }
+
+    // PROF-02 / MVVM: onFollowPerson calls writeFollowOverride exactly once with correct usernames.
+    func test_onFollowPerson_callsWriteFollowOverride() async throws {
+        let sut = DiscoverViewModel()
+        var callCount = 0
+        var capturedFollower: String = ""
+        var capturedFollowee: String = ""
+
+        sut.writeFollowOverride = { follower, followee in
+            callCount += 1
+            capturedFollower = follower
+            capturedFollowee = followee
+        }
+
+        sut.onFollowPerson(followerUsername: "alice", followeeUsername: "bob")
+
+        // Allow the fire-and-forget Task to complete
+        try await Task.sleep(nanoseconds: 100_000_000)
+
+        XCTAssertEqual(callCount, 1, "writeFollowOverride must be called exactly once")
+        XCTAssertEqual(capturedFollower, "alice", "Follower username must be passed correctly")
+        XCTAssertEqual(capturedFollowee, "bob", "Followee username must be passed correctly")
     }
 }
