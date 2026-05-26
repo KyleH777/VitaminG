@@ -187,6 +187,46 @@ final class GoalViewModel {
                 )
             }
         }
+
+        // Phase 22 (D-08, D-12): fire-and-forget profile republish and public goal sync
+        // after each check-in so viewers see refreshed streak and goal progress.
+        // Both Tasks are independent and do NOT await each other (Pitfall 7).
+
+        // Task A: republish profile with refreshed streakLength (D-08).
+        Task {
+            var profileDesc = FetchDescriptor<UserProfile>()
+            profileDesc.fetchLimit = 1
+            guard let userProfile = (try? context.fetch(profileDesc))?.first else { return }
+            // Respect the isPublic consent toggle (T-22-04-05).
+            guard userProfile.isPublic == true else { return }
+            let profileUsername = userProfile.username ?? ""
+            guard !profileUsername.isEmpty else { return }
+
+            let existingRecordID: String? = userProfile.cloudKitPublicRecordID
+                ?? UserDefaults.standard.string(forKey: "vg_appleUserID")
+
+            let allGoals = (try? context.fetch(FetchDescriptor<Goal>())) ?? []
+            let allEvents = allGoals.compactMap { $0.completionEvents }.flatMap { $0 }
+            let streakLength = StreakEngine.currentStreak(from: allEvents)
+            let goalCount = allGoals.filter { $0.isPublic == true }.count
+
+            // motto: nil — check-in republish updates streak/count only; motto updated at save.
+            try? await ProfileSharingService.publishProfile(
+                displayName: nil,
+                avatarColorHex: nil,
+                username: profileUsername,
+                existingRecordID: existingRecordID,
+                streakLength: streakLength,
+                goalCount: goalCount,
+                motto: nil
+            )
+        }
+
+        // Task B: sync progressPercent on all owned public goals (D-12).
+        Task {
+            let allGoals = (try? context.fetch(FetchDescriptor<Goal>())) ?? []
+            await PublicGoalService.syncOwnedPublicGoals(goals: allGoals)
+        }
     }
 
     func updateGoal(_ goal: Goal, context: ModelContext) throws {
