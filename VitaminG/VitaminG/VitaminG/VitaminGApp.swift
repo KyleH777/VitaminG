@@ -111,6 +111,9 @@ struct VitaminGApp: App {
                     // Passing [] is intentional — picks up new rotating message; top-goal title
                     // refreshes next time SettingsView/GoalViewModel calls reschedule with live goals.
                     await NotificationScheduler.shared.reschedule(activeGoals: [])
+                    // MILE-02: Schedule the global 7 PM streak-at-risk nudge on each launch.
+                    // Cap guard inside scheduleGlobalStreakAtRiskNudge prevents duplicate accumulation.
+                    await NotificationScheduler.shared.scheduleGlobalStreakAtRiskNudge()
                 }
 
                 // Phase 22 (D-08, D-11, D-12): fire-and-forget refresh tasks at launch.

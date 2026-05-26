@@ -209,6 +209,10 @@ final class GoalViewModel {
         rescheduleNotification(context: context)
         reloadWidgetTimelines()
 
+        // MILE-02: Cancel the global 7 PM streak-at-risk nudge after a successful check-in.
+        // Fire-and-forget — cancellation is best-effort (T-23-04-04 mitigation).
+        Task { await NotificationScheduler.shared.cancelGlobalStreakAtRiskNudge() }
+
         // Fire-and-forget GoalGlimpse upsert (D-01 / COMM-01).
         // Progress percent = completionEvents count / durationDays (clamped 0–100).
         // If durationDays is nil or zero, progressPercent defaults to 0.
