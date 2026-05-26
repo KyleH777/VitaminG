@@ -10,11 +10,22 @@ final class StreakFreezeService {
         self.defaults = defaults
     }
 
-    var canFreeze: Bool {
+    /// Returns true if the user can freeze their streak relative to the given date.
+    /// Uses ISO8601 calendar for weekOfYear comparison so the reset boundary is Monday
+    /// (not a Gregorian calendar artifact). yearForWeekOfYear is used instead of .year
+    /// to correctly handle the week 52 → week 1 year boundary.
+    func canFreezeRelativeTo(_ date: Date) -> Bool {
         guard let lastDate = lastFreezeDate else { return true }
-        let cal = Calendar.current
-        return !cal.isDate(lastDate, equalTo: .now, toGranularity: .month)
+        let iso = Calendar(identifier: .iso8601)
+        let lastWeek = iso.component(.weekOfYear, from: lastDate)
+        let thisWeek = iso.component(.weekOfYear, from: date)
+        let lastYear = iso.component(.yearForWeekOfYear, from: lastDate)
+        let thisYear = iso.component(.yearForWeekOfYear, from: date)
+        return lastWeek != thisWeek || lastYear != thisYear
     }
+
+    /// Returns true if the user can freeze their streak this week (once per ISO8601 week).
+    var canFreeze: Bool { canFreezeRelativeTo(.now) }
 
     var frozenDates: [Date] {
         let intervals = defaults.array(forKey: keyFrozenDates) as? [Double] ?? []
@@ -22,7 +33,7 @@ final class StreakFreezeService {
     }
 
     func freeze(on date: Date = .now) {
-        guard canFreeze else { return }
+        guard canFreezeRelativeTo(date) else { return }
         let cal = Calendar.current
         let day = cal.startOfDay(for: date)
         var intervals = defaults.array(forKey: keyFrozenDates) as? [Double] ?? []

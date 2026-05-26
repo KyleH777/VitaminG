@@ -46,9 +46,9 @@ final class Phase22PublicGoalServiceTests: XCTestCase {
         }
 
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: SchemaV9.Goal.self, configurations: config)
+        let container = try ModelContainer(for: SchemaV10.Goal.self, configurations: config)
         let context = ModelContext(container)
-        let goal = SchemaV9.Goal(title: dirtyTitle)
+        let goal = SchemaV10.Goal(title: dirtyTitle)
         goal.isPublic = true
         context.insert(goal)
 
@@ -89,22 +89,22 @@ final class Phase22PublicGoalServiceTests: XCTestCase {
     // Uses the writeOverride parameter of backfillPublicGoals to avoid CloudKit.
     func test_backfillPublicGoals_skipsGoalsWithExistingRecordID() async throws {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: SchemaV9.Goal.self, configurations: config)
+        let container = try ModelContainer(for: SchemaV10.Goal.self, configurations: config)
         let context = ModelContext(container)
 
         // Goal 1: public + already has record ID (should be skipped)
-        let alreadySynced = SchemaV9.Goal(title: "Already Synced")
+        let alreadySynced = SchemaV10.Goal(title: "Already Synced")
         alreadySynced.isPublic = true
         alreadySynced.cloudKitPublicGoalRecordID = "existing-record-id"
         context.insert(alreadySynced)
 
         // Goal 2: public + no record ID (should be backfilled)
-        let needsSync = SchemaV9.Goal(title: "Needs Sync")
+        let needsSync = SchemaV10.Goal(title: "Needs Sync")
         needsSync.isPublic = true
         context.insert(needsSync)
 
         // Goal 3: private + no record ID (should be skipped — not public)
-        let privateGoal = SchemaV9.Goal(title: "Private Goal")
+        let privateGoal = SchemaV10.Goal(title: "Private Goal")
         privateGoal.isPublic = false
         context.insert(privateGoal)
 

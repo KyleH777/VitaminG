@@ -30,6 +30,10 @@ enum PublicGoalService {
     /// Test seam: when non-nil, replaces fetchGoalsForUser CloudKit logic.
     static var fetchGoalsForUserOverride: ((String) async throws -> [PublicGoalItem])? = nil
 
+    /// Test seam: when non-nil, replaces syncOwnedPublicGoals CloudKit logic.
+    /// In test environments, set to a no-op closure to prevent CKContainer init crash.
+    static var syncOwnedPublicGoalsOverride: (([Goal]) async -> Void)? = nil
+
     // MARK: - Write / Delete
 
     /// Creates or replaces a PublicGoal CKRecord in the public CloudKit database.
@@ -205,6 +209,10 @@ enum PublicGoalService {
     /// Iterates goals where isPublic == true AND cloudKitPublicGoalRecordID != nil.
     /// On any per-goal error: silently logs and continues (D-12 — fire-and-forget).
     static func syncOwnedPublicGoals(goals: [Goal]) async {
+        if let override = syncOwnedPublicGoalsOverride {
+            await override(goals)
+            return
+        }
         let db = CKContainer(identifier: containerID).publicCloudDatabase
         for goal in goals {
             guard goal.isPublic == true,

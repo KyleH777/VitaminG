@@ -83,23 +83,23 @@ final class Phase22SchemaV9Tests: XCTestCase {
             "Goal.cloudKitPublicGoalRecordID must persist and read back the assigned String value")
     }
 
-    // Test 5 — typealias compile-time check: UserProfile resolves to SchemaV9.UserProfile.
-    // Expected: a SchemaV9.UserProfile can be assigned to a variable typed UserProfile (Schema8pV2 typealias).
+    // Test 5 — typealias compile-time check: UserProfile resolves to SchemaV10.UserProfile.
+    // Updated in Phase 23 Plan 01 when typealiases were advanced to V10.
     // This is a compile-time check — if it compiles, the typealias is correct.
-    func test_typealias_userProfile_isV9() {
-        let v9Profile = SchemaV9.UserProfile()
-        // Compile-time assignment — will fail to compile if typealias doesn't resolve to SchemaV9.UserProfile
-        let aliased: UserProfile = v9Profile
-        XCTAssertNotNil(aliased, "UserProfile typealias must resolve to SchemaV9.UserProfile")
+    func test_typealias_userProfile_isV10() {
+        let v10Profile = SchemaV10.UserProfile()
+        // Compile-time assignment — will fail to compile if typealias doesn't resolve to SchemaV10.UserProfile
+        let aliased: UserProfile = v10Profile
+        XCTAssertNotNil(aliased, "UserProfile typealias must resolve to SchemaV10.UserProfile")
     }
 
-    // Test 6 — typealias compile-time check: Goal resolves to SchemaV9.Goal.
-    // Expected: a SchemaV9.Goal can be assigned to a variable typed Goal (Schema8pV2 typealias).
+    // Test 6 — typealias compile-time check: Goal resolves to SchemaV10.Goal.
+    // Updated in Phase 23 Plan 01 when typealiases were advanced to V10.
     // This is a compile-time check — if it compiles, the typealias is correct.
-    func test_typealias_goal_isV9() {
-        let v9Goal = SchemaV9.Goal(title: "Typealias Test")
-        // Compile-time assignment — will fail to compile if typealias doesn't resolve to SchemaV9.Goal
-        let aliased: Goal = v9Goal
-        XCTAssertNotNil(aliased, "Goal typealias must resolve to SchemaV9.Goal")
+    func test_typealias_goal_isV10() {
+        let v10Goal = SchemaV10.Goal(title: "Typealias Test")
+        // Compile-time assignment — will fail to compile if typealias doesn't resolve to SchemaV10.Goal
+        let aliased: Goal = v10Goal
+        XCTAssertNotNil(aliased, "Goal typealias must resolve to SchemaV10.Goal")
     }
 }

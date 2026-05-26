@@ -39,7 +39,16 @@ struct VitaminGApp: App {
         self.notificationDelegate = delegate
         UNUserNotificationCenter.current().delegate = delegate
 
-        // Step 3: Initialize SwiftData container.
+        // Step 3: Guard CloudKit calls in test environments.
+        // CKContainer(identifier:) crashes when the app lacks iCloud entitlements (test/simulator
+        // environments without a paid team). Set no-op overrides so app bootstrap doesn't crash
+        // during XCTest runs. (Rule 1 auto-fix — pre-existing crash blocking test execution.)
+        if ProcessInfo.processInfo.environment["XCTestSessionIdentifier"] != nil {
+            PublicGoalService.syncOwnedPublicGoalsOverride = { _ in }
+            PublicGoalService.writePublicGoalOverride = { _, _ in return "" }
+        }
+
+        // Step 4: Initialize SwiftData container.
         do {
             container = try ModelContainerFactory.makeContainer()
 
@@ -49,7 +58,7 @@ struct VitaminGApp: App {
             fatalError("Could not create ModelContainer: \(error)")
         }
 
-        // Step 4: Install a lifetime-scoped StoreKit Transaction.updates listener (D-08, MON-03).
+        // Step 5: Install a lifetime-scoped StoreKit Transaction.updates listener (D-08, MON-03).
         // Must be assigned to a stored `let` property — local vars are deallocated after init()
         // and stop processing the queue (T-19-02-04 / Anti-Pattern in 19-RESEARCH.md).
         // T-19-02-01: Switch on VerificationResult — only call finish() for .verified transactions;

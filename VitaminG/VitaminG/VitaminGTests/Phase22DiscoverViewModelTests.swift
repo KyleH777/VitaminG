@@ -68,7 +68,7 @@ final class Phase22DiscoverViewModelTests: XCTestCase {
     // DISC-04: joinGoal creates a local SwiftData Goal with isPublic = false and marks joined.
     func test_joinGoal_insertsLocalGoalAndMarksJoined() async throws {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: SchemaV9.Goal.self, configurations: config)
+        let container = try ModelContainer(for: SchemaV10.Goal.self, configurations: config)
         let context = ModelContext(container)
 
         let sut = DiscoverViewModel()
@@ -85,7 +85,7 @@ final class Phase22DiscoverViewModelTests: XCTestCase {
         XCTAssertTrue(sut.isJoined(goalID: "uuid-1"), "joinGoal must mark goalID as joined")
 
         // Verify local Goal was created with isPublic = false (D-15)
-        let descriptor = FetchDescriptor<SchemaV9.Goal>()
+        let descriptor = FetchDescriptor<SchemaV10.Goal>()
         let goals = try context.fetch(descriptor)
         XCTAssertEqual(goals.count, 1, "joinGoal must insert exactly one Goal into context")
         XCTAssertEqual(goals.first?.title, "Run 5K")
@@ -95,7 +95,7 @@ final class Phase22DiscoverViewModelTests: XCTestCase {
     // DISC-04 / Pitfall 5: joinGoal is idempotent — repeat tap inserts only one Goal.
     func test_joinGoal_isIdempotentOnRepeatTap() async throws {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: SchemaV9.Goal.self, configurations: config)
+        let container = try ModelContainer(for: SchemaV10.Goal.self, configurations: config)
         let context = ModelContext(container)
 
         let sut = DiscoverViewModel()
@@ -111,7 +111,7 @@ final class Phase22DiscoverViewModelTests: XCTestCase {
         sut.joinGoal(result, tier: .immediate, context: context)
 
         // Only one Goal should be in context (Set<String> dedup per Pitfall 5)
-        let descriptor = FetchDescriptor<SchemaV9.Goal>()
+        let descriptor = FetchDescriptor<SchemaV10.Goal>()
         let goals = try context.fetch(descriptor)
         XCTAssertEqual(goals.count, 1, "joinGoal must be idempotent — repeat tap must not create duplicate Goals (Pitfall 5)")
     }
