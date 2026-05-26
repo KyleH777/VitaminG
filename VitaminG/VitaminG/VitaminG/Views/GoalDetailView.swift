@@ -76,7 +76,17 @@ struct GoalDetailView: View {
                     threshold: milestone.threshold,
                     goalTitle: goal.title ?? "",
                     streakCount: StreakEngine.currentStreak(from: goalEvents),
-                    onShareToCommunity: { /* no-op — wired in Plan 04 */ },
+                    onShareToCommunity: {
+                        // MILE-05: Wire to GoalViewModel.shareGoalMilestone (Plan 04)
+                        viewModel.shareGoalMilestone(
+                            goalID: milestone.goalID,
+                            threshold: milestone.threshold,
+                            goalTitle: goal.title ?? "",
+                            username: profiles.first?.username ?? profiles.first?.displayName ?? "",
+                            colorHex: profiles.first?.avatarColorHex ?? ""
+                        )
+                        localMilestone = nil
+                    },
                     onDismiss: { localMilestone = nil }
                 )
             }

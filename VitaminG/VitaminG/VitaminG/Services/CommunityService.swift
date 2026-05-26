@@ -549,3 +549,35 @@ extension CommunityService {
         }
     }
 }
+
+// MARK: - Phase 23 MILE-05: Achievement posts
+
+extension CommunityService {
+
+    /// Creates a CommunityPost record in the public CloudKit database with isAchievementPost = 1.
+    /// Used to share a per-goal streak milestone (e.g., "7-Day Streak") to the global feed.
+    ///
+    /// All user-supplied text passes through InputSanitizer.sanitizeForPublic (T-23-04-02, T-23-04-03).
+    /// Errors are propagated to the caller (GoalViewModel.shareGoalMilestone silently drops them).
+    static func createAchievementPost(
+        milestoneLabel: String,
+        goalTitle: String,
+        authorDisplayName: String?,
+        authorColorHex: String?
+    ) async throws -> CKRecord {
+        let db = CKContainer.default().publicCloudDatabase
+        let record = CKRecord(recordType: postRecordType)
+        let sanitizedAuthor = InputSanitizer.sanitizeForPublic(authorDisplayName ?? "Anonymous")
+        let sanitizedGoal = InputSanitizer.sanitizeForPublic(goalTitle)
+        let sanitizedLabel = InputSanitizer.sanitizeForPublic(milestoneLabel)
+        record["text"] = "🏆 \(sanitizedLabel) — \(sanitizedGoal)" as CKRecordValue
+        record["authorDisplayName"] = sanitizedAuthor as CKRecordValue
+        record["authorColorHex"] = (authorColorHex ?? "") as CKRecordValue
+        record["thumbsUpCount"] = 0 as CKRecordValue
+        record["heartCount"] = 0 as CKRecordValue
+        record["reportCount"] = 0 as CKRecordValue
+        record["reporterIDsJSON"] = "[]" as CKRecordValue
+        record["isAchievementPost"] = 1 as CKRecordValue
+        return try await db.save(record)
+    }
+}
