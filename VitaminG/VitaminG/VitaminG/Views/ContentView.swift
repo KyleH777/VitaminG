@@ -5,6 +5,7 @@ struct ContentView: View {
     @Environment(AppRouter.self) private var router
     @Query private var allUserChallenges: [UserChallenge]
     @State private var selectedTab: AppTab = .home
+    @State private var exploreSearchText: String = ""
 
     var body: some View {
         @Bindable var router = router
@@ -25,11 +26,16 @@ struct ContentView: View {
                 .tag(AppTab.goals)
 
             NavigationStack {
-                ExploreView()
+                ExploreView(searchText: exploreSearchText)
                     .navigationDestination(for: GoalCategory.self) { category in
                         CategoryGoalListView(category: category)
                     }
             }
+            .searchable(
+                text: $exploreSearchText,
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: "Search goals or people…"
+            )
             .tag(AppTab.explore)
 
             NavigationStack {

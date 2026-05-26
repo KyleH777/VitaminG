@@ -6,7 +6,50 @@ struct ExploreView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var allGoals: [Goal]
 
+    // MARK: - Search (Phase 22, Plan 22-05 Task 2)
+    // searchText is passed in from ContentView where .searchable lives on the NavigationStack
+    // (Pitfall 1 — .searchable must be on NavigationStack ancestor, not on ScrollView).
+    let searchText: String
+
+    @Environment(\.isSearching) private var isSearching
+
+    // DiscoverViewModel instance persists for the lifetime of this view so search debounce
+    // and joined-goal state survive body re-renders during search.
+    @State private var discoverViewModel = DiscoverViewModel()
+
+    init(searchText: String = "") {
+        self.searchText = searchText
+    }
+
     var body: some View {
+        if isSearching && searchText.isEmpty {
+            // D-02: active + empty → show TRENDING CHALLENGES only
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    sectionLabel("TRENDING CHALLENGES")
+                    ChallengeDiscoveryView(navigationPath: .constant(NavigationPath()))
+                }
+                .padding(.top, 8)
+                .padding(.bottom, 24)
+            }
+            .background(VGTheme.background.ignoresSafeArea())
+        } else if isSearching {
+            // D-03: active + non-empty → Discover overlay
+            DiscoverOverlayView(searchText: searchText, viewModel: discoverViewModel)
+                .onChange(of: searchText) { _, newText in
+                    discoverViewModel.onSearchTextChanged(newText)
+                }
+        } else {
+            // D-04: inactive → normal 6-section Explore
+            existingScrollContent
+        }
+    }
+
+    // MARK: - Existing Scroll Content
+    // Identical to the original ExploreView body — relocated into a private computed var
+    // so the three-branch body above can reference it without duplication.
+
+    private var existingScrollContent: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 // Section 1: Daily Goal Gifter (EXPLORE-01, EXPLORE-02)
