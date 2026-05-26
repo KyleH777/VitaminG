@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Social Growth Engine
 status: executing
-last_updated: "2026-05-25T17:13:29.833Z"
-last_activity: 2026-05-25 -- Phase 22 planning complete
+last_updated: "2026-05-26T02:29:45.130Z"
+last_activity: 2026-05-26
 progress:
   total_phases: 9
   completed_phases: 6
   total_plans: 33
-  completed_plans: 28
+  completed_plans: 31
   percent: 67
 ---
 
@@ -20,14 +20,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-15)
 
 **Core value:** Every morning, the user is reminded of their goals — making progress feel inevitable, not accidental.
-**Current focus:** Phase 22 — follow-system
+**Current focus:** Phase 22 — public-profile-follow-discover
 
 ## Current Position
 
-Phase: 21 — COMPLETE
-Plan: 1 of N
+Phase: 22 (public-profile-follow-discover) — EXECUTING
+Plan: 2 of 5
 Status: Ready to execute
-Last activity: 2026-05-25 -- Phase 22 planning complete
+Last activity: 2026-05-26
 
 ```
 v2.0 Progress: [██████████] 100% (6/9 phases, 28/28 plans)

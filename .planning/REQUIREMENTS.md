@@ -69,10 +69,10 @@
 
 ### Public Profile (PROF)
 
-- [ ] **PROF-01**: Public profile view ("Jordan Kim" style) shows avatar, motto/bio, streak length, goal count, and cheers given count
-- [ ] **PROF-02**: User can follow another user's public profile (one-time action; stored as a `Follow` record in CloudKit public DB; community feed remains global in v2.0)
-- [ ] **PROF-03**: "Cheer them on today" button on public profile sends applause (SOC-01); button is disabled after daily limit is reached with appropriate visual feedback
-- [ ] **PROF-04**: Public profile shows the user's public goals with progress rings displaying progress toward 100%
+- [x] **PROF-01**: Public profile view ("Jordan Kim" style) shows avatar, motto/bio, streak length, goal count, and cheers given count
+- [x] **PROF-02**: User can follow another user's public profile (one-time action; stored as a `Follow` record in CloudKit public DB; community feed remains global in v2.0)
+- [x] **PROF-03**: "Cheer them on today" button on public profile sends applause (SOC-01); button is disabled after daily limit is reached with appropriate visual feedback
+- [x] **PROF-04**: Public profile shows the user's public goals with progress rings displaying progress toward 100%
 - [ ] **PROF-05**: Every public profile shows a Report and Block action (content moderation required by App Store Guideline 1.2 to ship alongside profile photos); in-app support contact accessible from profile
 
 ### Milestone Features (MILE)
@@ -86,10 +86,10 @@
 
 ### Discover Page (DISC)
 
-- [ ] **DISC-01**: Discover page has a search bar that queries public goals by keyword (case-insensitive substring match, debounced 500ms); results show goal card with creator username, category, participant count, and progress circle
-- [ ] **DISC-02**: Discover search supports a "People" segment that queries user profiles by username (case-insensitive prefix match); results show profile cards with Follow button
+- [x] **DISC-01**: Discover page has a search bar that queries public goals by keyword (case-insensitive substring match, debounced 500ms); results show goal card with creator username, category, participant count, and progress circle
+- [x] **DISC-02**: Discover search supports a "People" segment that queries user profiles by username (case-insensitive prefix match); results show profile cards with Follow button
 - [ ] **DISC-03**: Trending Challenges section displayed on Discover when search is empty — reuses existing ChallengeDiscoveryView components from v1.0 Phase 15
-- [ ] **DISC-04**: User can join a public goal from Discover results — "Join" adds the goal to the user's local goal list and increments the public goal's participant count
+- [x] **DISC-04**: User can join a public goal from Discover results — "Join" adds the goal to the user's local goal list and increments the public goal's participant count
 
 ### Notification Enhancements (NOTIF)
 
@@ -200,14 +200,14 @@
 | SOC-01 | Phase 21 | Complete |
 | SOC-02 | Phase 21 | Complete |
 | SOC-03 | Phase 21 | Complete |
-| PROF-01 | Phase 22 | Pending |
-| PROF-02 | Phase 22 | Pending |
-| PROF-03 | Phase 22 | Pending |
-| PROF-04 | Phase 22 | Pending |
-| DISC-01 | Phase 22 | Pending |
-| DISC-02 | Phase 22 | Pending |
+| PROF-01 | Phase 22 | Complete |
+| PROF-02 | Phase 22 | Complete |
+| PROF-03 | Phase 22 | Complete |
+| PROF-04 | Phase 22 | Complete |
+| DISC-01 | Phase 22 | Complete |
+| DISC-02 | Phase 22 | Complete |
 | DISC-03 | Phase 22 | Pending |
-| DISC-04 | Phase 22 | Pending |
+| DISC-04 | Phase 22 | Complete |
 | MILE-01 | Phase 23 | Pending |
 | MILE-02 | Phase 23 | Pending |
 | MILE-03 | Phase 23 | Pending |
