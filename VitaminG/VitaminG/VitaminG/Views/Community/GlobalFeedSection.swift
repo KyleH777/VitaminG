@@ -72,19 +72,25 @@ struct GlobalFeedSection: View {
             } else {
                 LazyVStack(spacing: 12) {
                     ForEach(feedPosts, id: \.recordID) { post in
-                        CommunityPostCard(
-                            post: post,
-                            currentUserReaction: localReactionByPostID[post.recordID],
-                            accentColor: VGTheme.accentTerra,
-                            onReact: { type in handleReact(post: post, type: type) },
-                            onReport: {
-                                Task { await handleReport(post: post) }
-                            },
-                            onComment: {
-                                activeReplyPostID = post.recordID.recordName
-                                showReplySheet = true
-                            }
-                        )
+                        // MILE-05: Render StreakAchievementCard for achievement posts;
+                        // regular CommunityPostCard for all other posts.
+                        if (post["isAchievementPost"] as? Int) == 1 {
+                            StreakAchievementCard(record: post)
+                        } else {
+                            CommunityPostCard(
+                                post: post,
+                                currentUserReaction: localReactionByPostID[post.recordID],
+                                accentColor: VGTheme.accentTerra,
+                                onReact: { type in handleReact(post: post, type: type) },
+                                onReport: {
+                                    Task { await handleReport(post: post) }
+                                },
+                                onComment: {
+                                    activeReplyPostID = post.recordID.recordName
+                                    showReplySheet = true
+                                }
+                            )
+                        }
                     }
                 }
                 .padding(.horizontal, 16)

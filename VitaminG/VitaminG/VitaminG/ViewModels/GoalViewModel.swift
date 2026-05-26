@@ -368,6 +368,29 @@ final class GoalViewModel {
         }
     }
 
+    // MARK: - Phase 23 MILE-05: Community achievement sharing
+
+    /// Shares a per-goal streak milestone achievement to the community global feed.
+    /// Fire-and-forget — CloudKit errors are silently dropped (T-23-04-01 mitigation).
+    /// Called from GoalDetailView's onShareToCommunity closure (GoalStreakMilestoneView).
+    func shareGoalMilestone(
+        goalID: UUID,
+        threshold: Int,
+        goalTitle: String,
+        username: String,
+        colorHex: String
+    ) {
+        let milestoneLabel = "\(threshold)-Day Streak"
+        Task {
+            try? await CommunityService.createAchievementPost(
+                milestoneLabel: milestoneLabel,
+                goalTitle: goalTitle,
+                authorDisplayName: username,
+                authorColorHex: colorHex
+            )
+        }
+    }
+
     // MARK: - Stats (Phase 15 — UIADD-02)
 
     func earnedBadgeCount(from challenges: [UserChallenge]) -> Int {
