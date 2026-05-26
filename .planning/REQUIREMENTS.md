@@ -77,12 +77,12 @@
 
 ### Milestone Features (MILE)
 
-- [ ] **MILE-01**: "Life happened." streak freeze page shown with snowflake ❄️ — available once per week (ISO8601 Monday reset); activating it nullifies the missed day so the streak count is preserved
-- [ ] **MILE-02**: "Streak at risk" notification and/or in-app nudge surfaces at 7 PM local time if user has not checked in today and has a freeze available that week
-- [ ] **MILE-03**: Frozen days are displayed as ❄️ glyphs in the streak calendar/heatmap view (existing heatmap from v1.0 Phase 3)
-- [ ] **MILE-04**: Achievement unlocked full-screen appears at streak milestones: 7, 14, 30, 60, 90, 365 days — fire emoji, confetti burst, milestone label, "Share to Community" CTA, and "Continue" button returning to Home; each milestone shown only once (persisted to prevent re-showing)
-- [ ] **MILE-05**: Shared achievements scroll in the Community main page feed alongside regular posts
-- [ ] **MILE-06**: "You did it" goal completed page shown when a goal reaches full completion — animated checkmark, goal title, goal-specific streak count, confetti, "Share" (ShareLink) and "Back to Goals" CTAs
+- [x] **MILE-01**: "Life happened." streak freeze page shown with snowflake ❄️ — available once per week (ISO8601 Monday reset); activating it nullifies the missed day so the streak count is preserved
+- [x] **MILE-02**: "Streak at risk" notification and/or in-app nudge surfaces at 7 PM local time if user has not checked in today and has a freeze available that week
+- [x] **MILE-03**: Frozen days are displayed as ❄️ glyphs in the streak calendar/heatmap view (existing heatmap from v1.0 Phase 3)
+- [x] **MILE-04**: Achievement unlocked full-screen appears at streak milestones: 7, 14, 30, 60, 90, 365 days — fire emoji, confetti burst, milestone label, "Share to Community" CTA, and "Continue" button returning to Home; each milestone shown only once (persisted to prevent re-showing)
+- [x] **MILE-05**: Shared achievements scroll in the Community main page feed alongside regular posts
+- [x] **MILE-06**: "You did it" goal completed page shown when a goal reaches full completion — animated checkmark, goal title, goal-specific streak count, confetti, "Share" (ShareLink) and "Back to Goals" CTAs
 
 ### Discover Page (DISC)
 
@@ -208,11 +208,11 @@
 | DISC-02 | Phase 22 | Complete |
 | DISC-03 | Phase 22 | Complete |
 | DISC-04 | Phase 22 | Complete |
-| MILE-01 | Phase 23 | Pending |
-| MILE-02 | Phase 23 | Pending |
-| MILE-03 | Phase 23 | Pending |
-| MILE-04 | Phase 23 | Pending |
-| MILE-05 | Phase 23 | Pending |
-| MILE-06 | Phase 23 | Pending |
+| MILE-01 | Phase 23 | Complete |
+| MILE-02 | Phase 23 | Complete |
+| MILE-03 | Phase 23 | Complete |
+| MILE-04 | Phase 23 | Complete |
+| MILE-05 | Phase 23 | Complete |
+| MILE-06 | Phase 23 | Complete |
 | WID-01 | Phase 24 | Pending |
 | WID-02 | Phase 24 | Pending |
