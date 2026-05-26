@@ -554,27 +554,19 @@ ShareLink(
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED — 2026-05-26)
 
 1. **Are MILE-04 milestones on the global app streak or per-goal streak?**
-   - What we know: The requirement says "streak milestones" without specifying scope; the global streak is the prominently displayed number in `StatsView`.
-   - What's unclear: Per-goal streaks are also computed (by filtering events to a single goal's events); "streak at risk" (MILE-02) implies per-goal context.
-   - Recommendation: Clarify before implementing — global streak is simpler and aligns with the StatsView design; per-goal streak requires milestone detection inside the goal card.
+   - **RESOLVED: Per-goal streak.** Each goal independently tracks milestone thresholds (7/14/30/60/90/365). Milestone detection runs inside `addCheckIn` scoped to the goal being checked in.
 
 2. **Does MILE-06 fire automatically when `completionEvents.count >= durationDays` OR only on manual `toggleCompletion`?**
-   - What we know: `toggleCompletion` sets `isCompleted = true` manually; `addCheckIn` never sets it.
-   - What's unclear: A 30-day goal with 30 check-ins does not auto-complete today.
-   - Recommendation: If auto-complete is desired, add a branch in `addCheckIn` that calls `toggleCompletion` when count equals durationDays, then fires the celebration. This is a behavior addition that needs explicit sign-off.
+   - **RESOLVED: Auto + manual.** `addCheckIn` auto-fires "You did it" when `completionEvents.count >= durationDays`. Manual `toggleCompletion` also fires it. Both paths call the same celebration trigger.
 
 3. **Does MILE-05 community sharing require a new "Achievements" section in CommunityTabView, or does it interleave with the global feed?**
-   - What we know: The requirement says "scroll in Community feed alongside regular posts" — suggests interleaving.
-   - What's unclear: Interleaving mixed `CKRecord` types in `GlobalFeedSection` requires type-discriminating the `ForEach`.
-   - Recommendation: Interleave by `creationDate` in `CommunityHubViewModel`; add a `recordKind` field (`"achievement"` vs `"post"`) for cell type routing.
+   - **RESOLVED: Interleaved in global feed.** Achievement posts scroll alongside regular posts sorted by `creationDate`. The existing `postRecordType` is reused with an `isAchievementPost` discriminator field for cell routing.
 
 4. **Should the MILE-02 in-app nudge be a banner/alert rather than (or in addition to) the push notification?**
-   - What we know: The requirement says "notification/in-app nudge" — both are mentioned.
-   - What's unclear: In-app would require `GoalListView` to check "not checked in today + freeze available" at view appearance time and show a banner.
-   - Recommendation: Implement push notification first (simpler, consistent with existing patterns); in-app banner can be a secondary enhancement.
+   - **RESOLVED: Push notification only.** A local `UNCalendarNotificationTrigger` at 7 PM when user has not checked in today and has a freeze available this week.
 
 ---
 
@@ -594,8 +586,8 @@ Step 2.6: SKIPPED (no new external dependencies identified — same stack as Pha
 |----------|-------|
 | Framework | XCTest |
 | Config file | None — integrated in Xcode scheme |
-| Quick run command | `xcodebuild test -scheme VitaminG -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:VitaminGTests/<TestClass>` |
-| Full suite command | `xcodebuild test -scheme VitaminG -destination 'platform=iOS Simulator,name=iPhone 16'` |
+| Quick run command | `xcodebuild test -scheme VitaminG -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:VitaminGTests/<TestClass>` |
+| Full suite command | `xcodebuild test -scheme VitaminG -destination 'platform=iOS Simulator,name=iPhone 17 Pro'` |
 
 ### Phase Requirements → Test Map
 
