@@ -7,7 +7,7 @@ final class PublicProfileViewModel {
 
     enum ViewState: Equatable {
         case loading
-        case loaded(displayName: String?, avatarColorHex: String?)
+        case loaded(profile: PublicProfileData)
         case error(message: String)
     }
 
@@ -19,21 +19,21 @@ final class PublicProfileViewModel {
     }
 
     /// Closure override for unit testing. When non-nil, used instead of ProfileSharingService.
+    /// Returns PublicProfileData — updated in Phase 22 to carry the full profile struct.
     /// Follows the fake-injection pattern from NotificationSchedulerTests.
-    var fetchOverride: ((String) async throws -> (String?, String?))? = nil
+    var fetchOverride: ((String) async throws -> PublicProfileData)? = nil
 
     func fetchProfile(recordID: String) {
         state = .loading
         Task {
             do {
-                let result: (displayName: String?, avatarColorHex: String?)
+                let profile: PublicProfileData
                 if let override = fetchOverride {
-                    let (d, a) = try await override(recordID)
-                    result = (displayName: d, avatarColorHex: a)
+                    profile = try await override(recordID)
                 } else {
-                    result = try await ProfileSharingService.fetchProfile(recordID: recordID)
+                    profile = try await ProfileSharingService.fetchProfile(recordID: recordID)
                 }
-                state = .loaded(displayName: result.displayName, avatarColorHex: result.avatarColorHex)
+                state = .loaded(profile: profile)
             } catch let error as CKError {
                 switch error.code {
                 case .unknownItem:

@@ -78,18 +78,18 @@ struct PublicProfileView: View {
                     .foregroundStyle(.secondary)
             }
 
-        case .loaded(let displayName, let avatarColorHex):
+        case .loaded(let profile):
             VStack(spacing: 16) {
                 Spacer()
                 AvatarView(
-                    displayName: displayName,
-                    avatarColorHex: avatarColorHex,
+                    displayName: profile.displayName,
+                    avatarColorHex: profile.avatarColorHex,
                     photoData: nil,
                     size: 72
                 )
                 .contextMenu {
                     Button {
-                        reportUser(displayName: displayName)
+                        reportUser(displayName: profile.displayName)
                     } label: {
                         Label("Report User", systemImage: "flag")
                     }
@@ -100,13 +100,13 @@ struct PublicProfileView: View {
                     }
                 }
 
-                Text(displayName ?? "Unknown")
+                Text(profile.displayName ?? "Unknown")
                     .font(.title2.weight(.semibold))
                     .fontDesign(.rounded)
                     .foregroundStyle(.primary)
                     .contextMenu {
                         Button {
-                            reportUser(displayName: displayName)
+                            reportUser(displayName: profile.displayName)
                         } label: {
                             Label("Report User", systemImage: "flag")
                         }
