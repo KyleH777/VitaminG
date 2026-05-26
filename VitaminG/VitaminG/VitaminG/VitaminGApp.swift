@@ -103,6 +103,74 @@ struct VitaminGApp: App {
                     // refreshes next time SettingsView/GoalViewModel calls reschedule with live goals.
                     await NotificationScheduler.shared.reschedule(activeGoals: [])
                 }
+
+                // Phase 22 (D-08, D-11, D-12): fire-and-forget refresh tasks at launch.
+                // All three Tasks are wrapped in Task { } so they do NOT block the outer
+                // .task body (Pitfall 7 — never await Phase 22 launch hooks directly).
+                // The container.mainContext is used to read local data; access is safe on
+                // @MainActor since VitaminGApp.body runs on the main actor.
+                let launchContext = container.mainContext
+
+                // Phase 22 Task A: republish profile with refreshed streakLength + goalCount (D-08).
+                // T-22-04-05 privacy guard: skip entirely when user has not opted into public profile.
+                Task {
+                    // Fetch UserProfile to check consent and read identity fields.
+                    var profileDescriptor = FetchDescriptor<UserProfile>()
+                    profileDescriptor.fetchLimit = 1
+                    guard let userProfile = (try? launchContext.fetch(profileDescriptor))?.first else { return }
+
+                    // T-22-04-05: Private users must NOT republish streak/goalCount to PublicProfile.
+                    guard userProfile.isPublic == true else { return }
+
+                    // Read username from UserProfile (set during onboarding username claim).
+                    let username = userProfile.username ?? ""
+                    guard !username.isEmpty else { return }
+
+                    // existingRecordID: use cloudKitPublicRecordID stored on UserProfile,
+                    // falling back to vg_appleUserID (UserDefaults) as the record name key
+                    // when the explicit record ID is not yet stored locally (Phase 17 pattern).
+                    let existingRecordID: String? = userProfile.cloudKitPublicRecordID
+                        ?? UserDefaults.standard.string(forKey: "vg_appleUserID")
+
+                    // Fetch all goals to compute streakLength and goalCount.
+                    let allGoals = (try? launchContext.fetch(FetchDescriptor<Goal>())) ?? []
+                    let allEvents = allGoals.compactMap { $0.completionEvents }.flatMap { $0 }
+                    let streakLength = StreakEngine.currentStreak(from: allEvents)
+                    let goalCount = allGoals.filter { $0.isPublic == true }.count
+
+                    // T-22-04-06: pass motto: nil so the launch refresh does NOT overwrite
+                    // an existing motto — motto is updated only on ProfileEditSheet save.
+                    try? await ProfileSharingService.publishProfile(
+                        displayName: nil,
+                        avatarColorHex: nil,
+                        username: username,
+                        existingRecordID: existingRecordID,
+                        streakLength: streakLength,
+                        goalCount: goalCount,
+                        motto: nil
+                    )
+                }
+
+                // Phase 22 Task B: backfill PublicGoal records for any public goal that
+                // was made public before Phase 22 shipped (D-11 — best-effort, per-goal resilient).
+                Task {
+                    let allGoals = (try? launchContext.fetch(FetchDescriptor<Goal>())) ?? []
+                    var profileDescriptor = FetchDescriptor<UserProfile>()
+                    profileDescriptor.fetchLimit = 1
+                    let creatorUsername = (try? launchContext.fetch(profileDescriptor))?.first?.username ?? ""
+                    guard !creatorUsername.isEmpty else { return }
+                    await PublicGoalService.backfillPublicGoals(
+                        goals: allGoals,
+                        context: launchContext,
+                        creatorUsername: creatorUsername
+                    )
+                }
+
+                // Phase 22 Task C: sync progressPercent on all already-published public goals (D-12).
+                Task {
+                    let allGoals = (try? launchContext.fetch(FetchDescriptor<Goal>())) ?? []
+                    await PublicGoalService.syncOwnedPublicGoals(goals: allGoals)
+                }
             }
             .onOpenURL { url in
                 // D-08, D-09: Parse vitaming://profile/<recordID>
