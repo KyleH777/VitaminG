@@ -18,6 +18,9 @@ struct GoalListView: View {
     @State private var pendingMilestone: (goalID: UUID, threshold: Int)? = nil
     @State private var milestoneTask: Task<Void, Never>?
 
+    // MILE-04: Per-goal streak milestone (separate from challenge pendingMilestone)
+    @State private var pendingGoalMilestone: (goalID: UUID, threshold: Int)? = nil
+
     private var hasAnyGoals: Bool { !goals.isEmpty }
     private var sortedGoals: [Goal] { GoalSorter.sort(goals, by: sortOption) }
     private func goals(for tier: GoalTier) -> [Goal] { sortedGoals.filter { $0.tier == tier } }
@@ -88,6 +91,32 @@ struct GoalListView: View {
                     guard !Task.isCancelled else { return }
                     pendingMilestone = nil
                 }
+            }
+        }
+        // MILE-04: Consume pendingGoalMilestone for per-goal streak celebrations
+        .onChange(of: viewModel.pendingGoalMilestone?.goalID) { _, _ in
+            if let milestone = viewModel.pendingGoalMilestone {
+                pendingGoalMilestone = milestone
+                viewModel.pendingGoalMilestone = nil
+            }
+        }
+        // MILE-04: Present GoalStreakMilestoneView when pendingGoalMilestone fires
+        .fullScreenCover(
+            isPresented: Binding(
+                get: { pendingGoalMilestone != nil },
+                set: { if !$0 { pendingGoalMilestone = nil } }
+            )
+        ) {
+            if let milestone = pendingGoalMilestone {
+                let matchedGoal = goals.first(where: { $0.id == milestone.goalID })
+                GoalStreakMilestoneView(
+                    goalID: milestone.goalID,
+                    threshold: milestone.threshold,
+                    goalTitle: matchedGoal?.title ?? "",
+                    streakCount: StreakEngine.currentStreak(from: matchedGoal?.completionEvents ?? []),
+                    onShareToCommunity: { /* no-op — wired in Plan 04 */ },
+                    onDismiss: { pendingGoalMilestone = nil }
+                )
             }
         }
     }

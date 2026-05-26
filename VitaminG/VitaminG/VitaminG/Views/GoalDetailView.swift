@@ -16,6 +16,14 @@ struct GoalDetailView: View {
     @State private var showingCheckInCelebration = false
     @State private var viewModel = GoalViewModel()
 
+    // MILE-04: Per-goal streak milestone celebration state
+    @State private var localMilestone: (goalID: UUID, threshold: Int)? = nil
+
+    // MILE-06: Goal completion celebration state
+    @State private var showingCompletionCelebration = false
+    @State private var completionGoalTitle: String = ""
+    @State private var completionStreakCount: Int = 0
+
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
 
@@ -54,6 +62,51 @@ struct GoalDetailView: View {
         }
         .fullScreenCover(isPresented: $showingCheckInCelebration) {
             CheckInCelebrationView(streakCount: appStreak, onDismiss: { showingCheckInCelebration = false })
+        }
+        // MILE-04: Present GoalStreakMilestoneView when pendingGoalMilestone is set
+        .fullScreenCover(
+            isPresented: Binding(
+                get: { localMilestone != nil },
+                set: { if !$0 { localMilestone = nil } }
+            )
+        ) {
+            if let milestone = localMilestone {
+                GoalStreakMilestoneView(
+                    goalID: milestone.goalID,
+                    threshold: milestone.threshold,
+                    goalTitle: goal.title ?? "",
+                    streakCount: StreakEngine.currentStreak(from: goalEvents),
+                    onShareToCommunity: { /* no-op — wired in Plan 04 */ },
+                    onDismiss: { localMilestone = nil }
+                )
+            }
+        }
+        // MILE-06: Present GoalCompletionCelebrationView when pendingGoalCompletion is set
+        .fullScreenCover(isPresented: $showingCompletionCelebration) {
+            GoalCompletionCelebrationView(
+                goalTitle: completionGoalTitle,
+                streakCount: completionStreakCount,
+                onDismiss: { showingCompletionCelebration = false }
+            )
+        }
+        // Consume pendingGoalMilestone from ViewModel (MILE-04)
+        .onChange(of: viewModel.pendingGoalMilestone?.goalID) { _, _ in
+            if let milestone = viewModel.pendingGoalMilestone {
+                localMilestone = milestone
+                viewModel.pendingGoalMilestone = nil
+            }
+        }
+        // Consume pendingGoalCompletion from ViewModel (MILE-06)
+        .onChange(of: viewModel.pendingGoalCompletion) { _, newID in
+            guard let completedGoalID = newID else { return }
+            if goal.id == completedGoalID {
+                completionGoalTitle = goal.title ?? "Your Goal"
+                completionStreakCount = StreakEngine.currentStreak(from: goalEvents)
+                // Mark celebration shown to prevent re-showing (completionCelebrationShown = SchemaV10 field)
+                goal.completionCelebrationShown = true
+                showingCompletionCelebration = true
+            }
+            viewModel.pendingGoalCompletion = nil
         }
         .sheet(isPresented: $showingStartDatePicker) {
             NavigationStack {
