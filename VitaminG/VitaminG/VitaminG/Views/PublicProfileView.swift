@@ -1,30 +1,34 @@
 import SwiftUI
 import MessageUI
 
-/// Read-only sheet card displaying a public profile fetched via deep link.
-/// Shows avatar + display name only (D-02). Presented as a sheet (D-06).
-/// Includes Report/Block context menus and explicit button per PROF-05 (App Store Guideline 1.2).
+/// Read-only sheet card displaying a public profile fetched via deep link or Discover tap.
+/// Redesigned in Phase 22 to show the full UI-SPEC §PublicProfileView card:
+///   hero (avatar 80pt + display name + @username + motto)
+///   stats row (streak / goals / cheers given)
+///   action row (FollowButton + CheerButton)
+///   MY PUBLIC GOALS list (PublicGoalCard × N, empty state if none)
+///   Report/Block footer
+/// Existing shell preserved verbatim: NavigationStack, .navigationTitle("Profile"),
+/// Done toolbar, .alert("Block this user?"), .sheet for MFMailComposeView.
 struct PublicProfileView: View {
     let recordID: String
     @State private var viewModel = PublicProfileViewModel()
     @Environment(\.dismiss) private var dismiss
 
-    // MARK: - Report / Block state (PROF-05)
+    // MARK: - Report / Block state (PROF-05 — carry forward from Phase 17 unchanged)
     @State private var showBlockConfirm: Bool = false
     @State private var showMailCompose: Bool = false
     @State private var reportMailSubject: String = ""
     @State private var reportMailBody: String = ""
 
-    // MARK: - SOC-03: Cheers given counter
-    @State private var cheersGivenCount: Int = 0
-
     @AppStorage("vg_appleUserID") private var myAppleUserID: String = ""
+    @AppStorage("vg_username") private var myUsername: String = ""
 
     var body: some View {
         NavigationStack {
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(UIColor.systemGroupedBackground))
+                .background(VGTheme.background.ignoresSafeArea())
                 .navigationTitle("Profile")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -40,9 +44,6 @@ struct PublicProfileView: View {
         }
         .onAppear {
             viewModel.fetchProfile(recordID: recordID)
-        }
-        .task {
-            cheersGivenCount = (try? await CommunityService.fetchApplauseGivenCount(giverUsername: recordID)) ?? 0
         }
         .accessibilityHint("Read-only view of a shared profile.")
         .alert("Block this user?", isPresented: $showBlockConfirm) {
@@ -64,6 +65,8 @@ struct PublicProfileView: View {
         }
     }
 
+    // MARK: - Content Switch
+
     @ViewBuilder
     private var content: some View {
         switch viewModel.state {
@@ -79,66 +82,7 @@ struct PublicProfileView: View {
             }
 
         case .loaded(let profile):
-            VStack(spacing: 16) {
-                Spacer()
-                AvatarView(
-                    displayName: profile.displayName,
-                    avatarColorHex: profile.avatarColorHex,
-                    photoData: nil,
-                    size: 72
-                )
-                .contextMenu {
-                    Button {
-                        reportUser(displayName: profile.displayName)
-                    } label: {
-                        Label("Report User", systemImage: "flag")
-                    }
-                    Button(role: .destructive) {
-                        showBlockConfirm = true
-                    } label: {
-                        Label("Block User", systemImage: "slash.circle")
-                    }
-                }
-
-                Text(profile.displayName ?? "Unknown")
-                    .font(.title2.weight(.semibold))
-                    .fontDesign(.rounded)
-                    .foregroundStyle(.primary)
-                    .contextMenu {
-                        Button {
-                            reportUser(displayName: profile.displayName)
-                        } label: {
-                            Label("Report User", systemImage: "flag")
-                        }
-                        Button(role: .destructive) {
-                            showBlockConfirm = true
-                        } label: {
-                            Label("Block User", systemImage: "slash.circle")
-                        }
-                    }
-
-                Spacer()
-                Text("Shared via Vitamin G")
-                    .font(.caption)
-                    .fontDesign(.rounded)
-                    .foregroundStyle(.secondary)
-                    .padding(.bottom, 8)
-
-                Text("\(cheersGivenCount) cheers given")
-                    .font(.system(size: 14))
-                    .fontDesign(.rounded)
-                    .foregroundStyle(VGTheme.textMuted)
-                    .accessibilityLabel("\(cheersGivenCount) cheers given to others")
-
-                Button(action: { showBlockConfirm = true }) {
-                    Text("Report or Block")
-                        .font(.system(size: 14, weight: .light))
-                        .foregroundStyle(VGTheme.terra)
-                }
-                .padding(.top, 16)
-                .padding(.bottom, 24)
-            }
-            .padding(.horizontal, 16)
+            loadedContent(profile: profile)
 
         case .error(let message):
             VStack(spacing: 16) {
@@ -157,6 +101,188 @@ struct PublicProfileView: View {
                 Spacer()
             }
         }
+    }
+
+    // MARK: - Loaded Content (UI-SPEC §PublicProfileView)
+
+    @ViewBuilder
+    private func loadedContent(profile: PublicProfileData) -> some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+
+                // MARK: Hero Header (padding top: 24pt)
+                VStack(spacing: 8) {
+                    AvatarView(
+                        displayName: profile.displayName,
+                        avatarColorHex: profile.avatarColorHex,
+                        photoData: nil,
+                        size: 80
+                    )
+
+                    Text(profile.displayName ?? "Unknown")
+                        .font(VGTheme.serif(28))
+                        .foregroundStyle(VGTheme.textPrimary)
+                        .multilineTextAlignment(.center)
+
+                    Text("@\(profile.username ?? "user")")
+                        .font(.system(size: 13, design: .rounded))
+                        .foregroundStyle(VGTheme.textMuted)
+
+                    if let motto = profile.motto, !motto.isEmpty {
+                        Text(motto)
+                            .font(.system(size: 16, design: .rounded))
+                            .foregroundStyle(VGTheme.textSecondary)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(3)
+                            .padding(.horizontal, 24)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.top, 24)
+
+                // MARK: Stats Row (padding H: 24, V: 16)
+                HStack(spacing: 0) {
+                    statCell(value: "\(profile.streakLength)", label: "day streak")
+                    Divider()
+                        .frame(height: 36)
+                        .background(VGTheme.separator)
+                    statCell(value: "\(profile.goalCount)", label: "goals")
+                    Divider()
+                        .frame(height: 36)
+                        .background(VGTheme.separator)
+                    statCell(value: "\(profile.cheersGivenCount)", label: "cheers given")
+                }
+                .padding(.horizontal, 24)
+                .padding(.vertical, 16)
+
+                // MARK: Action Row (padding H: 24, top: 16, bottom: 24)
+                HStack(spacing: 16) {
+                    FollowButton(
+                        state: viewModel.followState,
+                        onFollow: {
+                            viewModel.onFollow(
+                                followerUsername: myUsername,
+                                followeeUsername: profile.username ?? ""
+                            )
+                        },
+                        username: profile.username ?? ""
+                    )
+
+                    CheerButton(
+                        isAvailable: viewModel.canCheerToday(recipientUsername: profile.username ?? ""),
+                        recipientUsername: profile.username ?? "",
+                        onCheer: {
+                            viewModel.onCheer(
+                                recipientUsername: profile.username ?? "",
+                                giverUsername: myUsername
+                            )
+                        }
+                    )
+
+                    Spacer()
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
+                .padding(.bottom, 24)
+
+                // Follow error banner (UI-SPEC §2 — auto-clears after 3s in VM)
+                if let followError = viewModel.followError {
+                    Text(followError)
+                        .font(.system(size: 13))
+                        .foregroundStyle(VGTheme.accentTerra)
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 8)
+                }
+
+                // MARK: Separator
+                Divider()
+                    .background(VGTheme.separator)
+                    .padding(.horizontal, 16)
+
+                // MARK: MY PUBLIC GOALS section (padding H: 16, top: 20)
+                sectionLabel("MY PUBLIC GOALS")
+                    .padding(.top, 20)
+
+                if viewModel.publicGoals.isEmpty {
+                    // Empty state (UI-SPEC §Empty States)
+                    VStack(spacing: 8) {
+                        Text("No public goals yet")
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .foregroundStyle(VGTheme.textPrimary)
+                        Text("This user hasn't shared any goals.")
+                            .font(.system(size: 16, design: .rounded))
+                            .foregroundStyle(VGTheme.textSecondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(24)
+                } else {
+                    LazyVStack(spacing: 12) {
+                        ForEach(viewModel.publicGoals) { goal in
+                            PublicGoalCard(goal: goal)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                }
+
+                // MARK: Separator
+                Divider()
+                    .background(VGTheme.separator)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+
+                // MARK: Footer (padding H: 16, top: 16, bottom: 24)
+                VStack(spacing: 8) {
+                    Button(action: { showBlockConfirm = true }) {
+                        Text("Report or Block")
+                            .font(.system(size: 13, design: .rounded))
+                            .foregroundStyle(VGTheme.accentTerra)
+                    }
+                    .buttonStyle(.plain)
+
+                    Text("Shared via Vitamin G")
+                        .font(.system(size: 13, design: .rounded))
+                        .foregroundStyle(VGTheme.textFaint)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+                .padding(.bottom, 24)
+            }
+        }
+        .onAppear {
+            // Resolve follow state once the profile username is known
+            viewModel.resolveFollowState(
+                followerUsername: myUsername,
+                followeeUsername: profile.username ?? ""
+            )
+        }
+    }
+
+    // MARK: - Section Label Helper
+    // Matches ExploreView.sectionLabel pattern (13pt semibold, kerning 0.4, textMuted, padding H: 16).
+
+    private func sectionLabel(_ text: String) -> some View {
+        Text(text.uppercased())
+            .font(.system(size: 13, weight: .semibold))
+            .kerning(0.4)
+            .foregroundStyle(VGTheme.textMuted)
+            .padding(.horizontal, 16)
+    }
+
+    // MARK: - Stat Cell Helper
+
+    private func statCell(value: String, label: String) -> some View {
+        VStack(spacing: 4) {
+            Text(value)
+                .font(VGTheme.serif(20))
+                .foregroundStyle(VGTheme.textPrimary)
+                .accessibilityAddTraits(.isStaticText)
+            Text(label)
+                .font(.system(size: 13, design: .rounded))
+                .foregroundStyle(VGTheme.textMuted)
+        }
+        .frame(maxWidth: .infinity)
     }
 
     // MARK: - Actions

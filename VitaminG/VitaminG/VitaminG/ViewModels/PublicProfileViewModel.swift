@@ -48,12 +48,23 @@ final class PublicProfileViewModel {
     /// Cleared after 3 seconds via Task.sleep.
     var followError: String? = nil
 
+    // MARK: - Public Goals
+
+    /// Public goals fetched for the viewed profile. Populated after fetchProfile succeeds.
+    var publicGoals: [PublicGoalItem] = []
+
+    /// Silent error string when publicGoals fetch fails — shown as empty state, not toast.
+    var publicGoalsError: String? = nil
+
     // MARK: - Test Override Seams
     // nil in production — set in unit tests to avoid CloudKit calls.
 
     /// Override for fetchProfile (updated in Phase 22 to return PublicProfileData struct).
     /// Follows the fake-injection pattern from NotificationSchedulerTests.
     var fetchOverride: ((String) async throws -> PublicProfileData)? = nil
+
+    /// Override for PublicGoalService.fetchGoalsForUser. nil = use real service.
+    var fetchGoalsForUserOverride: ((String) async throws -> [PublicGoalItem])? = nil
 
     /// Override for ProfileSharingService.fetchFollowState. nil = use real service.
     var fetchFollowStateOverride: ((String, String) async throws -> Bool)? = nil
@@ -68,8 +79,11 @@ final class PublicProfileViewModel {
 
     /// Loads the public profile from CloudKit (or fetchOverride in tests).
     /// Sets state = .loading immediately, then transitions to .loaded or .error.
+    /// On success, also kicks off a public goals fetch (silent — shows empty state on failure).
     func fetchProfile(recordID: String) {
         state = .loading
+        publicGoals = []
+        publicGoalsError = nil
         Task {
             do {
                 let profile: PublicProfileData
@@ -79,6 +93,21 @@ final class PublicProfileViewModel {
                     profile = try await ProfileSharingService.fetchProfile(recordID: recordID)
                 }
                 state = .loaded(profile: profile)
+
+                // Kick off public goals fetch after profile resolves username (silent on failure)
+                let username = profile.username ?? ""
+                if !username.isEmpty {
+                    do {
+                        if let override = fetchGoalsForUserOverride {
+                            publicGoals = try await override(username)
+                        } else {
+                            publicGoals = try await PublicGoalService.fetchGoalsForUser(username: username)
+                        }
+                    } catch {
+                        publicGoalsError = "Couldn't load this user's goals."
+                        // publicGoals remains [] — view shows empty state
+                    }
+                }
             } catch let error as CKError {
                 switch error.code {
                 case .unknownItem:
