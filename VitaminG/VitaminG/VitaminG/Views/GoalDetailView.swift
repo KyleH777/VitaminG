@@ -96,7 +96,13 @@ struct GoalDetailView: View {
             GoalCompletionCelebrationView(
                 goalTitle: completionGoalTitle,
                 streakCount: completionStreakCount,
-                onDismiss: { showingCompletionCelebration = false }
+                onDismiss: {
+                    // Mark celebration shown only after the user actually sees and dismisses it.
+                    // Setting this in .onChange before presentation could permanently suppress
+                    // the celebration if another fullScreenCover was already on-screen.
+                    goal.completionCelebrationShown = true
+                    showingCompletionCelebration = false
+                }
             )
         }
         // Consume pendingGoalMilestone from ViewModel (MILE-04)
@@ -112,8 +118,6 @@ struct GoalDetailView: View {
             if goal.id == completedGoalID {
                 completionGoalTitle = goal.title ?? "Your Goal"
                 completionStreakCount = StreakEngine.currentStreak(from: goalEvents)
-                // Mark celebration shown to prevent re-showing (completionCelebrationShown = SchemaV10 field)
-                goal.completionCelebrationShown = true
                 showingCompletionCelebration = true
             }
             viewModel.pendingGoalCompletion = nil
@@ -344,13 +348,17 @@ struct GoalDetailView: View {
                 .padding(.horizontal, 16)
 
             Button {
+                let priorCount = goal.completionEvents?.count ?? 0
                 viewModel.addCheckIn(
                     for: goal,
                     context: modelContext,
                     username: profiles.first?.displayName ?? "",
                     colorHex: profiles.first?.avatarColorHex ?? ""
                 )
-                showingCheckInCelebration = true
+                let newCount = goal.completionEvents?.count ?? 0
+                if newCount > priorCount {
+                    showingCheckInCelebration = true
+                }
             } label: {
                 HStack(spacing: 8) {
                     Image(systemName: isCheckedInToday ? "checkmark.circle.fill" : "checkmark.circle")
