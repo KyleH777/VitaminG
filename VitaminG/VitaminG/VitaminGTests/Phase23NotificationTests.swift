@@ -1,7 +1,22 @@
 import XCTest
+import UserNotifications
 @testable import VitaminG
 
 final class Phase23NotificationTests: XCTestCase {
+
+    override func setUp() async throws {
+        try await super.setUp()
+        // Ensure a clean notification center slate before each test so prior-test
+        // pending notifications cannot cause false negatives (CR-05 fix).
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+    }
+
+    override func tearDown() async throws {
+        // Clean up after each test so we don't pollute the notification center for
+        // subsequent tests in the suite.
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        try await super.tearDown()
+    }
 
     // MARK: - test_scheduleGlobalStreakAtRisk_respectsCapGuard
     //

@@ -498,7 +498,13 @@ extension NotificationScheduler {
             content: content,
             trigger: trigger
         )
-        try? await center.add(request)
+        do {
+            try await center.add(request)
+        } catch {
+            #if DEBUG
+            print("[NotificationScheduler] Failed to add globalStreakAtRisk: \(error)")
+            #endif
+        }
     }
 
     /// Cancels the global streak-at-risk nudge. Called after any successful check-in
