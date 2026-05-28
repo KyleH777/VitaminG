@@ -6,6 +6,7 @@ struct GoalListView: View {
     @Query private var goals: [Goal]
     @Query private var events: [CompletionEvent]
     @Query private var userChallenges: [UserChallenge]
+    @Query private var profiles: [UserProfile]
 
     @State private var viewModel = GoalViewModel()
     @State private var showingGoalEntryChoice = false
@@ -114,7 +115,18 @@ struct GoalListView: View {
                     threshold: milestone.threshold,
                     goalTitle: matchedGoal?.title ?? "",
                     streakCount: StreakEngine.currentStreak(from: matchedGoal?.completionEvents ?? []),
-                    onShareToCommunity: { /* no-op — wired in Plan 04 */ },
+                    onShareToCommunity: {
+                        if let matchedGoal {
+                            viewModel.shareGoalMilestone(
+                                goalID: milestone.goalID,
+                                threshold: milestone.threshold,
+                                goalTitle: matchedGoal.title ?? "",
+                                username: profiles.first?.username ?? profiles.first?.displayName ?? "",
+                                colorHex: profiles.first?.avatarColorHex ?? ""
+                            )
+                        }
+                        pendingGoalMilestone = nil
+                    },
                     onDismiss: { pendingGoalMilestone = nil }
                 )
             }
