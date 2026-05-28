@@ -31,14 +31,14 @@ The app shipped v1.0 as a full-featured iOS app with a configurable Challenge Pl
 
 Every morning, the user is reminded of their goals — making progress feel inevitable, not accidental.
 
-## Current State (v1.0)
+## Current State (v2.0 — in progress)
 
-Shipped: 2026-05-15
-- 15 phases, 67 plans, 98 requirements — all complete
-- ~16,917 LOC Swift, 134 Swift files
-- SwiftData with 8 schema versions (SchemaV1 → SchemaV8)
+v1.0 Shipped: 2026-05-15. Phase 24 complete: 2026-05-28.
+- v2.0: 24 phases complete (Phases 16–24 are v2.0 milestone work)
+- Phase 24 complete: Widget enhancements — WidgetDisplayData extended with activeGoalTitle/activeGoalProgress; GoalSummaryWidget redesigned with equal-split layout; StatsView freeze handler widget-reload gap closed
+- SwiftData with 10+ schema versions (SchemaV1 → SchemaV10)
 - CloudKit private DB (sync) + CloudKit public DB (community features)
-- 5 tabs: Goals, Stats, Wins, Challenges, Profile
+- 5 tabs (v2.0): Home · Goals · Explore · Community · Profile
 
 ## Requirements
 
