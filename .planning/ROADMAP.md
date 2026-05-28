@@ -310,4 +310,4 @@ Plans:
 | 21. Community Tab Redesign | v2.0 | 6/6 | Complete   | 2026-05-24 |
 | 22. Public Profile + Follow + Discover | v2.0 | 5/5 | Complete   | 2026-05-26 |
 | 23. Milestone Features + Streak Freeze | v2.0 | 4/4 | Complete    | 2026-05-26 |
-| 24. Widget Enhancements | v2.0 | 3/3 | Complete   | 2026-05-28 |
+| 24. Widget Enhancements | v2.0 | 3/3 | Complete    | 2026-05-28 |

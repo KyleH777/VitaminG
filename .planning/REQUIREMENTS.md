@@ -113,8 +113,8 @@
 
 ### Widget Enhancements (WID)
 
-- [ ] **WID-01**: Existing home screen widget (systemMedium) and lock screen widget (accessoryRectangular) updated to reflect v2.0 Home tab data (streak count, active goal with progress)
-- [ ] **WID-02**: `WidgetCenter.shared.reloadAllTimelines()` called on all new v2.0 goal state changes (daily check-in, freeze used, goal completed)
+- [x] **WID-01**: Existing home screen widget (systemMedium) and lock screen widget (accessoryRectangular) updated to reflect v2.0 Home tab data (streak count, active goal with progress)
+- [x] **WID-02**: `WidgetCenter.shared.reloadAllTimelines()` called on all new v2.0 goal state changes (daily check-in, freeze used, goal completed)
 
 ---
 
@@ -214,5 +214,5 @@
 | MILE-04 | Phase 23 | Complete |
 | MILE-05 | Phase 23 | Complete |
 | MILE-06 | Phase 23 | Complete |
-| WID-01 | Phase 24 | Pending |
-| WID-02 | Phase 24 | Pending |
+| WID-01 | Phase 24 | Complete |
+| WID-02 | Phase 24 | Complete |
