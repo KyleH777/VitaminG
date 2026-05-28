@@ -268,7 +268,18 @@ Plans:
   1. User adds the Vitamin G home screen widget and it shows their current streak count and their active goal with a progress indicator that reflects the latest data
   2. After the user checks in on a goal, freezes a streak, or completes a goal inside the app, the widget updates to reflect the change without requiring an app relaunch
 
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+**Wave 1**
+
+- [ ] 24-01-PLAN.md — WidgetDisplayData extension + WidgetDataProvider.build() active goal/progress + Phase24WidgetDataProviderTests.swift (WID-01)
+
+**Wave 2** *(blocked on Wave 1 completion; 24-02 and 24-03 run in parallel)*
+
+- [ ] 24-02-PLAN.md — GoalSummaryWidgetView equal-split layout redesign + TierRowView removal + .description copy update + human visual verify (WID-01)
+- [ ] 24-03-PLAN.md — StatsView freeze handler reload fix + WID-02 audit grep evidence + human verify widget refresh without app relaunch (WID-02)
+
+**UI hint**: yes
 
 ---
 
