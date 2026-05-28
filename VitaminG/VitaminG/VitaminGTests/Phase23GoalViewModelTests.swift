@@ -14,11 +14,17 @@ final class Phase23GoalViewModelTests: XCTestCase {
     var container: ModelContainer!
     var context: ModelContext!
     var sut: GoalViewModel!
+    /// Isolated UserDefaults suite for StreakMilestoneGate calls in tests.
+    /// Using a fresh UUID per suite prevents cross-test and cross-run contamination.
+    /// Pass this to every hasShown/markShown call so tests remain isolated from the
+    /// production app-group suite (changed in CR-01) and from each other.
+    var testDefaults: UserDefaults!
 
     override func setUpWithError() throws {
         container = try ModelContainerFactory.makeContainer(inMemory: true)
         context = container.mainContext
         sut = GoalViewModel()
+        testDefaults = UserDefaults(suiteName: UUID().uuidString)!
     }
 
     override func tearDown() async throws {
@@ -26,6 +32,7 @@ final class Phase23GoalViewModelTests: XCTestCase {
         sut = nil
         context = nil
         container = nil
+        testDefaults = nil
     }
 
     // MARK: - Helpers
@@ -60,12 +67,10 @@ final class Phase23GoalViewModelTests: XCTestCase {
         // Arrange: goal with 6 events on days -6 through -1 (yesterday = day -1)
         let goal = try makeGoal(withStreak: 6)
 
-        // Pre-condition: gate not yet shown for threshold 7
-        let testDefaults = UserDefaults(suiteName: UUID().uuidString)!
-        // We rely on fresh .standard defaults per test run; the gate uses .standard by default.
-        // Clear any stale .standard state for this goalID's threshold 7 key to be safe.
-        // (In practice, a fresh UUID ensures this key has never been set.)
-        XCTAssertFalse(StreakMilestoneGate.hasShown(goalID: goal.id, threshold: 7))
+        // Pre-condition: gate not yet shown for threshold 7 in isolated test suite.
+        // Always pass testDefaults so the test is isolated from the production app-group
+        // suite and from other tests (WR-07 fix).
+        XCTAssertFalse(StreakMilestoneGate.hasShown(goalID: goal.id, threshold: 7, defaults: testDefaults))
 
         // Act: check in today — streak goes to 7
         sut.addCheckIn(for: goal, context: context)
@@ -92,8 +97,8 @@ final class Phase23GoalViewModelTests: XCTestCase {
         // Arrange: goal with 6 consecutive check-ins
         let goal = try makeGoal(withStreak: 6)
 
-        // Pre-mark threshold 7 as already shown
-        StreakMilestoneGate.markShown(goalID: goal.id, threshold: 7)
+        // Pre-mark threshold 7 as already shown in isolated test suite (WR-07 fix).
+        StreakMilestoneGate.markShown(goalID: goal.id, threshold: 7, defaults: testDefaults)
 
         // Act: check in today — streak would be 7 but gate is already fired
         sut.addCheckIn(for: goal, context: context)
