@@ -40,7 +40,7 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
 - [x] **Phase 21: Community Tab Redesign** - Today's Glimpses carousel, Active Today, Glowing This Week, community feed with reactions/replies/photos, applause system (completed 2026-05-24)
 - [x] **Phase 22: Public Profile + Follow + Discover** - Public profile redesign, follow/cheer system, Discover page with goal search and people search (completed 2026-05-26)
 - [x] **Phase 23: Milestone Features + Streak Freeze** - Streak freeze, achievement unlocked screens, achievement sharing, goal completed celebration (completed 2026-05-26)
-- [ ] **Phase 24: Widget Enhancements** - Update widgets for v2.0 data, wire WidgetCenter.reloadAllTimelines() to all new state changes
+- [x] **Phase 24: Widget Enhancements** - Update widgets for v2.0 data, wire WidgetCenter.reloadAllTimelines() to all new state changes (completed 2026-05-28)
 
 ---
 
@@ -276,8 +276,8 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion; 24-02 and 24-03 run in parallel)*
 
-- [ ] 24-02-PLAN.md — GoalSummaryWidgetView equal-split layout redesign + TierRowView removal + .description copy update + human visual verify (WID-01)
-- [ ] 24-03-PLAN.md — StatsView freeze handler reload fix + WID-02 audit grep evidence + human verify widget refresh without app relaunch (WID-02)
+- [x] 24-02-PLAN.md — GoalSummaryWidgetView equal-split layout redesign + TierRowView removal + .description copy update + human visual verify (WID-01)
+- [x] 24-03-PLAN.md — StatsView freeze handler reload fix + WID-02 audit grep evidence + human verify widget refresh without app relaunch (WID-02)
 
 **UI hint**: yes
 
@@ -310,4 +310,4 @@ Plans:
 | 21. Community Tab Redesign | v2.0 | 6/6 | Complete   | 2026-05-24 |
 | 22. Public Profile + Follow + Discover | v2.0 | 5/5 | Complete   | 2026-05-26 |
 | 23. Milestone Features + Streak Freeze | v2.0 | 4/4 | Complete    | 2026-05-26 |
-| 24. Widget Enhancements | v2.0 | 1/3 | In Progress|  |
+| 24. Widget Enhancements | v2.0 | 3/3 | Complete   | 2026-05-28 |
