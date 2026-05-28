@@ -13,6 +13,11 @@ struct WidgetDisplayData {
 
     let tierRows: [TierRow]     // Always GoalTier.ordered order (4 elements)
     let globalStreak: Int
+    /// The highest-priority non-completed goal title (Immediate > ShortTerm > LongTerm > LifeGoal).
+    /// nil when all goals are completed or no goals exist.
+    let activeGoalTitle: String?
+    /// Progress ratio for the active goal (0.0–1.0, clamped). nil when goal.durationDays is nil or 0.
+    let activeGoalProgress: Double?
 
     /// Placeholder data for widget gallery (getSnapshot / placeholder).
     /// Uses sample goal titles so the widget gallery preview looks realistic.
@@ -23,13 +28,17 @@ struct WidgetDisplayData {
             TierRow(tier: .longTerm, topGoalTitle: "Run a half marathon"),
             TierRow(tier: .lifeGoal, topGoalTitle: "Write a novel"),
         ],
-        globalStreak: 7
+        globalStreak: 7,
+        activeGoalTitle: "Meditate for 10 minutes",
+        activeGoalProgress: 0.43
     )
 
     /// Empty fallback for error states — all tiers nil, streak 0.
     static let empty = WidgetDisplayData(
         tierRows: GoalTier.ordered.map { TierRow(tier: $0, topGoalTitle: nil) },
-        globalStreak: 0
+        globalStreak: 0,
+        activeGoalTitle: nil,
+        activeGoalProgress: nil
     )
 }
 
@@ -63,7 +72,33 @@ struct WidgetDataProvider {
             return WidgetDisplayData.TierRow(tier: tier, topGoalTitle: topTitle)
         }
 
-        return WidgetDisplayData(tierRows: tierRows, globalStreak: globalStreak)
+        // D-03: Active goal = highest-priority non-completed goal (Immediate > ShortTerm > LongTerm > LifeGoal).
+        // Within a tier, earliest creationDate wins.
+        let activeGoal = GoalTier.ordered.compactMap { tier in
+            goals
+                .filter { $0.tier == tier && !$0.isCompleted }
+                .sorted { ($0.creationDate ?? .distantPast) < ($1.creationDate ?? .distantPast) }
+                .first
+        }.first
+
+        let activeGoalTitle = activeGoal?.title
+
+        // D-04: Progress = completionEvents.count / durationDays (clamped 0.0–1.0).
+        // nil when durationDays is nil or 0 (no progress bar rendered).
+        let activeGoalProgress: Double? = {
+            guard let goal = activeGoal,
+                  let duration = goal.durationDays,
+                  duration > 0 else { return nil }
+            let count = Double(goal.completionEvents?.count ?? 0)
+            return min(1.0, count / Double(duration))
+        }()
+
+        return WidgetDisplayData(
+            tierRows: tierRows,
+            globalStreak: globalStreak,
+            activeGoalTitle: activeGoalTitle,
+            activeGoalProgress: activeGoalProgress
+        )
     }
 }
 
