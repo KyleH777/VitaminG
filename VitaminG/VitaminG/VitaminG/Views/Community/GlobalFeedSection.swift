@@ -27,15 +27,17 @@ struct GlobalFeedSection: View {
 
     // MARK: - Report helper
 
-    private static let reporterIDKey = "com.kyleharrington.VitaminG.reporterID"
-    private var reporterID: String {
-        if let stored = UserDefaults.standard.string(forKey: Self.reporterIDKey) {
-            return stored
-        }
+    // Stored let initialised exactly once per view instance via a self-executing closure.
+    // Using a computed var caused a race: two concurrent accesses in the same render cycle
+    // could each read nil from defaults before the first write propagated, generating two
+    // distinct reporter IDs for the same installation.
+    private let reporterID: String = {
+        let key = "com.kyleharrington.VitaminG.reporterID"
+        if let stored = UserDefaults.standard.string(forKey: key) { return stored }
         let newID = UUID().uuidString
-        UserDefaults.standard.set(newID, forKey: Self.reporterIDKey)
+        UserDefaults.standard.set(newID, forKey: key)
         return newID
-    }
+    }()
 
     // MARK: - State
 
