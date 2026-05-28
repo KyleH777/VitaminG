@@ -2,6 +2,20 @@ import WidgetKit
 import SwiftUI
 import SwiftData
 
+// MARK: - Widget Color Tokens
+// VGTheme is in the main app module and is not accessible from the widget extension.
+// These local color definitions mirror VGTheme.accentTerra exactly so the widget can
+// use the same adaptive terra / terraGlow palette without an import boundary violation.
+
+private extension Color {
+    /// Mirrors `VGTheme.accentTerra`: terra #C4673A (light) / terraGlow #FF8A5C (dark).
+    static let accentTerra = Color(uiColor: UIColor { t in
+        t.userInterfaceStyle == .dark
+            ? UIColor(red: 1.000, green: 0.541, blue: 0.361, alpha: 1)  // terraGlow #FF8A5C
+            : UIColor(red: 0.769, green: 0.404, blue: 0.227, alpha: 1)  // terra #C4673A
+    })
+}
+
 // MARK: - Shared Widget Container
 
 /// Cached ModelContainer for the widget extension process.
@@ -63,71 +77,77 @@ struct GoalSummaryWidgetView: View {
     let entry: GoalEntry
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            ForEach(Array(entry.displayData.tierRows.enumerated()), id: \.offset) { _, row in
-                TierRowView(row: row)
-            }
-
-            // Footer: streak count when > 0, omitted when 0 (D-04)
-            if entry.displayData.globalStreak > 0 {
-                Divider()
-                    .padding(.top, 8)
-                HStack(spacing: 4) {
-                    Image(systemName: "flame.fill")
-                        .foregroundStyle(Color(uiColor: UIColor { t in
-                            t.userInterfaceStyle == .dark
-                                ? UIColor(red: 1.0, green: 0.541, blue: 0.361, alpha: 1)
-                                : UIColor(red: 0.769, green: 0.404, blue: 0.227, alpha: 1)
-                        }))
-                        .font(.caption)
-                    Text("\(entry.displayData.globalStreak) day streak")
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                }
-                .padding(.top, 4)
+        VStack(alignment: .leading, spacing: 8) {
+            streakRow
+            if let title = entry.displayData.activeGoalTitle {
+                activeGoalRow(title: title, progress: entry.displayData.activeGoalProgress)
+            } else {
+                Text("Add your first goal")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .accessibilityLabel("Add your first goal")
             }
         }
         .padding(12)
         .containerBackground(.fill.tertiary, for: .widget)
     }
-}
 
-// MARK: - TierRowView
+    // MARK: - Streak Row
 
-private struct TierRowView: View {
-    let row: WidgetDisplayData.TierRow
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            // Tier icon + name header
-            HStack(spacing: 8) {
-                Image(systemName: row.tier.icon)
+    private var streakRow: some View {
+        HStack(spacing: 4) {
+            if entry.displayData.globalStreak > 0 {
+                Image(systemName: "flame.fill")
+                    .foregroundStyle(Color.accentTerra)
                     .font(.caption)
-                    .foregroundStyle(row.tier.color)
-                Text(row.tier.displayName)
+                Text("\(entry.displayData.globalStreak)")
+                    .font(.title2.bold().monospacedDigit())
+                Text("day streak")
                     .font(.caption)
-                    .foregroundStyle(row.tier.color)
-                Spacer()
-            }
-
-            // Goal title or empty prompt
-            if let title = row.topGoalTitle {
-                Text(title)
-                    .font(.subheadline)
-                    .fontWeight(row.tier.typographicWeight)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
+                    .fontWeight(.semibold)
             } else {
-                Text("No \(row.tier.displayName) goals yet")
+                Text("Start your streak")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(
+            entry.displayData.globalStreak > 0
+                ? "\(entry.displayData.globalStreak) day streak"
+                : "Start your streak"
+        )
+    }
+
+    // MARK: - Active Goal Row
+
+    private func activeGoalRow(title: String, progress: Double?) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .lineLimit(1)
+                .truncationMode(.tail)
+            if let p = progress {
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(Color.accentTerra.opacity(0.20))
+                            .frame(height: 4)
+                        Capsule()
+                            .fill(Color.accentTerra)
+                            .frame(width: geo.size.width * p, height: 4)
+                    }
+                }
+                .frame(height: 4)   // CRITICAL: fixes GeometryReader height (Pitfall 6)
+                .accessibilityHidden(true)
             }
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 8)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(row.tier.color.opacity(0.10))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(
+            progress != nil
+                ? "\(title), \(Int((progress ?? 0) * 100))% complete"
+                : title
         )
     }
 }
@@ -142,7 +162,7 @@ struct GoalSummaryWidget: Widget {
             GoalSummaryWidgetView(entry: entry)
         }
         .configurationDisplayName("Goals")
-        .description("See your top goal for each tier at a glance.")
+        .description("Your active goal and current streak at a glance.")
         .supportedFamilies([.systemMedium])
     }
 }
