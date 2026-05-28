@@ -272,7 +272,7 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 24-01-PLAN.md — WidgetDisplayData extension + WidgetDataProvider.build() active goal/progress + Phase24WidgetDataProviderTests.swift (WID-01)
+- [x] 24-01-PLAN.md — WidgetDisplayData extension + WidgetDataProvider.build() active goal/progress + Phase24WidgetDataProviderTests.swift (WID-01)
 
 **Wave 2** *(blocked on Wave 1 completion; 24-02 and 24-03 run in parallel)*
 
@@ -310,4 +310,4 @@ Plans:
 | 21. Community Tab Redesign | v2.0 | 6/6 | Complete   | 2026-05-24 |
 | 22. Public Profile + Follow + Discover | v2.0 | 5/5 | Complete   | 2026-05-26 |
 | 23. Milestone Features + Streak Freeze | v2.0 | 4/4 | Complete    | 2026-05-26 |
-| 24. Widget Enhancements | v2.0 | 0/? | Not started | - |
+| 24. Widget Enhancements | v2.0 | 1/3 | In Progress|  |
