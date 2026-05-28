@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 // MARK: - StatsView
 
@@ -104,6 +105,7 @@ struct StatsView: View {
         ) {
             Button("Freeze Streak") {
                 freezeService.freeze()
+                WidgetCenter.shared.reloadAllTimelines()
                 viewModel.refresh(events: events, goals: goals, frozenDates: freezeService.frozenDates)
             }
             Button("Cancel", role: .cancel) {}
