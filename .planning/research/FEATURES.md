@@ -582,3 +582,465 @@ Supporting Features
 - [Strava: The Social Layer of Fitness — Blake Crosley](https://blakecrosley.com/guides/design/strava)
 - [Master Search UX in 2026: Best Practices — Design Monks](https://www.designmonks.co/blog/search-ux-best-practices)
 - [CloudKit — Apple Developer Documentation](https://developer.apple.com/documentation/cloudkit)
+
+---
+
+---
+
+## v3.0 Feature Landscape (NEW Research — 2026-05-28)
+
+**Scope:** Features being added in v3.0 Personal Intelligence + Apple Watch milestone.
+**Confidence:** MEDIUM-HIGH (Apple Watch patterns verified against WidgetKit docs and competitive apps; AI integration patterns verified against Anthropic API docs and competitive landscape; analytics patterns verified against Swift Charts docs and competitor apps)
+
+**Classification:**
+- TABLE STAKES — Expected for this feature category; missing = implementation feels incomplete
+- DIFFERENTIATOR — Sets Vitamin G apart from comparable implementations
+- ANTI-FEATURE — High complexity-to-value ratio, UX harm, or architectural risk
+
+---
+
+## Feature Area A: Apple Watch App
+
+### A.1 Streak Count Complication
+
+**Classification:** TABLE STAKES
+
+**UX behavior in the wild:** Every iOS streaks app with a Watch extension surfaces the streak number as a complication. Duolingo's Watch complication shows the streak count in a circular badge. Streaks (the app) shows active habit count with a ring. Users who go to the trouble of adding a complication expect a persistent, always-visible glance — not a number they have to dig for.
+
+**Expected UX:** A `accessoryCircular` complication showing the current global streak count as a large number with a flame SF Symbol below. Tapping the complication opens the Watch app. The number stays current — stale complications erode trust faster than no complication at all.
+
+**Complication families to support:** `accessoryCircular` (primary — fits most watch faces), `accessoryRectangular` (secondary — shows label + number), `accessoryCorner` (optional). Do not attempt to support all 4 families from day one; accessoryCircular is the highest-value target.
+
+**Data flow (CRITICAL — App Groups do not work across phone/watch):** The app group container used for iOS widgets cannot be shared between the iPhone app and the Watch app — they are separate devices. Use CloudKit private DB as the source of truth; the Watch app reads streak data via its own SwiftData container synced through CloudKit. Alternatively, use WatchConnectivity `transferCurrentComplicationUserInfo` to push a lightweight payload (just the streak integer) from the iPhone app to the Watch complication timeline. WatchConnectivity is the faster, lighter approach for a single integer.
+
+**Refresh budget:** watchOS gives each complication a budget of approximately 50 timeline entries per day and approximately 40-50 background refreshes. The streak number changes at most once per day (at check-in time). Refresh on check-in (via WatchConnectivity push) rather than polling. Do not set up a repeating background refresh — the complication content changes at most once per day.
+
+**Complexity:** Medium. New WatchKit target in Xcode. WidgetKit extension inside the Watch app. WatchConnectivity session setup on both the phone and watch sides. Timeline provider with a single entry (streak count). One-time Xcode target/entitlement setup is the primary friction, not the Swift code.
+
+**Dependencies:** CompletionEvent-based streak computation (v1.0 Phase 3). App Group entitlement already exists (repurpose for WatchConnectivity session ID coordination if needed). WatchConnectivity requires the iPhone app to be the WCSession delegate.
+
+---
+
+### A.2 Active Goal + Progress Ring Complication
+
+**Classification:** TABLE STAKES
+
+**UX behavior in the wild:** Progress ring complications are the visual language of Apple Watch. Apple Fitness rings, Streaks (the app), and Habitify all show ring-based progress. Users expect a ring that fills as they complete their daily goal activity.
+
+**Expected UX:** A `accessoryCircular` complication with a progress ring (filled 0–100% based on today's completion rate across active goals) and a short goal title truncated to ~12 characters in the center or below the ring. Tapping opens the Watch app's goal list.
+
+**Progress value source:** The existing `activeGoalTitle` and `activeGoalProgress` fields already on `WidgetDisplayData` (added in Phase 24) can be forwarded to the Watch via WatchConnectivity. The Watch complication reads from this forwarded data, not from SwiftData directly — this avoids a full SwiftData stack on the Watch for this use case.
+
+**Complexity:** Medium. Same WatchKit target as A.1. The `accessoryCircular` complication with a Gauge or ProgressView inside a timeline entry is well-documented. The primary work is the WatchConnectivity data forwarding bridge.
+
+**Dependencies:** Phase 24 WidgetDisplayData extension (activeGoalTitle/activeGoalProgress). WatchConnectivity session from A.1.
+
+---
+
+### A.3 Check-In from Wrist
+
+**Classification:** DIFFERENTIATOR
+
+**UX behavior in the wild:** Streaks (the app) allows marking a habit complete from the Watch complication with a single tap. This is the highest-value Watch interaction — the whole reason someone wants an app on their wrist. Without it, the Watch app is read-only and feels like a missed opportunity.
+
+**Expected UX — two valid interaction patterns:**
+
+**Pattern 1 (Tap complication → open Watch app → tap "Done"):** The complication tap opens the Watch app. The Watch app shows the top active goal and a large "Check in" button. User taps. A haptic confirmation fires (`WKInterfaceDevice.current().play(.success)`). The complication updates on next timeline refresh.
+
+**Pattern 2 (Interactive complication — watchOS 11+ only):** A `Button(intent: CheckInGoalIntent())` inside the complication view triggers an App Intent directly from the watch face without opening the app. This is the highest-friction-reduction pattern but requires: watchOS 11 minimum (confirmed available since WWDC 2024), an App Intent that runs on the Watch (intent must be registered for watchOS target), and the intent writes to a shared store (WatchConnectivity transfer to phone, which then persists to SwiftData and CloudKit).
+
+**Recommendation:** Build Pattern 1 first (opens Watch app). It works on watchOS 10+ and has no App Intent complexity. Add Pattern 2 as an enhancement in a later phase if the Watch app proves popular.
+
+**Watch app data persistence:** Check-ins from the Watch must eventually reach the iPhone's SwiftData store (the authoritative store). Use `WCSession.transferUserInfo` (guaranteed delivery, not real-time) to send a `[String: Any]` dictionary containing the goal ID and completion timestamp from Watch to iPhone. The iPhone app receives this in `session(_:didReceiveUserInfo:)` and writes it to SwiftData.
+
+**Complexity:** High. The Watch-to-iPhone data sync via WatchConnectivity is the hardest part: handling the delegate callbacks, the offline queue (Watch may check in when iPhone is not reachable), and the deduplication logic on receipt. Plan for 2–3 days of WatchConnectivity debugging beyond the UI work.
+
+**Dependencies:** WatchConnectivity session from A.1. GoalViewModel.checkIn() on iPhone side. App Intents framework (if Pattern 2 added).
+
+---
+
+### A.4 Morning Nudge Delivered to Apple Watch
+
+**Classification:** TABLE STAKES
+
+**UX behavior in the wild:** Any iOS app that sends a morning push notification automatically delivers it to the paired Apple Watch if the phone is locked and the Watch is worn and unlocked. This is default iOS/watchOS behavior — it requires zero Watch-specific code to enable.
+
+**Expected UX:** The existing morning push notification (personalized with goal titles) appears on the Watch face as a notification card. The user can dismiss it from the Watch or tap to open the Watch app (if installed).
+
+**What "Watch-specific" means here:** The only Watch-specific enhancement is providing a Watch notification interface in the WatchKit target: a custom `WKUserNotificationHostingController` that shows a styled notification view instead of the default system card. This is optional polish — the notification delivers without it.
+
+**Complication tap as alternative nudge:** The complication itself serves as a persistent visual nudge after the notification is dismissed. The morning push notification ensures the first wrist raise of the day shows a goal reminder even if the user has not tapped the complication.
+
+**Complexity:** Low. Default notification delivery to Watch requires no code. Custom Watch notification UI is Low-Medium (optional WKUserNotificationHostingController subclass). This is the lowest-effort Watch feature with the highest daily visibility.
+
+**Dependencies:** Existing UNCalendarNotificationTrigger morning notification (v1.0 Phase 3). WatchKit target from A.1 (needed only for custom notification UI — not for basic delivery).
+
+---
+
+### A.5 Watch App Anti-Features
+
+**Classification:** ANTI-FEATURE
+
+| Anti-Feature | Why to Avoid | Better Approach |
+|---|---|---|
+| Full SwiftData stack on Watch for all goal data | Watch has limited RAM and storage; a full goal model graph is overkill for glanceable complications | Forward only what the complication needs via WatchConnectivity (integer + string) |
+| WCSession live messaging for real-time sync | `sendMessage` requires both devices reachable; breaks when iPhone is in airplane mode or out of Bluetooth range | Use `transferUserInfo` (guaranteed delivery queue) for check-in data |
+| Polling-based complication refresh | Exhausts the 50-refresh budget quickly | Push via `transferCurrentComplicationUserInfo` only when data actually changes (check-in event) |
+| Supporting all 4 complication families in v1 | 4x design and test surface for complications users may never use | Start with `accessoryCircular` only; add others based on user feedback |
+
+---
+
+## Feature Area B: Analytics Dashboard
+
+### B.1 Streak History Chart
+
+**Classification:** TABLE STAKES
+
+**UX behavior in the wild:** Strides, HabitNow, and Streaks (the app) all show a streak history chart — a bar or line chart where each bar represents a streak run (length on Y axis, end date on X axis). Users who are streak-motivated want to see their personal best and improvement over time. The GitHub contribution graph is the cultural reference point for this kind of longitudinal data display.
+
+**Expected UX:** A bar chart (preferred over line for discrete streak runs) showing each completed streak run as a vertical bar. X axis: time (week or month granularity selectable). Y axis: streak length in days. Tapping a bar reveals a tooltip with start date, end date, and length. A "Personal Best" annotation on the tallest bar. Segmented control for "Per goal" vs "Global" view.
+
+**Swift Charts implementation:** `BarMark` with `x: .value("Period", endDate)` and `y: .value("Days", streakLength)`. Swift Charts is already in the stack (iOS 16+, stronger on iOS 17+ with `chartXSelection` for tap-to-annotate). No new dependency required.
+
+**Data derivation:** The streak history requires computing all historical streak runs from `CompletionEvent` records — not just the current streak. The existing streak engine computes the current streak; this feature needs the full run history. A `StreakRun` struct (startDate, endDate, length) derived from sorted CompletionEvents is the data model. This computation is local and does not require new SwiftData schema changes — it reads existing CompletionEvent records.
+
+**Complexity:** Medium. The Swift Charts bar chart is low complexity. The `StreakRun` computation from CompletionEvent history is medium complexity (requires a date-gap detection algorithm over sorted events). Implement in a ViewModel method, not in the View.
+
+**Dependencies:** CompletionEvent records (v1.0 Phase 3). Swift Charts (already in the tech stack).
+
+---
+
+### B.2 Completion Rate Trends Chart
+
+**Classification:** TABLE STAKES
+
+**UX behavior in the wild:** HabitDaily, Done, and Productive all show a weekly/monthly completion percentage over time. This is the "are you getting better?" chart — the core analytics question for goal trackers. Users expect to see improvement trending upward over weeks.
+
+**Expected UX:** A line chart showing completion rate (0–100%) on Y axis, time period (weeks or months) on X axis. Segmented control: "Weekly" / "Monthly." The line uses `.interpolationMethod(.catmullRom)` for smooth curves. A horizontal reference line at 80% ("your target") if the user has set a goal. The most recent data point is annotated with its value.
+
+**Data derivation:** Weekly completion rate = (check-ins that week / total possible check-ins that week) × 100. "Total possible" = number of active goals × 7 days. This requires aggregating CompletionEvents by ISO calendar week, joining against the goal creation dates (a goal only contributes to "possible" starting from its creation date). This join logic is non-trivial but runs locally on-device from existing SwiftData data.
+
+**Complexity:** Medium. Swift Charts line chart is straightforward. The aggregation query over CompletionEvents with goal-aware "possible" calculation is the main complexity. Cache the result (recompute on check-in, not on every view render).
+
+**Dependencies:** CompletionEvent records (v1.0 Phase 3). Goal creation dates from the Goal model. Swift Charts.
+
+---
+
+### B.3 Full All-Time Goal Heatmap (GitHub-style)
+
+**Classification:** DIFFERENTIATOR
+
+**UX behavior in the wild:** GitHub's contribution graph is the universally recognized cultural reference. Streaks (the app) has a yearly heatmap. Loop Habit Tracker has a full-history heatmap. The all-time GitHub-style heatmap is rare in mainstream iOS goal apps — most show only the past 30–90 days. Showing the full history since app install is emotionally powerful ("look how far I've come").
+
+**Expected UX:** A horizontally scrollable grid of colored squares, one per day, from the goal's creation date to today. Color intensity maps to check-in count that day (0 = empty/gray, 1 = light green, 2+ = darker green, using a 4-level palette matching GitHub's aesthetic). Week columns run top-to-bottom (Mon–Sun). Month labels appear above each month's first column. A year selector if the history spans multiple years. Pinch-to-zoom to switch between "year view" (small squares) and "month view" (larger squares with day numbers).
+
+**Existing heatmap:** v1.0 already has a weekly heatmap (Phase 3). This feature extends it to all-time, requiring a horizontally scrolling implementation rather than the fixed-week view. The existing heatmap color logic can be reused.
+
+**Implementation note:** A full all-time heatmap with 365+ squares per year must use `LazyHStack` with virtualized rendering — not a `ForEach` over all days in a non-lazy container. Building with `LazyHStack` inside a `ScrollView(.horizontal)` is the correct pattern. Rendering 1000+ squares in a non-lazy stack will cause scroll stutter.
+
+**Complexity:** Medium-High. The lazy grid rendering with virtualization is the primary complexity. The color mapping and date grid generation are straightforward but require careful handling of week boundaries and partial months.
+
+**Dependencies:** CompletionEvent records (v1.0 Phase 3). Existing heatmap color logic (Phase 3). LazyHStack (SwiftUI).
+
+---
+
+### B.4 CSV Export via Share Sheet
+
+**Classification:** TABLE STAKES
+
+**UX behavior in the wild:** Loop Habit Tracker, HabitDaily, and Productive all support data export. Users who use analytics features invariably want to own their data. CSV export is the lowest-friction export format (opens in Numbers, Excel, Google Sheets). Users who don't use it don't notice its absence; users who want it strongly resent its absence.
+
+**Expected UX:** An "Export" button in the Analytics view or Settings. Tapping generates a CSV file (in-memory, no disk write needed) and presents the native `ShareLink` (iOS 16+ API) / `UIActivityViewController` for sharing to Files, Mail, AirDrop, etc. The CSV schema: one row per day, columns: date, goalTitle, goalTier, completed (boolean), streakDay. A header row. UTF-8 encoding.
+
+**Implementation:** Generate the CSV as a `String` by iterating over CompletionEvent records grouped by goal. Write to a `Data` object. Use `ShareLink(item: csvData, preview: SharePreview("Vitamin G Export"))` for the share sheet — zero UIKit bridge required on iOS 16+.
+
+**Complexity:** Low. CSV generation is string interpolation over a sorted array of structs. `ShareLink` is 3 lines of SwiftUI. The data query (fetching all CompletionEvents) may be slow for large histories — run it in a background Task, show a progress indicator, then present the share sheet when ready.
+
+**Dependencies:** CompletionEvent records (v1.0 Phase 3). Goal model. SwiftUI `ShareLink` (iOS 16+, in the stack).
+
+---
+
+### B.5 Analytics Anti-Features
+
+| Anti-Feature | Why to Avoid | Better Approach |
+|---|---|---|
+| Showing completion rate as a simple percentage without time context | "70% completion rate" is meaningless without knowing the period | Always show rate in a time-windowed chart with period labels |
+| Computing streak history and completion trends on the main thread | Large CompletionEvent histories (1000+ records) will block the UI | Always compute in a `Task { }` on a background thread, publish results via `@MainActor` |
+| Exporting via a custom file picker or saving to app Documents | Complex, fragile, requires user to understand iOS Files app | Use `ShareLink` / `UIActivityViewController` — system handles destination choice |
+| Offering JSON export instead of (or in addition to) CSV for v1 | Developers want JSON; users want CSV (opens in spreadsheets) | CSV only for v1; JSON export can be added later if requested |
+
+---
+
+## Feature Area C: AI (Claude) Integration
+
+### C.1 Goal Suggestions — Claude Analyzes Existing Goals
+
+**Classification:** DIFFERENTIATOR
+
+**UX behavior in the wild:** Pattrn, HabitForge, and AIHabitPro all offer AI goal suggestions. The dominant pattern: show 3 AI-generated goal suggestions with brief rationale, allow one-tap adoption, allow regeneration. The key differentiator for Vitamin G is that suggestions are seeded by the user's *existing goals* — not generic lifestyle templates. "You're working on fitness and mindfulness — consider adding a reading goal to round out your growth."
+
+**Expected UX:** A "Suggest goals" card on the Goals tab or a dedicated "AI Suggestions" sheet. Tapping triggers an API call with the user's current goals (titles and tiers) as context. Three suggestions appear with title, tier recommendation, and 1-sentence rationale. Each suggestion has an "Add this goal" button (calls GoalViewModel.addGoal()) and a "Not for me" dismiss. A "Refresh suggestions" button generates 3 new ones (rate-limited to prevent runaway API costs). A loading state with animated dots while the API responds.
+
+**Prompt structure (HIGH confidence this works):** Send a system prompt establishing the role, then a user message listing the goals. Request structured output (JSON array of 3 objects: title, tier, rationale). Parse the JSON response. Do not stream for this use case — wait for the full response, then render all 3 suggestions at once.
+
+**API key security (CRITICAL):** The Anthropic API key must not be embedded in the iOS app binary. Anyone with the `.ipa` file can extract strings from the binary. The correct architecture is: iOS app → your backend proxy → Anthropic API. The proxy receives the goal list, forwards to Claude, returns suggestions. This requires a minimal backend (a single Cloudflare Worker, Vercel serverless function, or AWS Lambda is sufficient). This is not optional — Anthropic's terms of service and security best practices explicitly prohibit embedding API keys in client apps.
+
+**Backend proxy minimum viable:** A single HTTP POST endpoint that: (1) validates the request (e.g., a per-device token or app-specific secret header — not the user's Anthropic key), (2) appends the Anthropic API key from an environment variable, (3) forwards to `https://api.anthropic.com/v1/messages`, (4) returns the response. A Cloudflare Worker can do this in ~30 lines of JavaScript with no infrastructure cost up to 100K requests/day.
+
+**Rate limiting / cost control:** Each suggestion request costs approximately $0.001–0.003 USD (claude-haiku-3, short prompt, short response). Without rate limiting, a user who taps "Refresh" 100 times could cost $0.30/day. Enforce a per-device rate limit at the proxy level: max 10 suggestion requests per user per day. Store the request count in a KV store (Cloudflare KV is free) keyed by a device fingerprint hash.
+
+**Complexity:** High. The AI feature itself is low-complexity (URLSession POST, JSON parsing). The required backend proxy and rate limiting add Medium complexity. The overall feature is High because it introduces a new infrastructure dependency (backend proxy) that did not exist in v1.0/v2.0. Plan for 1–2 days of backend work in addition to the iOS work.
+
+**Dependencies:** GoalViewModel with goal list access. Network layer (URLSession, already in use for CloudKit indirect patterns). New: backend proxy (Cloudflare Worker or equivalent). Anthropic API account.
+
+---
+
+### C.2 Personalized Daily Motivation Copy
+
+**Classification:** DIFFERENTIATOR
+
+**UX behavior in the wild:** "Habits - AI Daily Tracker" and "Habit AI" both offer AI-generated daily motivation. The pattern: one piece of motivational copy, generated fresh each morning, personalized with the user's name, streak, and goal context. The key UX finding from competitors is that generic motivation ("You can do it!") is perceived as worse than no motivation — personalization is the entire value. If the copy does not reference something specific to the user, users stop reading it.
+
+**Expected UX — two surfaces:**
+
+**Surface 1: Morning push notification body.** Instead of the static "Here are your goals for today: [list]", the notification body is Claude-generated copy: "Day 14, Jordan. Your writing goal is 14 days strong — keep the momentum." This is generated by the proxy the night before (e.g., 2 AM local time) and cached. The notification scheduler reads from the cache when scheduling the 8 AM notification.
+
+**Surface 2: Home tab card.** A card at the top of the Home tab shows today's motivation copy (same content as the notification, or a fresh generation on app open). Appears only once per calendar day (collapses/hides after the user's first check-in of the day).
+
+**Generation timing:** Generating on-demand at notification schedule time (daily at a fixed background task time) is cleaner than generating at app open. Use `BGAppRefreshTask` to schedule a background generation the night before. The generated copy is stored in UserDefaults (ephemeral — no SwiftData schema change needed).
+
+**Offline / failure handling:** If the API call fails or the device has no connectivity, fall back to the existing static notification copy (the goal list format from v1.0). The motivation copy is a nice-to-have enhancement — a missing response should never block the notification from firing.
+
+**Privacy consideration:** The prompt sent to the Claude API includes the user's goal titles and streak data. This is personal information. Include a clear disclosure in the privacy policy and, on first use, show an in-app prompt: "To generate personalized motivation, we send your goal titles and streak count to Claude (Anthropic). No other data is shared." Give the user an opt-out toggle in Settings.
+
+**Complexity:** High. The `BGAppRefreshTask` background execution is notoriously unreliable on iOS (the OS decides when to run it, not the developer). The notification scheduling pipeline (generate copy → store → schedule notification with copy) has multiple failure points. Plan for 3–4 days including testing on-device background behavior.
+
+**Dependencies:** Existing UNCalendarNotificationTrigger notification pipeline (v1.0 Phase 3). Backend proxy from C.1. BGAppRefreshTask (requires "Background fetch" capability in Xcode target). UserDefaults for motivation copy cache.
+
+---
+
+### C.3 AI Anti-Features
+
+| Anti-Feature | Why to Avoid | Better Approach |
+|---|---|---|
+| Embedding the Anthropic API key in the iOS binary | Extractable from the .ipa; violates Anthropic ToS; enables API cost abuse | Always route through a backend proxy |
+| Streaming responses for goal suggestions | Partial JSON is not parseable; streaming adds complexity for a 3-item list | Request full response, render all at once |
+| Generating motivation copy on main thread / in View body | Blocks UI; API calls take 1–5 seconds | Always in an async Task, show loading state |
+| Showing AI suggestions without a "Not for me" option | Users who don't want a suggestion feel trapped; one-tap dismiss is required | Always offer dismiss per suggestion |
+| Using a large model (claude-opus) for simple structured outputs | 10–20x cost vs haiku for the same task | Use claude-haiku-3 for goal suggestions and motivation copy; reserve larger models for complex reasoning if ever needed |
+| Regenerating motivation copy on every app open | API cost accumulates; users don't want new copy every time they open the app | Generate once per day (background task), cache in UserDefaults, display cached copy |
+
+---
+
+## Feature Area D: Smart Notifications
+
+### D.1 Tone Adaptation Based on Streak Level
+
+**Classification:** DIFFERENTIATOR
+
+**UX behavior in the wild:** Duolingo's notifications are the gold standard for tone adaptation — the app is famous for its escalating "sad owl" notifications when streaks are at risk. Headspace uses warm, non-urgent copy. Most goal apps use static copy. Tone-adaptive notifications are rare and memorable when done well.
+
+**Expected UX — tone matrix:**
+
+| Streak State | Tone | Example Copy |
+|---|---|---|
+| 0 (no streak) | Inviting, low pressure | "A fresh start. What's one thing you're working toward today?" |
+| 1–6 days | Encouraging, momentum-building | "Day [N] building. Keep showing up — it adds up." |
+| 7–29 days | Celebratory, proud | "One week strong, [name]. Your [goal title] streak is real." |
+| 30+ days | Reverent, community | "30 days. You're in rare company. Don't stop now." |
+| Streak just broken | Compassionate, not punishing | "Yesterday didn't happen. Today is a new streak. Ready?" |
+| Streak at risk (evening) | Urgent but warm | "Your [N]-day streak ends at midnight. 5 minutes is enough." |
+
+**Implementation:** The notification scheduler reads the current streak count from UserDefaults (written by the app at each check-in via the existing WidgetDisplayData path). A `NotificationCopyGenerator` struct maps streak state to a copy variant. No API call required for tone selection — it is a local switch statement over streak ranges. This feature is pure logic, no network dependency.
+
+**Complexity:** Low. This is a local switch statement and string interpolation. The existing notification scheduling code (Phase 3) already references goal titles. Extend it to also read the streak count and select a copy variant. The tone matrix copy needs to be written (UX copywriting work, not code complexity).
+
+**Dependencies:** Streak count in UserDefaults (written by streak engine at check-in). Existing UNCalendarNotificationTrigger scheduling (v1.0 Phase 3). Goal titles in UserDefaults/WidgetDisplayData (existing).
+
+---
+
+### D.2 Content References Actual Goal Titles
+
+**Classification:** TABLE STAKES
+
+**UX behavior in the wild:** The v1.0 notification already includes goal titles ("Here are your goals for today: [list]"). This feature extends that pattern to make the title feel less like a list and more like a personal message. The research finding is clear: notifications that contain the user's actual data (name, specific goal name, specific number) have 2–3x higher open rates than generic copy.
+
+**Expected UX:** Instead of listing all goals, pick the single highest-priority active goal (top-tier, longest streak, or most recently checked in — configurable heuristic). The notification body references it by name: "Your 'Write every morning' goal is calling." or "Day 7: Keep showing up for 'Run 3 miles a week'."
+
+**Heuristic for goal selection:** Use the goal with the highest streak count as the "hero goal" for the notification. If tied, use the goal at the highest tier. This heuristic is simple, local, and does not require AI.
+
+**Complexity:** Low. The goal selection heuristic is a sort + first() operation over the goals array. The notification body template is a String interpolation. This is a refinement of the existing Phase 3 notification code, not a new feature.
+
+**Dependencies:** Goal model with streak data. Existing notification scheduling (v1.0 Phase 3). UserDefaults/WidgetDisplayData for quick access at notification schedule time.
+
+---
+
+### D.3 Send Time Adaptation Based on Check-In Patterns
+
+**Classification:** DIFFERENTIATOR
+
+**UX behavior in the wild:** This is genuinely rare in iOS apps because it requires storing historical check-in times and computing an optimal send window — most apps offer a manual time picker (which Vitamin G already has from v2.0). Apps like Finch (self-care app) adaptively suggest new nudge times based on when the user is most active. The pattern is: observe when the user actually opens the app and checks in, then suggest moving the notification time to match.
+
+**Expected UX:** After 7+ days of check-in history, the app computes the most common hour of check-in. If the user's check-ins cluster at 7 AM but their nudge time is set to 8 AM, show a banner: "We noticed you usually check in around 7 AM. Move your nudge to 7 AM?" with "Update" and "Keep 8 AM" buttons. This is a suggestion, not an automatic change — the user remains in control.
+
+**Implementation:** At each check-in, record the hour (`Calendar.current.component(.hour, from: Date())`) in a small array stored in UserDefaults (rolling 14-day window, store as `[Int]`). After 7 data points, compute the mode (most frequent hour). If the mode differs from the current nudge time by 2+ hours, surface the suggestion banner.
+
+**Complexity:** Low-Medium. The hour tracking is a UserDefaults array append. The mode computation is a `Dictionary(grouping:)` + `max(by:)` — ~5 lines. The UI banner is a conditional SwiftUI view on the Home tab. The only subtlety is the trigger logic: only suggest once, don't re-suggest if dismissed, don't suggest if the user has already manually set their time recently.
+
+**Dependencies:** Check-in timestamps (CompletionEvent records from Phase 3, or a lighter UserDefaults rolling array for just the hours). Existing notification scheduling (v1.0 Phase 3). Notification time setting UI (v2.0 feature 11.1).
+
+---
+
+### D.4 Streak-at-Risk Evening Alert
+
+**Classification:** TABLE STAKES
+
+**UX behavior in the wild:** Duolingo's evening "Don't lose your streak" notification is its most impactful retention tool. Habitica sends evening reminders for incomplete quests. The pattern: fire at 7–8 PM if the user has an active streak and has not checked in today. This is the single highest-ROI notification a streaks-based app can send.
+
+**Expected UX:** An additional notification (separate from the morning nudge) scheduled dynamically each morning: "if the user has not checked in by 7 PM, fire a streak-at-risk alert." The alert: title "Your [N]-day streak ends at midnight." body "[Goal name] is waiting. Just tap once." action button (if the app is in foreground when the notification fires, the action dismisses and opens the check-in flow).
+
+**Implementation challenge:** Local notifications cannot be conditionally fired ("only if X has not happened"). The workaround: schedule the evening alert every morning. When the user checks in, cancel the pending evening notification via `UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["streak-at-risk"])`. This cancel-on-check-in pattern is well-established in iOS apps with streak protection mechanics.
+
+**Notification identifier:** Use a fixed identifier `"streak.at-risk.evening"` so the same notification slot can be cancelled and rescheduled each day without accumulating pending notifications.
+
+**Streak threshold for firing:** Only fire the evening alert if the current streak is >= 3 days. A 1–2 day streak is not emotionally significant enough to justify an extra notification. A 3+ day streak has enough sunk cost to motivate action.
+
+**User experience:** The user should not receive two notifications on days they have already checked in. The cancel-on-check-in logic is mandatory, not optional.
+
+**Complexity:** Low-Medium. The scheduling and cancellation logic is ~20 lines. The notification content is a string interpolation over streak count and goal title. The main complexity is testing: need to verify the cancel-on-check-in works correctly when the app is backgrounded, when the user checks in via the widget, and when the user checks in via the Watch (Watch check-in must also trigger the phone-side cancel).
+
+**Dependencies:** Streak count at check-in time. CompletionEvent records (to know if user has checked in today). Existing notification scheduling (v1.0 Phase 3). Watch check-in (A.3) — Watch check-in must send a cancel signal to the phone.
+
+---
+
+### D.5 Smart Notification Anti-Features
+
+| Anti-Feature | Why to Avoid | Better Approach |
+|---|---|---|
+| More than 2 notifications per day | App Store Review Guideline 4.5.4; iOS 15+ notification summary groups can hide even 2; more = churn risk | Maximum 2: morning nudge + evening streak-at-risk (only if not checked in) |
+| Sending streak-at-risk for streaks of 0–2 days | Not emotionally compelling; feels nagging rather than protective | Only fire for streaks >= 3 days |
+| Automatically changing the user's nudge time without consent | Users feel violated when apps change their settings | Always ask first; never auto-change |
+| Using `.timeSensitive` interruption level for morning nudge | Time-sensitive breaks Focus mode; morning nudge is not an emergency | Use `.active` (default) for morning nudge; `.timeSensitive` is appropriate only for the streak-at-risk alert if streak >= 30 days |
+| Scheduling evening alert without cancelling on check-in | User who checks in at noon still gets a "your streak is at risk" at 7 PM — confusing and trust-eroding | Cancel-on-check-in is mandatory |
+
+---
+
+## v3.0 Feature Classification Summary
+
+| Feature | Classification | Complexity | New Infrastructure? |
+|---------|---------------|------------|---------------------|
+| A.1 Streak complication | TABLE STAKES | Medium | WatchKit target (new) |
+| A.2 Active goal + progress ring complication | TABLE STAKES | Medium | WatchKit target (shared from A.1) |
+| A.3 Check-in from wrist | DIFFERENTIATOR | High | WatchConnectivity bridge |
+| A.4 Morning nudge to Watch | TABLE STAKES | Low | None (automatic delivery) |
+| B.1 Streak history chart | TABLE STAKES | Medium | None |
+| B.2 Completion rate trends chart | TABLE STAKES | Medium | None |
+| B.3 All-time goal heatmap | DIFFERENTIATOR | Medium-High | None |
+| B.4 CSV export | TABLE STAKES | Low | None |
+| C.1 Goal suggestions (AI) | DIFFERENTIATOR | High | Backend proxy (new) |
+| C.2 Daily motivation copy (AI) | DIFFERENTIATOR | High | Backend proxy (shared from C.1) |
+| D.1 Tone adaptation | DIFFERENTIATOR | Low | None |
+| D.2 Goal title in notifications | TABLE STAKES | Low | None |
+| D.3 Send time adaptation | DIFFERENTIATOR | Low-Medium | None |
+| D.4 Streak-at-risk evening alert | TABLE STAKES | Low-Medium | None |
+
+---
+
+## v3.0 Feature Dependency Map
+
+```
+Apple Watch
+  A.1 Streak complication ──────────────────── WatchKit target (NEW) + WatchConnectivity
+  A.2 Progress ring complication ───────────── A.1 (same target) + Phase 24 WidgetDisplayData
+  A.3 Check-in from wrist ──────────────────── A.1 + WatchConnectivity bridge + GoalViewModel
+    └── D.4 Streak-at-risk ───────────────────── A.3 must cancel evening notification on Watch check-in
+  A.4 Morning nudge to Watch ───────────────── Existing UNCalendarNotificationTrigger (v1.0 Phase 3)
+    └── Optional: WatchKit notification UI ───── A.1 WatchKit target
+
+Analytics
+  B.1 Streak history chart ─────────────────── CompletionEvent records (v1.0 Phase 3) + Swift Charts
+  B.2 Completion rate trends ───────────────── CompletionEvent + Goal creation dates + Swift Charts
+  B.3 All-time heatmap ─────────────────────── CompletionEvent records + existing heatmap color logic
+  B.4 CSV export ───────────────────────────── CompletionEvent + Goal model + ShareLink
+
+AI (Claude)
+  C.1 Goal suggestions ─────────────────────── Backend proxy (NEW) + GoalViewModel
+  C.2 Daily motivation copy ────────────────── Backend proxy (shared) + BGAppRefreshTask + notification pipeline
+    └── C.2 depends on D.2 ───────────────────── Goal title in notification (D.2) is the fallback when AI fails
+
+Smart Notifications
+  D.1 Tone adaptation ──────────────────────── Streak count in UserDefaults + existing scheduling (Phase 3)
+  D.2 Goal title in notification ───────────── Goal model + existing scheduling (Phase 3)
+  D.3 Send time adaptation ─────────────────── Check-in hour history + notification time setter (v2.0 11.1)
+  D.4 Streak-at-risk evening alert ─────────── Streak count + existing scheduling + cancel-on-check-in
+    └── D.4 cancel must be triggered by ─────── A.3 Watch check-in AND widget check-in AND app check-in
+```
+
+---
+
+## v3.0 New Infrastructure Required
+
+| Infrastructure | Purpose | Options | Recommendation |
+|---|---|---|---|
+| WatchKit app target | Apple Watch app, complications, check-in | Built into Xcode (File > New Target > Watch App) | Required for A.1–A.4 |
+| Backend proxy | Route AI requests securely | Cloudflare Worker (free tier), Vercel serverless, AWS Lambda | Cloudflare Worker — zero cold start, free up to 100K req/day, JavaScript |
+| BGAppRefreshTask | Generate motivation copy nightly | BGTaskScheduler (built into iOS) | Required for C.2 |
+
+---
+
+## v3.0 Schema Changes Required
+
+| Change | Scope | Migration Path |
+|---|---|---|
+| No new SwiftData models required for v3.0 | All analytics features read from existing CompletionEvent + Goal models | No schema migration needed |
+| `motivationCopyCache: String` + `motivationCopyDate: Date` | UserDefaults (not SwiftData) | No migration — UserDefaults key addition |
+| `checkinHourHistory: [Int]` (rolling 14-day) | UserDefaults | No migration — UserDefaults key addition |
+| Watch complication data payload | WatchConnectivity `userInfo` dictionary | No SwiftData change — lightweight dictionary |
+
+---
+
+## v3.0 Build Priority Ordering
+
+**Build first — highest value, lowest new infrastructure risk:**
+1. D.2 Goal title in notifications (refinement of existing v1.0 code, near-zero effort)
+2. D.1 Tone adaptation (local logic only, no new infra, high perceived intelligence)
+3. D.4 Streak-at-risk evening alert (proven retention tool, Low-Medium complexity)
+4. B.4 CSV export (user data ownership, table stakes, Low complexity)
+5. B.1 Streak history chart (Swift Charts, local data, Medium complexity)
+6. B.2 Completion rate trends (Swift Charts, local data, Medium complexity)
+
+**Build second — watch app (new Xcode target, dedicated sprint):**
+7. A.1 Streak complication (foundation of Watch target — must be built before A.2, A.3, A.4)
+8. A.4 Morning nudge to Watch (zero code after A.1 target exists; add optional notification UI)
+9. A.2 Active goal + progress ring complication (depends on A.1)
+10. A.3 Check-in from wrist (highest Watch complexity; build after A.1 and A.2 are stable)
+
+**Build third — AI features (new backend dependency):**
+11. Backend proxy (prerequisite for C.1 and C.2 — set up first)
+12. C.1 Goal suggestions (backend proxy + structured JSON parsing)
+13. C.2 Daily motivation copy (backend proxy + BGAppRefreshTask + notification pipeline)
+
+**Build last — adaptive send time (requires data accumulation):**
+14. D.3 Send time adaptation (requires 7+ days of real usage data to validate the suggestion trigger — test with simulated data in development)
+
+---
+
+## Sources
+
+- [Apple Developer Documentation — Creating Accessory Widgets and Watch Complications](https://developer.apple.com/documentation/widgetkit/creating-accessory-widgets-and-watch-complications)
+- [Apple Developer Documentation — Transferring Data with Watch Connectivity](https://developer.apple.com/documentation/WatchConnectivity/transferring-data-with-watch-connectivity)
+- [Apple Developer Documentation — Go Further with Complications in WidgetKit (WWDC22)](https://developer.apple.com/videos/play/wwdc2022/10051/)
+- [Building Interactive Apple Watch Widget — Cocoa Switch](https://www.cocoaswitch.com/2024/12/16/building-interactive-apple.html)
+- [SwiftData CloudKit sync on watchOS 10 — Apple Developer Forums](https://developer.apple.com/forums/thread/733397)
+- [Data Synchronization Between iOS and watchOS Using WatchConnectivity — Medium](https://medium.com/@sheik25bareeth/data-synchronization-between-ios-and-watchos-using-watchconnectivity-009a3064e12a)
+- [Apple Developer Documentation — Swift Charts](https://developer.apple.com/documentation/charts)
+- [Mastering Charts Framework in SwiftUI & iOS 18 — Devtechie](https://www.devtechie.com/mastering-charts-framework-in-swiftui-ios-18)
+- [API Key Best Practices — Anthropic Help Center](https://support.claude.com/en/articles/9767949-api-key-best-practices-keeping-your-keys-safe-and-secure)
+- [Anthropic Swift Client Library Examples — AIProxy](https://www.aiproxy.com/docs/swift-examples/anthropic.html)
+- [SwiftAnthropic — GitHub (jamesrochabrun)](https://github.com/jamesrochabrun/SwiftAnthropic)
+- [25 Best Apple Watch Complications — iPhone Life](https://www.iphonelife.com/content/25-best-apple-watch-complications)
+- [Designing Apple Watch Complications — MoldStud](https://moldstud.com/articles/p-the-ultimate-guide-to-designing-complications-for-apple-watch-dos-and-donts)
+- [iOS Notifications Complete Developer Guide 2026 — Medium](https://medium.com/@thakurneeshu280/the-complete-guide-to-ios-notifications-from-basics-to-advanced-2026-edition-48cdcba8c18c)
+- [Send Communication and Time Sensitive Notifications — WWDC21](https://developer.apple.com/videos/play/wwdc2021/10091/)
+- [HabitDaily App Store — CSV Export Feature Reference](https://apps.apple.com/us/app/habit-tracker-habitdaily/id6754026468)
+- [Best Habit Tracker Apps 2026 — Reclaim](https://reclaim.ai/blog/habit-tracker-apps)

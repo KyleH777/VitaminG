@@ -1,506 +1,542 @@
-# Architecture: VitaminG v2.0 Feature Integration
+# Architecture: VitaminG v3.0 Feature Integration
 
-**Milestone:** v2.0 Social Growth Engine
-**Researched:** 2026-05-15
-**Scope:** How new v2.0 features integrate with existing MVVM + SwiftData (SchemaV1–V8) + CloudKit architecture
-
----
-
-## Existing Architecture Snapshot (v1.0)
-
-- **Navigation:** `AppRouter` (@Observable) + `AppRoute` (Hashable enum) + `VGTabBar` (custom, `.toolbar(.hidden)` pattern)
-- **Tab state:** `ContentView` owns `@State private var selectedTab: Int`; VGTabBar is a `safeAreaInset`
-- **Current tab wiring (ContentView, v1.0 HEAD):**
-  - 0 → HomeView (NavigationStack)
-  - 1 → GoalListView (NavigationStack, uses `router.path`)
-  - 2 → CommunityTabView (NavigationStack)
-  - 3 → ChallengeDiscoveryView (NavigationStack, owns its own `NavigationPath`)
-  - 4 → ProfileView (NavigationStack)
-- **VGTabBar labels (v1.0 HEAD):** Home · Goals · Community · Explore · Me
-- **CloudKit:** Private DB via SwiftData `ModelConfiguration`; Public DB via direct `CKContainer.default().publicCloudDatabase` calls in `CommunityService` + `ProfileSharingService`
-- **Schema:** SchemaV8; `UserProfile` is the singleton local model (1 per device); `UserProfile.username` added in V8
-- **AvatarView:** Accepts `photoData: Data?`; renders `UIImage` if non-nil, initials circle otherwise
-- **ProfileViewModel:** Handles photo selection via `PhotosPickerItem`, compresses to JPEG ≤200KB, stores in `UserProfile.photoData` (private SwiftData / iCloud private DB)
+**Milestone:** v3.0 Personal Intelligence + Apple Watch
+**Researched:** 2026-05-28
+**Scope:** How the 4 new v3.0 feature areas integrate with existing MVVM + SwiftData (SchemaV10) + CloudKit + WidgetKit + MVVM architecture
 
 ---
 
-## Feature-by-Feature Integration Analysis
+## Existing Architecture Snapshot (v2.0 — Phase 24 complete)
+
+- **Schema:** SchemaV10 (10 schema versions; `VitaminGMigrationPlan` with 9 lightweight stages)
+- **Persistence:** `ModelContainerFactory` — App Group container (`group.com.kyleharrington.VitaminG`), `cloudKitDatabase: .none` in current build; `makeWidgetContainer()` mirrors same config, read-only from widget process
+- **Core models (SchemaV10):** `Goal`, `CompletionEvent` (V2), `UserProfile`, `DailyWin` (V3), `ChallengeTemplate`/`UserChallenge`/`CheckIn` (V4), `GoalIdea`/`MoodEntry` (V7)
+- **Streak computation:** `StreakEngine` — pure static struct, derives everything from `CompletionEvent` records; `StatsViewModel` owns heatmap + streak display state
+- **Notifications:** `NotificationScheduler` — 3 identifiers (daily reminder, win reminder, global streak-at-risk); `UNCalendarNotificationTrigger` repeats; `NotificationPreferences` (enum) bridges UserDefaults ↔ App Group UserDefaults
+- **Widget target:** `VitaminGWidget` — `makeWidgetContainer()`, `WidgetDataProvider` (pure static func building `WidgetDisplayData` from Goal/CompletionEvent arrays), `StreakWidget` + `GoalSummaryWidget`
+- **Watch target:** `VGWatchApp` exists in Xcode project (`com.kyleharrington.VitaminG.watchkitapp`, SDKROOT = watchos, WATCHOS_DEPLOYMENT_TARGET = 7.0). Current state: scaffold-only — all views use hardcoded data. No SwiftData wiring, no App Intents, no complications registered.
+- **Tab structure (v2.0):** Home · Goals · Explore · Community · Profile
 
 ---
 
-### 1. Tab Restructuring: Goals · Stats · Wins · Challenges · Profile → Home · Goals · Explore · Community · Profile
+## Feature 1: Apple Watch App
 
-**Observation:** The v1.0 HEAD code already has the v2.0 tab *labels* in VGTabBar (Home, Goals, Community, Explore, Me), but the *content wiring* does not match v2.0 intent. Specifically, index 3 points to `ChallengeDiscoveryView` (labeled "Explore") and index 2 points to `CommunityTabView`. The v2.0 spec swaps these: Explore (new tab with shake/feelings/trending) is index 2 and Community (redesigned) is index 3. Wins and Stats are no longer top-level tabs — they become routable destinations.
+### Current State Assessment
 
-**What happens to Stats, Wins, Challenges?**
-- `StatsView` — demote to a routable sub-page. Natural home: reachable from `HomeView` via a "See Stats" card or from `ProfileView`. Add `AppRoute.stats` navigation to HomeView's NavigationStack.
-- `DailyWinsView` — demote to a routable sub-page under `GoalListView` or reachable from the Home tab's daily check-in flow. `AppRoute.wins` already exists and is wired in the Goals tab's `NavigationDestination`.
-- `ChallengeDiscoveryView` — becomes the **Discover** page (index 2 in v2.0? or a sub-tab within Community). Per the v2.0 spec, Discover is a page reachable from Community (search public goals/profiles, trending challenges). It can remain a `NavigationLink` destination within the Community tab rather than a top-level tab.
+The WatchOS target exists (`VGWatchApp`, `VGWatchContentView`, Screens/*, Shared/*) but is purely a design scaffold. `TodayGlanceView` has a hardcoded `@State private var checkedIn = false` with no SwiftData context. `WatchGoalListView` uses hardcoded `GoalItem` structs. No `ModelContainer` is injected in `VGWatchApp.body`.
 
-**Concrete changes required:**
-- **Modified:** `ContentView` — rewire tabs 2, 3; update `NavigationDestination` blocks
-- **Modified:** `VGTabBar` — relabel: index 2 = "Explore" (sparkles icon), index 3 = "Community" (person.2); adjust SF Symbol names
-- **Modified:** `AppRoute` — add `case explore`, `case discover`, `case home`; verify `case stats` is still routable
-- **Modified:** `AppRouter` — no structural change; `pendingPublicProfileRecordID` and `pendingChallengeCheckInID` remain
-- **New:** `ExploreTabView` — root of the new Explore tab (index 2)
-- **Modified:** `CommunityTabView` — redesign (new "Today's glimpses", live users, applause sections)
-- **No schema change required** for tab restructuring alone
+### Data Sharing: WatchConnectivity, Not App Groups or CloudKit
 
-**Build order dependency:** Tab restructuring is a prerequisite for all other feature work — it establishes where each new feature lives.
+App Groups work for on-device extension-to-app sharing (the widget uses this). They do NOT work across devices (iPhone to Apple Watch). CloudKit sync from iOS to watchOS has been unreliable in practice — multiple developer forum threads confirm SwiftData + CloudKit sync fails to reach Apple Watch even with matching container identifiers. The recommended, reliable approach is WatchConnectivity.
 
----
+**Verdict: Use WatchConnectivity (WCSession) to push a lightweight data snapshot from the iOS app to the Watch app on demand and on foreground.** The Watch app does NOT open SwiftData directly.
 
-### 2. Profile Picture Upload: CloudKit Storage Location + AvatarView Integration
-
-**Storage decision: CloudKit private DB (via SwiftData iCloud sync), NOT the public DB.**
-
-Rationale: `UserProfile.photoData` (type `Data?`) already exists in SchemaV8 and syncs automatically through the SwiftData CloudKit private container. `ProfileViewModel.handlePhotoSelection()` already compresses to JPEG ≤200KB and writes to `profile?.photoData`. The photo is already stored in the private iCloud DB through the SwiftData sync path.
-
-**What is NOT done yet:**
-- The onboarding flow does not include a photo selection step
-- The public `PublicProfile` CloudKit record (in the public DB) currently stores only `displayName` and `avatarColorHex` — it does NOT include the photo
-- For the Community and public profile views where *other users* see someone's photo, the photo must be readable by others — which means the **public DB** must store the photo as a `CKAsset`
-
-**Full picture for v2.0 profile photo:**
-1. User selects photo → `ProfileViewModel.handlePhotoSelection()` (existing) → stored in `UserProfile.photoData` (private DB, local + iCloud private sync) — ALREADY WORKS
-2. When user makes profile public → `ProfileSharingService.publishProfile()` must be extended to upload the photo as a `CKAsset` to the `PublicProfile` public DB record
-3. When other users view a public profile → `PublicProfileViewModel.fetchProfile()` must be extended to download the `CKAsset` and decode to `Data`
-4. `AvatarView` already accepts `photoData: Data?` — no API change required, only data flow
-
-**Modified components:**
-- `ProfileSharingService.publishProfile()` — add `photoData: Data?` parameter; write as `CKAsset` to temp file, attach to record; existing field allowlist pattern must explicitly include this field
-- `ProfileSharingService.fetchProfile()` — return `photoData: Data?` in addition to existing fields; download asset synchronously
-- `PublicProfileViewModel` — update `ViewState.loaded` to include `photoData: Data?`
-- `ProfileViewModel.toggleProfilePublic()` — pass `profile.photoData` to updated `publishProfile()`
-- Onboarding flow — add `PhotosPicker` step (new `OnboardingPhotoScreen`); call existing `handlePhotoSelection()` from onboarding
-
-**No schema change needed.** `UserProfile.photoData` already exists in SchemaV8.
-
-**Security note:** CloudKit `CKAsset` files in the public DB are publicly readable by any CloudKit-authenticated user — this is correct behavior for a public profile photo. The existing `InputSanitizer` field allowlist in `ProfileSharingService` must be explicitly documented to allow `photoAsset`.
-
----
-
-### 3. Unique Username Enforcement
-
-**Constraint confirmed:** `@Attribute(.unique)` is explicitly banned for CloudKit sync (per CLAUDE.md and PROJECT.md). This is not a v2.0 constraint — it was established in v1.0.
-
-**Correct pattern — application-level duplicate detection:**
-
-Username uniqueness requires a two-step check against the CloudKit public DB before the user can claim a username:
-
-1. **Local validation** (already exists in `ProfileViewModel.usernameValidationError`): format check (lowercase, digits, underscores, ≤30 chars)
-2. **Remote availability check** (new): query CloudKit public DB `PublicProfile` records for `username == draftUsername`; if any record found, reject with "Username already taken"
-3. **Write with conflict detection** (race condition mitigation): after confirming availability, write the username to the `PublicProfile` record and attempt to save. If another user claims it between check and write (TOCTOU), handle `CKError.serverRecordChanged` by re-running the availability check and returning the conflict error.
-
-**CloudKit query for username check:**
-```swift
-let predicate = NSPredicate(format: "username == %@", candidate)
-let query = CKQuery(recordType: "PublicProfile", predicate: predicate)
-let results = try await db.records(matching: query, resultsLimit: 1)
+**Data flow:**
 ```
-This requires adding a `username` field to the `PublicProfile` CK record type and adding a queryable index on `username` in CloudKit Dashboard.
+iOS App (SwiftData source of truth)
+  → WatchSessionManager (new iOS service)
+    → WCSession.sendMessage() / updateApplicationContext()
+      → Watch WatchSessionDelegate (new Watch service)
+        → WatchAppState (new @Observable on Watch)
+          → TodayGlanceView / WatchGoalListView / complications
+```
 
-**Schema change:** `PublicProfile` CloudKit record type (not SwiftData schema) needs a new `username` field. `UserProfile.username` (SwiftData) already exists from SchemaV8. No new SwiftData migration required.
-
-**New components:**
-- `UsernameAvailabilityService` (new enum, mirrors `ProfileSharingService` pattern) — `checkAvailability(username:) async throws -> Bool`; `reserveUsername(username:, recordID:) async throws`
-
-**Modified components:**
-- `ProfileViewModel` — add `checkAndSaveUsername(context:) async` that calls local validation then remote check; expose `isCheckingUsername: Bool` and `usernameIsAvailable: Bool` state
-- `ProfileSharingService.publishProfile()` — include `username` field in the public record write
-- Onboarding — add username step; call `ProfileViewModel.checkAndSaveUsername()` before allowing "Continue"
-
-**Build order dependency:** Username must be stored in the public DB before unique enforcement is meaningful. Enforce that onboarding writes the public record at username claim time.
-
----
-
-### 4. StoreKit 2 Tip Jar: Architecture Placement
-
-**Purchase logic location:** A new `TipJarViewModel` (@Observable, @MainActor) — consistent with all existing ViewModels. Business logic in ViewModel, zero purchase code in Views.
-
-**No SwiftData model needed.** Consumable tip purchases do not need local persistence. StoreKit 2 provides `Transaction.currentEntitlements` and `Transaction.updates` for receipt validation; consumable transactions are finished immediately after acknowledgment. There is nothing to store.
-
-**UserDefaults (optional):** For a "thank you" flag (did the user ever tip?), a single `@AppStorage("vg_hasTipped") var hasTipped = false` in the ViewModel or the View is sufficient. This is purely cosmetic (to show a "thank you" message instead of the tip buttons) and does not affect entitlement logic.
-
-**New components:**
-- `TipJarViewModel` — `@Observable @MainActor final class`
-  - `var products: [Product] = []` — loaded via `Product.products(for: tipProductIDs)`
-  - `var isPurchasing: Bool = false`
-  - `var purchaseError: String? = nil`
-  - `func loadProducts() async` — calls `Product.products(for:)`
-  - `func purchase(_ product: Product) async` — calls `product.purchase()`, switches on `.verified` result, calls `transaction.finish()`
-  - `var tipProductIDs: [String]` — hardcoded array of App Store Connect product IDs (e.g. `["vg_tip_small", "vg_tip_medium", "vg_tip_large"]`)
-- `TipJarView` — new View (navigated to from About page)
-- `AboutView` — new View (in Profile tab Settings section or accessible from Profile)
-
-**Modified components:**
-- `AppRoute` — add `case tipJar`, `case about`
-- Settings section in `ProfileView` or new `SettingsView` extension
-
-**StoreKit configuration:** Requires `.storekit` configuration file for development/preview testing. No backend. No RevenueCat or similar — raw StoreKit 2 is sufficient for a tip jar.
-
-**App Store Review note:** Apple requires a "Restore Purchases" button for non-consumable products. Tip jars are consumable — restore is not required, but Apple may ask for one anyway. Add a `Transaction.currentEntitlements` check as a courtesy restore path.
-
----
-
-### 5. "Live Users" Presence: CloudKit Public DB Approach
-
-**Constraint:** No background push server. CloudKit subscriptions require APNs registration but no custom server.
-
-**Honest assessment:** True real-time presence (sub-5-second staleness) is not achievable with CloudKit alone on iOS without a persistent connection (WebSocket) or silent push with high delivery reliability. CloudKit silent push notifications are "best-effort" — Apple explicitly does not guarantee delivery timing.
-
-**Achievable approach — heartbeat polling with short TTL records:**
-
-1. On app foreground, write/update a `UserPresence` record in the CloudKit public DB:
-   - `recordType: "UserPresence"`
-   - `fields: userDisplayName (String), username (String), currentGoalTitle (String?), lastSeenAt (Date), deviceToken (String — optional, for dedup)`
-   - `recordName: derived from userID or device token (stable per device)`
-2. On app background/terminate, write a `lastSeenAt` timestamp that is clearly in the past — no explicit "offline" record needed; records older than N minutes are considered offline
-3. On Community tab appear, fetch `UserPresence` records where `lastSeenAt > now - 5 minutes`, limit 20
-4. Poll on a timer (`Timer.publish(every: 60)`) while the Community tab is visible — this is acceptable because the user is actively on screen
-5. Write own heartbeat every 30 seconds while on-screen
-
-**Freshness:** With 60-second polling and 5-minute TTL window, "live users" will be 0–60 seconds stale. Acceptable for a social feature with this product's scale.
-
-**New components:**
-- `PresenceService` (new enum, mirrors `CommunityService`) — `func heartbeat(profile: UserProfile) async throws`, `func fetchLiveUsers(limit: Int) async throws -> [CKRecord]`
-- `LiveUsersViewModel` (@Observable, @MainActor) — `var liveUsers: [CKRecord] = []`, `var isLoading: Bool`, polling timer logic in `startPolling()` / `stopPolling()`
-
-**Modified components:**
-- `CommunityTabView` — add LiveUsers section, inject `LiveUsersViewModel`
-
-**CloudKit schema (not SwiftData):** New `UserPresence` record type in public DB with queryable index on `lastSeenAt`.
-
-**No SwiftData model.** Presence is ephemeral — never persisted locally.
-
-**No new SwiftData schema version required.**
-
----
-
-### 6. Shake Gesture for Daily Goal: CoreMotion MVVM Pattern
-
-**CoreMotion rule:** One `CMMotionManager` instance per app. Do not create one per View. The existing app has no CoreMotion usage, so this is a net-new singleton service.
-
-**Correct placement: shared @Observable service, injected via environment.**
-
+The snapshot sent over WCSession is a lightweight `[String: Any]` dictionary (Codable struct encoded to JSON Data then to `[String: Any]`):
 ```swift
-@Observable
-final class MotionService {
-    private let manager = CMMotionManager()
-    var didShake: Bool = false  // toggled on shake detection
-    // ...
+struct WatchSnapshot: Codable {
+    let globalStreak: Int
+    let activeGoalTitle: String?
+    let activeGoalProgress: Double?  // 0.0–1.0
+    let todayCheckedIn: Bool
+    let topGoalTitles: [String]      // up to 4, one per tier
+    let updatedAt: Date
 }
 ```
 
-Instantiated once in `VitaminGApp` or `ContentView`, injected via `.environment(motionService)`.
+`updateApplicationContext()` is preferred over `sendMessage()` for this use case — it delivers the latest state even when the Watch app is not in the foreground, and the Watch receives it on next launch. `sendMessage()` is used for the interactive check-in action (requires both sides reachable).
 
-**Shake detection approach:**
-- Option A — `CMMotionManager.startDeviceMotionUpdates(to:)` with threshold on `userAcceleration` magnitude (≥2.5g) — clean, no UIKit bridge needed; runs on background queue, publishes via `@MainActor` dispatch
-- Option B — Override `UIWindow.motionEnded(_:with:)` — simpler but requires UIKit bridge and a UIViewControllerRepresentable wrapper; not idiomatic in this codebase
+### Complications: WidgetKit on watchOS 10+
 
-Option A is correct for this codebase's pure SwiftUI + @Observable pattern.
+WatchOS 9 migrated complications to WidgetKit (deprecating ClockKit). Interactive complications (AppIntent-driven actions) require watchOS 11+.
 
-**Architecture:**
-- `MotionService` detects shake → sets `didShake = true`
-- `ExploreTabView` observes `motionService.didShake` → triggers daily goal gifter animation → resets `didShake = false`
-- Daily goal gifter logic lives in `ExploreViewModel`, not in `MotionService` (single responsibility)
+**Recommendation: Target watchOS 10 for read-only complications (streak count, goal progress ring), watchOS 11 for interactive check-in complication button.**
 
-**New components:**
-- `MotionService` (@Observable, singleton, starts/stops CoreMotion updates)
-- `ExploreViewModel` (@Observable, @MainActor) — owns daily goal gifter state, "3 gifts" list, feelings prompt state, trending data
+The existing `VitaminGWidget` target uses `AppIntentConfiguration` already for iOS. The Watch complication target is a separate WidgetKit extension that must be added under the WatchOS target in Xcode. It shares the complication families `accessoryCircular` (streak count), `accessoryRectangular` (goal title + ring), and `accessoryCorner`.
 
-**Modified components:**
-- `VitaminGApp.init()` — instantiate `MotionService`, inject via `.environment(motionService)`
-- `ExploreTabView` (new) — consumes `@Environment(MotionService.self)`
+The Watch complication reads data from the WatchOS App Group UserDefaults (written by the Watch app's `WatchSessionDelegate` when a WCSession message arrives). This mirrors the iOS widget pattern exactly — data in a shared container, complication reads a snapshot.
 
-**No SwiftData change.** The daily goal gifter is stateless except for a "already shown today" flag, handled via `@AppStorage("vg_dailyGoalDate") var lastShakeDate: String = ""` in `ExploreViewModel`.
-
----
-
-### 7. Applause System: CloudKit Record + SwiftUI Animation
-
-**CloudKit record design for applause:**
-
-```
-RecordType: "Applause"
-Fields:
-  - fromUsername: String (sanitized, profanity-filtered)
-  - fromDisplayName: String
-  - fromAvatarColorHex: String
-  - toProfileRecordID: String (references PublicProfile.recordID)
-  - toUsername: String (denormalized for query without join)
-  - goalTitle: String? (optional — applause on a specific goal)
-  - createdAt: Date (set by CloudKit on creation)
-```
-
-Queryable index needed on `toProfileRecordID` for per-profile applause feed.
-
-**Applause uniqueness (once/day per giver):** Cannot use CloudKit unique constraints. Enforce at application level: before creating an `Applause` record, query for existing `Applause` where `fromUsername == currentUser AND toProfileRecordID == target AND createdAt > startOfToday`. If found, reject silently or show "Already cheered today."
-
-**Floating username animation in SwiftUI:**
-
-The floating animation is a pure SwiftUI effect — no CloudKit involvement at render time. Pattern:
-
+**Check-in from wrist (watchOS 11+ interactive):**
 ```swift
-// In CommunityViewModel or ApplauseViewModel
-struct FloatingLabel: Identifiable {
-    let id = UUID()
-    let username: String
-    var opacity: Double = 1.0
-    var offset: CGFloat = 0
-}
+struct WatchCheckInIntent: AppIntent {
+    static var title: LocalizedStringResource = "Check In Today"
 
-var floatingLabels: [FloatingLabel] = []
-```
-
-When a new applause event arrives (via polling or after user taps 👏):
-1. Append a `FloatingLabel` to `floatingLabels`
-2. Animate `.offset(y: -80)` + `.opacity(0)` over 1.5 seconds using `withAnimation(.easeOut(duration: 1.5))`
-3. Remove from array after animation completes (`Task { try await Task.sleep(for: .seconds(1.5)) }`)
-
-The View renders `ZStack` of `FloatingLabel` items positioned over the profile/goal card.
-
-**New components:**
-- `ApplauseService` (new enum) — `func sendApplause(from:, to:, goalTitle:) async throws -> CKRecord`, `func fetchApplause(forProfileRecordID:, since:) async throws -> [CKRecord]`, `func hasAlreadyApplaudedToday(from:, to:) async throws -> Bool`
-- `ApplauseViewModel` (@Observable, @MainActor) — manages `floatingLabels`, applause send/poll, `cheersGiven: Int`
-
-**Modified components:**
-- `PublicProfileView` + `PublicProfileViewModel` — add 👏 button, `cheersGiven` count display, integrate `ApplauseViewModel`
-- `CommunityTabView` — add "Glowing this week" spotlight section, consume `ApplauseViewModel` for feed
-
-**No SwiftData change.** Applause records live entirely in CloudKit public DB. No local persistence.
-
----
-
-### 8. In-App Dark Mode Toggle
-
-**State storage: `@AppStorage` (UserDefaults), NOT SwiftData.**
-
-Rationale: Dark mode preference is a device-local setting. It does not need CloudKit sync, migration versioning, or SwiftData's relationship model. `@AppStorage` is the correct primitive.
-
-**Implementation pattern (HIGH confidence — matches Apple's own pattern):**
-
-```swift
-// In VitaminGApp body or a root wrapper view
-@AppStorage("vg_colorSchemeOverride") var colorSchemeRaw: String = "system"
-
-var preferredColorScheme: ColorScheme? {
-    switch colorSchemeRaw {
-    case "light": return .light
-    case "dark":  return .dark
-    default:      return nil   // nil = follow system
+    func perform() async throws -> some IntentResult {
+        // 1. Write check-in confirmation to Watch App Group UserDefaults
+        // 2. Send WCSession message to iOS: ["action": "checkIn", "timestamp": ISO8601 date]
+        // 3. iOS WatchSessionManager receives → creates CompletionEvent in SwiftData → reschedules notifications
+        return .result()
     }
 }
 ```
 
-Apply at the root `.preferredColorScheme(preferredColorScheme)` on the `WindowGroup`'s root view. Changing `colorSchemeRaw` from Settings causes SwiftUI to re-render the entire view tree with the new scheme.
+The iOS side handles the actual SwiftData write. The Watch side optimistically updates local display state.
 
-**Where the toggle lives:** `SettingsView` (accessible from Profile tab). The toggle writes to `@AppStorage("vg_colorSchemeOverride")`.
+### WatchOS Deployment Target
 
-**Architecture note:** This does NOT belong in a ViewModel. A ViewModel should not own UI appearance state. `@AppStorage` in a View or accessed directly from `WindowGroup` is the right pattern for this cross-cutting concern. No ViewModel needed.
+Change from `WATCHOS_DEPLOYMENT_TARGET = 7.0` to `10.0` (required for WidgetKit complications). Use `@available(watchOS 11.0, *)` guard for interactive Button(intent:) elements — fall back to a tap on the complication that deep-links to the app on watchOS 10.
 
-**No SwiftData change. No new schema version.**
+### Morning Nudge to Watch
 
-**Modified components:**
-- `VitaminGApp.body` — add `.preferredColorScheme(preferredColorScheme)` to the root `Group`
-- `SettingsView` — add dark mode picker (System / Light / Dark)
+iOS schedules a `UNCalendarNotificationTrigger` notification. When the device is paired with a Watch and the Watch app is installed, watchOS automatically mirrors eligible iOS notifications to the Watch. No separate watchOS notification scheduling is needed — the existing `NotificationScheduler.schedule()` handles this. The `WatchNotificationView` (scaffold) becomes the Watch notification interface controller.
+
+### New Components (Watch Feature)
+
+| Component | Target | Type | Purpose |
+|-----------|--------|------|---------|
+| `WatchSessionManager` | iOS | @Observable service | Sends WatchSnapshot via WCSession on goal/check-in changes; listens for check-in confirmations from Watch |
+| `WatchSessionDelegate` | watchOS | NSObject + WCSessionDelegate | Receives snapshot from iOS; writes to Watch App Group UserDefaults; relays check-in action back to iOS |
+| `WatchAppState` | watchOS | @Observable | In-memory state for Watch UI — globalStreak, activeGoalTitle, todayCheckedIn; populated from WatchSessionDelegate |
+| `WatchSnapshot` | Shared (or duplicated) | Codable struct | Lightweight DTO crossing the WCSession boundary |
+| `WatchCheckInIntent` | watchOS | AppIntent | Interactive complication action (watchOS 11+) |
+| `VGWatchComplicationBundle` | watchOS extension | WidgetBundle | Registers streak + goal complications |
+| `StreakComplication` | watchOS extension | Widget (accessoryCircular) | Displays global streak count |
+| `GoalProgressComplication` | watchOS extension | Widget (accessoryRectangular) | Displays active goal title + progress ring |
+
+### Modified Existing Components (Watch Feature)
+
+| Component | Changes |
+|-----------|---------|
+| `VGWatchApp` | Inject `WatchAppState` via `.environment()`; activate `WCSession` on launch via `WatchSessionDelegate` |
+| `TodayGlanceView` | Consume `@Environment(WatchAppState.self)` instead of hardcoded state; wire check-in button to `WatchCheckInIntent` or WCSession message |
+| `WatchGoalListView` | Consume `WatchAppState.topGoalTitles` instead of hardcoded `GoalItem` array |
+| `WatchFaceView` | Consume `WatchAppState` for streak count and progress values |
+| `GoalViewModel` | On completion toggle → call `WatchSessionManager.sendSnapshot()` |
+| `NotificationScheduler` | No change needed — iOS notifications mirror to Watch automatically |
+| `ModelContainerFactory` | No change — Watch does NOT open SwiftData |
 
 ---
 
-### 9. SchemaV9: What New Models Are Required
+## Feature 2: Analytics Dashboard
 
-**SwiftData schema migrations are required only when the local SwiftData model changes.** CloudKit public DB record types (CommunityPost, PublicProfile, UserPresence, Applause) are not SwiftData models and do not trigger schema migrations.
+### Data Source Assessment
 
-**Analysis of each v2.0 feature:**
+All analytics data is already in SwiftData. No new storage is needed.
 
-| Feature | SwiftData Change? | Migration Needed? |
-|---------|-------------------|-------------------|
-| Tab restructuring | None | No |
-| Profile picture in onboarding | None — `UserProfile.photoData` exists (SchemaV8) | No |
-| Username uniqueness enforcement | None — `UserProfile.username` exists (SchemaV8) | No |
-| Tip Jar | None | No |
-| Live users presence | None — ephemeral CK public records | No |
-| Shake gesture / daily goal gifter | None — `@AppStorage` flag | No |
-| Applause system | None — CK public records | No |
-| Dark mode toggle | None — `@AppStorage` | No |
-| Follow / cheer system | New? — `FollowRelationship` local record? | Possibly yes (see below) |
-| Achievement milestones | `UserChallenge` + threshold already tracked | No |
-| Home tab quote of day | None — `VGQuoteBank` exists | No |
+- **Streak history over time:** Requires walking `CompletionEvent` records chronologically. `StreakEngine.bestStreak()` gives the all-time best. A new computed function deriving per-period streak lengths (e.g., "streak as of week N") requires iterating grouped events. This is a new computation in `StreakEngine` or a new `AnalyticsEngine` struct.
+- **Completion rate trends (weekly/monthly):** Group `CompletionEvent.completedAt` by ISO week or month, compute unique-goal completion rates per bucket. Derivable from existing `CompletionEvent` records.
+- **All-time heatmap:** `StatsViewModel.heatmapData` already computes `[Date: Int]` — the dashboard heatmap is a larger rendering of this same data, not a new model.
+- **CSV export:** Generate a CSV string from `Goal` + `CompletionEvent` records in memory, present via `ShareLink` with `ShareLink(item: csvString)` — no new storage needed.
 
-**The one potential SchemaV9 trigger:**
+**Verdict: No new SwiftData models. No SchemaV11 required for analytics.** All data derives from existing `Goal` and `CompletionEvent` records.
 
-The **follow system** ("follow + cheer them on today") implies the local app knows which profiles the current user follows. If this list is stored locally (for offline-capable following lists), a new SwiftData model is needed:
+### Swift Charts Integration
 
+Swift Charts (iOS 16+, enhanced in iOS 17) is the correct primitive. No third-party chart library needed.
+
+- **Line/bar chart (streak history):** `Chart { ForEach(streakPeriods) { LineMark(...) } }` or `BarMark`
+- **Completion rate trend:** `BarMark` grouped by week/month with a `chartXSelection` gesture for iOS 17 tooltip
+- **Heatmap:** The existing heatmap uses a custom `LazyVGrid` + colored cells. The analytics dashboard version is the same component scaled to full-screen with a date range picker.
+- **CSV export:** `ShareLink(item: csvString, preview: SharePreview("Goal History"))` — zero dependency on charts; pure data export.
+
+### New Components (Analytics)
+
+| Component | Type | Purpose |
+|-----------|------|---------|
+| `AnalyticsDashboardView` | View | Full-screen analytics screen with tab/segment for different chart types |
+| `AnalyticsDashboardViewModel` | @Observable ViewModel | Owns chart data arrays; calls AnalyticsEngine; owns CSV generation |
+| `AnalyticsEngine` | Static struct | Pure computation: streakHistory(events:), completionRateTrend(events:goals:period:), generateCSV(goals:events:); testable |
+| `StreakPeriod` | Value type (struct) | DTO for chart: `startDate`, `endDate`, `length` |
+| `CompletionRateBucket` | Value type (struct) | DTO for chart: `periodLabel`, `rate` |
+
+### Modified Existing Components (Analytics)
+
+| Component | Changes |
+|-----------|---------|
+| `StatsViewModel` | Consider whether to extend or keep separate. Recommendation: keep `StatsViewModel` for the existing Stats screen (streak cards, existing heatmap); `AnalyticsDashboardViewModel` is a new, separate ViewModel for the new dashboard view |
+| `AppRoute` | Add `case analyticsDashboard` |
+| `StreakEngine` | Optionally add `streakHistory(from events:, calendar:) -> [StreakPeriod]` — or put this in `AnalyticsEngine` to keep `StreakEngine` single-purpose |
+
+---
+
+## Feature 3: AI (Claude via Anthropic API)
+
+### API Key Storage
+
+The Anthropic API key must NEVER be embedded in source code or any committed file. It must be stored in the iOS Keychain at runtime.
+
+**Recommended pattern — `KeychainService` wrapper (no third-party dependency):**
 ```swift
-// SchemaV9 candidate
-@Model final class FollowedProfile {
-    var id: UUID = UUID()
-    var publicRecordID: String?      // CK public record ID
-    var username: String?
-    var displayName: String?
-    var avatarColorHex: String?
-    var followedAt: Date?
+enum KeychainService {
+    private static let service = "com.kyleharrington.VitaminG"
+
+    static func save(key: String, value: String) throws {
+        let data = Data(value.utf8)
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: key,
+            kSecValueData as String: data,
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock
+        ]
+        SecItemDelete(query as CFDictionary)  // Remove before add
+        let status = SecItemAdd(query as CFDictionary, nil)
+        guard status == errSecSuccess else { throw KeychainError.saveFailed(status) }
+    }
+
+    static func load(key: String) throws -> String {
+        // SecItemCopyMatching pattern
+    }
 }
 ```
 
-**Recommendation:** Store follows in CloudKit public DB only (in a `Follow` record type), keeping the local SwiftData schema at V8. This avoids a schema migration and aligns with the existing pattern (community features = CK public DB, not SwiftData). A `Follow` CK record: `fromUserRecordID`, `toProfileRecordID`, `followedAt`.
+The API key is entered by the user in Settings (one-time setup), stored in Keychain, read at network call time. It is never read at app launch, never stored in UserDefaults or AppStorage. This is the same security posture as apps like Prompt or SSH clients.
 
-**Verdict: No SchemaV9 required for v2.0 if follows are CK-public-only.**
+**App Store consideration:** Calling the Anthropic API directly from an iOS app with a user-supplied key is analogous to a "bring your own API key" model. Apple does not prohibit this pattern. The key risk is accidental exposure in logs — ensure the key is never logged. A future v3.1 path could proxy through a server, but for v3.0 user-supplied key in Keychain is the pragmatic choice that avoids backend infrastructure.
 
-If product later requires offline follow lists, SchemaV9 adds `FollowedProfile` as a lightweight migration (additive model, nil defaults).
+### Anthropic API Integration (No Third-Party SDK)
+
+Per the project constraint ("no third-party dependencies unless necessary"), implement direct HTTP using `URLSession`:
+
+```
+POST https://api.anthropic.com/v1/messages
+Headers:
+  x-api-key: {keychainApiKey}
+  anthropic-version: 2023-06-01
+  content-type: application/json
+Body:
+  { "model": "claude-3-haiku-20240307",
+    "max_tokens": 256,
+    "messages": [{ "role": "user", "content": "{prompt}" }] }
+```
+
+`claude-3-haiku-20240307` is the right model choice for this use case: fast, cheap, sufficient capability for goal suggestions and motivation copy. Use `claude-3-5-sonnet` only if quality proves insufficient.
+
+Non-streaming is adequate for both use cases (goal suggestions = single JSON block; daily motivation = single paragraph). Streaming adds implementation complexity for minimal UX gain at these token lengths.
+
+### Two AI Features and Their Prompts
+
+**Goal Suggestions:**
+- Input context: up to 10 existing goal titles + tiers (passed as a compact list)
+- Output: 3–5 suggested complementary goals as a JSON array `[{"title": "...", "tier": "immediate|shortTerm|longTerm|lifeGoal"}]`
+- Prompt instructs Claude to: analyze the user's existing goals, identify gaps across tiers, suggest goals that are specific, achievable, and complementary
+- Parse with `JSONDecoder` — validate output schema before presenting to user
+
+**Daily Motivation:**
+- Input context: current global streak, today's active goal count, top goal title
+- Output: 1–2 sentence motivational message (plain text, no JSON needed)
+- Prompt instructs Claude to: be specific about the streak and goal, match tone to streak length (celebratory at 7+, encouraging at 1–3, resilient after break)
+- Cached in UserDefaults keyed by calendar day — regenerate only once per day, not on every app open
+
+### New Components (AI)
+
+| Component | Type | Purpose |
+|-----------|------|---------|
+| `AnthropicService` | Actor or @MainActor service | URLSession-based API client; `func suggestGoals(existingGoals: [Goal]) async throws -> [GoalSuggestion]`; `func generateMotivation(streak: Int, goalTitle: String?) async throws -> String` |
+| `GoalSuggestion` | Codable struct | `title: String`, `tier: GoalTier`, `rationale: String?` |
+| `KeychainService` | Enum | Generic Keychain read/write/delete using Security framework |
+| `AIViewModel` | @Observable ViewModel | Owns `suggestions: [GoalSuggestion]`, `motivationText: String?`, `isLoading: Bool`, `error: String?`; drives both AI-powered UI surfaces |
+
+### Modified Existing Components (AI)
+
+| Component | Changes |
+|-----------|---------|
+| `GoalCreationWizardViewModel` | Add `func fetchAISuggestions() async` → calls `AIViewModel` or `AnthropicService` directly; expose `aiSuggestions: [GoalSuggestion]` |
+| `SettingsView` (or new `APIKeySettingsView`) | Text field for API key entry → `KeychainService.save(key: "anthropicApiKey", value: ...)` |
+| `NotificationScheduler.makeContent()` | After daily motivation is cached, `makeContent()` can read from UserDefaults to use AI-generated copy in the notification body instead of the hardcoded `inspirationalMessages` array |
+| `AppRoute` | Add `case aiGoalSuggestions` |
+
+### Motivation Caching Strategy
+
+```
+UserDefaults key: "vg_aiMotivation_{YYYY-MM-DD}"
+Value: String (motivation text)
+Write: Once per day on first app open if key is absent
+Read: makeContent() checks this key before falling back to inspirationalMessages
+```
+
+This keeps the motivation fresh (new every day) without unnecessary API calls.
 
 ---
 
-### 10. Discover Page Search: CloudKit Public DB vs Local Filtering
+## Feature 4: Smart Notifications
 
-**CloudKit public DB search approach:**
+### Current Notification Architecture
 
-CloudKit `CKQuery` with `NSPredicate` supports:
-- `CONTAINS` (case-insensitive with `[cd]` modifier) for substring matching on indexed String fields
-- `BEGINSWITH` for prefix matching
+`NotificationScheduler` schedules at a fixed user-chosen time (`NotificationPreferences.hour/minute`). The content uses a rotating `inspirationalMessages` array — day-seeded but not adaptive. The global streak-at-risk nudge fires at 19:00 regardless of whether the user has already checked in.
 
-For goal/profile search by keyword:
+### What "Smart" Means Architecturally
+
+1. **Tone adapts to streak level** — already achievable by reading `StreakEngine.currentStreak()` at notification-schedule time and choosing different message templates
+2. **Content references actual goal titles** — already done in `makeContent()` (the top active goal title is included)
+3. **Send time adapts to historical check-in patterns** — requires storing check-in timestamps and computing the modal check-in hour; derives from `CompletionEvent.completedAt`
+4. **Streak-at-risk evening alert if not checked in** — the `scheduleGlobalStreakAtRiskNudge()` already exists; smart version cancels it after check-in and only fires if the user has a streak ≥ 2
+
+### User Pattern Data Storage
+
+No new SwiftData model is needed. The smart send time can be computed from existing `CompletionEvent.completedAt` timestamps.
+
+**Algorithm:**
+```
+modal_hour = mode(hour(event.completedAt) for event in last 30 completion events)
+```
+If fewer than 7 events, fall back to user-set time. If modal hour differs from stored time by more than 1 hour, suggest or auto-update the notification time.
+
+This computation belongs in a new `NotificationPatternAnalyzer` (static struct, same pattern as `StreakEngine`). It runs asynchronously when the app foregrounds. Result is stored in App Group UserDefaults under a new key `vg_adaptiveNotificationHour`.
+
+### Tone Templates
+
+Replace the 7-element `inspirationalMessages` array with a `ToneBank` enum:
+
 ```swift
-let predicate = NSPredicate(format: "username CONTAINS[cd] %@", searchText)
-let query = CKQuery(recordType: "PublicProfile", predicate: predicate)
+enum NotificationTone {
+    case onFire(streak: Int)       // streak >= 14
+    case building(streak: Int)     // streak 7–13
+    case starting(streak: Int)     // streak 1–6
+    case recovering               // streak == 0, had streak before
+    case fresh                    // no history
+}
 ```
 
-**Limitation:** CloudKit does not support full-text search or fuzzy matching. `CONTAINS[cd]` is substring-only and requires a queryable index on the field. Index creation is done in CloudKit Dashboard — not automatically inferred.
+`NotificationScheduler.makeContent(activeGoals:, streak:, tone:)` becomes a new overload that accepts tone. The existing overload remains for backward compatibility.
 
-**Architecture decision: remote-only search, no local cache.**
+### Streak-at-Risk Smart Cancellation
 
-Local filtering only works if all public records are downloaded first — infeasible at any scale. Search must query CloudKit public DB. Results are displayed directly; no local caching needed for MVP.
+The existing `scheduleGlobalStreakAtRiskNudge()` fires every night at 19:00 regardless. The smart version:
+1. Re-evaluates at `BGAppRefreshTask` foreground (or at check-in time)
+2. If `StreakEngine.currentStreak() == 0` AND user has no prior streak > 1, skip the alert (nothing to protect)
+3. After successful check-in, `cancelGlobalStreakAtRiskNudge()` is already called (Phase 23) — this is correct
 
-**Debounce pattern:** `DiscoverViewModel` holds `var searchText: String` and debounces via `Task` with `try await Task.sleep(for: .milliseconds(400))` before calling the service — consistent with the codebase's async/await pattern (no Combine).
+### New Components (Smart Notifications)
 
-**New components:**
-- `DiscoverViewModel` (@Observable, @MainActor) — `var searchText: String`, `var goalResults: [CKRecord]`, `var profileResults: [CKRecord]`, `var isSearching: Bool`, debounced search
-- `DiscoverView` — accessible from Community tab or as a NavigationLink destination
+| Component | Type | Purpose |
+|-----------|------|---------|
+| `NotificationPatternAnalyzer` | Static struct | `func preferredCheckInHour(from events: [CompletionEvent]) -> Int?` — returns modal hour from last 30 events, nil if insufficient data |
+| `ToneBank` | Enum | Static `func message(for tone: NotificationTone, goalTitle: String?) -> String` — replaces hardcoded `inspirationalMessages` |
+| `SmartNotificationScheduler` | Extension on `NotificationScheduler` | `func rescheduleAdaptive(activeGoals: [Goal], events: [CompletionEvent]) async` — orchestrates tone selection + adaptive time |
 
-**Modified components:**
-- `AppRoute` — add `case discover`
-- `CommunityTabView` — add "Search" button/entry point to `DiscoverView`
+### Modified Existing Components (Smart Notifications)
 
-**CloudKit requirements:**
-- `PublicProfile` record type: queryable index on `username`, `displayName`
-- Goal record type in public DB: queryable index on title field
+| Component | Changes |
+|-----------|---------|
+| `NotificationScheduler.makeContent()` | New overload: `makeContent(activeGoals:, streak:, tone:)`; original signature preserved |
+| `NotificationPreferences` | Add `vg_adaptiveNotificationHour` key; `SmartNotificationScheduler` writes this, `reschedule()` reads it |
+| `GoalViewModel` (or wherever check-in is triggered) | After successful check-in: call `SmartNotificationScheduler.rescheduleAdaptive()` to update tone for next day's notification |
+
+---
+
+## SwiftData Schema: SchemaV11
+
+**One new schema version is needed for v3.0, but only if the AI features add per-goal metadata.**
+
+The AI motivation text is cached in UserDefaults (not SwiftData) — no schema change.
+Goal suggestions are transient (shown, then user accepts or dismisses) — no schema change.
+Smart notification adaptive hour is in UserDefaults — no schema change.
+Analytics data is derived from existing records — no schema change.
+Watch data is exchanged via WCSession, not stored locally on Watch — no schema change.
+
+**SchemaV11 trigger: IF the product wants to record that a Goal was created from an AI suggestion (for analytics, or to exclude it from future suggestion cycles), add:**
+
+```swift
+// SchemaV11 candidate field on Goal
+var isAISuggested: Bool? = nil    // optional with nil default — lightweight migration safe
+var aiSuggestionRationale: String? = nil  // optional — lightweight migration safe
+```
+
+**Verdict: SchemaV11 is optional. Ship v3.0 without it if AI-sourced goals don't need to be distinguished from user-created goals. If this distinction matters for the goal suggestion prompt (avoid re-suggesting existing AI goals), use the goal title string match instead — no schema change needed.**
+
+---
+
+## Data Flow Diagrams
+
+### Watch Check-In Flow
+
+```
+User taps "Check in" on Watch (TodayGlanceView)
+  → WatchCheckInIntent.perform() [watchOS 11] OR WCSession.sendMessage() [watchOS 10]
+    → iOS: WatchSessionManager.session(_:didReceiveMessage:)
+      → GoalViewModel.toggleCompletion(for: activeGoal)
+        → CompletionEvent inserted into SwiftData
+        → StreakEngine recomputes
+        → WatchSessionManager.sendSnapshot() → WCSession.updateApplicationContext()
+        → WidgetCenter.shared.reloadAllTimelines() [iOS widgets update]
+        → NotificationScheduler.cancelGlobalStreakAtRiskNudge()
+          → Watch: WatchAppState.todayCheckedIn = true [UI updates]
+```
+
+### AI Daily Motivation Flow
+
+```
+App foregrounds (morning)
+  → AIViewModel.refreshMotivationIfNeeded()
+    → Check UserDefaults["vg_aiMotivation_2026-05-28"]
+      → [cache hit] → use cached string, skip API
+      → [cache miss] → AnthropicService.generateMotivation(streak:, goalTitle:)
+        → URLSession POST to api.anthropic.com/v1/messages
+        → Parse response text
+        → Store in UserDefaults["vg_aiMotivation_{today}"]
+        → NotificationScheduler.reschedule(activeGoals:, motivationOverride: text)
+```
+
+### Smart Notification Scheduling Flow
+
+```
+App foregrounds OR check-in completes
+  → SmartNotificationScheduler.rescheduleAdaptive(activeGoals:, events:)
+    → NotificationPatternAnalyzer.preferredCheckInHour(from: events)
+      → [has pattern] → write to UserDefaults["vg_adaptiveNotificationHour"]
+      → [no pattern] → use NotificationPreferences.hour (user-set time)
+    → StreakEngine.currentStreak(from: events) → determine ToneBank tone
+    → [AI motivation cached today] → use AI text
+    → [no AI motivation] → ToneBank.message(for: tone, goalTitle:)
+    → NotificationScheduler.schedule(hour:, minute:, content:)
+```
 
 ---
 
 ## Component Summary: New vs Modified
 
-### New Components
+### New Components (v3.0)
 
-| Component | Type | Tab | Notes |
-|-----------|------|-----|-------|
-| `ExploreTabView` | View | Explore (2) | Root of Explore tab |
-| `ExploreViewModel` | ViewModel | Explore | Shake gifter, feelings, trending |
-| `MotionService` | Service | App-wide | Singleton, one `CMMotionManager` |
-| `LiveUsersViewModel` | ViewModel | Community | Polling, presence display |
-| `PresenceService` | Service | Community | CK public DB heartbeat/fetch |
-| `ApplauseService` | Service | Community/Profile | CK public DB applause CRUD |
-| `ApplauseViewModel` | ViewModel | Community/Profile | Floating label animation state |
-| `TipJarViewModel` | ViewModel | Profile/About | StoreKit 2 product fetch + purchase |
-| `TipJarView` | View | Profile | Tiered tip display |
-| `AboutView` | View | Profile | App version, tip jar entry |
-| `UsernameAvailabilityService` | Service | Onboarding | CK public DB username check |
-| `DiscoverViewModel` | ViewModel | Community | Debounced CK search |
-| `DiscoverView` | View | Community | Search UI |
+| Component | Target | Type | Feature Area |
+|-----------|--------|------|--------------|
+| `WatchSessionManager` | iOS | @Observable service | Watch |
+| `WatchSessionDelegate` | watchOS | NSObject + WCSessionDelegate | Watch |
+| `WatchAppState` | watchOS | @Observable | Watch |
+| `WatchSnapshot` | Shared | Codable struct | Watch |
+| `WatchCheckInIntent` | watchOS | AppIntent (watchOS 11+) | Watch |
+| `VGWatchComplicationBundle` | watchOS WidgetKit extension | WidgetBundle | Watch |
+| `StreakComplication` | watchOS WidgetKit extension | Widget (accessoryCircular) | Watch |
+| `GoalProgressComplication` | watchOS WidgetKit extension | Widget (accessoryRectangular) | Watch |
+| `AnalyticsDashboardView` | iOS | View | Analytics |
+| `AnalyticsDashboardViewModel` | iOS | @Observable ViewModel | Analytics |
+| `AnalyticsEngine` | iOS | Static struct | Analytics |
+| `StreakPeriod` | iOS | Value type | Analytics |
+| `CompletionRateBucket` | iOS | Value type | Analytics |
+| `AnthropicService` | iOS | Actor/service | AI |
+| `GoalSuggestion` | iOS | Codable struct | AI |
+| `KeychainService` | iOS | Enum | AI (security) |
+| `AIViewModel` | iOS | @Observable ViewModel | AI |
+| `NotificationPatternAnalyzer` | iOS | Static struct | Smart notifications |
+| `ToneBank` | iOS | Enum | Smart notifications |
+| `SmartNotificationScheduler` | iOS | Extension | Smart notifications |
 
-### Modified Components
+### Modified Existing Components (v3.0)
 
 | Component | Changes |
 |-----------|---------|
-| `ContentView` | Rewire tab indices 2/3; update NavigationDestination blocks |
-| `VGTabBar` | Relabel tab 2→Explore (sparkles/wand icon), 3→Community; adjust SF Symbol names |
-| `AppRoute` | Add: `explore`, `discover`, `tipJar`, `about`; verify `stats` still wired |
-| `ProfileSharingService` | `publishProfile()` — add `photoData: Data?` param, write as CKAsset; `fetchProfile()` — return `photoData: Data?` |
-| `PublicProfileViewModel` | `ViewState.loaded` — add `photoData: Data?`; add applause count, cheer button state |
-| `ProfileViewModel` | Add `checkAndSaveUsername(context:) async` (remote check); `toggleProfilePublic()` — pass photo to publishProfile |
-| `CommunityTabView` | Add: live users section, "Today's glimpses", "Glowing this week", Discover entry |
-| `OnboardingViewModel` | Add photo step, Apple Sign-In-only flow, username claim step with async check |
-| `VitaminGApp` | Instantiate `MotionService`, inject via environment; add `.preferredColorScheme()` modifier |
-| `SettingsView` | Add dark mode picker; daily nudge time setting already exists |
+| `VGWatchApp` | Inject `WatchAppState` env object; activate WCSession |
+| `TodayGlanceView` | Wire to `WatchAppState`; connect check-in to intent |
+| `WatchGoalListView` | Wire to `WatchAppState.topGoalTitles` |
+| `WatchFaceView` | Wire to `WatchAppState` streak/progress |
+| `GoalViewModel` | On completion: call `WatchSessionManager.sendSnapshot()` |
+| `SettingsView` | Add API key entry field; write to `KeychainService` |
+| `NotificationScheduler` | Add `makeContent(activeGoals:, streak:, tone:)` overload |
+| `NotificationPreferences` | Add `vg_adaptiveNotificationHour` key |
+| `StatsViewModel` | Consider exposing `heatmapData` and `globalStreak` to `AnalyticsDashboardViewModel` — or duplicate the @Query fetch |
+| `AppRoute` | Add: `analyticsDashboard`, `aiGoalSuggestions` |
+| `GoalCreationWizardViewModel` | Add AI suggestion fetch capability |
 
 ---
 
-## CloudKit Schema Changes (Public DB Record Types)
+## Build Order Recommendation
 
-These are additions to the CloudKit **public database** schema — not SwiftData. New record types must be defined and promoted in CloudKit Dashboard.
+The order below respects cross-feature dependencies and minimizes rework.
 
-| Record Type | Fields | Queryable Indexes Needed |
-|-------------|--------|--------------------------|
-| `UserPresence` (new) | `username (String)`, `displayName (String)`, `avatarColorHex (String)`, `currentGoalTitle (String)`, `lastSeenAt (Date)` | `lastSeenAt` |
-| `Applause` (new) | `fromUsername (String)`, `fromDisplayName (String)`, `fromAvatarColorHex (String)`, `toProfileRecordID (String)`, `toUsername (String)`, `goalTitle (String)`, `createdAt (Date)` | `toProfileRecordID`, `createdAt` |
-| `Follow` (new) | `fromUserRecordID (String)`, `toProfileRecordID (String)`, `followedAt (Date)` | `fromUserRecordID`, `toProfileRecordID` |
-| `PublicProfile` (existing — extend) | Add: `username (String)`, `photoAsset (CKAsset)` | Add: `username` |
+### Phase A: Watch Foundation (no interactions yet)
+**What:** WCSession setup, WatchAppState, data sync from iOS to Watch. Wire existing Watch screens to live data. Complications (read-only).
 
----
+**Why first:** The Watch scaffold exists but has zero real data wiring. All other Watch features (check-in, complications) depend on the data flow being established. Complications require a separate WidgetKit extension target — create it now so subsequent phases can extend it.
 
-## SwiftData Schema Version Assessment
-
-**No SchemaV9 is required for v2.0** if follows, presence, and applause remain in CloudKit public DB only (no local SwiftData persistence). All v2.0 features either:
-- Use existing SwiftData fields (`UserProfile.photoData`, `UserProfile.username` — both in SchemaV8)
-- Use `@AppStorage` for device-local preferences (dark mode, daily shake date)
-- Use CloudKit public DB records (presence, applause, follow, public profile photo)
-
-**If SchemaV9 is needed later:** The trigger would be persisting follow relationships locally for offline access. Migration would be lightweight (additive `FollowedProfile` model, all optional fields).
+**Dependencies established:** `WatchSessionManager` + `WatchSessionDelegate` + `WatchAppState` + `WatchSnapshot`.
 
 ---
 
-## Suggested Build Order
+### Phase B: Watch Interactive Check-In + Complications
+**What:** `WatchCheckInIntent` (guarded by `@available(watchOS 11.0, *)`), interactive complications, watchOS 10 fallback (tap-to-open app).
 
-This order respects feature dependencies and avoids rework:
-
-1. **Tab restructuring + AppRoute updates** — prerequisite for everything; establishes where each feature lives (ContentView, VGTabBar, AppRoute)
-2. **Onboarding overhaul** — Apple Sign-In only, T&C, unique username (with `UsernameAvailabilityService`), profile picture step, notification permission slide; gates SchemaV8 username + photo data being populated at onboarding time
-3. **Public profile photo** — extend `ProfileSharingService` to write/read CKAsset; update `PublicProfileViewModel`; all subsequent social features show correct avatars
-4. **Home tab** (new dashboard) — `HomeView` already partially exists; complete streak display, quote, primary goal, "My Goals" list; Stats/Wins as NavigationLink destinations
-5. **Goals flow enhancements** — wizard, "Need ideas", goal detail with streak/flame; builds on existing `GoalCreationWizardViewModel`
-6. **StoreKit 2 Tip Jar** — self-contained, no dependencies on other v2.0 features; early = good because App Store review requires IAP review lead time
-7. **Dark mode toggle** — two-line change to `VitaminGApp` + `SettingsView` picker; zero risk
-8. **Explore tab** — `ExploreTabView` + `ExploreViewModel` + `MotionService` (shake gifter, feelings prompt, Vitamin Shelf, trending); requires CloudKit trending query
-9. **Community tab redesign** — "Today's glimpses", live users (`PresenceService` + `LiveUsersViewModel`), applause system (`ApplauseService` + `ApplauseViewModel` + floating animation)
-10. **Public profile + follow/cheer** — `PublicProfileView` redesign, follow button, cheer/applause on profile; depends on Applause system (step 9)
-11. **Discover page** — `DiscoverView` + `DiscoverViewModel`; depends on CloudKit indexes from Community work
-12. **Streak freeze, achievement celebrations, notification picker** — polishing layer; no new architecture, extend existing `StreakFreezeService` and `MilestoneCelebrationView`
-13. **Widget enhancements** — last, because widgets read from SwiftData and the schema is stable; `WidgetDataProvider` extension
+**Why second:** Depends on Phase A data flow. The check-in action must write back through iOS SwiftData — this is only safe once the WCSession pipeline is tested.
 
 ---
 
-## Architecture Decision Flags
+### Phase C: Analytics Dashboard
+**What:** `AnalyticsEngine`, `AnalyticsDashboardViewModel`, `AnalyticsDashboardView` with Swift Charts. CSV export via `ShareLink`.
+
+**Why third:** Fully self-contained. No dependencies on Watch or AI features. Deriving data from existing SwiftData records is safe to do at any point. Going before AI lets AI motivations potentially surface on the analytics screen ("Your consistency this month...").
+
+---
+
+### Phase D: Keychain + Anthropic Service Foundation
+**What:** `KeychainService`, `AnthropicService`, API key Settings UI, `GoalSuggestion` model, `AIViewModel`.
+
+**Why fourth:** Must be in place before any AI-powered UI is wired. Keychain work is security-critical — test it before building UI on top. `AnthropicService` should be tested with real API calls before the ViewModel layer is built.
+
+---
+
+### Phase E: AI Goal Suggestions in Creation Flow
+**What:** Wire `AIViewModel.suggestions` into `GoalCreationWizardViewModel`; show AI suggestions in the wizard.
+
+**Why fifth:** Depends on Phase D `AnthropicService` being validated.
+
+---
+
+### Phase F: AI Daily Motivation + Notification Integration
+**What:** `AIViewModel.refreshMotivationIfNeeded()`, UserDefaults motivation cache, `NotificationScheduler` overload accepting AI copy.
+
+**Why sixth:** Depends on Phase D `AnthropicService`. Notification integration must be done carefully — ensure the AI text is validated/truncated before use in a notification (iOS truncates notification body at ~200 chars; AI copy must respect this).
+
+---
+
+### Phase G: Smart Notifications
+**What:** `NotificationPatternAnalyzer`, `ToneBank`, `SmartNotificationScheduler`. Wire adaptive scheduling into check-in and app-foreground paths.
+
+**Why last:** Builds on all prior work — requires AI motivation (Phase F), existing streak data, and the notification scheduler to be stable. Smart notifications enhance rather than replace existing notification behavior.
+
+---
+
+## Architecture Decision Log
 
 | Decision | Verdict | Rationale |
 |----------|---------|-----------|
-| Profile photo in private vs public DB | **Both** — private DB for storage (existing), public DB for sharing (CKAsset in PublicProfile record) | Privacy: user controls when photo is visible (via isPublic toggle) |
-| Follows in CK public DB vs SwiftData | **CK public DB only** | Avoids SchemaV9; consistent with existing community pattern; acceptable for MVP |
-| Dark mode state in UserDefaults vs SwiftData | **UserDefaults (@AppStorage)** | Device-local preference; no sync needed; SwiftData overkill |
-| Tip jar in StoreKit 2 vs SwiftData | **StoreKit 2 only, no SwiftData** | Consumables don't need local persistence; `transaction.finish()` is the end state |
-| Shake detection via CMMotionManager vs UIWindow override | **CMMotionManager** | Pure SwiftUI + @Observable; no UIKit bridge; consistent with codebase style |
-| Live users via subscriptions vs polling | **Polling with short TTL records** | CloudKit push is best-effort; polling is predictable and controllable |
-| Username uniqueness via @Attribute(.unique) | **BANNED** (project constraint) | CloudKit incompatible; app-level query check is the only valid pattern |
+| Watch data sync: WatchConnectivity vs CloudKit vs App Group | **WatchConnectivity** | App Groups don't cross device boundaries; CloudKit-to-watchOS sync is unreliable in practice (multiple confirmed forum issues); WCSession is the standard, reliable approach |
+| Watch complication data source | **Watch App Group UserDefaults** (written by WatchSessionDelegate) | Mirrors the iOS widget pattern; complications cannot fetch data on demand, they read a snapshot |
+| Interactive complications: watchOS 10 vs 11 | **watchOS 11 for interactive, gracefully degrade on 10** | `Button(intent:)` in WidgetKit requires watchOS 11; deploy target stays at 10 for broader compatibility |
+| Morning nudge to Watch | **Mirror iOS notification automatically** | No separate watchOS notification scheduling required; the paired Watch mirrors eligible iOS notifications |
+| Analytics storage: new models vs derived computation | **Derived from existing CompletionEvent records** | All required data is already in SwiftData; creating parallel storage would introduce sync complexity and duplication |
+| Analytics charting: Swift Charts vs third-party | **Swift Charts (first-party)** | iOS 17+ minimum already established; no third-party dependency needed; line/bar/heatmap all achievable natively |
+| AI API key storage: Keychain vs UserDefaults vs hardcoded | **Keychain only** | UserDefaults is not encrypted and is included in device backups; hardcoding violates security and makes key rotation impossible |
+| AI API: direct URLSession vs third-party SDK | **Direct URLSession** | Project constraint: no third-party dependencies unless necessary; the Anthropic API is simple HTTP POST with JSON; no streaming required for these use cases |
+| AI model choice | **claude-3-haiku** | Fast, low cost, sufficient for goal suggestions and short-form motivation; upgrade path to claude-3-5-sonnet if quality proves insufficient |
+| AI motivation caching | **UserDefaults keyed by calendar date** | Single string per day; no CloudKit sync needed (motivation is device-specific); avoids redundant API calls |
+| Smart notification time adaptation: new model vs derived | **Derived from CompletionEvent timestamps** | Sufficient data already exists; a new SwiftData model would be premature optimization |
+| SchemaV11: add AI-sourced goal flag | **Defer unless product requires it** | Goal title string matching is sufficient to prevent re-suggesting identical goals; adding a schema version for a single bool adds migration complexity |
 
 ---
 
 ## Architectural Violations to Avoid
 
-1. **Do not put `CMMotionManager` in a View** — exactly one instance per app, created in a service class, injected via environment
-2. **Do not put StoreKit purchase calls in a View** — all `product.purchase()` calls go in `TipJarViewModel`
-3. **Do not store applause/presence/follow counts in SwiftData** — these are community-scale counters that live in CloudKit public DB; SwiftData is for the user's own private data
-4. **Do not add `@Attribute(.unique)` to `UserProfile.username`** — this will silently break CloudKit sync
-5. **Do not use Combine for debounce in `DiscoverViewModel`** — use `Task + Task.sleep` pattern consistent with the rest of the codebase (no Combine)
-6. **Do not write business logic for the floating applause animation in a View** — `ApplauseViewModel` owns `floatingLabels: [FloatingLabel]` and drives animations; View only reads state
-7. **Do not create a `CMMotionManager` per View or per ViewModel** — this is a per-app singleton; instantiate once in `VitaminGApp`
+1. **Do not open SwiftData from the Watch target** — `WGWatchApp` must not call `ModelContainerFactory`; all data arrives via WCSession snapshot
+2. **Do not store the Anthropic API key in UserDefaults, AppStorage, or any committed file** — Keychain only; never log the key value
+3. **Do not call `AnthropicService` from a View** — all API calls go through `AIViewModel`; MVVM strictly enforced
+4. **Do not use App Group UserDefaults for cross-device sync** — App Groups share within one device; WCSession crosses the device boundary
+5. **Do not schedule a separate watchOS notification** — iOS notifications mirror automatically when Watch is paired; duplicate scheduling causes double-delivery
+6. **Do not run `NotificationPatternAnalyzer` synchronously on the main thread** — event aggregation over 30+ records is O(n); run async and publish result to the calling ViewModel
+7. **Do not regenerate AI motivation on every app foreground** — check UserDefaults cache key first; one API call per calendar day maximum
+8. **Do not put Claude prompt strings in Views** — all prompt construction belongs in `AnthropicService` methods; prompts are business logic
+9. **Do not use CloudKit sync as the Watch data channel** — it is unreliable between iOS and watchOS; WatchConnectivity is the only reliable real-time path
 
 ---
 
 ## Sources
 
-- CloudKit unique constraints limitation: [Hacking with Swift Forums](https://www.hackingwithswift.com/forums/swiftui/best-way-to-handle-unique-values-with-swiftdata-and-cloudkit/30145)
-- CKQuerySubscription for public DB (not CKDatabaseSubscription): [Apple Developer Documentation](https://developer.apple.com/documentation/cloudkit/ckquerysubscription)
-- CloudKit notifications best-effort delivery: [Cocoacasts](https://cocoacasts.com/five-reasons-cloudkit-notifications-are-not-arriving)
-- StoreKit 2 consumable purchase result: [Apple Developer Documentation — Product.PurchaseResult](https://developer.apple.com/documentation/storekit/product/purchaseresult)
-- StoreKit 2 Transaction.latest(for:): [Apple Developer Documentation](https://developer.apple.com/documentation/storekit/transaction/latest%28for%3A%29)
-- .preferredColorScheme override pattern: [Apple Developer Forums](https://developer.apple.com/forums/thread/658818)
-- CoreMotion SwiftUI integration: [CreateWithSwift](https://www.createwithswift.com/using-core-motion-within-a-swiftui-application/)
-- Tip jar implementation reference: [Ben Cardy](https://bencardy.co.uk/2023/02/17/implementing-a-tip-jar-with-swift-and-swiftui/)
+- SwiftData + CloudKit sync between iOS and watchOS (unreliable): [Apple Developer Forums — SwiftData CloudKit sync on WatchOS 10](https://developer.apple.com/forums/thread/733397)
+- WatchConnectivity for iOS–watchOS data sharing: [Apple Developer Documentation — Transferring data with Watch Connectivity](https://developer.apple.com/documentation/WatchConnectivity/transferring-data-with-watch-connectivity)
+- Interactive watchOS widgets require watchOS 11: [Cocoa Switch — Building interactive Apple Watch widget](https://www.cocoaswitch.com/2024/12/16/building-interactive-apple.html)
+- WidgetKit complications on watchOS 9+: [Kodeco — watchOS With SwiftUI by Tutorials, Chapter 8: Complications](https://www.kodeco.com/books/watchos-with-swiftui-by-tutorials/v2.0/chapters/8-complications)
+- Migrating ClockKit to WidgetKit: [Apple Developer Documentation](https://developer.apple.com/documentation/widgetkit/converting-a-clockkit-app)
+- Swift Charts iOS 17 features (selection, scrolling): [Apple Developer Documentation — Charts](https://developer.apple.com/documentation/charts)
+- Anthropic Messages API direct HTTP: [Anthropic API Documentation — Messages streaming](https://docs.anthropic.com/claude/reference/messages-streaming)
+- SwiftAnthropic iOS SDK (reference, not used): [GitHub — jamesrochabrun/SwiftAnthropic](https://github.com/jamesrochabrun/SwiftAnthropic)
+- SwiftClaude KeychainAuthenticator pattern: [GitHub — GeorgeLyon/SwiftClaude](https://github.com/GeorgeLyon/SwiftClaude)
+- iOS Keychain with Security framework: [How to Use Keychain for Secure Storage in Swift](https://oneuptime.com/blog/post/2026-02-02-swift-keychain-secure-storage/view)
+- Anthropic CORS/client-side access risks: [Simon Willison — Claude's API now supports CORS](https://simonwillison.net/2024/Aug/23/anthropic-dangerous-direct-browser-access/)
+- App Groups vs WatchConnectivity for data sharing: [Apple Developer Forums — SwiftData and correct setup for App Group](https://developer.apple.com/forums/thread/732986)

@@ -2,8 +2,516 @@
 
 **Project:** Vitamin G — iOS Goal Tracking / Gratitude App
 **Domain:** iOS 17+, SwiftData, CloudKit sync, WidgetKit, UserNotifications, MVVM
-**Researched:** 2026-04-03 (v1.0) / 2026-05-15 (v2.0 addendum)
+**Researched:** 2026-04-03 (v1.0) / 2026-05-15 (v2.0 addendum) / 2026-05-28 (v3.0 addendum)
 **Overall confidence:** HIGH (sourced from Apple Developer Forums, official docs, verified community articles)
+
+---
+
+## v3.0 Feature Pitfalls
+
+These pitfalls are specific to adding Apple Watch, analytics charts, Anthropic AI, and adaptive smart notifications to the **existing** Vitamin G app — which already has 10 schema versions, an App Group shared container, CloudKit private DB sync, and live App Store users.
+
+Ordered by severity within each feature area.
+
+---
+
+### Quick-Reference Table — v3.0 Pitfalls
+
+| ID | Area | Pitfall | Severity | Warning Sign | Phase |
+|----|------|---------|----------|--------------|-------|
+| V3-WA-1 | Watch — Data | App Group cannot share SwiftData data cross-device | CRITICAL | Watch shows 0 items; iOS data intact | Watch: Data Layer |
+| V3-WA-2 | Watch — WCSession | `sendMessage` from iOS does NOT wake watch; check-ins silently lost | CRITICAL | Check-ins succeed on watch but never surface on iPhone | Watch: Data Layer |
+| V3-WA-3 | Watch — WCSession | `isReachable` is unpredictably false; no programmatic cure | HIGH | "Unavailable" UI shown during normal use | Watch: Data Layer |
+| V3-WA-4 | Watch — WCSession | Simulator blocks `transferUserInfo`, `transferFile`, complication transfer | HIGH | Everything works in Simulator; breaks on device | Watch: Data Layer |
+| V3-WA-5 | Watch — Complications | Complication refresh budget ~2×/hour; exhaustion causes silent stale data | HIGH | Complication stops updating; no error thrown | Watch: Complications |
+| V3-WA-6 | Watch — Complications | `transferCurrentComplicationUserInfo` has its own tighter daily budget | HIGH | Complication refresh ceases for the rest of the day | Watch: Complications |
+| V3-WA-7 | Watch — Notifications | Local notifications do not auto-mirror to watch without configuration | MEDIUM | Notification fires on phone only; nothing on wrist | Watch: Notifications |
+| V3-SD-1 | SwiftData — Migration | Non-optional new property without default breaks CloudKit sync silently | CRITICAL | Sync stops; no crash; data does not propagate | Analytics: Schema |
+| V3-SD-2 | SwiftData — Migration | Custom `StagedMigrationPlan` incompatible with CloudKit; causes crash | CRITICAL | Migration works locally; CloudKit devices crash on update | Analytics: Schema |
+| V3-SD-3 | SwiftData — Migration | CloudKit schema add-only; rename = data loss | CRITICAL | Production data loss for renamed/removed field | All phases |
+| V3-SD-4 | SwiftData — Threading | `@Model` objects not Sendable; crossing actors causes crash | HIGH | "Objects in different contexts" crash in analytics VM | Analytics: Charts |
+| V3-SD-5 | SwiftData — CloudKit deploy | New SchemaV11 not deployed to CloudKit Production before TestFlight | HIGH | Sync works in dev container; fails for external users | Analytics: Schema |
+| V3-AN-1 | Analytics — Memory | Fetching all `CompletionEvent` for CSV export spikes memory | HIGH | OOM crash or freeze for users with 12+ months of data | Analytics: Export |
+| V3-AN-2 | Analytics — Charts | Swift Charts degrades at 20K+ data points; trend charts must aggregate | MEDIUM | Jank in charts view for power users | Analytics: Charts |
+| V3-AI-1 | AI — Security | API key embedded in binary is extractable from any `.ipa` | CRITICAL | Key appears in third-party billing or usage logs | AI: Foundation |
+| V3-AI-2 | AI — SDK | Community Swift Anthropic SDKs lag behind API changes | MEDIUM | SDK method unavailable after Anthropic API update | AI: Foundation |
+| V3-AI-3 | AI — Latency | First streaming token delayed 3–8 s with no feedback | HIGH | Users see frozen "Generating…" with no progress | AI: Foundation |
+| V3-AI-4 | AI — Rate Limits | Buggy retry loop exhausts daily API budget in minutes | HIGH | 429 errors; unexpected billing charges | AI: Foundation |
+| V3-AI-5 | AI — Prompt size | Full goal history in context bloats tokens; hits ITPM ceiling | MEDIUM | High cost; 429 ITPM errors on prompt submission | AI: Personalization |
+| V3-AI-6 | AI — Offline | AI features with no network guard crash or error with no recovery | HIGH | One-star reviews: "App crashes offline" | AI: Foundation |
+| V3-NT-1 | Notifications — Scheduling | 64-slot cap silently drops new requests | HIGH | Some notifications stop firing; no error thrown | Notifications: Foundation |
+| V3-NT-2 | Notifications — Background | `BGAppRefreshTask` not guaranteed; streak-at-risk alert never fires | HIGH | Evening alerts fail for infrequent users | Notifications: Adaptive |
+| V3-NT-3 | Notifications — Adaptive timing | Computing send window from events on main thread freezes UI | MEDIUM | Freeze when user changes notification preferences | Notifications: Adaptive |
+| V3-NT-4 | Notifications — Foreground | Banner not shown when app is foregrounded (default behavior) | LOW | Notification fires invisibly when user is already in app | Notifications: Foundation |
+
+---
+
+### Feature: Apple Watch
+
+#### V3-WA-1 — App Group Cannot Share SwiftData Data Cross-Device
+
+**Severity:** CRITICAL
+**What goes wrong:** The existing Vitamin G App Group container successfully shares SwiftData between the iOS app and the WidgetKit extension — both run on the same iPhone process space. Developers assume the same `ModelConfiguration(groupContainer:)` trick will work for the watchOS app. It does not. The watch app opens the container and returns 0 results. This is not a configuration bug; it is a platform constraint.
+
+**Why it happens:** App Groups share a container on the same physical device. The Apple Watch is a separate device connected over Bluetooth/Wi-Fi. There is no shared file system across that link. `sharedAppContainerIdentifier` is a same-device feature.
+
+**Consequences:** The watch app displays no data. Check-ins on the watch cannot reach the phone's SwiftData store. All watch features are broken until the correct data strategy is in place.
+
+**Prevention:** From the first line of watch code, use `WatchConnectivity` as the data transport:
+- Use `WCSession.default.updateApplicationContext(_:)` to push a JSON snapshot of the data the watch needs for display (current streak, active goal, today's status). The watch caches this locally and displays it.
+- Use `WCSession.default.transferUserInfo(_:)` for write operations from the watch (check-in events) — this guarantees delivery to the iOS app even when the phone is not immediately reachable.
+- Never attempt to open the full SwiftData container on the watch. The watch maintains only a small, watch-local display cache (can be `UserDefaults` in the watch App Group, or a tiny local SwiftData store for persistence across watch reboots).
+
+**Warning sign:** Watch app returns 0 items from `@Query` or `ModelContext.fetch` despite iOS data being present.
+
+**Suggested phase:** Watch: Data Layer — must be the architectural foundation before any UI work.
+
+---
+
+#### V3-WA-2 — `sendMessage` from iOS Does NOT Wake the Watch
+
+**Severity:** CRITICAL
+**What goes wrong:** `WCSession.default.sendMessage(_:replyHandler:errorHandler:)` called from the iOS app side does not wake the watchOS app if it is suspended. The message is silently dropped. The inverse IS true: `sendMessage` called from the watch DOES wake the iOS companion. This asymmetry causes an entire class of bugs where the developer thinks data is flowing from phone to watch when it is not.
+
+**Consequences:** Check-in events sent from the watch reach the phone correctly. Data pushed from the phone (e.g., a new AI motivation message, a streak update) never arrives at the watch unless the watch app is actively running in the foreground.
+
+**Prevention:**
+- Use `updateApplicationContext(_:)` for phone→watch data pushes. This queues the context and delivers it the next time the watch app is activated (foreground or complication update).
+- Use `transferUserInfo(_:)` for any watch→phone write operations (check-ins). This is guaranteed delivery with queuing.
+- Never rely on `sendMessage` as the sole mechanism for critical data delivery in either direction.
+
+**Warning sign:** Check-ins appear to succeed on the watch (no error callback), but the iOS app's SwiftData store shows no new `CompletionEvent` records after the watch interaction.
+
+**Suggested phase:** Watch: Data Layer.
+
+---
+
+#### V3-WA-3 — `isReachable` Returns False Unpredictably
+
+**Severity:** HIGH
+**What goes wrong:** `WCSession.default.isReachable` checks whether the companion app is running in the foreground AND the Bluetooth link is active. In everyday use (phone in pocket, watch app suspended, watch face showing a complication) `isReachable` returns `false` the vast majority of the time. Code that gates write operations on `isReachable` shows "Unavailable" to users during normal usage.
+
+**Known failure mode:** There is a documented, unsolved WCSession bug where `isReachable` gets stuck at `false` even when conditions should be met. The only recovery is rebooting the watch. This affects simulator and device.
+
+**Prevention:** Never use `isReachable` as a gate for important operations. Use it only as a signal for whether to attempt a real-time `sendMessage` as an optimization. All important write operations (check-ins) must use `transferUserInfo` which works regardless of reachability.
+
+**Warning sign:** Users report that the app says "Watch unavailable" while wearing the watch normally.
+
+**Suggested phase:** Watch: Data Layer.
+
+---
+
+#### V3-WA-4 — WatchConnectivity Transfer APIs Do Not Work in Simulator
+
+**Severity:** HIGH
+**What goes wrong:** `transferUserInfo`, `transferFile`, and `transferCurrentComplicationUserInfo` are not supported in the iOS Simulator + watchOS Simulator pairing. They silently do nothing. `sendMessage` works in Simulator. Developers who only test in Simulator ship code that appears to work but fails completely on device.
+
+**Prevention:** From the first WatchConnectivity integration task, test on physical hardware — both an iPhone and a paired Apple Watch. The Simulator is useful only for UI iteration; it cannot validate data transport. Create a checklist item: "Test check-in end-to-end on device before merging."
+
+**Warning sign:** "Everything works in Simulator, breaks on device" — the classic WatchConnectivity trap.
+
+**Suggested phase:** Watch: Data Layer — establish device testing protocol before any WatchConnectivity code is merged.
+
+---
+
+#### V3-WA-5 — Complication Refresh Budget (~2×/Hour) Exhaustion Causes Silent Stale Data
+
+**Severity:** HIGH
+**What goes wrong:** The app calls `WKExtension.shared().reloadComplicationTimelines()` (or equivalent ClockKit API) aggressively — on every WCSession message received, on every app context update, on every background task. Once the budget (approximately 50 reloads/day, roughly 2/hour) is exhausted, the complication simply stops updating for the rest of the day. No error is thrown; no delegate is called. The complication shows stale streak data.
+
+**Prevention:**
+- In `getTimelineEntries(for:after:limit:completion:)`, provide a full 24-hour forward timeline. The system can display correct time-based data without any reload.
+- Call `reloadTimelines` only on user-initiated events: a check-in completed, a new day beginning.
+- Set `getNextRequestedUpdateDate` to tomorrow morning (when the day's streak state changes), not in 5 minutes.
+
+**Warning sign:** Complication shows yesterday's streak data during testing; no error logs. Budget exhaustion is invisible.
+
+**Suggested phase:** Watch: Complications.
+
+---
+
+#### V3-WA-6 — `transferCurrentComplicationUserInfo` Has a Tighter Separate Daily Budget
+
+**Severity:** HIGH
+**What goes wrong:** `transferCurrentComplicationUserInfo(_:)` is a high-priority API that triggers an immediate complication refresh. Apple allocates it a separate, very small daily budget (roughly 50 transfers/day across all complications). Using it every time any data changes — rather than just on user-initiated check-ins — exhausts the budget by noon, after which complication updates are throttled to the standard lower-priority queue.
+
+**Prevention:** Use `transferCurrentComplicationUserInfo` only for the single most user-relevant event: the user completing a check-in on the watch. For all background data pushes (morning motivation, daily streak refresh), use `updateApplicationContext` and let the complication timeline do the work.
+
+**Warning sign:** Complication updates instantly for the first several taps but then goes stale for hours.
+
+**Suggested phase:** Watch: Complications.
+
+---
+
+#### V3-WA-7 — Local Notifications Do Not Auto-Mirror to Watch Without Proper Configuration
+
+**Severity:** MEDIUM
+**What goes wrong:** The morning motivation notification fires on the iPhone but does not appear on the Apple Watch. The watch mirrors local notifications automatically only when: (a) the watch app is installed and paired, (b) the notification category is not excluded from watch mirroring, (c) the watch is on the wrist with wrist detection active (or wrist detection is off), and (d) the iPhone is locked (watch does not mirror if iPhone is unlocked).
+
+**Prevention:**
+- Test notifications exclusively on physical hardware with the watch face showing and the phone locked.
+- Do not suppress `sound` on notification content — silent notifications are less likely to mirror.
+- If you define custom `UNNotificationCategory` identifiers, verify they are not excluded from watch forwarding.
+- Accept that notification mirroring is a system behavior, not something the app controls directly; design the UX to work whether or not the notification reaches the watch.
+
+**Warning sign:** Notification appears on phone in testing but not wrist; may pass Simulator testing but fail on device.
+
+**Suggested phase:** Watch: Notifications.
+
+---
+
+### Feature: Analytics Dashboard (SchemaV11)
+
+#### V3-SD-1 — Non-Optional Analytics Field Without Default Breaks CloudKit Sync Silently
+
+**Severity:** CRITICAL
+**What goes wrong:** Analytics wants to cache a pre-computed value on the `Goal` model (e.g., `var lastComputedStreak: Int` or `var analyticsTag: String`). If the property is non-optional and has no default value, CloudKit refuses to sync records containing it, silently. The record saves locally but never propagates to other devices. Users on two devices see divergent data.
+
+**The exact error (CloudKit will log, but not crash):**
+```
+CloudKit integration requires that all attributes be optional, or have a default value set.
+```
+
+**Prevention:** Every new property added in SchemaV11 must be one of:
+- `var cachedStreak: Int? = nil` (optional with explicit nil default), or
+- `var analyticsTag: String = ""` (non-optional with default value)
+
+Do not pre-compute and store analytics values in SwiftData at all if those values can be computed on read from existing `CompletionEvent` data. Compute on read; cache only in memory.
+
+**Warning sign:** Property added to a `@Model` without `?` and without `= defaultValue`. Run `initializeCloudKitSchema()` in a debug build to force CloudKit validation and catch this before shipping.
+
+**Suggested phase:** Analytics: Schema — must be caught before the first SchemaV11 build reaches any device.
+
+---
+
+#### V3-SD-2 — Custom `StagedMigrationPlan` Incompatible with CloudKit
+
+**Severity:** CRITICAL
+**What goes wrong:** If analytics requires transforming existing data during migration (e.g., back-filling a new `GoalCreatedAt` timestamp from inferred data), the developer writes a `StagedMigrationPlan` with a `.custom(...)` stage. This works perfectly in the Simulator (local SQLite, no CloudKit). On any device with iCloud enabled, the CloudKit+migration ordering conflict causes either a silent container failure or a crash on the update install.
+
+**Known failure pattern:** The system attempts to initialize CloudKit against the store before the migration runs. With a custom stage, this creates an irreconcilable state.
+
+**Prevention:**
+- Use lightweight migration exclusively for SchemaV11. All changes must be additive with optional/defaulted fields — no custom migration steps.
+- If data transformation is needed (e.g., populating `analyticsStartDate` from `goal.createdAt`), do it lazily in the app layer on first access: check if the field is nil, compute it, save it, and return it. This is equivalent to a migration but runs in application code, not in the migration pipeline.
+- Test the upgrade path from SchemaV10 → SchemaV11 on a device with iCloud enabled, using real data, before any TestFlight distribution.
+
+**Warning sign:** Any `.custom(...)` stage in a migration plan that includes a CloudKit-synced container.
+
+**Suggested phase:** Analytics: Schema.
+
+---
+
+#### V3-SD-3 — CloudKit Schema Is Add-Only; Rename or Delete = Data Loss
+
+**Severity:** CRITICAL
+**What goes wrong:** This is an existing constraint (documented in P0-3 from v1.0) that applies to every v3.0 schema change. If any v3.0 analytics field is later renamed or removed, CloudKit interprets this as "delete the old attribute and add a new one" — resulting in data loss for the old field on all user devices. This cannot be undone.
+
+**Prevention:** Never rename or remove a SwiftData property that has ever been included in a CloudKit-synced schema version. If a field name was wrong, add a new property with the correct name, migrate data in the app layer, and leave the old property in place with a deprecation comment.
+
+**Warning sign:** Any git diff showing a property removed from or renamed in a `@Model` class.
+
+**Suggested phase:** All phases — standing rule, not phase-specific.
+
+---
+
+#### V3-SD-4 — SwiftData Models Not Sendable; Analytics Background Fetch Causes Crashes
+
+**Severity:** HIGH
+**What goes wrong:** The analytics dashboard needs to aggregate large `CompletionEvent` datasets. To avoid blocking the main thread, the developer runs the fetch on a background `ModelActor`. After the fetch, the `CompletionEvent` model objects are passed directly to a `@MainActor` ViewModel for chart rendering. The app crashes: "Illegal attempt to establish a relationship between objects in different contexts."
+
+**Why it happens:** SwiftData `@Model` instances are bound to the `ModelContext` they were fetched from. They are not `Sendable` and cannot cross actor boundaries.
+
+**Prevention:**
+- After any background fetch, immediately map `@Model` objects to plain value-type structs (`CompletionEventSummary(date: event.date, goalId: event.goalId, tier: event.tier)`) before returning from the `ModelActor`.
+- Pass only value types (structs, arrays of structs) across actor boundaries.
+- Alternatively, use `PersistentIdentifier` to pass references across actors and re-fetch on the receiving actor.
+
+**Warning sign:** `@Model` objects stored in `@Observable` ViewModel properties that are accessed from multiple actors.
+
+**Suggested phase:** Analytics: Charts — catch during first analytics ViewModel implementation.
+
+---
+
+#### V3-SD-5 — CloudKit Production Schema Not Deployed Before TestFlight
+
+**Severity:** HIGH
+**What goes wrong:** SchemaV11 adds new CloudKit record types or attributes. In the development CloudKit environment, Apple creates schema entities automatically on first save. TestFlight builds using the development container appear to work. But the App Store submission uses the production CloudKit container, which still has SchemaV10. External TestFlight testers (if they are pointed at production) and App Store users cannot sync the new fields.
+
+**Prevention:** After every schema version bump, before distributing any external TestFlight build:
+1. Open CloudKit Dashboard (developer.apple.com)
+2. Select the app's container → Schema → Deploy Schema Changes to Production
+3. Verify the new record types/attributes appear in the Production schema
+4. Add this step to the app's release checklist as a required gating step
+
+**Warning sign:** Schema changes visible in CloudKit Console > Development but not in Production.
+
+**Suggested phase:** Analytics: Schema — and added to release checklist.
+
+---
+
+### Feature: Analytics Charts and Export
+
+#### V3-AN-1 — CSV Export Fetching All CompletionEvents at Once Causes Memory Spike
+
+**Severity:** HIGH
+**What goes wrong:** The CSV export calls `modelContext.fetch(FetchDescriptor<CompletionEvent>())` with no `fetchLimit`. For a user who has been tracking 20 goals for 18 months, this loads 10,000+ `CompletionEvent` records into memory simultaneously. SwiftData loads the full model graph including all relationships. On devices with 3 GB of RAM this causes a several-second freeze before the share sheet appears; on 2 GB devices it triggers an OOM termination.
+
+**Prevention:**
+- Use `FetchDescriptor` with `fetchLimit: 500` and `fetchOffset` to read records in pages.
+- Build the CSV string incrementally: write each page's rows to a temp file using `FileHandle.write`, then close the file and pass its `URL` to `ShareLink`.
+- Never build the entire CSV in a single `String` in RAM. A 10,000-row CSV of 80-character rows = ~800 KB — manageable, but relationship data can easily multiply this.
+- Stream to a temp file at `FileManager.default.temporaryDirectory` and clean up after the share sheet dismisses.
+
+**Warning sign:** `FetchDescriptor` without `fetchLimit` in the export path.
+
+**Suggested phase:** Analytics: Export.
+
+---
+
+#### V3-AN-2 — Swift Charts Degrades with Large Raw Datasets
+
+**Severity:** MEDIUM
+**What goes wrong:** The streak history chart plots a `LineMark` for each `CompletionEvent`. A user with 12 months of data across 20 goals has ~7,300 events. Swift Charts begins to show visible rendering lag around 20,000 data points. The heatmap (one cell per day) is safe at ~365–1,095 cells for 1–3 years of data, but trend charts that plot raw events rather than aggregated counts will hit the threshold for power users.
+
+**Prevention:**
+- Aggregate before passing to Charts. For a completion-rate trend chart, compute weekly completion percentages in a background `ModelActor` task; pass the resulting `[WeeklyCompletionRate]` value-type array to the chart (52 items/year, not 365+).
+- For the heatmap, one `RectangleMark` per calendar day is correct and efficient (max ~1,095 items for 3 years).
+- Never pass the raw `CompletionEvent` `@Query` result array directly to a Charts view.
+
+**Warning sign:** Chart view receives more than 1,000 raw model objects; no pre-aggregation step.
+
+**Suggested phase:** Analytics: Charts.
+
+---
+
+### Feature: AI (Claude / Anthropic)
+
+#### V3-AI-1 — Anthropic API Key Embedded in Binary Is Extractable
+
+**Severity:** CRITICAL
+**What goes wrong:** Any string constant, `Info.plist` entry, or bundled config file containing the Anthropic API key (`sk-ant-...`) is readable by anyone who downloads the `.ipa` and runs `strings` or uses a binary analysis tool. The key is immediately usable to make API calls billed to the developer's Anthropic account.
+
+**Consequences:** Key theft leads to: unexpected billing (potentially hundreds of dollars), rate-limit exhaustion for legitimate users, potential Anthropic account suspension for terms-of-service violation.
+
+**Prevention options (choose one, in preference order):**
+
+1. **Backend proxy (strongest):** All Anthropic calls route through a lightweight server function (e.g., a Cloudflare Worker or Vercel Function) the developer controls. The iOS app never has the key. The server verifies the request is from a legitimate app instance (e.g., checks a device token). This is the only approach that fully protects against key theft.
+
+2. **User-supplied key:** The user enters their own Anthropic API key in Settings. The app stores it exclusively in the iOS Keychain (`SecItemAdd` / `SecItemCopyMatching`), never in `UserDefaults`. The key is never compiled into the binary. This moves the billing responsibility to the user but requires them to have an Anthropic account.
+
+3. **Keychain-only, developer-distributed:** The key is not in the binary; it is written to Keychain at first launch by a server-provided encrypted config. Still extractable from memory by a sophisticated attacker but not from the binary. Acceptable for a portfolio project with low abuse risk; not acceptable for a commercial product.
+
+**Verification:** Run `strings YourApp.app/YourApp | grep "sk-ant"` on every release archive before distribution. If any match, the key is exposed.
+
+**Suggested phase:** AI: Foundation — key strategy must be decided and implemented before any AI network code is written.
+
+---
+
+#### V3-AI-2 — Community Swift Anthropic SDKs Lag Behind Official API
+
+**Severity:** MEDIUM
+**What goes wrong:** There is no official Anthropic iOS/Swift SDK from Anthropic (as of this research). Community packages (`SwiftAnthropic`, `AnthropicSwiftSDK`, `tthew/anthropic-swift-sdk`) implement the REST API surface in Swift. When Anthropic releases a new model, changes a request parameter, or deprecates an endpoint, the community SDK may take weeks to update. The pinned SDK version throws serialization errors; AI features break.
+
+**Prevention:**
+- Pin to a specific SDK release tag and monitor the upstream repository for updates.
+- Alternatively (and recommended for robustness), call the Anthropic Messages REST API directly using `URLSession` + `Codable` structs. This eliminates the SDK version dependency and gives full control over request construction. The API surface is stable and well-documented.
+- Write an integration test that calls the real API endpoint in CI (behind a feature flag); this surfaces breakage before users see it.
+
+**Warning sign:** Dependency on a community SDK version that is more than 2 months old without a verified compatibility check against the current API.
+
+**Suggested phase:** AI: Foundation.
+
+---
+
+#### V3-AI-3 — First Streaming Token Delayed 3–8 Seconds With No User Feedback
+
+**Severity:** HIGH
+**What goes wrong:** When requesting motivation copy or goal suggestions, the Claude API processes the prompt before streaming begins. This initialization phase takes 3–8 seconds. If the UI is waiting for `await anthropicClient.createMessage(...)` to return the full response before updating the view, users see a completely frozen "Generating…" state with no progress indicator for up to 8 seconds — enough for them to assume the app has crashed.
+
+**Prevention:**
+- Use the Anthropic streaming API (`stream: true` in the request body).
+- Process `text_delta` events as they arrive and update a `@Published` / `@Observable` string property in the ViewModel on each delta.
+- Show a "typing indicator" (animated dots or a streaming cursor) that appears immediately when the request is sent, before the first token arrives.
+- Set a timeout: if no first token arrives within 10 seconds, show an error and offer a "Try again" button. Do not leave the user in an infinite loading state.
+
+**Warning sign:** `await` on a non-streaming Anthropic request in a button action handler; no UI update until the `await` returns.
+
+**Suggested phase:** AI: Foundation.
+
+---
+
+#### V3-AI-4 — Retry Loop Without Backoff Exhausts API Budget
+
+**Severity:** HIGH
+**What goes wrong:** Anthropic returns a `429 Too Many Requests` error. The app catches it and immediately retries in a loop (`while error == 429 { retry() }`). This hammers the rate limiter, accumulates token usage on each attempt, and exhausts the daily ITPM and OTPM budget in minutes. On Tier 1 accounts (new accounts), limits are low: 50 RPM, 40,000 ITPM.
+
+**Prevention:**
+- Implement exponential backoff: `delay = min(60, 2^retryCount)` seconds between attempts, with jitter.
+- Cache the last successfully generated motivation copy (store in `UserDefaults` or SwiftData with a timestamp). If the API returns 429 or any error, serve the cached copy with a subtle "generated earlier today" indicator rather than retrying indefinitely.
+- Do not retry more than 3 times total for any single user request.
+- Log all 429 responses to detect if the app is hitting limits systematically (useful for deciding whether to increase Anthropic tier).
+
+**Warning sign:** Retry logic without a `Task.sleep` between attempts; no maximum retry count.
+
+**Suggested phase:** AI: Foundation.
+
+---
+
+#### V3-AI-5 — Sending Full Goal History as Context Blooms Token Count
+
+**Severity:** MEDIUM
+**What goes wrong:** The AI goal suggestion feature sends all user goals and their full history as context to Claude. A user with 30 goals, each with title, description, tier, streak history, and completion events, easily generates a 3,000–5,000 token prompt. At Tier 1 limits (40,000 ITPM), this leaves room for only ~8 simultaneous requests before the per-minute limit is hit. It also increases cost and response latency.
+
+**Prevention:**
+- Summarize each goal to its essential signal: `title`, `tier`, `currentStreak`, `completionRateThisMonth`. This is ~20 tokens per goal.
+- Cap context at the 10 most active goals by last completion date.
+- For goal suggestions, provide only the goal titles and tiers — the AI does not need completion event timestamps to suggest complementary goals.
+- Test prompt token counts in the Anthropic console before implementing in the app.
+
+**Warning sign:** Prompt construction code serializing full `@Model` objects or `CompletionEvent` arrays.
+
+**Suggested phase:** AI: Goal Suggestions, AI: Motivation Copy.
+
+---
+
+#### V3-AI-6 — No Network Guard on AI Features Causes Crashes or Unhandled Errors Offline
+
+**Severity:** HIGH
+**What goes wrong:** The user taps "Generate motivation" while on a flight (airplane mode). The `URLSession` request throws a network error. If the ViewModel does not handle `URLError.notConnectedToInternet` explicitly, the app shows a generic error or — worse — crashes if the error propagates through an uncaught `try`.
+
+**Prevention:**
+- Use `NWPathMonitor` (Network framework, zero permissions required) to track connectivity status. Expose it as an `@Observable` singleton.
+- Before initiating any Anthropic API call, check `NWPathMonitor.currentPath.status == .satisfied`. If not, skip the request and serve cached motivation copy or a static fallback string.
+- Bundle a set of 20–30 static motivation strings keyed by streak range in the app binary as a zero-dependency fallback. This is the "offline" UX, not an error state.
+- All `URLSession` calls for AI must be wrapped in `do { } catch let error as URLError { }` with explicit handling for `.notConnectedToInternet` and `.timedOut`.
+
+**Warning sign:** AI network calls with no connectivity pre-check; no catch for `URLError`.
+
+**Suggested phase:** AI: Foundation.
+
+---
+
+### Feature: Smart Notifications
+
+#### V3-NT-1 — 64-Slot Local Notification Cap Silently Drops New Requests
+
+**Severity:** HIGH
+**What goes wrong:** iOS enforces a hard cap of 64 pending `UNNotificationRequest` objects. Vitamin G already schedules daily morning notifications (at minimum 1 per day, potentially several days ahead). Adding a streak-at-risk evening alert, an adaptive "best time" morning notification, and a notification-picker confirmation notification can approach this cap. When the cap is exceeded, new `add` calls silently succeed (no error is thrown) but the notification is never actually scheduled.
+
+**Prevention:**
+- Implement a centralized `NotificationScheduler` type that is the single point of control for all notification scheduling.
+- Before any scheduling operation, call `UNUserNotificationCenter.current().pendingNotificationRequests { requests in ... }` to audit the current count.
+- Remove all app-owned notifications and reschedule atomically rather than appending to whatever is currently scheduled.
+- Schedule only what is needed: 7 days of morning notifications (7 slots) + 1 evening streak alert (1 slot) + 1 notification-picker reminder (1 slot) = 9 slots. Well within the 64 cap, leaving 55 slots for other app needs.
+- Audit existing notification code to ensure the widget's `WidgetCenter.shared.reloadAllTimelines()` calls are not creating notification side-effects.
+
+**Warning sign:** Notification scheduling code that appends new requests without first checking or clearing existing ones. No centralized scheduling abstraction.
+
+**Suggested phase:** Notifications: Foundation.
+
+---
+
+#### V3-NT-2 — BGAppRefreshTask Is Not Reliable for Streak-at-Risk Evening Alert
+
+**Severity:** HIGH
+**What goes wrong:** The streak-at-risk alert must fire in the evening only if the user has not yet checked in that day. The obvious implementation: schedule a `BGAppRefreshTask` for 8 PM, check SwiftData, and conditionally fire a notification. In practice, `BGAppRefreshTask` is throttled by iOS based on battery level, Low Power Mode, user behavior, and how frequently the user opens the app. For infrequent users — exactly the users most at risk of breaking a streak — iOS may not run the background task at all.
+
+**Consequences:** The users who most need the evening reminder never receive it.
+
+**Prevention:** Do not use `BGAppRefreshTask` for the streak-at-risk alert. Use a schedule-and-cancel pattern:
+1. When the morning notification is scheduled (or at any check-in scheduling point), also schedule a `UNCalendarNotificationTrigger` for 8:30 PM that evening as the streak-at-risk alert. This requires no background execution.
+2. When the user successfully checks in, call `UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["streak-at-risk-\(today)"])` to cancel the evening alert.
+3. If the user never checks in, the scheduled notification fires at 8:30 PM automatically — no background task required.
+
+This pattern is reliable, uses zero background budget, and fires for exactly the users who need it.
+
+**Warning sign:** Streak-at-risk logic inside a `BGTaskScheduler` handler.
+
+**Suggested phase:** Notifications: Adaptive.
+
+---
+
+#### V3-NT-3 — Computing Adaptive Send Time on Main Thread Freezes UI
+
+**Severity:** MEDIUM
+**What goes wrong:** The "adaptive timing" feature analyzes all `CompletionEvent` timestamps to find the user's typical check-in window. If this computation runs synchronously when the user opens the notification preferences screen (or when the app reschedules notifications in the foreground), it blocks the main thread. For users with 12+ months of `CompletionEvent` data, this computation iterates thousands of records and causes a visible freeze.
+
+**Prevention:**
+- Pre-compute the preferred send window in a background `@ModelActor` task. This runs when the app foregrounds or when a new `CompletionEvent` is saved.
+- Write the result to App Group `UserDefaults` as a simple `Double` (hour of day) or two integers (hour, minute).
+- The `NotificationScheduler` reads only from `UserDefaults` — it never touches SwiftData at schedule time.
+- The background computation runs at most once per day (guard with a timestamp in `UserDefaults`).
+
+**Warning sign:** `ModelContext.fetch(FetchDescriptor<CompletionEvent>())` called synchronously in a notification scheduling code path that runs on the main actor.
+
+**Suggested phase:** Notifications: Adaptive.
+
+---
+
+#### V3-NT-4 — Notification Banner Not Shown When App Is Foregrounded
+
+**Severity:** LOW
+**What goes wrong:** When the Vitamin G app is open in the foreground, `UNUserNotificationCenter` does not display notification banners by default. If the morning motivation notification fires while the user is in the app (e.g., they opened the app at exactly 7:00 AM), the notification is delivered silently with no visible feedback.
+
+**Prevention:** Implement `UNUserNotificationCenterDelegate.userNotificationCenter(_:willPresent:withCompletionHandler:)` on the app delegate or a registered delegate, returning `.banner` (and optionally `.sound`, `.badge`) in the completion handler. Register the delegate at app launch.
+
+**Warning sign:** No `UNUserNotificationCenterDelegate` implementation in the codebase.
+
+**Suggested phase:** Notifications: Foundation.
+
+---
+
+## Phase-Specific Warning Summary — v3.0
+
+| Phase Topic | Must Address Before Proceeding | Consequence If Skipped |
+|-------------|-------------------------------|------------------------|
+| Watch: Data Layer | V3-WA-1, V3-WA-2, V3-WA-4 | Watch shows no data; check-ins lost |
+| Watch: Complications | V3-WA-5, V3-WA-6 | Stale complication data by midday |
+| Analytics: Schema | V3-SD-1, V3-SD-2, V3-SD-3, V3-SD-5 | Data loss on update or CloudKit sync failure |
+| Analytics: Charts | V3-AN-2, V3-SD-4 | Chart jank or ViewModel crashes |
+| Analytics: Export | V3-AN-1 | OOM crash for power users |
+| AI: Foundation | V3-AI-1, V3-AI-3, V3-AI-6 | Security incident or unusable UX |
+| AI: Generation | V3-AI-4, V3-AI-5 | Budget exhaustion or billing surprise |
+| Notifications: Foundation | V3-NT-1, V3-NT-4 | Silent notification drops |
+| Notifications: Adaptive | V3-NT-2, V3-NT-3 | Streak-at-risk alert never fires; UI freeze |
+
+---
+
+## v3.0 Sources
+
+- [SwiftData and correct setup for Apple Watch — Apple Developer Forums](https://developer.apple.com/forums/thread/732986)
+- [SwiftData CloudKit sync on WatchOS — Apple Developer Forums](https://developer.apple.com/forums/thread/733397)
+- [Data Synchronization Between iOS and watchOS Using WatchConnectivity — Medium](https://medium.com/@sheik25bareeth/data-synchronization-between-ios-and-watchos-using-watchconnectivity-009a3064e12a)
+- [Transferring data with Watch Connectivity — Apple Developer Documentation](https://developer.apple.com/documentation/WatchConnectivity/transferring-data-with-watch-connectivity)
+- [WCSession sendMessage reliability — Apple Developer Forums](https://developer.apple.com/forums/thread/20311)
+- [WatchConnectivity not working on device — Apple Developer Forums](https://developer.apple.com/forums/thread/662935)
+- [WatchConnectivity transferUserInfo — Apple Developer Forums](https://developer.apple.com/forums/thread/127460)
+- [Communicating between iOS and watchOS: WCSession — Hacking with Swift](https://www.hackingwithswift.com/read/37/8/communicating-between-ios-and-watchos-wcsession)
+- [Keeping your complications up to date — Apple Developer Documentation](https://developer.apple.com/documentation/clockkit/keeping-your-complications-up-to-date)
+- [WatchOS Complications, Part 2 — Atomic Object](https://spin.atomicobject.com/2021/01/26/complications-basic-functionality/)
+- [SwiftData + CloudKit Migration Failure — Apple Developer Forums](https://developer.apple.com/forums/thread/742899)
+- [SwiftData Migration Plan does not work — Apple Developer Forums](https://developer.apple.com/forums/thread/748049)
+- [Designing Models for CloudKit Sync — fatbobman](https://fatbobman.com/en/snippet/rules-for-adapting-data-models-to-cloudkit/)
+- [Deploy your CloudKit-backed SwiftData entities to production — Leo Kwan](https://www.leojkwan.com/swiftdata-cloudkit-deploy-schema-changes/)
+- [How to run SwiftData in background — polpiella.dev](https://www.polpiella.dev/core-data-swift-data-concurrency)
+- [SwiftData does not work on background thread — Apple Developer Forums](https://developer.apple.com/forums/thread/736226)
+- [SwiftData on iOS 18 extreme memory — Apple Developer Forums](https://developer.apple.com/forums/thread/761522)
+- [How to optimize SwiftData app performance — Hacking with Swift](https://www.hackingwithswift.com/quick-start/swiftdata/how-to-optimize-the-performance-of-your-swiftdata-apps)
+- [Swift Charts performance — Apple Developer Forums](https://developer.apple.com/forums/thread/740314)
+- [Practical Data Visualization with SwiftUI Charts — Medium](https://medium.com/data-science-collective/practical-data-visualization-with-swiftui-charts-patterns-and-pitfalls-f2abe4251c84)
+- [API Key Best Practices — Claude Help Center](https://support.claude.com/en/articles/9767949-api-key-best-practices-keeping-your-keys-safe-and-secure)
+- [Integrating Claude API into iOS/SwiftUI Apps — Claude Lab](https://claudelab.net/en/articles/api-sdk/claude-api-ios-swiftui-integration-complete-guide)
+- [Use API Keys on iPhone — Folding Sky](https://folding-sky.com/blog/mobile-app-openai-anthropic-api-keys-ios)
+- [Anthropic API Rate Limits — Claude API Docs](https://docs.anthropic.com/en/api/rate-limits)
+- [Anthropic API Latency Optimization — Webeyez](https://webeyez.com/insights/guides/anthropic-api-latency-optimization-guide)
+- [Anthropic API Rate Limiting: Handling 429 Errors — Markaicode](https://markaicode.com/anthropic-api-rate-limits-429-errors/)
+- [SwiftAnthropic — GitHub](https://github.com/jamesrochabrun/SwiftAnthropic)
+- [AnthropicSwiftSDK — Swift Package Index](https://swiftpackageindex.com/fumito-ito/AnthropicSwiftSDK)
+- [Implementing a local notification scheduler in Todoist iOS — Doist Engineering](https://www.doist.dev/implementing-a-local-notification-scheduler-in-todoist-ios/)
+- [Does UNNotificationRequest have a limit — Apple Developer Forums](https://developer.apple.com/forums/thread/811171)
+- [Don't rely on BGAppRefreshTask — Mert Bulan](https://mertbulan.com/programming/dont-rely-on-bgapprefreshtask-for-your-apps-business-logic)
+- [iOS Background Execution Limits — AppsonAir](https://www.appsonair.com/blogs/background-execution-limits-in-ios-what-every-developer-must-know)
 
 ---
 
@@ -340,7 +848,7 @@ For a pure SwiftUI approach: store the preference as a `@AppStorage` enum (syste
 
 ## v1.0 Pitfalls (Retained for Reference)
 
-These pitfalls were identified during v1.0 development and remain relevant for ongoing v2.0 work.
+These pitfalls were identified during v1.0 development and remain relevant for ongoing v2.0 and v3.0 work.
 
 ### P0-1 — CloudKit Requires All Model Properties and Relationships to Be Optional
 
@@ -509,6 +1017,35 @@ The following attributes are marked non-optional but do not have a default value
 
 ---
 
+## Phase Mapping — v3.0 Pitfalls
+
+| Feature Area | Pitfall ID | Severity | Suggested Phase |
+|---|---|---|---|
+| Watch — Data Layer | V3-WA-1 | CRITICAL | Watch: Data Layer (first watch phase) |
+| Watch — Data Layer | V3-WA-2 | CRITICAL | Watch: Data Layer |
+| Watch — Data Layer | V3-WA-3 | HIGH | Watch: Data Layer |
+| Watch — Data Layer | V3-WA-4 | HIGH | Watch: Data Layer |
+| Watch — Complications | V3-WA-5 | HIGH | Watch: Complications |
+| Watch — Complications | V3-WA-6 | HIGH | Watch: Complications |
+| Watch — Notifications | V3-WA-7 | MEDIUM | Watch: Notifications |
+| SwiftData — Schema | V3-SD-1 | CRITICAL | Analytics: Schema (first analytics phase) |
+| SwiftData — Schema | V3-SD-2 | CRITICAL | Analytics: Schema |
+| SwiftData — Schema | V3-SD-3 | CRITICAL | All phases (standing rule) |
+| SwiftData — Threading | V3-SD-4 | HIGH | Analytics: Charts |
+| SwiftData — CloudKit deploy | V3-SD-5 | HIGH | Analytics: Schema + release checklist |
+| Analytics — Export | V3-AN-1 | HIGH | Analytics: Export |
+| Analytics — Charts | V3-AN-2 | MEDIUM | Analytics: Charts |
+| AI — Security | V3-AI-1 | CRITICAL | AI: Foundation (first AI phase) |
+| AI — SDK | V3-AI-2 | MEDIUM | AI: Foundation |
+| AI — Latency | V3-AI-3 | HIGH | AI: Foundation |
+| AI — Rate Limits | V3-AI-4 | HIGH | AI: Foundation |
+| AI — Prompt Size | V3-AI-5 | MEDIUM | AI: Goal Suggestions, AI: Motivation |
+| AI — Offline | V3-AI-6 | HIGH | AI: Foundation |
+| Notifications — Scheduling | V3-NT-1 | HIGH | Notifications: Foundation |
+| Notifications — Background | V3-NT-2 | HIGH | Notifications: Adaptive |
+| Notifications — Adaptive Timing | V3-NT-3 | MEDIUM | Notifications: Adaptive |
+| Notifications — Foreground | V3-NT-4 | LOW | Notifications: Foundation |
+
 ## Phase Mapping — v2.0 Pitfalls
 
 | Feature Area | Pitfall ID | Severity | Suggested Phase |
@@ -550,6 +1087,41 @@ The following attributes are marked non-optional but do not have a default value
 ---
 
 ## Sources
+
+### v3.0 Research Sources
+
+- [SwiftData and correct setup for Apple Watch — Apple Developer Forums](https://developer.apple.com/forums/thread/732986)
+- [SwiftData CloudKit sync on WatchOS — Apple Developer Forums](https://developer.apple.com/forums/thread/733397)
+- [Data Synchronization Between iOS and watchOS Using WatchConnectivity — Medium](https://medium.com/@sheik25bareeth/data-synchronization-between-ios-and-watchos-using-watchconnectivity-009a3064e12a)
+- [Transferring data with Watch Connectivity — Apple Developer Documentation](https://developer.apple.com/documentation/WatchConnectivity/transferring-data-with-watch-connectivity)
+- [WCSession sendMessage reliability — Apple Developer Forums](https://developer.apple.com/forums/thread/20311)
+- [WatchConnectivity not working on device — Apple Developer Forums](https://developer.apple.com/forums/thread/662935)
+- [WatchConnectivity transferUserInfo — Apple Developer Forums](https://developer.apple.com/forums/thread/127460)
+- [Communicating between iOS and watchOS: WCSession — Hacking with Swift](https://www.hackingwithswift.com/read/37/8/communicating-between-ios-and-watchos-wcsession)
+- [Keeping your complications up to date — Apple Developer Documentation](https://developer.apple.com/documentation/clockkit/keeping-your-complications-up-to-date)
+- [WatchOS Complications, Part 2 — Atomic Object](https://spin.atomicobject.com/2021/01/26/complications-basic-functionality/)
+- [SwiftData + CloudKit Migration Failure — Apple Developer Forums](https://developer.apple.com/forums/thread/742899)
+- [SwiftData Migration Plan does not work — Apple Developer Forums](https://developer.apple.com/forums/thread/748049)
+- [Designing Models for CloudKit Sync — fatbobman](https://fatbobman.com/en/snippet/rules-for-adapting-data-models-to-cloudkit/)
+- [Deploy your CloudKit-backed SwiftData entities to production — Leo Kwan](https://www.leojkwan.com/swiftdata-cloudkit-deploy-schema-changes/)
+- [How to run SwiftData in background — polpiella.dev](https://www.polpiella.dev/core-data-swift-data-concurrency)
+- [SwiftData does not work on background thread — Apple Developer Forums](https://developer.apple.com/forums/thread/736226)
+- [SwiftData on iOS 18 extreme memory — Apple Developer Forums](https://developer.apple.com/forums/thread/761522)
+- [How to optimize SwiftData app performance — Hacking with Swift](https://www.hackingwithswift.com/quick-start/swiftdata/how-to-optimize-the-performance-of-your-swiftdata-apps)
+- [Swift Charts performance — Apple Developer Forums](https://developer.apple.com/forums/thread/740314)
+- [Practical Data Visualization with SwiftUI Charts — Medium](https://medium.com/data-science-collective/practical-data-visualization-with-swiftui-charts-patterns-and-pitfalls-f2abe4251c84)
+- [API Key Best Practices — Claude Help Center](https://support.claude.com/en/articles/9767949-api-key-best-practices-keeping-your-keys-safe-and-secure)
+- [Integrating Claude API into iOS/SwiftUI Apps — Claude Lab](https://claudelab.net/en/articles/api-sdk/claude-api-ios-swiftui-integration-complete-guide)
+- [Use API Keys on iPhone — Folding Sky](https://folding-sky.com/blog/mobile-app-openai-anthropic-api-keys-ios)
+- [Anthropic API Rate Limits — Claude API Docs](https://docs.anthropic.com/en/api/rate-limits)
+- [Anthropic API Latency Optimization — Webeyez](https://webeyez.com/insights/guides/anthropic-api-latency-optimization-guide)
+- [Anthropic API Rate Limiting: Handling 429 Errors — Markaicode](https://markaicode.com/anthropic-api-rate-limits-429-errors/)
+- [SwiftAnthropic — GitHub](https://github.com/jamesrochabrun/SwiftAnthropic)
+- [AnthropicSwiftSDK — Swift Package Index](https://swiftpackageindex.com/fumito-ito/AnthropicSwiftSDK)
+- [Implementing a local notification scheduler in Todoist iOS — Doist Engineering](https://www.doist.dev/implementing-a-local-notification-scheduler-in-todoist-ios/)
+- [Does UNNotificationRequest have a limit — Apple Developer Forums](https://developer.apple.com/forums/thread/811171)
+- [Don't rely on BGAppRefreshTask — Mert Bulan](https://mertbulan.com/programming/dont-rely-on-bgapprefreshtask-for-your-apps-business-logic)
+- [iOS Background Execution Limits — AppsonAir](https://www.appsonair.com/blogs/background-execution-limits-in-ios-what-every-developer-must-know)
 
 ### v2.0 Research Sources
 
