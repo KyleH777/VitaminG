@@ -14,9 +14,11 @@ enum StreakMilestoneGate {
     static let goalStreakThresholds: [Int] = [7, 14, 30, 60, 90, 365]
 
     private static let key = "vg_streakMilestonesShown"
+    private static let defaultSuite = "group.com.kyleharrington.VitaminG"
 
     /// Returns true if the milestone celebration for the given goalID + threshold has already been shown.
-    static func hasShown(goalID: UUID, threshold: Int, defaults: UserDefaults = .standard) -> Bool {
+    static func hasShown(goalID: UUID, threshold: Int,
+                         defaults: UserDefaults = UserDefaults(suiteName: defaultSuite) ?? .standard) -> Bool {
         let compositeKey = "\(goalID.uuidString)-\(threshold)"
         guard let data = defaults.data(forKey: key),
               let set = try? JSONDecoder().decode(Set<String>.self, from: data)
@@ -25,15 +27,18 @@ enum StreakMilestoneGate {
     }
 
     /// Marks the milestone celebration for the given goalID + threshold as shown.
-    static func markShown(goalID: UUID, threshold: Int, defaults: UserDefaults = .standard) {
+    static func markShown(goalID: UUID, threshold: Int,
+                          defaults: UserDefaults = UserDefaults(suiteName: defaultSuite) ?? .standard) {
         var set: Set<String> = []
         if let data = defaults.data(forKey: key),
            let existing = try? JSONDecoder().decode(Set<String>.self, from: data) {
             set = existing
         }
         set.insert("\(goalID.uuidString)-\(threshold)")
-        if let encoded = try? JSONEncoder().encode(set) {
-            defaults.set(encoded, forKey: key)
+        guard let encoded = try? JSONEncoder().encode(set) else {
+            assertionFailure("[StreakMilestoneGate] Failed to encode milestone set — markShown is a no-op")
+            return
         }
+        defaults.set(encoded, forKey: key)
     }
 }
