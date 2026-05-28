@@ -578,6 +578,9 @@ extension CommunityService {
         record["reportCount"] = 0 as CKRecordValue
         record["reporterIDsJSON"] = "[]" as CKRecordValue
         record["isAchievementPost"] = 1 as CKRecordValue
+        // Explicit sentinel category ensures fetchPosts(category:) predicates can include
+        // achievement posts and CloudKit schema validation passes when category is required.
+        record["category"] = "achievement" as CKRecordValue
         return try await db.save(record)
     }
 }
