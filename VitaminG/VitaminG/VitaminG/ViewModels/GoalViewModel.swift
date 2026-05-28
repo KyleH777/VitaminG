@@ -178,6 +178,8 @@ final class GoalViewModel {
         event.tierRawValue = goal.tierRawValue
         context.insert(event)
         event.goal = goal
+        // SwiftData synchronously updates goal.completionEvents on @MainActor — all subsequent
+        // reads of goal.completionEvents in this method reflect the new event.
 
         // MILE-04: Per-goal streak milestone detection.
         // currentStreak reads goal.completionEvents which now includes the just-inserted event
@@ -186,9 +188,12 @@ final class GoalViewModel {
             from: goal.completionEvents ?? [],
             frozenDates: freezeService.frozenDates
         )
-        for threshold in StreakMilestoneGate.goalStreakThresholds {
-            if goalStreak >= threshold
-                && goalStreak - 1 < threshold
+        // Iterate descending so the highest milestone wins; break after first match.
+        // Exact equality (goalStreak == threshold) is correct for "just crossed" detection:
+        // addCheckIn is the only place that appends events, so lower thresholds would have
+        // fired on prior calls. This removes the subtraction and ordering dependency.
+        for threshold in StreakMilestoneGate.goalStreakThresholds.sorted(by: >) {
+            if goalStreak == threshold
                 && !StreakMilestoneGate.hasShown(goalID: goal.id, threshold: threshold) {
                 pendingGoalMilestone = (goalID: goal.id, threshold: threshold)
                 break
@@ -217,7 +222,9 @@ final class GoalViewModel {
         // Progress percent = completionEvents count / durationDays (clamped 0–100).
         // If durationDays is nil or zero, progressPercent defaults to 0.
         if !username.isEmpty {
-            let completionCount = (goal.completionEvents?.count ?? 0) + 1  // +1 for the just-inserted event
+            // After event.goal = goal, completionEvents already includes the new event on @MainActor.
+            // Remove the +1 — SwiftData relationship graph is synchronously updated.
+            let completionCount = goal.completionEvents?.count ?? 0
             let durationDays = goal.durationDays ?? 0
             let progressPercent: Int = durationDays > 0
                 ? min(100, (completionCount * 100) / durationDays)
