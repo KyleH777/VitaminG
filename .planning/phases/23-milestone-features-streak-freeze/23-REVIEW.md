@@ -30,7 +30,11 @@ findings:
   warning: 7
   info: 3
   total: 15
-status: issues_found
+status: fixed
+fixed:
+  critical: 5
+  warning: 7
+  info: 0
 ---
 
 # Phase 23: Code Review Report
