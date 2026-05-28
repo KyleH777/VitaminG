@@ -1,18 +1,14 @@
 # Vitamin G
 
-## Current Milestone: v2.0 Social Growth Engine
+## Current Milestone: v3.0 Personal Intelligence + Apple Watch
 
-**Goal:** Transform Vitamin G from a personal goal tracker into a social growth platform with a new tab structure, community-first Explore tab, redesigned Community feed with live interactions, enhanced goal creation flows, public profiles with applause, streak freeze, achievement celebrations, Discover page, tip jar, and full settings + onboarding overhaul.
+**Goal:** Extend Vitamin G to the wrist and make it smarter — Apple Watch with full complication and check-in support, deep analytics with CSV export, AI-powered goal suggestions and personalized daily motivation via Claude, and notifications that adapt to your streak and habits.
 
 **Target features:**
-- Explore tab (new) — shake for daily goal, feelings prompt, trending, vitamin shelf, 3 gifts for stuck days
-- Community page redesign — goal landing, Today's glimpses, live users, Glowing spotlight + 👏 applause
-- Onboarding overhaul — Apple Sign-In only, T&C PDF, unique username, profile picture, permission slides
-- Home tab (new dashboard) — streak, quote of day, primary goal progress, My Goals list
-- Goals flow enhancements — create goal wizard, need ideas, goal detail with streak + flame
-- Public profile ("Jordan Kim") — follow, cheer, public goals + progress
-- Streak freeze ("Life happened.") — once/week snowflake protection
-- Achievement unlocked — 7d/30d+ milestone celebrations, community share
+- Apple Watch — streak complication, active goal + progress complication, check-in from wrist, morning nudge delivered to watch
+- Analytics dashboard — streak history chart, completion rate trends, full all-time goal heatmap, CSV export via share sheet
+- AI (Claude) — suggest new goals based on existing ones + generate personalized daily motivation copy each morning
+- Smart notifications — tone adapts to streak level, content references actual goal titles, send time adapts to check-in patterns, streak-at-risk evening alert
 - Discover page — search public goals/profiles, trending challenges
 - Notification picker — "Pick your daily nudge time" landing
 - Tip Jar + About page — tiered payments, version info
@@ -65,78 +61,29 @@ v1.0 Shipped: 2026-05-15. Phase 24 complete: 2026-05-28.
 - ✓ Community feed with CloudKit public DB, reactions, profanity filter, 5 optional modules — v1.0 (Phase 14)
 - ✓ ChallengeDiscoveryView redesign, Community Goals landing, ProfileView fixes, username (SchemaV8) — v1.0 (Phase 15)
 
-### Active (v2.0 Targets)
+### Active (v3.0 Targets)
 
-**Explore Tab**
-- [ ] "Shake out some growth" daily goal gifter with confetti + accomplished counter (top-right, one/day)
-- [ ] "How are you feeling" collapsible prompt with checkmark confirmation
-- [ ] "Trending Now" — most active goals + newest community goal with progress circles to 100%
-- [ ] Vitamin Shelf — 6 category redirects: body, mind, wellness, money, connection, creative
-- [ ] "3 gifts for stuck days" — easy daily goals; added once, disappear from Explore page per day
+**Apple Watch**
+- [ ] Streak count complication on watch face
+- [ ] Active goal + progress ring complication on watch face
+- [ ] Check-in from wrist (tap complication to mark today's goal complete)
+- [ ] Morning nudge notification delivered to Apple Watch
 
-**Community Page**
-- [ ] Goal landing page — progress circle with % in middle, people count, days remaining, % remaining
-- [ ] "Today's glimpses" — cycling community member goal cards; tap to open goal page with comments/photos
-- [ ] Live users section — users currently on app + their most current goal
-- [ ] "Glowing this week" spotlight — applause (👏) system; username floats on profile + appears on applauded goal
-- [ ] Community feed — live active users at top, most liked → recent → random feed, reply + react (❤️🔥👍)
+**Analytics**
+- [ ] Streak history chart (line/bar showing streak length over time per goal)
+- [ ] Completion rate trends (weekly/monthly % chart across all goals)
+- [ ] Full all-time goal heatmap (GitHub-style, every day since goal creation)
+- [ ] CSV export of all goal history via share sheet
 
-**Onboarding / Auth**
-- [ ] Apple Sign-In only (remove Google Sign-In)
-- [ ] T&C PDF clickable link (Vitamin_G_Terms_and_Conditions.pdf)
-- [ ] Unique username (one per user, no duplicates — extends SchemaV8)
-- [ ] Profile picture upload in onboarding
-- [ ] Notification permission slide in onboarding
-- [ ] Camera access permission slide in onboarding
-- [ ] "Welcome Back" re-login screen ("Good to see you" + Sign in with Apple)
+**AI (Claude)**
+- [ ] Goal suggestions — Claude analyzes existing goals and suggests complementary ones
+- [ ] Personalized daily motivation — Claude generates unique morning copy based on streak + goals
 
-**Home Tab**
-- [ ] Name + streak display at top of Home tab
-- [ ] Quote of the day
-- [ ] Primary goal (community set goal) with progress bar
-- [ ] "My Goals" list with "+add" inline, progress rings, days remaining per goal
-
-**Goals Flow**
-- [ ] Create goal wizard: What kind? → Say it out loud → How often? (duration, start, reminder, public/private, start journey)
-- [ ] "Need ideas" → pre-made goals list ("My goals, your journey starts here…")
-- [ ] "Already have a goal" → blank goal landing page
-- [ ] Goal check-off → checkmark celebration page with streak + back to goals
-- [ ] Goal detail page — daily checkmarks, days remaining slots, "Check in for today" with streak, flame icon
-
-**Profile & Social**
-- [ ] Public profile ("Jordan Kim" style) — motto/bio, streak, goal count, cheers given
-- [ ] Follow + "cheer them on today" (once/day limit)
-- [ ] Public goals with progress to 100% on profile view
-
-**Milestone Features**
-- [ ] Streak freeze "Life happened." page (snowflake ❄️, once/week)
-- [ ] Achievement unlocked screen (7d, 30d, etc.) — fire emoji, community share, Continue → Home
-- [ ] Achievements scroll in community main page
-- [ ] Goal completed "You did it" celebration page
-
-**Discover Page**
-- [ ] Search public goals to join
-- [ ] Search profiles to follow
-- [ ] Trending challenges section
-
-**Notification Picker**
-- [ ] "Pick your daily nudge time" landing page with quick pick times
-
-**Tip Jar & About**
-- [ ] About page — "Vitamin G" + current version
-- [ ] Tip jar tiers (tiered payments), accessible via big button on About page
-
-**Settings**
-- [ ] Daily nudge time setting
-- [ ] Public/private profile toggle
-- [ ] Dark mode toggle
-- [ ] Contact support
-
-**Deferred from pre-v2.0 targets** (pushed to v3.0)
-- [ ] Apple Watch app (accessory complications)
-- [ ] Full analytics dashboard with historical charts + CSV export
-- [ ] AI-powered goal suggestions based on existing goals
-- [ ] Smart notification content personalization
+**Smart Notifications**
+- [ ] Tone adapts to streak level (celebratory for high streak, encouraging for low/broken)
+- [ ] Content references actual goal titles (not generic copy)
+- [ ] Send time adapts to user's historical check-in patterns
+- [ ] Streak-at-risk evening alert when user hasn't checked in and has streak to protect
 
 ### Out of Scope
 
@@ -155,10 +102,11 @@ v1.0 Shipped: 2026-05-15. Phase 24 complete: 2026-05-28.
 - Target platform: iOS 17+ (SwiftData, @Observable, modern SwiftUI APIs)
 - Architecture: MVVM with SwiftData + WidgetKit + CloudKit (private + public DB)
 - Distribution: App Store + portfolio showcase
-- Schema versioned from day one (SchemaV1 → SchemaV8 via VitaminGMigrationPlan)
+- Schema versioned from day one (SchemaV1 → SchemaV10 via VitaminGMigrationPlan)
 - Challenge Platform is template-driven — adding new challenge types requires zero core logic
 - Community features use CloudKit public DB — no server backend required
 - 5-tab navigation (v2.0): Home · Goals · Explore · Community · Profile
+- v3.0 adds WatchKit target + Anthropic SDK for AI features
 
 ## Constraints
 
@@ -202,4 +150,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-15 — v2.0 milestone started*
+*Last updated: 2026-05-28 — v3.0 milestone started*
