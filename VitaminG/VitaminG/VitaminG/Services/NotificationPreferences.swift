@@ -100,4 +100,76 @@ enum NotificationPreferences {
         let shared = UserDefaults(suiteName: suiteName)
         return shared?.object(forKey: winMinuteKey) as? Int ?? defaultWinMinute
     }
+
+    // MARK: - Check-In Hour History (Phase 25, NOTIF-03, D-08)
+
+    /// UserDefaults key for the rolling check-in hour history array.
+    /// Written to the App Group suite only — widgets and Watch may read it.
+    static let checkInHourHistoryKey = "checkInHourHistory"
+
+    /// UserDefaults key for the permanent nudge-suggestion-dismissed flag (D-13).
+    static let nudgeSuggestionDismissedKey = "nudgeSuggestionDismissed"
+
+    /// Appends `hour` to the rolling check-in hour history in the App Group suite.
+    /// Maintains a maximum of 14 entries via FIFO eviction (D-08).
+    /// Written to the App Group suite only — do NOT mirror to UserDefaults.standard (Pitfall 6).
+    static func appendCheckInHour(_ hour: Int) {
+        let shared = UserDefaults(suiteName: suiteName)
+        var history = (shared?.array(forKey: checkInHourHistoryKey) as? [Int]) ?? []
+        history.append(hour)
+        if history.count > 14 {
+            history.removeFirst(history.count - 14)
+        }
+        shared?.set(history, forKey: checkInHourHistoryKey)
+    }
+
+    /// Returns the stored check-in hour history from the App Group suite.
+    /// Returns an empty array when the key is absent or the value is not `[Int]`.
+    static func checkInHourHistory() -> [Int] {
+        let shared = UserDefaults(suiteName: suiteName)
+        return (shared?.array(forKey: checkInHourHistoryKey) as? [Int]) ?? []
+    }
+
+    /// Computes the modal (most frequently occurring) hour from check-in history.
+    ///
+    /// Security mitigation (T-25-01-01): out-of-range values (< 0 or > 23) are filtered
+    /// before mode computation so tampered UserDefaults values cannot influence the result.
+    ///
+    /// Tie-breaking: when two hours appear equally often, the one with the earliest
+    /// first-occurrence index in the filtered history wins (D-10, Claude's Discretion).
+    ///
+    /// - Returns: the modal hour (0–23), or `nil` if history is empty after filtering.
+    static func modalCheckInHour() -> Int? {
+        let history = checkInHourHistory().filter { $0 >= 0 && $0 <= 23 }
+        guard !history.isEmpty else { return nil }
+
+        var counts: [Int: Int] = [:]
+        for hour in history {
+            counts[hour, default: 0] += 1
+        }
+
+        guard let maxCount = counts.values.max() else { return nil }
+
+        // Among all hours tied at maxCount, pick the one whose first occurrence is earliest.
+        let tiedHours = counts.filter { $0.value == maxCount }.map { $0.key }
+        return tiedHours.min { lhs, rhs in
+            (history.firstIndex(of: lhs) ?? Int.max) < (history.firstIndex(of: rhs) ?? Int.max)
+        }
+    }
+
+    // MARK: - Nudge Suggestion Dismissed Flag (Phase 25, NOTIF-03, D-13)
+
+    /// Whether the nudge-time suggestion banner has been permanently dismissed.
+    /// Read via `.bool(forKey:)` so absent or type-mismatched values safely return `false`
+    /// (T-25-01-02 Tampering mitigation).
+    static var nudgeSuggestionDismissed: Bool {
+        UserDefaults(suiteName: suiteName)?.bool(forKey: nudgeSuggestionDismissedKey) ?? false
+    }
+
+    /// Permanently marks the nudge suggestion as dismissed via the App Group suite.
+    /// After this call, `nudgeSuggestionDismissed` returns `true` and the banner
+    /// never reappears (D-13).
+    static func markNudgeSuggestionDismissed() {
+        UserDefaults(suiteName: suiteName)?.set(true, forKey: nudgeSuggestionDismissedKey)
+    }
 }
