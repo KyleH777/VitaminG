@@ -133,7 +133,7 @@ struct NudgeTimePickerScreen: View {
         }
 
         NotificationPreferences.save(hour: finalHour, minute: finalMinute)
-        Task { await NotificationScheduler.shared.reschedule(activeGoals: []) }
+        Task { await NotificationScheduler.shared.reschedule(activeGoals: [], completionEvents: []) } // Plan 03: wire real completionEvents
         path.append(.cameraPermission)
     }
 

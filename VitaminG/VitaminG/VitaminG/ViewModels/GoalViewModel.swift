@@ -371,7 +371,7 @@ final class GoalViewModel {
         let descriptor = FetchDescriptor<Goal>(predicate: #Predicate { !$0.isCompleted })
         let activeGoals = (try? context.fetch(descriptor)) ?? []
         Task {
-            await NotificationScheduler.shared.reschedule(activeGoals: activeGoals)
+            await NotificationScheduler.shared.reschedule(activeGoals: activeGoals, completionEvents: []) // Plan 03: wire real completionEvents
         }
     }
 

@@ -111,35 +111,29 @@ final class NotificationSchedulerPhase25Tests: XCTestCase {
     }
 
     // MARK: - NOTIF-04: One-Shot 7 PM Tests
-    // RED until Task 2 adds scheduleOneShotStreakAtRisk(activeGoals:streak:pendingCount:).
-    // Real assertions activated in Task 2 when the method exists.
 
     func test_schedule_oneShotStreakAtRisk_repeats_false() async throws {
-        // Task 2 required: scheduleOneShotStreakAtRisk(activeGoals:streak:pendingCount:)
-        // GREEN implementation:
-        //   await scheduler.scheduleOneShotStreakAtRisk(activeGoals: [], streak: 3, pendingCount: 0)
-        //   let pending = await UNUserNotificationCenter.current().pendingNotificationRequests()
-        //   let request = pending.first { $0.identifier == NotificationScheduler.globalStreakAtRiskIdentifier }
-        //   try XCTSkipIf(request == nil, "Notification permission not granted — skip trigger assertion")
-        //   guard let trigger = request?.trigger as? UNCalendarNotificationTrigger else {
-        //       return XCTFail("Expected UNCalendarNotificationTrigger")
-        //   }
-        //   XCTAssertFalse(trigger.repeats, "One-shot 7 PM alert must have repeats: false")
-        //   XCTAssertEqual(trigger.dateComponents.hour, 19)
-        //   XCTAssertEqual(trigger.dateComponents.minute, 0)
-        XCTFail("Task 2 required: scheduleOneShotStreakAtRisk(activeGoals:streak:pendingCount:) not yet implemented")
+        await scheduler.scheduleOneShotStreakAtRisk(activeGoals: [], streak: 3, pendingCount: 0)
+
+        let pending = await UNUserNotificationCenter.current().pendingNotificationRequests()
+        let request = pending.first { $0.identifier == NotificationScheduler.globalStreakAtRiskIdentifier }
+        try XCTSkipIf(request == nil, "Notification permission not granted in test environment — skip trigger assertion")
+        guard let trigger = request?.trigger as? UNCalendarNotificationTrigger else {
+            return XCTFail("Expected UNCalendarNotificationTrigger for one-shot 7 PM alert")
+        }
+        XCTAssertFalse(trigger.repeats, "One-shot 7 PM alert must have repeats: false")
+        XCTAssertEqual(trigger.dateComponents.hour, 19, "One-shot trigger hour should be 19")
+        XCTAssertEqual(trigger.dateComponents.minute, 0, "One-shot trigger minute should be 0")
     }
 
     func test_schedule_oneShotSkipped_atCapBoundary() async {
-        // Task 2 required: scheduleOneShotStreakAtRisk cap guard
-        // GREEN implementation:
-        //   await scheduler.scheduleOneShotStreakAtRisk(activeGoals: [], streak: 5, pendingCount: 60)
-        //   let pending = await UNUserNotificationCenter.current().pendingNotificationRequests()
-        //   let nudgeAdded = pending.contains {
-        //       $0.identifier == NotificationScheduler.globalStreakAtRiskIdentifier
-        //   }
-        //   XCTAssertFalse(nudgeAdded, "Cap guard should prevent one-shot when pendingCount >= 60")
-        XCTFail("Task 2 required: scheduleOneShotStreakAtRisk cap guard not yet implemented")
+        await scheduler.scheduleOneShotStreakAtRisk(activeGoals: [], streak: 5, pendingCount: 60)
+
+        let pending = await UNUserNotificationCenter.current().pendingNotificationRequests()
+        let nudgeAdded = pending.contains {
+            $0.identifier == NotificationScheduler.globalStreakAtRiskIdentifier
+        }
+        XCTAssertFalse(nudgeAdded, "Cap guard should prevent one-shot when pendingCount >= 60")
     }
 
     // MARK: - NOTIF-03: Pure Helper Tests (pass after Task 1)

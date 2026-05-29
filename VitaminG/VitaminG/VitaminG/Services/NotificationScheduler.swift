@@ -97,10 +97,11 @@ final class NotificationScheduler {
 
     // MARK: - Scheduling
 
-    /// Schedules a single repeating daily notification at the specified time (NOTIF-02, NOTIF-04).
-    /// Removes any existing notification first to stay within the 64-request cap (NOTIF-05).
+    /// Schedules a daily repeating morning notification and a one-shot 7 PM streak-at-risk alert (NOTIF-01, NOTIF-02, NOTIF-04).
+    /// Removes any existing morning notification first to stay within the 64-request cap (NOTIF-05).
     /// Hour is clamped to 0–23 and minute to 0–59 (T-03-08: tamper mitigation).
-    func schedule(hour: Int, minute: Int, activeGoals: [Goal]) async {
+    /// CompletionEvents are used to compute the current streak for tone selection (D-03).
+    func schedule(hour: Int, minute: Int, activeGoals: [Goal], completionEvents: [CompletionEvent]) async {
         let center = UNUserNotificationCenter.current()
         // Remove-before-add pattern — ensures single notification stays within iOS 64-cap
         center.removePendingNotificationRequests(withIdentifiers: [Self.identifier])
@@ -113,15 +114,20 @@ final class NotificationScheduler {
         components.hour = validHour
         components.minute = validMinute
 
+        // D-03: Compute streak for tone selection; global streak (no tier, no frozenDates)
+        let streak = StreakEngine.currentStreak(from: completionEvents)
+
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
         let request = UNNotificationRequest(
             identifier: Self.identifier,
-            content: makeContent(activeGoals: activeGoals, currentStreak: 0),
+            content: makeContent(activeGoals: activeGoals, currentStreak: streak),
             trigger: trigger
         )
         // WR-01: Surface center.add errors instead of swallowing with try?.
         do {
             try await center.add(request)
+            // D-07: After morning notification succeeds, schedule one-shot 7 PM streak-at-risk alert.
+            await scheduleOneShotStreakAtRisk(activeGoals: activeGoals, streak: streak)
         } catch {
             #if DEBUG
             print("[NotificationScheduler] Failed to add daily reminder request: \(error)")
@@ -131,12 +137,88 @@ final class NotificationScheduler {
 
     /// Reschedules with the user's stored time preference (NOTIF-06).
     /// Reads hour and minute from NotificationPreferences; defaults to 8:00 AM when no preference is stored.
-    func reschedule(activeGoals: [Goal]) async {
+    func reschedule(activeGoals: [Goal], completionEvents: [CompletionEvent]) async {
         await schedule(
             hour: NotificationPreferences.hour,
             minute: NotificationPreferences.minute,
-            activeGoals: activeGoals
+            activeGoals: activeGoals,
+            completionEvents: completionEvents
         )
+    }
+
+    // MARK: - One-Shot 7 PM Streak-At-Risk Alert (NOTIF-04)
+
+    /// Schedules a one-shot 7 PM notification reminding the user their streak is at risk.
+    /// Skips scheduling if the current hour is >= 19 (Pitfall 3 — avoids cross-day false alarm).
+    /// Respects the iOS 64-request cap guard (returns early when pendingCount >= 60).
+    /// Uses remove-before-add with globalStreakAtRiskIdentifier — at-most-one-pending invariant (T-25-02-02).
+    ///
+    /// - Parameters:
+    ///   - activeGoals: Used to personalize the alert body with the top active goal title (D-06).
+    ///   - streak: Current streak count — shown in the alert body (D-06).
+    ///   - pendingCount: Injectable count for test isolation; nil fetches the real count from UNUserNotificationCenter.
+    func scheduleOneShotStreakAtRisk(activeGoals: [Goal], streak: Int, pendingCount: Int? = nil) async {
+        // Pitfall 3 / Open Question 1: Skip if current hour is already past 19:00 to avoid
+        // scheduling a notification that would fire the next morning instead of this evening.
+        let currentHour = Calendar.current.component(.hour, from: Date())
+        guard currentHour < 19 else {
+            #if DEBUG
+            print("[NotificationScheduler] Skipping one-shot streakAtRisk — current hour past 19:00 (\(currentHour))")
+            #endif
+            return
+        }
+
+        // 64-cap guard: fetch or use injected count
+        let center = UNUserNotificationCenter.current()
+        let count: Int
+        if let injected = pendingCount {
+            count = injected
+        } else {
+            count = await center.pendingNotificationRequests().count
+        }
+        guard count < 60 else {
+            #if DEBUG
+            print("[NotificationScheduler] Skipping one-shot streakAtRisk — approaching 64-cap (\(count) pending)")
+            #endif
+            return
+        }
+
+        // Remove-before-add: at most one pending instance regardless of call frequency (T-25-02-02)
+        center.removePendingNotificationRequests(withIdentifiers: [Self.globalStreakAtRiskIdentifier])
+
+        // Build personalized content (D-06)
+        let content = UNMutableNotificationContent()
+        content.title = "Streak at risk"
+        let topTitle = activeGoals
+            .filter { !$0.isCompleted }
+            .compactMap { $0.title }
+            .filter { !$0.isEmpty }
+            .first
+        if let topTitle {
+            content.body = "Your \(topTitle) streak is at risk — check in to keep your \(streak)-day run alive."
+        } else {
+            content.body = "You haven't checked in today — keep your streak alive."
+        }
+        content.sound = .default
+        content.userInfo = ["deepLink": "goalList", "source": "streakAtRisk"]
+
+        // One-shot trigger at 19:00 — repeats: false (D-05)
+        let trigger = UNCalendarNotificationTrigger(
+            dateMatching: DateComponents(hour: 19, minute: 0),
+            repeats: false
+        )
+        let request = UNNotificationRequest(
+            identifier: Self.globalStreakAtRiskIdentifier,
+            content: content,
+            trigger: trigger
+        )
+        do {
+            try await center.add(request)
+        } catch {
+            #if DEBUG
+            print("[NotificationScheduler] Failed to add one-shot streakAtRisk: \(error)")
+            #endif
+        }
     }
 
     // MARK: - Authorization

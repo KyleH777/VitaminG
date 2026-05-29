@@ -117,7 +117,7 @@ struct SettingsView: View {
                     NotificationPreferences.save(hour: hour, minute: minute)
                     // Reschedule immediately with updated time (NOTIF-06, NOTIF-03)
                     Task {
-                        await NotificationScheduler.shared.reschedule(activeGoals: Array(activeGoals))
+                        await NotificationScheduler.shared.reschedule(activeGoals: Array(activeGoals), completionEvents: []) // Plan 03: wire real completionEvents
                     }
                 }
 
@@ -232,7 +232,7 @@ struct SettingsView: View {
                     let granted = await NotificationScheduler.shared.requestAuthorization()
                     authStatus = granted ? .authorized : .denied
                     if granted {
-                        await NotificationScheduler.shared.reschedule(activeGoals: Array(activeGoals))
+                        await NotificationScheduler.shared.reschedule(activeGoals: Array(activeGoals), completionEvents: []) // Plan 03: wire real completionEvents
                     }
                 }
             }
