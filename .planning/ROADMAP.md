@@ -301,7 +301,20 @@ Plans:
   3. User visits Settings after 14 days of consistent check-ins at a time 2+ hours earlier than their current nudge setting and sees a non-intrusive banner suggesting they shift their nudge time; tapping the banner applies the change immediately; the banner never auto-applies without a tap
   4. User with a broken or missing streak reads encouraging phrasing; user with 1–6 day streak reads neutral-building phrasing; user with 7+ day streak reads celebratory-momentum phrasing — all determined locally with no network call
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 25-01-PLAN.md — Wave 0 scaffolding: NotificationPreferences keys (checkInHourHistory, nudgeSuggestionDismissed) + helpers (appendCheckInHour, modalCheckInHour, markNudgeSuggestionDismissed) + RED test file NotificationSchedulerPhase25Tests (NOTIF-01, NOTIF-02, NOTIF-03, NOTIF-04)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 25-02-PLAN.md — NotificationScheduler signature migration: three tone copy banks + makeContent(activeGoals:currentStreak:) + schedule/reschedule (activeGoals:completionEvents:) + scheduleOneShotStreakAtRisk with cap guard + evening-skip guard (NOTIF-01, NOTIF-02, NOTIF-04)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 25-03-PLAN.md — Cascade + UI: GoalViewModel addCheckIn hour append + dual fetch in rescheduleNotification + VitaminGApp launch reschedule update + SettingsView nudge suggestion banner + human verify (NOTIF-03, NOTIF-04)
 
 ### Phase 26: Analytics Dashboard
 
@@ -374,7 +387,7 @@ Plans:
 | 22. Public Profile + Follow + Discover | v2.0 | 5/5 | Complete   | 2026-05-26 |
 | 23. Milestone Features + Streak Freeze | v2.0 | 4/4 | Complete    | 2026-05-26 |
 | 24. Widget Enhancements | v2.0 | 3/3 | Complete    | 2026-05-28 |
-| 25. Smart Notifications Enhancement | v3.0 | 0/? | Not started | - |
+| 25. Smart Notifications Enhancement | v3.0 | 0/3 | Not started | - |
 | 26. Analytics Dashboard | v3.0 | 0/? | Not started | - |
 | 27. Apple Watch App | v3.0 | 0/? | Not started | - |
 | 28. AI (Claude) Integration | v3.0 | 0/? | Not started | - |
