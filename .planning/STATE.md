@@ -6,7 +6,7 @@ status: planning
 last_updated: "2026-05-28T00:00:00.000Z"
 last_activity: 2026-05-28
 progress:
-  total_phases: 0
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,17 +20,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-28)
 
 **Core value:** Every morning, the user is reminded of their goals — making progress feel inevitable, not accidental.
-**Current focus:** Defining requirements for v3.0
+**Current focus:** Roadmap defined for v3.0 — ready to plan Phase 25
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: Not started (roadmap defined)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-05-28 — Milestone v3.0 started
+Status: Ready to plan Phase 25
+Last activity: 2026-05-28 — v3.0 roadmap created (Phases 25–28)
 
 ```
-v3.0 Progress: [          ] 0% (0/? phases, 0/? plans)
+v3.0 Progress: [          ] 0% (0/4 phases, 0/? plans)
 ```
 
 ## Accumulated Context
@@ -68,6 +68,14 @@ v3.0 Progress: [          ] 0% (0/? phases, 0/? plans)
 | TrendingGoal CKRecord schema uses silent fallback | TrendingGoal record type not yet deployed to CloudKit — ExploreService catches CKError and returns staticTrendingGoals |
 | StuckDayGift.id is a stable String (not UUID()) | Reproducible UserDefaults hide key across sessions; changing IDs would break hide gates |
 | StuckDayGift.description renamed to .subtitle | Avoids CustomStringConvertible protocol conflict with Swift's built-in description property |
+| v3.0 build order: Notifications → Analytics → Watch → AI | Notifications first (no new infra, validates cancel-on-check-in path Watch needs); Analytics second (self-contained); Watch third (new target, physical device required, cancel path must pre-exist); AI last (new backend proxy is highest-risk infra) |
+| WatchConnectivity (not App Groups) for iOS-Watch data bridge | App Groups are same-device only; CloudKit-to-watchOS sync is documented as unreliable; WCSession is the only reliable cross-device bridge |
+| Cloudflare Worker proxy for AI features | Anthropic API key must never be embedded in iOS binary; Cloudflare Worker holds the key server-side; free up to 100K req/day |
+| No SchemaV11 required for v3.0 | All v3.0 state (motivation copy, check-in hour history, Watch snapshot) lives in UserDefaults; analytics derives from existing CompletionEvent data |
+| BGAppRefreshTask is fallback only for AI motivation copy | BGAppRefreshTask is non-deterministic for infrequent users; primary generation trigger is app foreground with date-key cache check |
+| Streak-at-risk evening alert uses schedule-and-cancel (not BGAppRefreshTask) | BGAppRefreshTask throttled for infrequent users (exactly who needs the alert); schedule morning + cancel on any check-in surface |
+| Watch check-in must cancel streak-at-risk notification via same path as iOS/widget | 64-slot cap requires reliable cancellation; all three check-in surfaces (app, widget, Watch) must call the same removePendingNotificationRequests path |
+| watchOS 10.0 minimum for Watch target | Existing scaffold targets watchOS 7.0 — too low for WidgetKit complications; set to 10.0 immediately; Button(intent:) interactive complications require watchOS 11.0, guard with @available |
 
 ### Blockers
 
@@ -79,6 +87,8 @@ None.
 - CloudKit Console: promote new public DB record types (UserPresence, Applause, Follow, extended PublicProfile) to Production before Phase 21
 - CloudKit Console: add Queryable index on "username" field in PublicProfile record type (iCloud.com.kyleharrington.VitaminG) before 17-03 real-device testing — required for username availability check (isUsernameTaken/countRecordsWithUsername)
 - CloudKit Console: create TrendingGoal record type (title/String, category/String, participantCount/Int64, completedCount/Int64, createdAt/DateTime) + Queryable index on participantCount + deploy to Production + seed records before real-device Explore tab testing
+- Physical device testing required before merging any WatchConnectivity code (Phase 27) — WCSession transferUserInfo is a no-op in Simulator
+- Deploy Cloudflare Worker before any AI feature testing (Phase 28) — Worker URL must be stable before AI-01 and AI-02 can be validated
 
 ## Deferred Items (from v1.0)
 

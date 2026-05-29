@@ -61,15 +61,15 @@
 
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
-| WATCH-02 | — | Not planned |
-| WATCH-03 | — | Not planned |
-| ANLT-02 | — | Not planned |
-| ANLT-03 | — | Not planned |
-| ANLT-04 | — | Not planned |
-| AI-03 | — | Not planned |
-| AI-01 | — | Not planned |
-| AI-02 | — | Not planned |
-| NOTIF-01 | — | Not planned |
-| NOTIF-02 | — | Not planned |
-| NOTIF-03 | — | Not planned |
-| NOTIF-04 | — | Not planned |
+| NOTIF-01 | Phase 25 | Not started |
+| NOTIF-02 | Phase 25 | Not started |
+| NOTIF-03 | Phase 25 | Not started |
+| NOTIF-04 | Phase 25 | Not started |
+| ANLT-02 | Phase 26 | Not started |
+| ANLT-03 | Phase 26 | Not started |
+| ANLT-04 | Phase 26 | Not started |
+| WATCH-02 | Phase 27 | Not started |
+| WATCH-03 | Phase 27 | Not started |
+| AI-03 | Phase 28 | Not started |
+| AI-01 | Phase 28 | Not started |
+| AI-02 | Phase 28 | Not started |

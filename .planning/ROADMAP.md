@@ -4,6 +4,7 @@
 
 - ✅ **v1.0 MVP** — Phases 1–15 (shipped 2026-05-15)
 - 🔄 **v2.0 Social Growth Engine** — Phases 16–24 (in progress)
+- 📋 **v3.0 Personal Intelligence + Apple Watch** — Phases 25–28 (planned)
 
 ## Phases
 
@@ -41,6 +42,13 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
 - [x] **Phase 22: Public Profile + Follow + Discover** - Public profile redesign, follow/cheer system, Discover page with goal search and people search (completed 2026-05-26)
 - [x] **Phase 23: Milestone Features + Streak Freeze** - Streak freeze, achievement unlocked screens, achievement sharing, goal completed celebration (completed 2026-05-26)
 - [x] **Phase 24: Widget Enhancements** - Update widgets for v2.0 data, wire WidgetCenter.reloadAllTimelines() to all new state changes (completed 2026-05-28)
+
+### v3.0 Personal Intelligence + Apple Watch
+
+- [ ] **Phase 25: Smart Notifications Enhancement** - Tone-adaptive notifications, goal-title personalization, streak-at-risk evening alert, send-time suggestion banner
+- [ ] **Phase 26: Analytics Dashboard** - Completion rate trends chart (Swift Charts), all-time goal heatmap, CSV export via ShareLink
+- [ ] **Phase 27: Apple Watch App** - accessoryRectangular complication with goal + progress ring, check-in from wrist via WCSession.transferUserInfo
+- [ ] **Phase 28: AI (Claude) Integration** - Cloudflare Worker proxy, goal suggestions card on Explore tab, personalized daily motivation on Home tab
 
 ---
 
@@ -281,6 +289,61 @@ Plans:
 
 **UI hint**: yes
 
+### Phase 25: Smart Notifications Enhancement
+
+**Goal**: Users receive daily notifications that know who they are — referencing their actual goal titles, adapting tone to their streak health, alerting them in the evening only when a streak is genuinely at risk, and surfacing a nudge-time suggestion when the app detects a systematic mismatch between their check-in patterns and their current notification schedule
+**Depends on**: Phase 24
+**Requirements**: NOTIF-01, NOTIF-02, NOTIF-03, NOTIF-04
+**Success Criteria** (what must be TRUE):
+
+  1. User with a 10-day streak opens a morning notification and reads celebratory copy referencing one of their actual active goal titles; a user with a broken streak reads encouraging copy instead of the same generic message
+  2. User who has not checked in by 7 PM and has a streak of 3 or more days receives a second notification that evening; the moment they check in via the iOS app, a widget, or the Apple Watch, that evening alert is silently cancelled and never fires
+  3. User visits Settings after 14 days of consistent check-ins at a time 2+ hours earlier than their current nudge setting and sees a non-intrusive banner suggesting they shift their nudge time; tapping the banner applies the change immediately; the banner never auto-applies without a tap
+  4. User with a broken or missing streak reads encouraging phrasing; user with 1–6 day streak reads neutral-building phrasing; user with 7+ day streak reads celebratory-momentum phrasing — all determined locally with no network call
+
+**Plans**: TBD
+
+### Phase 26: Analytics Dashboard
+
+**Goal**: Users can explore their full goal history through a completion rate trends chart, a scrollable all-time heatmap per goal, and export everything as a CSV file — all computed from existing CompletionEvent data with no schema migration
+**Depends on**: Phase 25
+**Requirements**: ANLT-02, ANLT-03, ANLT-04
+**Success Criteria** (what must be TRUE):
+
+  1. User opens the Analytics view and sees a bar or line chart (Swift Charts) displaying their weekly and monthly goal completion rate across all active and completed goals; the chart renders without lag even for users with 2+ years of data
+  2. User taps any goal and sees a full all-time GitHub-style heatmap from that goal's creation date to today; the heatmap scrolls horizontally without stutter for 1000+ days because it uses LazyHStack virtualization
+  3. User taps Export on the Analytics view, selects a destination (Files, Mail, or any share-sheet recipient), and receives a well-formed CSV file containing every CompletionEvent — goal name, date, tier — with no truncation even for large histories
+
+**Plans**: TBD
+**UI hint**: yes
+
+### Phase 27: Apple Watch App
+
+**Goal**: Users can glance at their active goal title and progress ring on their watch face via an accessoryRectangular complication, and check in for the day directly from their wrist with the same effect as checking in on iPhone
+**Depends on**: Phase 25
+**Requirements**: WATCH-02, WATCH-03
+**Success Criteria** (what must be TRUE):
+
+  1. User adds the Vitamin G accessoryRectangular complication to their watch face and sees their active goal title and a progress ring showing today's completion status; data reflects the most recent iPhone state within the WatchConnectivity session
+  2. User taps the complication to open the Watch app, sees a prominent Check In button, taps it, and the check-in is relayed to the iPhone via WCSession.transferUserInfo; the iPhone's streak count updates, the home screen widget reloads, and any pending streak-at-risk evening notification is cancelled — identical to checking in from the iOS app
+  3. User who has not checked in by evening does not receive a duplicate streak-at-risk alert on their Watch — the single alert scheduled on iPhone mirrors to the wrist automatically, and is cancelled by the Watch check-in through the same cancel path used by the iOS and widget check-in surfaces
+
+**Plans**: TBD
+
+### Phase 28: AI (Claude) Integration
+
+**Goal**: Users see Claude-generated goal suggestions on the Explore tab and a personalized daily motivation message on the Home tab, both powered by a Cloudflare Worker proxy that keeps the Anthropic API key off the device and both degrade gracefully to static fallbacks when the proxy is unreachable
+**Depends on**: Phase 27
+**Requirements**: AI-03, AI-01, AI-02
+**Success Criteria** (what must be TRUE):
+
+  1. A Cloudflare Worker is deployed at a stable HTTPS URL; iOS can POST a request and receive a Claude response; the Anthropic API key exists only in the Worker's environment variables and is never present in the iOS binary (verified by `strings` scan of the .ipa)
+  2. User opens the Explore tab and sees a "Goals suggested for you" card with 3 Claude-generated goal suggestions based on their existing goal titles and categories; tapping one adds the goal with a single tap; suggestions do not re-fetch more than once per calendar day (UserDefaults cache key by date string)
+  3. User sees a personalized daily motivation message above the My Goals list on the Home tab; the message references their actual streak count and active goal titles; it was generated by Claude at most once today and falls back to a VGQuoteBank entry if the Cloudflare Worker is unreachable — the Home tab never shows an error state or empty card in place of the motivation message
+
+**Plans**: TBD
+**UI hint**: yes
+
 ---
 
 ## Progress
@@ -311,3 +374,7 @@ Plans:
 | 22. Public Profile + Follow + Discover | v2.0 | 5/5 | Complete   | 2026-05-26 |
 | 23. Milestone Features + Streak Freeze | v2.0 | 4/4 | Complete    | 2026-05-26 |
 | 24. Widget Enhancements | v2.0 | 3/3 | Complete    | 2026-05-28 |
+| 25. Smart Notifications Enhancement | v3.0 | 0/? | Not started | - |
+| 26. Analytics Dashboard | v3.0 | 0/? | Not started | - |
+| 27. Apple Watch App | v3.0 | 0/? | Not started | - |
+| 28. AI (Claude) Integration | v3.0 | 0/? | Not started | - |
