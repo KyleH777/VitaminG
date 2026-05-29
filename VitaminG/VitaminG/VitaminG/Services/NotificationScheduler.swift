@@ -20,38 +20,73 @@ final class NotificationScheduler {
 
     // MARK: - Content
 
-    /// Seven rotating inspirational messages — seeded by day-of-year so the same message
-    /// is shown all day and changes each calendar day (D-16).
-    internal static let inspirationalMessages: [String] = [
-        "You got this! 💪",
-        "Take your daily Vitamin G 💊",
-        "Your goals are waiting ☀️",
-        "One step closer today 🌱",
-        "Make it happen 🔥",
-        "Progress, not perfection 🌿",
-        "Small steps, big results ⭐"
+    /// Celebratory copy bank — shown when streak >= 7 days (D-01).
+    /// Day-of-year rotation selects within this bank.
+    internal static let celebratoryCopy: [String] = [
+        "You're on fire — keep the streak alive! 🔥",
+        "What a run! Every day you show up is a win. 🏆",
+        "Momentum is your superpower right now. ⚡",
+        "You're on a roll — don't stop now! 🎉",
+        "Days of discipline add up to a life well lived. ✨"
     ]
 
-    /// Builds notification content with a day-rotated inspirational message and the top active goal
-    /// title (D-16 / D-17). Completed goals are excluded. Nil/empty titles are skipped.
-    /// Body: "{message}\n{topGoalTitle}" when an active goal exists, else the message alone.
-    func makeContent(activeGoals: [Goal]) -> UNMutableNotificationContent {
+    /// Neutral-building copy bank — shown when streak is 1–6 days (D-01).
+    /// Encouraging steady progress without overstating the achievement.
+    internal static let neutralBuildingCopy: [String] = [
+        "One day at a time — you're building something real. 🌱",
+        "Showing up is the hardest part. You're doing it. 💪",
+        "Every check-in is a brick in the wall. Keep building. 🧱",
+        "Small steps, consistent effort — that's how it's done. 🚶",
+        "You're making it a habit. That's the whole game. 📅"
+    ]
+
+    /// Encouraging copy bank — shown when streak is 0 or broken (D-01).
+    /// Warm fresh-start energy, no guilt.
+    internal static let encouragingCopy: [String] = [
+        "Today is the day. Fresh start, no pressure. ☀️",
+        "Every great streak begins with a single day. Start here. 🌿",
+        "No streak needed — just one small action today. 👣",
+        "Today counts. Let's make it matter. 💫",
+        "The best time to start was yesterday. Second best: right now. ⏰"
+    ]
+
+    /// Returns the appropriate copy bank based on the current streak (D-01).
+    /// - Returns: `celebratoryCopy` for streak >= 7, `neutralBuildingCopy` for streak 1–6,
+    ///            `encouragingCopy` for streak <= 0 (defensive: negative values fall through).
+    private static func copyBank(for streak: Int) -> [String] {
+        if streak >= 7 {
+            return celebratoryCopy
+        } else if streak >= 1 {
+            return neutralBuildingCopy
+        } else {
+            return encouragingCopy
+        }
+    }
+
+    /// Builds notification content with a day-rotated tone-adaptive message and up to 2 active goal
+    /// titles (D-02, D-04). Completed goals are excluded. Nil/empty titles are skipped.
+    /// Body: "{tone message}\n{Goal 1}\n{Goal 2}" (2 goals), "{tone message}\n{Goal 1}" (1 goal),
+    /// or "{tone message}" alone when no active goals exist.
+    func makeContent(activeGoals: [Goal], currentStreak: Int) -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
         content.title = "Good morning"
 
+        let bank = Self.copyBank(for: currentStreak)
         let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 1
-        let message = Self.inspirationalMessages[(dayOfYear - 1) % Self.inspirationalMessages.count]
+        let message = bank[(dayOfYear - 1) % bank.count]
 
-        let topGoalTitle = activeGoals
-            .filter { !$0.isCompleted }
-            .compactMap { $0.title }
-            .filter { !$0.isEmpty }
-            .first
+        let titles: [String] = Array(
+            activeGoals
+                .filter { !$0.isCompleted }
+                .compactMap { $0.title }
+                .filter { !$0.isEmpty }
+                .prefix(2)
+        )
 
-        if let topGoalTitle {
-            content.body = "\(message)\n\(topGoalTitle)"
-        } else {
+        if titles.isEmpty {
             content.body = message
+        } else {
+            content.body = ([message] + titles).joined(separator: "\n")
         }
 
         content.sound = .default
@@ -81,7 +116,7 @@ final class NotificationScheduler {
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
         let request = UNNotificationRequest(
             identifier: Self.identifier,
-            content: makeContent(activeGoals: activeGoals),
+            content: makeContent(activeGoals: activeGoals, currentStreak: 0),
             trigger: trigger
         )
         // WR-01: Surface center.add errors instead of swallowing with try?.

@@ -30,31 +30,35 @@ final class NotificationSchedulerTests: XCTestCase {
         context.insert(g2)
         context.insert(g3)
 
-        let content = scheduler.makeContent(activeGoals: [g1, g2, g3])
+        let content = scheduler.makeContent(activeGoals: [g1, g2, g3], currentStreak: 0)
         XCTAssertEqual(content.title, "Good morning")
-        XCTAssertTrue(content.body.contains("\n"), "Body should contain newline between message and top goal")
-        XCTAssertTrue(content.body.contains("Run 5k"), "Body should contain the top (first) goal title")
-        XCTAssertFalse(content.body.contains("Read daily"), "Body should only show the top goal, not others")
+        XCTAssertTrue(content.body.contains("\n"), "Body should contain newline between message and top goals")
+        XCTAssertTrue(content.body.contains("Run 5k"), "Body should contain the first goal title")
+        XCTAssertTrue(content.body.contains("Read daily"), "Body should contain the second goal title (up to 2 shown)")
+        XCTAssertFalse(content.body.contains("Learn Swift"), "Body should show at most 2 goals; third goal excluded")
     }
 
-    func test_makeContent_limitsToThreeGoals() throws {
+    func test_makeContent_limitsToTwoGoals() throws {
         let context = ModelContext(container)
         let goals = (1...5).map { Goal(title: "Goal \($0)", tier: .immediate) }
         goals.forEach { context.insert($0) }
 
-        let content = scheduler.makeContent(activeGoals: goals)
-        // New format: one inspirational message + top goal only — exactly one newline, no separators
+        let content = scheduler.makeContent(activeGoals: goals, currentStreak: 0)
+        // New format: one tone message + up to 2 goal titles — exactly two newlines, no separators
         let newlineCount = content.body.components(separatedBy: "\n").count - 1
-        XCTAssertEqual(newlineCount, 1, "Body should have exactly one newline (message + top goal only)")
+        XCTAssertEqual(newlineCount, 2, "Body should have exactly two newlines (message + 2 goal titles)")
         XCTAssertFalse(content.body.contains("\u{00B7}"), "Body should not use middle-dot separators")
+        XCTAssertTrue(content.body.contains("Goal 1"), "First goal should be included")
+        XCTAssertTrue(content.body.contains("Goal 2"), "Second goal should be included")
+        XCTAssertFalse(content.body.contains("Goal 3"), "Third goal should be excluded (max 2)")
     }
 
     func test_makeContent_noActiveGoals_fallbackMessage() {
-        let content = scheduler.makeContent(activeGoals: [])
-        XCTAssertFalse(content.body.isEmpty, "Empty goal list should produce an inspirational message")
+        let content = scheduler.makeContent(activeGoals: [], currentStreak: 0)
+        XCTAssertFalse(content.body.isEmpty, "Empty goal list should produce an encouraging message")
         XCTAssertFalse(content.body.contains("\n"), "No-goal body should be the message alone — no newline")
-        XCTAssertTrue(NotificationScheduler.inspirationalMessages.contains(content.body),
-                      "Body should be one of the 7 inspirational messages")
+        XCTAssertTrue(NotificationScheduler.encouragingCopy.contains(content.body),
+                      "Body should be one of the encouraging copy messages (streak 0)")
     }
 
     func test_makeContent_completedGoalsExcluded() throws {
@@ -65,13 +69,13 @@ final class NotificationSchedulerTests: XCTestCase {
         context.insert(g1)
         context.insert(g2)
 
-        let content = scheduler.makeContent(activeGoals: [g1, g2])
+        let content = scheduler.makeContent(activeGoals: [g1, g2], currentStreak: 0)
         XCTAssertTrue(content.body.contains("Active"), "Active goal title should appear")
         XCTAssertFalse(content.body.contains("Done"), "Completed goal title should be excluded")
     }
 
     func test_makeContent_userInfo_containsDeepLink() {
-        let content = scheduler.makeContent(activeGoals: [])
+        let content = scheduler.makeContent(activeGoals: [], currentStreak: 0)
         XCTAssertEqual(content.userInfo["deepLink"] as? String, "goalList",
                        "userInfo should carry deepLink = goalList for navigation on tap")
     }
@@ -84,7 +88,7 @@ final class NotificationSchedulerTests: XCTestCase {
         context.insert(g1)
         context.insert(g2)
 
-        let content = scheduler.makeContent(activeGoals: [g1, g2])
+        let content = scheduler.makeContent(activeGoals: [g1, g2], currentStreak: 0)
         XCTAssertTrue(content.body.contains("Valid"), "Nil title should be skipped; valid title should appear")
         XCTAssertFalse(content.body.contains("WillBeNilledOut"), "Nil title should not appear")
     }
@@ -96,7 +100,7 @@ final class NotificationSchedulerTests: XCTestCase {
         context.insert(g1)
         context.insert(g2)
 
-        let content = scheduler.makeContent(activeGoals: [g1, g2])
+        let content = scheduler.makeContent(activeGoals: [g1, g2], currentStreak: 0)
         XCTAssertTrue(content.body.contains("Real Goal"), "Real goal title should appear")
         XCTAssertFalse(content.body.contains("\u{00B7}"), "No separator should appear — empty title was skipped")
     }
@@ -110,15 +114,15 @@ final class NotificationSchedulerTests: XCTestCase {
         context.insert(g1)
         context.insert(g2)
 
-        let content = scheduler.makeContent(activeGoals: [g1, g2])
-        XCTAssertFalse(content.body.isEmpty, "All-completed goals should still produce an inspirational message")
+        let content = scheduler.makeContent(activeGoals: [g1, g2], currentStreak: 0)
+        XCTAssertFalse(content.body.isEmpty, "All-completed goals should still produce an encouraging message")
         XCTAssertFalse(content.body.contains("\n"), "All-completed body should be message alone — no goal title newline")
-        XCTAssertTrue(NotificationScheduler.inspirationalMessages.contains(content.body),
-                      "Body should be one of the 7 inspirational messages")
+        XCTAssertTrue(NotificationScheduler.encouragingCopy.contains(content.body),
+                      "Body should be one of the encouraging copy messages (streak 0)")
     }
 
     func test_makeContent_sound_isDefault() {
-        let content = scheduler.makeContent(activeGoals: [])
+        let content = scheduler.makeContent(activeGoals: [], currentStreak: 0)
         XCTAssertEqual(content.sound, .default, "Notification sound should be default")
     }
 

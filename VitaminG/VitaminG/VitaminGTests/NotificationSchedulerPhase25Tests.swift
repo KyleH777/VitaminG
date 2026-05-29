@@ -39,58 +39,84 @@ final class NotificationSchedulerPhase25Tests: XCTestCase {
     }
 
     // MARK: - NOTIF-01: Tone Selection Tests
-    // RED until Plan 02 adds makeContent(activeGoals:currentStreak:) + copy bank statics.
 
     func test_makeContent_celebratoryCopy_whenStreakGe7() throws {
-        // RED scaffold: makeContent(activeGoals:currentStreak:) and celebratoryCopy
-        // do not exist yet — added by Plan 02.
-        // When GREEN: call scheduler.makeContent(activeGoals: [goal], currentStreak: 7)
-        // and assert content.body.hasPrefix one of NotificationScheduler.celebratoryCopy.
-        XCTFail("Plan 02 required: makeContent(activeGoals:currentStreak:) and celebratoryCopy not yet implemented")
+        let context = ModelContext(container)
+        let goal = Goal(title: "Goal A", tier: .immediate)
+        context.insert(goal)
+
+        let content = scheduler.makeContent(activeGoals: [goal], currentStreak: 7)
+        XCTAssertTrue(
+            NotificationScheduler.celebratoryCopy.contains { content.body.hasPrefix($0) },
+            "streak >= 7 should select from celebratoryCopy bank"
+        )
     }
 
     func test_makeContent_neutralBuildingCopy_whenStreak1To6() throws {
-        // RED scaffold: Plan 02 required.
-        // When GREEN: currentStreak=3, assert body prefix in neutralBuildingCopy.
-        XCTFail("Plan 02 required: makeContent(activeGoals:currentStreak:) and neutralBuildingCopy not yet implemented")
+        let context = ModelContext(container)
+        let goal = Goal(title: "Goal A", tier: .immediate)
+        context.insert(goal)
+
+        let content = scheduler.makeContent(activeGoals: [goal], currentStreak: 3)
+        XCTAssertTrue(
+            NotificationScheduler.neutralBuildingCopy.contains { content.body.hasPrefix($0) },
+            "streak 1..6 should select from neutralBuildingCopy bank"
+        )
     }
 
     func test_makeContent_encouragingCopy_whenStreak0() throws {
-        // RED scaffold: Plan 02 required.
-        // When GREEN: currentStreak=0, assert body prefix in encouragingCopy.
-        XCTFail("Plan 02 required: makeContent(activeGoals:currentStreak:) and encouragingCopy not yet implemented")
+        let context = ModelContext(container)
+        let goal = Goal(title: "Goal A", tier: .immediate)
+        context.insert(goal)
+
+        let content = scheduler.makeContent(activeGoals: [goal], currentStreak: 0)
+        XCTAssertTrue(
+            NotificationScheduler.encouragingCopy.contains { content.body.hasPrefix($0) },
+            "streak 0 should select from encouragingCopy bank"
+        )
     }
 
     // MARK: - NOTIF-02: Goal-Title Injection Tests
-    // RED until Plan 02 adds multi-goal support to makeContent.
 
     func test_makeContent_twoGoalTitles() throws {
-        // RED scaffold: Plan 02 required.
-        // When GREEN: 2 active goals "Goal A"/"Goal B", currentStreak=3.
-        // Assert content.body.contains("\nGoal A") AND content.body.contains("\nGoal B").
-        XCTFail("Plan 02 required: makeContent(activeGoals:currentStreak:) with 2-title injection not yet implemented")
+        let context = ModelContext(container)
+        let goalA = Goal(title: "Goal A", tier: .immediate)
+        let goalB = Goal(title: "Goal B", tier: .shortTerm)
+        context.insert(goalA)
+        context.insert(goalB)
+
+        let content = scheduler.makeContent(activeGoals: [goalA, goalB], currentStreak: 3)
+        XCTAssertTrue(content.body.contains("\nGoal A"), "Body should contain Goal A after tone message newline")
+        XCTAssertTrue(content.body.contains("\nGoal B"), "Body should contain Goal B as second goal title")
     }
 
     func test_makeContent_singleGoal() throws {
-        // RED scaffold: Plan 02 required.
-        // When GREEN: 1 active goal "Goal A", currentStreak=3.
-        // Assert body contains "\nGoal A" and body.components(separatedBy:"\n").count - 1 == 1.
-        XCTFail("Plan 02 required: makeContent(activeGoals:currentStreak:) single-goal body not yet implemented")
+        let context = ModelContext(container)
+        let goalA = Goal(title: "Goal A", tier: .immediate)
+        context.insert(goalA)
+
+        let content = scheduler.makeContent(activeGoals: [goalA], currentStreak: 3)
+        XCTAssertTrue(content.body.contains("\nGoal A"), "Single-goal body should contain goal title after newline")
+        let newlineCount = content.body.components(separatedBy: "\n").count - 1
+        XCTAssertEqual(newlineCount, 1, "Single-goal body should have exactly one newline (message + one title)")
     }
 
     func test_makeContent_noActiveGoals_bodyIsToneMessageOnly() throws {
-        // RED scaffold: Plan 02 required.
-        // When GREEN: empty activeGoals, currentStreak=0.
-        // Assert body equals a message from encouragingCopy exactly (no trailing newline).
-        XCTFail("Plan 02 required: makeContent(activeGoals:currentStreak:) no-goals body not yet implemented")
+        let content = scheduler.makeContent(activeGoals: [], currentStreak: 0)
+        XCTAssertTrue(
+            NotificationScheduler.encouragingCopy.contains(content.body),
+            "No-goals body should exactly match an encouragingCopy message (no trailing newline)"
+        )
+        XCTAssertFalse(content.body.contains("\n"), "No-goals body should contain no newlines")
     }
 
     // MARK: - NOTIF-04: One-Shot 7 PM Tests
-    // RED until Plan 02 adds scheduleOneShotStreakAtRisk(activeGoals:streak:pendingCount:).
+    // RED until Task 2 adds scheduleOneShotStreakAtRisk(activeGoals:streak:pendingCount:).
+    // Real assertions activated in Task 2 when the method exists.
 
     func test_schedule_oneShotStreakAtRisk_repeats_false() async throws {
-        // RED scaffold: Plan 02 required.
-        // When GREEN:
+        // Task 2 required: scheduleOneShotStreakAtRisk(activeGoals:streak:pendingCount:)
+        // GREEN implementation:
         //   await scheduler.scheduleOneShotStreakAtRisk(activeGoals: [], streak: 3, pendingCount: 0)
         //   let pending = await UNUserNotificationCenter.current().pendingNotificationRequests()
         //   let request = pending.first { $0.identifier == NotificationScheduler.globalStreakAtRiskIdentifier }
@@ -101,19 +127,19 @@ final class NotificationSchedulerPhase25Tests: XCTestCase {
         //   XCTAssertFalse(trigger.repeats, "One-shot 7 PM alert must have repeats: false")
         //   XCTAssertEqual(trigger.dateComponents.hour, 19)
         //   XCTAssertEqual(trigger.dateComponents.minute, 0)
-        XCTFail("Plan 02 required: scheduleOneShotStreakAtRisk(activeGoals:streak:pendingCount:) not yet implemented")
+        XCTFail("Task 2 required: scheduleOneShotStreakAtRisk(activeGoals:streak:pendingCount:) not yet implemented")
     }
 
     func test_schedule_oneShotSkipped_atCapBoundary() async {
-        // RED scaffold: Plan 02 required.
-        // When GREEN:
+        // Task 2 required: scheduleOneShotStreakAtRisk cap guard
+        // GREEN implementation:
         //   await scheduler.scheduleOneShotStreakAtRisk(activeGoals: [], streak: 5, pendingCount: 60)
         //   let pending = await UNUserNotificationCenter.current().pendingNotificationRequests()
         //   let nudgeAdded = pending.contains {
         //       $0.identifier == NotificationScheduler.globalStreakAtRiskIdentifier
         //   }
         //   XCTAssertFalse(nudgeAdded, "Cap guard should prevent one-shot when pendingCount >= 60")
-        XCTFail("Plan 02 required: scheduleOneShotStreakAtRisk cap guard not yet implemented")
+        XCTFail("Task 2 required: scheduleOneShotStreakAtRisk cap guard not yet implemented")
     }
 
     // MARK: - NOTIF-03: Pure Helper Tests (pass after Task 1)
