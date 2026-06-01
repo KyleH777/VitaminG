@@ -214,6 +214,9 @@ final class GoalViewModel {
         rescheduleNotification(context: context)
         reloadWidgetTimelines()
 
+        // NOTIF-03 (D-09): record check-in hour for nudge suggestion analysis. Synchronous UserDefaults write — no Task wrapper.
+        NotificationPreferences.appendCheckInHour(Calendar.current.component(.hour, from: Date()))
+
         // MILE-02: Cancel the global 7 PM streak-at-risk nudge after a successful check-in.
         // Fire-and-forget — cancellation is best-effort (T-23-04-04 mitigation).
         Task { await NotificationScheduler.shared.cancelGlobalStreakAtRiskNudge() }
@@ -364,14 +367,16 @@ final class GoalViewModel {
 
     // MARK: - Notification Rescheduling
 
-    /// Reschedules the daily notification with current active goals (NOTIF-03).
-    /// Called after every goal mutation to keep the notification body current (T-03-10).
+    /// Reschedules the daily notification with current active goals and completion events (NOTIF-03, NOTIF-04).
+    /// Called after every goal mutation to keep the notification body and streak tier current (T-03-10).
     func rescheduleNotification(context: ModelContext) {
         // #Predicate requires stored-property key paths — use isCompleted, NOT the computed wrapper `completed`.
         let descriptor = FetchDescriptor<Goal>(predicate: #Predicate { !$0.isCompleted })
         let activeGoals = (try? context.fetch(descriptor)) ?? []
+        let eventsDescriptor = FetchDescriptor<CompletionEvent>()
+        let completionEvents = (try? context.fetch(eventsDescriptor)) ?? []
         Task {
-            await NotificationScheduler.shared.reschedule(activeGoals: activeGoals, completionEvents: []) // Plan 03: wire real completionEvents
+            await NotificationScheduler.shared.reschedule(activeGoals: activeGoals, completionEvents: completionEvents)
         }
     }
 
