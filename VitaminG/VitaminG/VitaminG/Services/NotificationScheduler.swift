@@ -157,13 +157,14 @@ final class NotificationScheduler {
     ///   - activeGoals: Used to personalize the alert body with the top active goal title (D-06).
     ///   - streak: Current streak count — shown in the alert body (D-06).
     ///   - pendingCount: Injectable count for test isolation; nil fetches the real count from UNUserNotificationCenter.
-    func scheduleOneShotStreakAtRisk(activeGoals: [Goal], streak: Int, pendingCount: Int? = nil) async {
+    ///   - currentHour: Injectable hour for test isolation; nil reads the real wall-clock hour from Calendar.
+    func scheduleOneShotStreakAtRisk(activeGoals: [Goal], streak: Int, pendingCount: Int? = nil, currentHour: Int? = nil) async {
         // Pitfall 3 / Open Question 1: Skip if current hour is already past 19:00 to avoid
         // scheduling a notification that would fire the next morning instead of this evening.
-        let currentHour = Calendar.current.component(.hour, from: Date())
-        guard currentHour < 19 else {
+        let hour = currentHour ?? Calendar.current.component(.hour, from: Date())
+        guard hour < 19 else {
             #if DEBUG
-            print("[NotificationScheduler] Skipping one-shot streakAtRisk — current hour past 19:00 (\(currentHour))")
+            print("[NotificationScheduler] Skipping one-shot streakAtRisk — current hour past 19:00 (\(hour))")
             #endif
             return
         }
@@ -578,55 +579,6 @@ extension NotificationScheduler {
     /// Stable identifier for the global streak-at-risk nudge.
     /// Used for remove-before-add deduplication and cancellation on check-in.
     static let globalStreakAtRiskIdentifier = "com.kyleharrington.VitaminG.streakAtRisk.global"
-
-    /// Schedules a daily repeating 7 PM notification reminding the user to check in
-    /// if they haven't yet. Respects the iOS 64-request cap by checking pending count
-    /// before adding. Uses remove-before-add to prevent duplicate accumulation (T-23-04-04).
-    ///
-    /// Errors are silently swallowed — streak-at-risk nudge is best-effort.
-    func scheduleGlobalStreakAtRiskNudge() async {
-        await scheduleGlobalStreakAtRiskNudge(pendingCount: nil)
-    }
-
-    /// Testable overload — `pendingCount: nil` fetches the real count from UNUserNotificationCenter.
-    /// Tests inject a specific integer to verify cap guard behavior without hitting the real center.
-    func scheduleGlobalStreakAtRiskNudge(pendingCount: Int? = nil) async {
-        let center = UNUserNotificationCenter.current()
-        let count: Int
-        if let injected = pendingCount {
-            count = injected
-        } else {
-            count = await center.pendingNotificationRequests().count
-        }
-        guard count < 60 else {
-            #if DEBUG
-            print("[NotificationScheduler] Skipping globalStreakAtRisk — approaching 64-cap (\(count) pending)")
-            #endif
-            return
-        }
-        center.removePendingNotificationRequests(withIdentifiers: [Self.globalStreakAtRiskIdentifier])
-        let content = UNMutableNotificationContent()
-        content.title = "Life happened?"
-        content.body = "You haven't checked in today. Use your streak freeze to protect your streak."
-        content.sound = .default
-        content.userInfo = ["deepLink": "goalList", "source": "streakAtRisk"]
-        var components = DateComponents()
-        components.hour = 19
-        components.minute = 0
-        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
-        let request = UNNotificationRequest(
-            identifier: Self.globalStreakAtRiskIdentifier,
-            content: content,
-            trigger: trigger
-        )
-        do {
-            try await center.add(request)
-        } catch {
-            #if DEBUG
-            print("[NotificationScheduler] Failed to add globalStreakAtRisk: \(error)")
-            #endif
-        }
-    }
 
     /// Cancels the global streak-at-risk nudge. Called after any successful check-in
     /// so the user is not reminded to check in after they already have.

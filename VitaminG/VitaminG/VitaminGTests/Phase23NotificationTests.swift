@@ -18,19 +18,18 @@ final class Phase23NotificationTests: XCTestCase {
         try await super.tearDown()
     }
 
-    // MARK: - test_scheduleGlobalStreakAtRisk_respectsCapGuard
+    // MARK: - test_scheduleOneShotStreakAtRisk_respectsCapGuard
     //
-    // When pending count is already at or above 60, scheduleGlobalStreakAtRiskNudge(pendingCount:)
+    // When pending count is already at or above 60, scheduleOneShotStreakAtRisk(pendingCount:)
     // must return early and NOT attempt to add a notification.
-    // We verify this by observing that the method returns without throwing/crashing,
-    // and by testing the injected-count overload — if pendingCount >= 60, the guard fires.
-    func test_scheduleGlobalStreakAtRisk_respectsCapGuard() async {
+    // scheduleGlobalStreakAtRiskNudge was removed in Phase 25 — replaced by scheduleOneShotStreakAtRisk.
+    func test_scheduleOneShotStreakAtRisk_respectsCapGuard() async {
         // Arrange: inject a pending count of 60 (at the cap boundary)
         let scheduler = NotificationScheduler.shared
 
-        // Act: call the testable overload with pendingCount = 60
+        // Act: call with pendingCount = 60 and a fixed currentHour so the time guard doesn't fire.
         // The method should return early without adding a notification.
-        await scheduler.scheduleGlobalStreakAtRiskNudge(pendingCount: 60)
+        await scheduler.scheduleOneShotStreakAtRisk(activeGoals: [], streak: 5, pendingCount: 60, currentHour: 8)
 
         // Assert: the global streak-at-risk notification should NOT be pending
         // (because the cap guard fired and we returned early — no center.add was called)

@@ -113,7 +113,8 @@ final class NotificationSchedulerPhase25Tests: XCTestCase {
     // MARK: - NOTIF-04: One-Shot 7 PM Tests
 
     func test_schedule_oneShotStreakAtRisk_repeats_false() async throws {
-        await scheduler.scheduleOneShotStreakAtRisk(activeGoals: [], streak: 3, pendingCount: 0)
+        // Pass currentHour: 8 so the time-of-day guard never fires regardless of wall-clock time (WR-02).
+        await scheduler.scheduleOneShotStreakAtRisk(activeGoals: [], streak: 3, pendingCount: 0, currentHour: 8)
 
         let pending = await UNUserNotificationCenter.current().pendingNotificationRequests()
         let request = pending.first { $0.identifier == NotificationScheduler.globalStreakAtRiskIdentifier }
@@ -127,7 +128,8 @@ final class NotificationSchedulerPhase25Tests: XCTestCase {
     }
 
     func test_schedule_oneShotSkipped_atCapBoundary() async {
-        await scheduler.scheduleOneShotStreakAtRisk(activeGoals: [], streak: 5, pendingCount: 60)
+        // Pass currentHour: 8 so the time guard doesn't fire — only cap guard should prevent scheduling (WR-02).
+        await scheduler.scheduleOneShotStreakAtRisk(activeGoals: [], streak: 5, pendingCount: 60, currentHour: 8)
 
         let pending = await UNUserNotificationCenter.current().pendingNotificationRequests()
         let nudgeAdded = pending.contains {
