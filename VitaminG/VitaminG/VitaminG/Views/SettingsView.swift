@@ -223,7 +223,9 @@ struct SettingsView: View {
             // Load or create the user profile for the Privacy toggle (Pitfall 7)
             profileVM.loadOrCreateProfile(context: modelContext)
             // NOTIF-03: compute modal check-in hour and show suggestion banner if warranted.
-            if !NotificationPreferences.nudgeSuggestionDismissed,
+            // Requires >= 14 history entries (D-10) to ensure the modal is statistically meaningful.
+            if NotificationPreferences.checkInHourHistory().count >= 14,
+               !NotificationPreferences.nudgeSuggestionDismissed,
                let modal = NotificationPreferences.modalCheckInHour() {
                 let currentHour = NotificationPreferences.hour
                 if abs(modal - currentHour) >= 2 {
