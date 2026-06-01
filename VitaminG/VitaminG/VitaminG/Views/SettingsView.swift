@@ -52,6 +52,10 @@ struct SettingsView: View {
     /// Full authorization status so the UI can distinguish notDetermined / denied / authorized.
     @State private var authStatus: UNAuthorizationStatus = .notDetermined
 
+    /// NOTIF-03: true when modalCheckInHour differs from current hour by >= 2 and not yet dismissed.
+    @State private var showNudgeSuggestion: Bool = false
+    @State private var suggestedHour: Int = 0
+
     /// ProfileViewModel for Privacy toggle — loads/creates profile in .onAppear (Pitfall 7).
     @State private var profileVM = ProfileViewModel()
 
@@ -103,6 +107,12 @@ struct SettingsView: View {
             }
 
             Section("Daily Reminder") {
+                // NOTIF-03: suggestion banner — shown when modal check-in hour differs from
+                // current reminder hour by >= 2 and the user has not yet dismissed it.
+                if showNudgeSuggestion {
+                    nudgeSuggestionBanner
+                }
+
                 DatePicker(
                     "Reminder Time",
                     selection: $notificationTime,
@@ -113,11 +123,9 @@ struct SettingsView: View {
                     let components = Calendar.current.dateComponents([.hour, .minute], from: newValue)
                     let hour = components.hour ?? NotificationPreferences.defaultHour
                     let minute = components.minute ?? NotificationPreferences.defaultMinute
-                    // Persist to both standard and App Group UserDefaults (NOTIF-06, D-06)
                     NotificationPreferences.save(hour: hour, minute: minute)
-                    // Reschedule immediately with updated time (NOTIF-06, NOTIF-03)
                     Task {
-                        await NotificationScheduler.shared.reschedule(activeGoals: Array(activeGoals), completionEvents: []) // Plan 03: wire real completionEvents
+                        await NotificationScheduler.shared.reschedule(activeGoals: Array(activeGoals), completionEvents: Array(allEvents))
                     }
                 }
 
@@ -214,6 +222,15 @@ struct SettingsView: View {
             )
             // Load or create the user profile for the Privacy toggle (Pitfall 7)
             profileVM.loadOrCreateProfile(context: modelContext)
+            // NOTIF-03: compute modal check-in hour and show suggestion banner if warranted.
+            if !NotificationPreferences.nudgeSuggestionDismissed,
+               let modal = NotificationPreferences.modalCheckInHour() {
+                let currentHour = NotificationPreferences.hour
+                if abs(modal - currentHour) >= 2 {
+                    suggestedHour = modal
+                    showNudgeSuggestion = true
+                }
+            }
         }
         .task {
             await refreshAuthStatus()
@@ -232,7 +249,7 @@ struct SettingsView: View {
                     let granted = await NotificationScheduler.shared.requestAuthorization()
                     authStatus = granted ? .authorized : .denied
                     if granted {
-                        await NotificationScheduler.shared.reschedule(activeGoals: Array(activeGoals), completionEvents: []) // Plan 03: wire real completionEvents
+                        await NotificationScheduler.shared.reschedule(activeGoals: Array(activeGoals), completionEvents: Array(allEvents))
                     }
                 }
             }
@@ -259,6 +276,60 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
             }
         }
+    }
+
+    // MARK: - Nudge Suggestion Banner
+
+    /// NOTIF-03: inline banner prompting the user to shift their reminder to their modal check-in hour.
+    @ViewBuilder
+    private var nudgeSuggestionBanner: some View {
+        let formattedHour: String = {
+            var components = DateComponents()
+            components.hour = suggestedHour
+            components.minute = 0
+            let date = Calendar.current.date(from: components) ?? Date()
+            return date.formatted(date: .omitted, time: .shortened)
+        }()
+
+        HStack(alignment: .top, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Suggested Time")
+                    .font(.subheadline.bold())
+                Text("You usually check in around \(formattedHour). Switch your reminder to match?")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            VStack(spacing: 6) {
+                Button("Apply") {
+                    // Write the new hour (minute stays 0), update the picker, reschedule, dismiss.
+                    NotificationPreferences.save(hour: suggestedHour, minute: 0)
+                    var comps = DateComponents()
+                    comps.hour = suggestedHour
+                    comps.minute = 0
+                    notificationTime = Calendar.current.date(from: comps) ?? notificationTime
+                    NotificationPreferences.markNudgeSuggestionDismissed()
+                    showNudgeSuggestion = false
+                    Task {
+                        await NotificationScheduler.shared.reschedule(activeGoals: Array(activeGoals), completionEvents: Array(allEvents))
+                    }
+                }
+                .font(.footnote.bold())
+                .buttonStyle(.borderedProminent)
+                .tint(VGTheme.accentTerra)
+
+                Button {
+                    NotificationPreferences.markNudgeSuggestionDismissed()
+                    showNudgeSuggestion = false
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.vertical, 4)
     }
 
     // MARK: - Helpers
