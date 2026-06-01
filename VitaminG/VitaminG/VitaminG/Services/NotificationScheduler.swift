@@ -195,7 +195,11 @@ final class NotificationScheduler {
             .filter { !$0.isEmpty }
             .first
         if let topTitle {
-            content.body = "Your \(topTitle) streak is at risk — check in to keep your \(streak)-day run alive."
+            if streak > 0 {
+                content.body = "Your \(topTitle) streak is at risk — check in to keep your \(streak)-day run alive."
+            } else {
+                content.body = "You haven't started your \(topTitle) streak yet — check in today."
+            }
         } else {
             content.body = "You haven't checked in today — keep your streak alive."
         }
