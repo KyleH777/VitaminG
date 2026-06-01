@@ -45,7 +45,7 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
 
 ### v3.0 Personal Intelligence + Apple Watch
 
-- [ ] **Phase 25: Smart Notifications Enhancement** - Tone-adaptive notifications, goal-title personalization, streak-at-risk evening alert, send-time suggestion banner
+- [x] **Phase 25: Smart Notifications Enhancement** - Tone-adaptive notifications, goal-title personalization, streak-at-risk evening alert, send-time suggestion banner
 - [ ] **Phase 26: Analytics Dashboard** - Completion rate trends chart (Swift Charts), all-time goal heatmap, CSV export via ShareLink
 - [ ] **Phase 27: Apple Watch App** - accessoryRectangular complication with goal + progress ring, check-in from wrist via WCSession.transferUserInfo
 - [ ] **Phase 28: AI (Claude) Integration** - Cloudflare Worker proxy, goal suggestions card on Explore tab, personalized daily motivation on Home tab
@@ -306,15 +306,15 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 25-01-PLAN.md — Wave 0 scaffolding: NotificationPreferences keys (checkInHourHistory, nudgeSuggestionDismissed) + helpers (appendCheckInHour, modalCheckInHour, markNudgeSuggestionDismissed) + RED test file NotificationSchedulerPhase25Tests (NOTIF-01, NOTIF-02, NOTIF-03, NOTIF-04)
+- [x] 25-01-PLAN.md — Wave 0 scaffolding: NotificationPreferences keys (checkInHourHistory, nudgeSuggestionDismissed) + helpers (appendCheckInHour, modalCheckInHour, markNudgeSuggestionDismissed) + RED test file NotificationSchedulerPhase25Tests (NOTIF-01, NOTIF-02, NOTIF-03, NOTIF-04)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 25-02-PLAN.md — NotificationScheduler signature migration: three tone copy banks + makeContent(activeGoals:currentStreak:) + schedule/reschedule (activeGoals:completionEvents:) + scheduleOneShotStreakAtRisk with cap guard + evening-skip guard (NOTIF-01, NOTIF-02, NOTIF-04)
+- [x] 25-02-PLAN.md — NotificationScheduler signature migration: three tone copy banks + makeContent(activeGoals:currentStreak:) + schedule/reschedule (activeGoals:completionEvents:) + scheduleOneShotStreakAtRisk with cap guard + evening-skip guard (NOTIF-01, NOTIF-02, NOTIF-04)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 25-03-PLAN.md — Cascade + UI: GoalViewModel addCheckIn hour append + dual fetch in rescheduleNotification + VitaminGApp launch reschedule update + SettingsView nudge suggestion banner + human verify (NOTIF-03, NOTIF-04)
+- [x] 25-03-PLAN.md — Cascade + UI: GoalViewModel addCheckIn hour append + dual fetch in rescheduleNotification + VitaminGApp launch reschedule update + SettingsView nudge suggestion banner + human verify (NOTIF-03, NOTIF-04)
 
 ### Phase 26: Analytics Dashboard
 
