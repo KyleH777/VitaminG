@@ -228,7 +228,9 @@ struct SettingsView: View {
                !NotificationPreferences.nudgeSuggestionDismissed,
                let modal = NotificationPreferences.modalCheckInHour() {
                 let currentHour = NotificationPreferences.hour
-                if abs(modal - currentHour) >= 2 {
+                let diff = abs(modal - currentHour)
+                let circularDiff = min(diff, 24 - diff)
+                if circularDiff >= 2 {
                     suggestedHour = modal
                     showNudgeSuggestion = true
                 }
