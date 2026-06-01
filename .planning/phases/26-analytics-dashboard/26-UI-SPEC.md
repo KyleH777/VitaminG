@@ -39,24 +39,25 @@ Declared values (must be multiples of 4):
 | xs | 4px | Icon gaps, badge padding, cell gutter between heatmap cells |
 | sm | 8px | Inline element spacing (HStack spacing), button label gap |
 | md | 16px | Default section padding (`.padding(.horizontal, 16)`), card internal padding |
-| lg | 24px | Vertical padding for full-bleed sections |
+| lg | 24px | Vertical padding for full-bleed sections; ScrollView VStack spacing |
 | xl | 32px | Major section breaks inside ScrollView |
 | 2xl | 48px | Not used in this phase |
 | 3xl | 64px | Not used in this phase |
 
+2 weight tiers declared: Regular and Heavy.
+
 ### Inherited Non-Standard Values
 
-The following values are **not** new design tokens and must not be generalised beyond their specific contexts:
+The following values are **layout constants (not tokens)** and must not be generalised beyond their specific contexts:
 
 | Value | Context | Reason for Exception |
 |-------|---------|----------------------|
 | 3 pt | `LazyHStack` column spacing in `AllTimeHeatmapView` | Pixel-exact copy of the existing `HeatmapView.swift` grid spacing. Changing this value would break visual consistency with the 90-day heatmap that appears on the same Stats screen. |
 | 3 pt | Heatmap cell gap (`VStack(spacing: 3)` inside each week column) | Same source — verbatim from `HeatmapView.swift` cell/gap dimensions. |
 
-These two 3 pt values are inherited for visual consistency with the existing heatmap component. They are not a new spacing token. The planner must not introduce any additional 3 pt spacings beyond these two carried-over values.
+These values do not enter the design token system. They are hardcoded constants inherited from the existing HeatmapView.swift implementation. Executors must copy them as literals, not introduce them as new spacing tokens.
 
 Additional non-standard exceptions:
-- `AnalyticsView` ScrollView VStack spacing: 20 pt (matches `StatsView` pattern — source: StatsView.swift line 22).
 - Card corner radius: 16 pt for list rows, 20 pt for full-width gradient cards (matches StatsView globalStreakCard).
 - Chart height: 180 pt (taller than GoalDetailView's 80 pt; analytics chart warrants more vertical space).
 - Touch targets: minimum 44×44 pt for all tappable goal list rows and export buttons.
@@ -73,12 +74,14 @@ All text uses the system font with `.fontDesign(.rounded)` unless noted as serif
 
 | Role | SwiftUI Modifier | Approx Size | Weight | Line Height |
 |------|-----------------|-------------|--------|-------------|
-| Display Number (streak count) | `.font(.system(size: 28, weight: .bold, design: .rounded))` | 28 pt | Bold (700) | 1.0 |
-| Section Heading | `.font(.title3.weight(.semibold)).fontDesign(.rounded)` | 20 pt | Semibold (600) | 1.2 |
+| Display Number (streak count) | `.font(.system(size: 28, weight: .bold, design: .rounded))` | 28 pt | Heavy (600–700) | 1.0 |
+| Section Heading | `.font(.title3.weight(.semibold)).fontDesign(.rounded)` | 20 pt | Heavy (600–700) | 1.2 |
 | Body / Goal Row Label | `.font(.body).fontDesign(.rounded)` | 17 pt | Regular (400) | 1.5 |
 | Caption / Axis Label | `.font(.caption).fontDesign(.rounded)` | 12 pt | Regular (400) | 1.4 |
 
-Exactly 4 size roles declared. 2 weights used: Regular (400) and Bold/Semibold (600–700).
+Exactly 4 size roles declared. 2 weight tiers declared: Regular (400) and Heavy (600–700).
+
+The Heavy tier uses `.semibold` for hierarchy (section headings) and `.bold` for display emphasis (streak count) — both fall within the single Heavy weight tier and are matched to SwiftUI semantic font modifiers.
 
 Chart axis labels (X-axis bucket labels, Y-axis percent ticks): `.font(.caption)` via Swift Charts `AxisValueLabel` — 12 pt, regular weight.
 
@@ -143,7 +146,7 @@ Modified components:
 ```
 NavigationTitle: "Analytics" (.large)
 ScrollView(.vertical)
-  VStack(spacing: 20)
+  VStack(spacing: 24)
     ├── Completion Rate Card          [gradient header, 180pt chart, segmented control]
     │     ├── Section title: "Completion Rate"    (.title3.semibold.rounded)
     │     ├── Picker: Weekly | Monthly             (.segmented style)
@@ -160,9 +163,11 @@ ScrollView(.vertical)
           Label("Export All Data", systemImage: "square.and.arrow.up")
           .font(.body.weight(.semibold)).fontDesign(.rounded)
   .padding(.horizontal, 16)
-  .padding(.vertical, 20)
+  .padding(.vertical, 24)
 .background(Color(UIColor.systemGroupedBackground))
 ```
+
+ScrollView VStack spacing: 24pt (lg token) — StatsView uses 20pt but that was set before this token system; new views default to lg.
 
 ### GoalAllTimeHeatmapView Layout
 
@@ -197,6 +202,8 @@ ScrollViewReader { proxy in
   .onAppear { proxy.scrollTo(weeks.count - 1, anchor: .trailing) }
 }
 ```
+
+Note: The `spacing: 3` values in `LazyHStack` and `VStack` above are layout constants inherited from `HeatmapView.swift`, not design tokens. See "Inherited Non-Standard Values" in the Spacing Scale section.
 
 ---
 
