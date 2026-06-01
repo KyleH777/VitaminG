@@ -133,7 +133,7 @@ struct SettingsView: View {
             }
 
             Section {
-                Text("Your notification will include up to 3 of your active goal titles as a daily reminder.")
+                Text("Your notification will include up to 2 of your active goal titles as a daily reminder.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }

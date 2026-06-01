@@ -8,7 +8,7 @@ import Foundation
 /// Design constraints (NOTIF-02 through NOTIF-07):
 /// - Single identifier pattern — remove before re-add — stays within iOS 64-request cap (NOTIF-05)
 /// - UNCalendarNotificationTrigger with repeats: true fires daily at user-selected time (NOTIF-02, NOTIF-04)
-/// - Notification body contains up to 3 active (non-completed) goal titles (NOTIF-03)
+/// - Notification body contains up to 2 active (non-completed) goal titles (NOTIF-03)
 /// - deepLink userInfo key enables deep-link routing on notification tap (NOTIF-07)
 /// - UserDefaults keys "notificationHour"/"notificationMinute" store user's chosen time (NOTIF-06)
 /// - Hour clamped to 0-23, minute clamped to 0-59 (T-03-08: tamper mitigation)
