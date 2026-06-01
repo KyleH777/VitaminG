@@ -327,7 +327,21 @@ Plans:
   2. User taps any goal and sees a full all-time GitHub-style heatmap from that goal's creation date to today; the heatmap scrolls horizontally without stutter for 1000+ days because it uses LazyHStack virtualization
   3. User taps Export on the Analytics view, selects a destination (Files, Mail, or any share-sheet recipient), and receives a well-formed CSV file containing every CompletionEvent — goal name, date, tier — with no truncation even for large histories
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 26-01-PLAN.md — Wave 0 test scaffolding + CSVExportService + AppRoute.analytics case (ANLT-04, ANLT-02, ANLT-03)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 26-02-PLAN.md — AnalyticsViewModel: completionRateBuckets, heatmapDataByGoal, allGoals; turns Phase26AnalyticsViewModelTests RED stubs GREEN (ANLT-02, ANLT-03)
+
+**Wave 3** *(blocked on Waves 1+2 completion)*
+
+- [ ] 26-03-PLAN.md — Views + navigation wiring: AllTimeHeatmapView, GoalAllTimeHeatmapView, AnalyticsView, StatsView nav row, ContentView destination; human verify (ANLT-02, ANLT-03, ANLT-04)
+
 **UI hint**: yes
 
 ### Phase 27: Apple Watch App
@@ -388,6 +402,6 @@ Plans:
 | 23. Milestone Features + Streak Freeze | v2.0 | 4/4 | Complete    | 2026-05-26 |
 | 24. Widget Enhancements | v2.0 | 3/3 | Complete    | 2026-05-28 |
 | 25. Smart Notifications Enhancement | v3.0 | 0/3 | Not started | - |
-| 26. Analytics Dashboard | v3.0 | 0/? | Not started | - |
+| 26. Analytics Dashboard | v3.0 | 0/3 | Not started | - |
 | 27. Apple Watch App | v3.0 | 0/? | Not started | - |
 | 28. AI (Claude) Integration | v3.0 | 0/? | Not started | - |
