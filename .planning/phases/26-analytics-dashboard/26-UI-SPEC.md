@@ -44,9 +44,18 @@ Declared values (must be multiples of 4):
 | 2xl | 48px | Not used in this phase |
 | 3xl | 64px | Not used in this phase |
 
-Exceptions:
-- Heatmap cell size: 12×12 pt (matches existing `HeatmapView` cell). Cell spacing: 3 pt (matches existing pattern).
-- `LazyHStack` column spacing: 3 pt (same as `HeatmapView` grid spacing).
+### Inherited Non-Standard Values
+
+The following values are **not** new design tokens and must not be generalised beyond their specific contexts:
+
+| Value | Context | Reason for Exception |
+|-------|---------|----------------------|
+| 3 pt | `LazyHStack` column spacing in `AllTimeHeatmapView` | Pixel-exact copy of the existing `HeatmapView.swift` grid spacing. Changing this value would break visual consistency with the 90-day heatmap that appears on the same Stats screen. |
+| 3 pt | Heatmap cell gap (`VStack(spacing: 3)` inside each week column) | Same source — verbatim from `HeatmapView.swift` cell/gap dimensions. |
+
+These two 3 pt values are inherited for visual consistency with the existing heatmap component. They are not a new spacing token. The planner must not introduce any additional 3 pt spacings beyond these two carried-over values.
+
+Additional non-standard exceptions:
 - `AnalyticsView` ScrollView VStack spacing: 20 pt (matches `StatsView` pattern — source: StatsView.swift line 22).
 - Card corner radius: 16 pt for list rows, 20 pt for full-width gradient cards (matches StatsView globalStreakCard).
 - Chart height: 180 pt (taller than GoalDetailView's 80 pt; analytics chart warrants more vertical space).
@@ -60,13 +69,14 @@ Exceptions:
 
 All text uses the system font with `.fontDesign(.rounded)` unless noted as serif. This matches the established pattern in StatsView and GoalDetailView.
 
+> **Navigation title size is system-controlled.** SwiftUI's `.navigationTitle("Analytics")` with `.navigationBarTitleDisplayMode(.large)` renders the large navigation title at approximately 34 pt bold. This size is not a manually declared design token — it is set entirely by the OS and cannot be overridden without using custom navigation bar appearance APIs. It is therefore excluded from the app's design scale below.
+
 | Role | SwiftUI Modifier | Approx Size | Weight | Line Height |
 |------|-----------------|-------------|--------|-------------|
-| Navigation Title | `.navigationTitle` + `.navigationBarTitleDisplayMode(.large)` | 34 pt | Bold (700) | 1.2 |
+| Display Number (streak count) | `.font(.system(size: 28, weight: .bold, design: .rounded))` | 28 pt | Bold (700) | 1.0 |
 | Section Heading | `.font(.title3.weight(.semibold)).fontDesign(.rounded)` | 20 pt | Semibold (600) | 1.2 |
 | Body / Goal Row Label | `.font(.body).fontDesign(.rounded)` | 17 pt | Regular (400) | 1.5 |
 | Caption / Axis Label | `.font(.caption).fontDesign(.rounded)` | 12 pt | Regular (400) | 1.4 |
-| Display Number (streak count) | `.font(.system(size: 28, weight: .bold, design: .rounded))` | 28 pt | Bold (700) | 1.0 |
 
 Exactly 4 size roles declared. 2 weights used: Regular (400) and Bold/Semibold (600–700).
 
@@ -125,6 +135,8 @@ Modified components:
 ---
 
 ## Layout Specification
+
+**Primary focal point:** Completion Rate card (gradient header + BarMark chart) — positioned first in scroll order; gradient header distinguishes it from all other sections.
 
 ### AnalyticsView Layout
 
