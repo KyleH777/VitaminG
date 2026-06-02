@@ -43,7 +43,10 @@ struct CSVExportService {
     /// - Returns: A CSV string. First line is always the header row. Rows are sorted by
     ///            completedAt ascending.
     static func buildGoalCSV(goal: Goal, events: [CompletionEvent], frozenDates: [Date]) -> String {
-        let filtered = events.filter { $0.goal === goal }
+        // Use value equality on goal.id rather than reference identity (===) to guard
+        // against cross-context mismatches that occur when events and goal are fetched
+        // from different ModelContext instances (e.g., after a CloudKit sync refresh).
+        let filtered = events.filter { $0.goal?.id == goal.id }
         return buildRows(events: filtered, frozenDates: frozenDates)
     }
 
@@ -87,8 +90,19 @@ private extension String {
     /// Wraps the string in double-quotes and escapes any embedded double-quotes
     /// per RFC 4180 (each " becomes "").
     /// Apply to any field that may contain commas, quotes, or newlines.
+    ///
+    /// Newlines (\r\n, \r, \n) are replaced with a space before quoting because
+    /// virtually every spreadsheet application interprets an embedded newline inside
+    /// a quoted field as a literal record break — splitting one row into multiple rows
+    /// and corrupting the exported data, even though RFC 4180 §2.6 technically permits it.
     var csvEscaped: String {
-        let escaped = replacingOccurrences(of: "\"", with: "\"\"")
+        // Strip CR and LF before quoting — spreadsheet apps treat embedded
+        // newlines as record breaks even inside quoted fields.
+        let sanitized = self
+            .replacingOccurrences(of: "\r\n", with: " ")
+            .replacingOccurrences(of: "\r", with: " ")
+            .replacingOccurrences(of: "\n", with: " ")
+        let escaped = sanitized.replacingOccurrences(of: "\"", with: "\"\"")
         return "\"\(escaped)\""
     }
 }
