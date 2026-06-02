@@ -17,7 +17,7 @@ struct GoalAllTimeHeatmapView: View {
     /// Streak-freeze dates — used for is_frozen column in per-goal CSV export.
     let frozenDates: [Date]
 
-    /// All events — filtered inside buildGoalCSV using identity (===).
+    /// All events — filtered inside buildGoalCSV using goal.id equality.
     @Query private var events: [CompletionEvent]
 
     // MARK: - Start Date
@@ -32,7 +32,10 @@ struct GoalAllTimeHeatmapView: View {
             .min() {
             return earliest
         }
-        return Calendar.current.date(byAdding: .day, value: -90, to: Date())!
+        // Safe fallback — if calendar arithmetic fails, use a fixed 90-day offset
+        // rather than force-unwrapping and crashing on a corrupted calendar/locale.
+        return Calendar.current.date(byAdding: .day, value: -90, to: Date())
+            ?? Date(timeIntervalSinceNow: -90 * 86400)
     }
 
     // MARK: - Body
@@ -79,7 +82,15 @@ struct GoalAllTimeHeatmapView: View {
 
     private var perGoalExportButton: some View {
         let dateStamp = Date().formatted(.iso8601.year().month().day())
-        let goalTitle = goal.title ?? "goal"
+        // Sanitize goal title for use in a filename: replace path-separator characters
+        // and strip control characters that are illegal in file names on iOS and Windows.
+        // A raw title like "Finance / Budget" would produce a broken path component
+        // on many share destinations, silently truncating the filename.
+        let safeTitle = (goal.title ?? "goal")
+            .replacingOccurrences(of: "/", with: "-")
+            .replacingOccurrences(of: ":", with: "-")
+            .components(separatedBy: .controlCharacters).joined(separator: "")
+            .trimmingCharacters(in: .whitespaces)
         let csvContent = CSVExportService.buildGoalCSV(
             goal: goal,
             events: Array(events),
@@ -89,7 +100,7 @@ struct GoalAllTimeHeatmapView: View {
         return ShareLink(
             item: csvContent,
             preview: SharePreview(
-                "vitamin-g-\(goalTitle)-\(dateStamp).csv",
+                "vitamin-g-\(safeTitle)-\(dateStamp).csv",
                 image: Image(systemName: "doc.text")
             )
         ) {
