@@ -332,11 +332,11 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 26-01-PLAN.md — Wave 0 test scaffolding + CSVExportService + AppRoute.analytics case (ANLT-04, ANLT-02, ANLT-03)
+- [x] 26-01-PLAN.md — Wave 0 test scaffolding + CSVExportService + AppRoute.analytics case (ANLT-04, ANLT-02, ANLT-03)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 26-02-PLAN.md — AnalyticsViewModel: completionRateBuckets, heatmapDataByGoal, allGoals; turns Phase26AnalyticsViewModelTests RED stubs GREEN (ANLT-02, ANLT-03)
+- [x] 26-02-PLAN.md — AnalyticsViewModel: completionRateBuckets, heatmapDataByGoal, allGoals; turns Phase26AnalyticsViewModelTests RED stubs GREEN (ANLT-02, ANLT-03)
 
 **Wave 3** *(blocked on Waves 1+2 completion)*
 
@@ -402,6 +402,6 @@ Plans:
 | 23. Milestone Features + Streak Freeze | v2.0 | 4/4 | Complete    | 2026-05-26 |
 | 24. Widget Enhancements | v2.0 | 3/3 | Complete    | 2026-05-28 |
 | 25. Smart Notifications Enhancement | v3.0 | 0/3 | Not started | - |
-| 26. Analytics Dashboard | v3.0 | 0/3 | Not started | - |
+| 26. Analytics Dashboard | v3.0 | 2/3 | In Progress|  |
 | 27. Apple Watch App | v3.0 | 0/? | Not started | - |
 | 28. AI (Claude) Integration | v3.0 | 0/? | Not started | - |
