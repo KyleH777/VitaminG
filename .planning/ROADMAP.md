@@ -46,7 +46,7 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
 ### v3.0 Personal Intelligence + Apple Watch
 
 - [x] **Phase 25: Smart Notifications Enhancement** - Tone-adaptive notifications, goal-title personalization, streak-at-risk evening alert, send-time suggestion banner
-- [ ] **Phase 26: Analytics Dashboard** - Completion rate trends chart (Swift Charts), all-time goal heatmap, CSV export via ShareLink
+- [x] **Phase 26: Analytics Dashboard** - Completion rate trends chart (Swift Charts), all-time goal heatmap, CSV export via ShareLink (completed 2026-06-02)
 - [ ] **Phase 27: Apple Watch App** - accessoryRectangular complication with goal + progress ring, check-in from wrist via WCSession.transferUserInfo
 - [ ] **Phase 28: AI (Claude) Integration** - Cloudflare Worker proxy, goal suggestions card on Explore tab, personalized daily motivation on Home tab
 
@@ -340,7 +340,7 @@ Plans:
 
 **Wave 3** *(blocked on Waves 1+2 completion)*
 
-- [ ] 26-03-PLAN.md — Views + navigation wiring: AllTimeHeatmapView, GoalAllTimeHeatmapView, AnalyticsView, StatsView nav row, ContentView destination; human verify (ANLT-02, ANLT-03, ANLT-04)
+- [x] 26-03-PLAN.md — Views + navigation wiring: AllTimeHeatmapView, GoalAllTimeHeatmapView, AnalyticsView, StatsView nav row, ContentView destination; human verify (ANLT-02, ANLT-03, ANLT-04)
 
 **UI hint**: yes
 
@@ -402,6 +402,6 @@ Plans:
 | 23. Milestone Features + Streak Freeze | v2.0 | 4/4 | Complete    | 2026-05-26 |
 | 24. Widget Enhancements | v2.0 | 3/3 | Complete    | 2026-05-28 |
 | 25. Smart Notifications Enhancement | v3.0 | 0/3 | Not started | - |
-| 26. Analytics Dashboard | v3.0 | 2/3 | In Progress|  |
+| 26. Analytics Dashboard | v3.0 | 3/3 | Complete   | 2026-06-02 |
 | 27. Apple Watch App | v3.0 | 0/? | Not started | - |
 | 28. AI (Claude) Integration | v3.0 | 0/? | Not started | - |
