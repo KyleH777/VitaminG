@@ -18,10 +18,16 @@ struct AllTimeHeatmapView: View {
 
     // MARK: - Week Column Builder
 
+    /// Cached week columns — computed once in .onAppear and stored in @State so the
+    /// full date-arithmetic loop does not run on every LazyHStack render pass.
+    /// `nil` before the view first appears; uses buildWeeks() as a synchronous fallback
+    /// for the brief window between init and onAppear (e.g., snapshot tests).
+    @State private var cachedWeeks: [[Date]]? = nil
+
     /// Builds an array of week-columns from startDate through today.
     /// Each column is an array of up to 7 Date values (Sunday–Saturday or Monday–Sunday
     /// depending on locale; we use weekOfYear interval which respects the device locale).
-    private var weeks: [[Date]] {
+    private func buildWeeks() -> [[Date]] {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
 
@@ -43,6 +49,7 @@ struct AllTimeHeatmapView: View {
     // MARK: - Body
 
     var body: some View {
+        let weeks = cachedWeeks ?? buildWeeks()
         ScrollViewReader { proxy in
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(alignment: .top, spacing: 3) {
@@ -58,6 +65,10 @@ struct AllTimeHeatmapView: View {
                 .padding(.horizontal, 8)
             }
             .onAppear {
+                // Populate the cache on first appear so subsequent re-renders skip the loop.
+                if cachedWeeks == nil {
+                    cachedWeeks = buildWeeks()
+                }
                 // Scroll to the last (most recent) week column.
                 proxy.scrollTo(weeks.count - 1, anchor: .trailing)
             }
