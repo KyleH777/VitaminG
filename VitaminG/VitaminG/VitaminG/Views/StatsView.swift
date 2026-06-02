@@ -14,6 +14,11 @@ struct StatsView: View {
     @Query private var goals: [Goal]
 
     @State private var viewModel = StatsViewModel()
+    // NOTE (WR-04): StatsView and AnalyticsView each hold an independent StreakFreezeService
+    // instance. Both read/write the same UserDefaults suite, so a freeze applied here is
+    // persisted, but AnalyticsView's instance won't reflect it until its next onAppear.
+    // The two frozenDates arrays can transiently diverge within the same navigation session.
+    // Full fix: lift StreakFreezeService to a shared @Environment object at the NavigationStack root.
     @State private var freezeService = StreakFreezeService()
     @State private var showFreezeConfirmation = false
 
@@ -38,10 +43,13 @@ struct StatsView: View {
         .onAppear {
             viewModel.refresh(events: events, goals: goals, frozenDates: freezeService.frozenDates)
         }
-        .onChange(of: events.count) {
+        // Track the full array of IDs rather than just .count to detect in-place mutations
+        // (e.g., a completedAt date correction or a goal title update) that don't change
+        // the collection size but do change what the stats display.
+        .onChange(of: events.map(\.id)) {
             viewModel.refresh(events: events, goals: goals, frozenDates: freezeService.frozenDates)
         }
-        .onChange(of: goals.count) {
+        .onChange(of: goals.map(\.id)) {
             viewModel.refresh(events: events, goals: goals, frozenDates: freezeService.frozenDates)
         }
     }
