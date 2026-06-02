@@ -16,6 +16,7 @@ struct ContentView: View {
                         switch route {
                         case .stats: StatsView()
                         case .wins: DailyWinsView()
+                        case .analytics: AnalyticsView()
                         default: EmptyView()
                         }
                     }
