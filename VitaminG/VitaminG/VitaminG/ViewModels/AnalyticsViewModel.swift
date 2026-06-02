@@ -45,6 +45,12 @@ final class AnalyticsViewModel {
     /// All goals provided to the last refresh call (active and completed — D-08).
     var allGoals: [Goal] = []
 
+    /// Pre-built global CSV string for ShareLink export.
+    /// Built inside refresh() so it is always in sync with the latest events/goals snapshot
+    /// and is never computed during a SwiftUI body re-render (MVVM constraint — no business
+    /// logic in Views). Empty string until the first refresh call completes.
+    private(set) var globalCSVContent: String = ""
+
     // MARK: - Refresh
 
     /// Recomputes all analytics state from raw SwiftData arrays.
@@ -68,6 +74,14 @@ final class AnalyticsViewModel {
             )
         }
         heatmapDataByGoal = byGoal
+
+        // Build global CSV here (not in the View) so the content is always current
+        // and never computed during a body re-render.
+        globalCSVContent = CSVExportService.buildGlobalCSV(
+            events: events,
+            goals: goals,
+            frozenDates: frozenDates
+        )
     }
 
     // MARK: - Heatmap Start Date
@@ -87,7 +101,10 @@ final class AnalyticsViewModel {
             .min() {
             return earliest
         }
-        return Calendar.current.date(byAdding: .day, value: -90, to: Date())!
+        // Safe fallback — if calendar arithmetic fails, use a fixed 90-day offset
+        // rather than force-unwrapping and crashing on a corrupted calendar/locale.
+        return Calendar.current.date(byAdding: .day, value: -90, to: Date())
+            ?? Date(timeIntervalSinceNow: -90 * 86400)
     }
 
     // MARK: - Weekly Bucket Builder

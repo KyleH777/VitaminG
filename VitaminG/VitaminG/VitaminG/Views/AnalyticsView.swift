@@ -20,6 +20,12 @@ struct AnalyticsView: View {
     // MARK: - State
 
     @State private var viewModel = AnalyticsViewModel()
+    // NOTE (WR-04): AnalyticsView and StatsView each hold an independent StreakFreezeService
+    // instance. Both read/write the same UserDefaults suite, so a freeze applied in StatsView
+    // is persisted, but this view's in-memory instance won't reflect it until its next onAppear.
+    // The two frozenDates arrays can transiently diverge within the same navigation session,
+    // which means a CSV exported here could omit a freeze that StatsView just recorded.
+    // Full fix: lift StreakFreezeService to a shared @Environment object at the NavigationStack root.
     @State private var freezeService = StreakFreezeService()
     @State private var granularity: ChartGranularity = .weekly
 
@@ -41,10 +47,13 @@ struct AnalyticsView: View {
         .onAppear {
             viewModel.refresh(events: events, goals: goals, frozenDates: freezeService.frozenDates)
         }
-        .onChange(of: events.count) {
+        // Track the full array of IDs rather than just .count to detect in-place mutations
+        // (e.g., a completedAt date correction or a goal title update) that don't change
+        // the collection size but do change the data the chart and CSV display.
+        .onChange(of: events.map(\.id)) {
             viewModel.refresh(events: events, goals: goals, frozenDates: freezeService.frozenDates)
         }
-        .onChange(of: goals.count) {
+        .onChange(of: goals.map(\.id)) {
             viewModel.refresh(events: events, goals: goals, frozenDates: freezeService.frozenDates)
         }
     }
@@ -139,14 +148,11 @@ struct AnalyticsView: View {
 
     private var globalExportButton: some View {
         let dateStamp = Date().formatted(.iso8601.year().month().day())
-        let csvContent = CSVExportService.buildGlobalCSV(
-            events: Array(events),
-            goals: Array(goals),
-            frozenDates: freezeService.frozenDates
-        )
-
+        // CSV content is sourced from viewModel.globalCSVContent — built inside
+        // AnalyticsViewModel.refresh() so it is never computed during a body re-render
+        // and always reflects the same snapshot used by the chart (MVVM constraint).
         return ShareLink(
-            item: csvContent,
+            item: viewModel.globalCSVContent,
             preview: SharePreview(
                 "vitamin-g-history-\(dateStamp).csv",
                 image: Image(systemName: "doc.text")
