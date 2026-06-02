@@ -27,6 +27,7 @@ struct StatsView: View {
                 )
                 tierStreakGrid
                 heatmapSection
+                analyticsNavigationRow
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 20)
@@ -163,6 +164,38 @@ struct StatsView: View {
                 .padding(16)
             }
         }
+    }
+
+    // MARK: - Analytics Navigation Row
+
+    /// D-01: Navigation entry point to AnalyticsView at the bottom of StatsView.
+    private var analyticsNavigationRow: some View {
+        NavigationLink(value: AppRoute.analytics) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color(UIColor.secondarySystemGroupedBackground))
+
+                HStack(spacing: 12) {
+                    Image(systemName: "chart.bar.xaxis")
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(VGTheme.accentTerra)
+                        .frame(width: 28, height: 28)
+
+                    Text("Analytics")
+                        .font(.body)
+                        .fontDesign(.rounded)
+                        .foregroundStyle(.primary)
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(16)
+            }
+        }
+        .buttonStyle(.plain)
     }
 }
 
