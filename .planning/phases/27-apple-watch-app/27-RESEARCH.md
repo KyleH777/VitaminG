@@ -703,7 +703,7 @@ Button {
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **WatchSessionManager and GoalViewModel injection path**
    - What we know: GoalViewModel is `@MainActor @Observable`; WatchSessionManager.shared is a singleton with no SwiftUI environment access
