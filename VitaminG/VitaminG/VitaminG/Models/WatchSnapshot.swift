@@ -1,5 +1,7 @@
 import Foundation
+#if os(iOS)
 import SwiftData
+#endif
 
 // MARK: - WatchSnapshot
 
@@ -48,6 +50,7 @@ struct WatchSnapshot: Codable, Equatable {
 
     // MARK: - Build
 
+    #if os(iOS)
     /// Builds a WatchSnapshot from fetched Goal and CompletionEvent arrays.
     ///
     /// Delegates active goal selection, progress, and streak computation to
@@ -93,4 +96,5 @@ struct WatchSnapshot: Codable, Equatable {
             activeGoalId: activeGoal?.id.uuidString
         )
     }
+    #endif
 }

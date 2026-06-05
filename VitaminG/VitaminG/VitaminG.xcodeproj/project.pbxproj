@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		01C75244FFC14F149F900A8A /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F14914B850E9BBD7B191228 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift */; };
+		AA2703000000000001 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2703000000000002 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift */; };
+		AA2703000000000003 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminG/Models/WatchSnapshot.swift in Sources (VitaminGWatch) */ = {isa = PBXBuildFile; fileRef = AA2703000000000004 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminG/Models/WatchSnapshot.swift */; };
 		0215FC4236B8ED097AB98DAE /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CommunityGlanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2950BF6AA140B86F98641 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CommunityGlanceView.swift */; };
 		20E780CBADA4CD49AC80520B /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CheckInSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58C6E3734DD7FE511BCECAA1 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CheckInSuccessView.swift */; };
 		22E9180E646E4AF848C4269E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98B4B54F3AA3B9B1BDD0064C /* Foundation.framework */; };
@@ -84,6 +86,8 @@
 
 /* Begin PBXFileReference section */
 		1EDC2BC95349143CF9058C5C /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchNotificationView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchNotificationView.swift"; sourceTree = "<absolute>"; };
+		AA2703000000000002 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift"; sourceTree = "<absolute>"; };
+		AA2703000000000004 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminG/Models/WatchSnapshot.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminG/Models/WatchSnapshot.swift"; sourceTree = "<absolute>"; };
 		2CC2950BF6AA140B86F98641 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CommunityGlanceView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CommunityGlanceView.swift"; sourceTree = "<absolute>"; };
 		3235BA87AACE9E48C01626A6 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/TodayGlanceView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/TodayGlanceView.swift"; sourceTree = "<absolute>"; };
 		58C6E3734DD7FE511BCECAA1 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CheckInSuccessView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CheckInSuccessView.swift"; sourceTree = "<absolute>"; };
@@ -271,6 +275,8 @@
 				1EDC2BC95349143CF9058C5C /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchNotificationView.swift */,
 				E104D2642E124CAD573B3E59 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGRingView.swift */,
 				5F14914B850E9BBD7B191228 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift */,
+				AA2703000000000002 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift */,
+				AA2703000000000004 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminG/Models/WatchSnapshot.swift */,
 				9ABE9DE82BC061C5F8C367C3 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchApp.swift */,
 				5A10481FE8195C75F9889B99 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchContentView.swift */,
 			);
@@ -476,6 +482,8 @@
 				4830C81AB9A5088ADABD9A3E /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchNotificationView.swift in Sources */,
 				50B4C2F0FF5C2483A279F568 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGRingView.swift in Sources */,
 				01C75244FFC14F149F900A8A /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift in Sources */,
+				AA2703000000000001 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift in Sources */,
+				AA2703000000000003 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminG/Models/WatchSnapshot.swift in Sources (VitaminGWatch) */,
 				7534C0A7296FD8F19123BF4B /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchApp.swift in Sources */,
 				E43D5202EC5362DF0E7BBA5A /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchContentView.swift in Sources */,
 			);
