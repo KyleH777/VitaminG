@@ -7,8 +7,9 @@ dependency_graph:
   requires: []
   provides:
     - watchOS 10.0 deployment target in VitaminGWatch target
-    - VitaminGWatch.entitlements with Watch-scoped App Group
+    - VitaminGWatch.entitlements with Watch-scoped App Group (registered in Apple Developer Portal)
     - VitaminGWatchWidget.entitlements with Watch-scoped App Group
+    - VitaminGWatchWidget Xcode target wired with VGRingView + VGWatchTheme membership
     - RED XCTest stubs for WatchSnapshot, WatchSessionManager, WatchReceiver
   affects:
     - VitaminG/VitaminG/VitaminG.xcodeproj/project.pbxproj
@@ -20,6 +21,7 @@ tech_stack:
   patterns:
     - plist entitlements file for watchOS App Group
     - RED XCTest stub pattern with XCTFail placeholders
+    - Apple Developer Portal App Group registration (manual)
 key_files:
   created:
     - VitaminG/VitaminGWatch/VitaminGWatch.entitlements
@@ -32,11 +34,11 @@ key_files:
 decisions:
   - "Watch-scoped App Group identifier is group.com.kyleharrington.VitaminGWatch (distinct from iOS group.com.kyleharrington.VitaminG)"
   - "RED test stubs reference unresolved types only in TODO comments, not in compile-time code"
-  - "VitaminGWatchWidget directory created on disk; Xcode target wiring is a human checkpoint"
+  - "VitaminGWatchWidget directory created on disk; Xcode target wiring confirmed by user at checkpoint"
 metrics:
-  duration: "~15 minutes"
+  duration: "~20 minutes (including human checkpoint)"
   completed: "2026-06-05"
-  tasks_completed: 3
+  tasks_completed: 4
   tasks_total: 4
   files_created: 5
   files_modified: 1
@@ -44,7 +46,7 @@ metrics:
 
 # Phase 27 Plan 01: Watch Foundation Setup Summary
 
-Watch foundation setup complete: watchOS 10.0 deployment target raised, Watch-scoped App Group entitlements created, and three RED XCTest stubs committed — all buildable under VitaminGTests target.
+Watch foundation fully established: watchOS 10.0 deployment target raised, Watch-scoped App Group (`group.com.kyleharrington.VitaminGWatch`) registered in Apple Developer Portal and wired in both Watch targets, entitlements files created, VitaminGWatchWidget target exists with VGRingView/VGWatchTheme membership, and three RED XCTest stubs committed — all confirming the correct Wave 0 state (build succeeds, tests fail with XCTFail messages).
 
 ## Tasks Completed
 
@@ -53,10 +55,7 @@ Watch foundation setup complete: watchOS 10.0 deployment target raised, Watch-sc
 | 1 | Raise VitaminGWatch deployment target to watchOS 10.0 | f404e85 | VitaminG.xcodeproj/project.pbxproj |
 | 2 | Create VitaminGWatch and VitaminGWatchWidget entitlements files | fb281cb | VitaminGWatch.entitlements, VitaminGWatchWidget.entitlements |
 | 3 | Create RED XCTest stubs for WatchSnapshot, WatchSessionManager, WatchReceiver | 70370f0 | WatchSnapshotTests.swift, WatchSessionManagerTests.swift, WatchReceiverTests.swift |
-
-## Task 4 — Human Checkpoint (Blocking)
-
-Task 4 is a `checkpoint:human-action` requiring manual steps in Xcode and Apple Developer Portal. Execution paused here. See checkpoint details below.
+| 4 | Human checkpoint: Apple Developer Portal + Xcode wiring — approved | (human action) | Apple Developer Portal, Xcode target settings |
 
 ## Verification Results
 
@@ -81,17 +80,31 @@ Task 4 is a `checkpoint:human-action` requiring manual steps in Xcode and Apple 
 - No file imports `WatchConnectivity` or `WidgetKit` (PASS)
 - WatchReceiverTests.swift: 6 `watchSnapshot_` occurrences (≥5 required) (PASS)
 
+### Task 4 — Human Checkpoint Cleared
+- App Group `group.com.kyleharrington.VitaminGWatch` registered in Apple Developer Portal (user confirmed)
+- VitaminGWatch target: App Group entitlement applied in Xcode (user confirmed)
+- VitaminGWatchWidget target: App Group entitlement applied in Xcode (user confirmed)
+- VitaminGWatchWidget target: VGRingView.swift and VGWatchTheme.swift in Target Membership (user confirmed)
+- `xcodebuild -scheme VitaminG ... build` → **BUILD SUCCEEDED** (PASS)
+- RED test run (`WatchSnapshotTests`): All 6 tests FAILED with correct `XCTFail` messages (PASS — expected Wave 0 state)
+  - `test_build_returnsActiveGoalTitle_fromHighestPriorityTier` — FAILED (RED stub)
+  - `test_build_returnsActiveGoalProgress_zeroToOne` — FAILED (RED stub)
+  - `test_build_returnsGlobalStreak_fromStreakEngine` — FAILED (RED stub)
+  - `test_build_returnsHasCheckedInToday_trueWhenTodayEventExists` — FAILED (RED stub)
+  - `test_build_returnsActiveGoalId_uuidString` — FAILED (RED stub)
+  - `test_codable_roundTripsThroughJSONEncoderDecoder` — FAILED (RED stub)
+
 ## Deviations from Plan
 
-None — plan executed exactly as written.
+None — plan executed exactly as written. Human checkpoint cleared as expected.
 
 ## Known Stubs
 
-None — no production code stubs. The test stubs are intentional RED stubs per TDD plan.
+None — no production code stubs. The test stubs are intentional RED stubs per TDD plan; downstream plans 27-02 through 27-05 will make them GREEN.
 
 ## Threat Surface Scan
 
-No new network endpoints, auth paths, file access patterns, or schema changes introduced. Entitlements files are local filesystem artifacts; no runtime trust boundary crossed until Apple Developer Portal registration (human checkpoint) and Xcode wiring (human checkpoint).
+No new network endpoints, auth paths, file access patterns, or schema changes introduced. Entitlements files are local filesystem artifacts; App Group registration in Apple Developer Portal establishes the runtime trust boundary that Plans 27-02+ depend on. No new threats beyond those already enumerated in the plan's threat register (T-27-01-01 through T-27-01-04).
 
 ## Self-Check: PASSED
 
@@ -103,3 +116,5 @@ No new network endpoints, auth paths, file access patterns, or schema changes in
 - [x] Commit f404e85 exists (Task 1)
 - [x] Commit fb281cb exists (Task 2)
 - [x] Commit 70370f0 exists (Task 3)
+- [x] Build succeeded (Task 4 post-checkpoint verification)
+- [x] RED tests confirmed failing with XCTFail messages (Wave 0 state correct)
