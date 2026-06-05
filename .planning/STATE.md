@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Personal Intelligence + Apple Watch
 status: executing
-last_updated: "2026-06-05T22:53:01.279Z"
-last_activity: 2026-06-05 -- Phase 27 planned (6 plans, 5 waves)
+last_updated: "2026-06-05T23:30:00.000Z"
+last_activity: 2026-06-05 -- Phase 27 Plan 01 completed (3/4 tasks) — paused at checkpoint:human-action
 progress:
   total_phases: 13
-  completed_phases: 10
-  total_plans: 46
-  completed_plans: 43
-  percent: 77
+  completed_phases: 11
+  total_plans: 52
+  completed_plans: 46
+  percent: 85
 ---
 
 # Project State
@@ -20,14 +20,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-28)
 
 **Core value:** Every morning, the user is reminded of their goals — making progress feel inevitable, not accidental.
-**Current focus:** Phase 26 — analytics-dashboard
+**Current focus:** Phase 27 — apple-watch-app
 
 ## Current Position
 
-Phase: 27 (apple-watch-app) — PLANNED
+Phase: 27 (apple-watch-app) — EXECUTING
+Plan: 1 of 6 — paused at checkpoint:human-action (Task 4)
 Plans: 6 (waves 0–5)
-Status: Ready to execute Phase 27
-Last activity: 2026-06-05 -- Phase 27 planned (6 plans, 5 waves)
+Status: Awaiting human action (Apple Developer Portal + Xcode wiring for Watch App Group)
+Last activity: 2026-06-05 -- Phase 27 Plan 01 completed (3/4 tasks) — paused at checkpoint:human-action
 
 ```
 v3.0 Progress: [###       ] 25% (1/4 phases, 3/3 plans)
@@ -76,6 +77,7 @@ v3.0 Progress: [###       ] 25% (1/4 phases, 3/3 plans)
 | Streak-at-risk evening alert uses schedule-and-cancel (not BGAppRefreshTask) | BGAppRefreshTask throttled for infrequent users (exactly who needs the alert); schedule morning + cancel on any check-in surface |
 | Watch check-in must cancel streak-at-risk notification via same path as iOS/widget | 64-slot cap requires reliable cancellation; all three check-in surfaces (app, widget, Watch) must call the same removePendingNotificationRequests path |
 | watchOS 10.0 minimum for Watch target | Existing scaffold targets watchOS 7.0 — too low for WidgetKit complications; set to 10.0 immediately; Button(intent:) interactive complications require watchOS 11.0, guard with @available |
+| Watch-scoped App Group is group.com.kyleharrington.VitaminGWatch | Distinct from iOS group.com.kyleharrington.VitaminG; iOS and watchOS App Group containers are different filesystem locations (DTS-confirmed) |
 
 ### Blockers
 
