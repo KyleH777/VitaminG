@@ -46,6 +46,15 @@ final class WatchReceiver: NSObject, WCSessionDelegate {
         #endif
     }
 
+    // iOS requires these two delegate methods; watchOS does NOT have them (Pitfall 6).
+    #if os(iOS)
+    func sessionDidBecomeInactive(_ session: WCSession) {}
+    func sessionDidDeactivate(_ session: WCSession) {
+        // Re-activate after a Watch switch on iOS.
+        session.activate()
+    }
+    #endif
+
     func session(
         _ session: WCSession,
         didReceiveApplicationContext applicationContext: [String: Any]
