@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Personal Intelligence + Apple Watch
 status: executing
-last_updated: "2026-06-05T23:59:00.000Z"
-last_activity: 2026-06-05 -- Phase 27 Plan 01 fully complete (4/4 tasks) — human checkpoint cleared, build SUCCEEDED, RED tests confirmed
+last_updated: "2026-06-05T23:14:23Z"
+last_activity: 2026-06-05 -- Phase 27 Plan 02 fully complete (2/2 tasks) — WatchSnapshot+WatchSessionManager implemented, 6/6 WatchSnapshotTests GREEN, BUILD SUCCEEDED
 progress:
   total_phases: 13
   completed_phases: 11
   total_plans: 52
-  completed_plans: 47
-  percent: 87
+  completed_plans: 48
+  percent: 88
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-05-28)
 ## Current Position
 
 Phase: 27 (apple-watch-app) — EXECUTING
-Plan: 2 of 6 — ready for Plan 02
+Plan: 3 of 6 — ready for Plan 03
 Plans: 6 (waves 0–5)
-Status: Plan 01 complete — Watch foundation established (deployment target, App Group, entitlements, RED tests)
-Last activity: 2026-06-05 -- Phase 27 Plan 01 fully complete (4/4 tasks) — human checkpoint cleared, build SUCCEEDED, RED tests confirmed
+Status: Plan 02 complete — WatchSnapshot+WatchSessionManager iOS data layer implemented, 6/6 WatchSnapshotTests GREEN
+Last activity: 2026-06-05 -- Phase 27 Plan 02 fully complete (2/2 tasks) — WatchSnapshot+WatchSessionManager implemented, 6/6 WatchSnapshotTests GREEN, BUILD SUCCEEDED
 
 ```
 v3.0 Progress: [###       ] 25% (1/4 phases, 3/3 plans)
@@ -78,6 +78,9 @@ v3.0 Progress: [###       ] 25% (1/4 phases, 3/3 plans)
 | Watch check-in must cancel streak-at-risk notification via same path as iOS/widget | 64-slot cap requires reliable cancellation; all three check-in surfaces (app, widget, Watch) must call the same removePendingNotificationRequests path |
 | watchOS 10.0 minimum for Watch target | Existing scaffold targets watchOS 7.0 — too low for WidgetKit complications; set to 10.0 immediately; Button(intent:) interactive complications require watchOS 11.0, guard with @available |
 | Watch-scoped App Group is group.com.kyleharrington.VitaminGWatch | Distinct from iOS group.com.kyleharrington.VitaminG; iOS and watchOS App Group containers are different filesystem locations (DTS-confirmed) |
+| WatchSnapshot.build() delegates to WidgetDataProvider.build() — not re-derived | Guarantees identical active goal selection on iPhone and Watch; single source of truth for tier priority + creationDate tiebreak |
+| activeGoalProgress coerced to 0.0 in WatchSnapshot (not nil) | Watch progress ring (VGRingView) requires concrete Double; nil from WidgetDataProvider means no duration set → 0.0 is correct (D-01) |
+| WatchSnapshot payload encoded as Data under key "snapshot" in applicationContext dict | Property-list safe; JSON-encoded Data survives WCSession serialization without type coercion issues |
 
 ### Blockers
 
