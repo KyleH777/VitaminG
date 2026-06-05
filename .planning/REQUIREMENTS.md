@@ -68,7 +68,7 @@
 | ANLT-02 | Phase 26 | Not started |
 | ANLT-03 | Phase 26 | Not started |
 | ANLT-04 | Phase 26 | Not started |
-| WATCH-02 | Phase 27 | Not started |
+| WATCH-02 | Phase 27 | Data path complete (Plans 02+03); complication view in Plan 04 |
 | WATCH-03 | Phase 27 | Not started |
 | AI-03 | Phase 28 | Not started |
 | AI-01 | Phase 28 | Not started |

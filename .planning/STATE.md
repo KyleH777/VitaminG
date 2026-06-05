@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Personal Intelligence + Apple Watch
 status: executing
-last_updated: "2026-06-05T23:14:23Z"
-last_activity: 2026-06-05 -- Phase 27 Plan 02 fully complete (2/2 tasks) — WatchSnapshot+WatchSessionManager implemented, 6/6 WatchSnapshotTests GREEN, BUILD SUCCEEDED
+last_updated: "2026-06-05T23:29:11Z"
+last_activity: 2026-06-05 -- Phase 27 Plan 03 fully complete (3/3 tasks) — WatchReceiver+TodayGlanceView implemented, 5/5 WatchReceiverTests GREEN, BUILD SUCCEEDED
 progress:
   total_phases: 13
   completed_phases: 11
   total_plans: 52
-  completed_plans: 48
-  percent: 88
+  completed_plans: 49
+  percent: 90
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-05-28)
 ## Current Position
 
 Phase: 27 (apple-watch-app) — EXECUTING
-Plan: 3 of 6 — ready for Plan 03
+Plan: 4 of 6 — ready for Plan 04
 Plans: 6 (waves 0–5)
-Status: Plan 02 complete — WatchSnapshot+WatchSessionManager iOS data layer implemented, 6/6 WatchSnapshotTests GREEN
-Last activity: 2026-06-05 -- Phase 27 Plan 02 fully complete (2/2 tasks) — WatchSnapshot+WatchSessionManager implemented, 6/6 WatchSnapshotTests GREEN, BUILD SUCCEEDED
+Status: Plan 03 complete — WatchReceiver watchOS-side WCSession + TodayGlanceView live data + 5/5 WatchReceiverTests GREEN
+Last activity: 2026-06-05 -- Phase 27 Plan 03 fully complete (3/3 tasks) — WatchReceiver+TodayGlanceView implemented, 5/5 WatchReceiverTests GREEN, BUILD SUCCEEDED
 
 ```
 v3.0 Progress: [###       ] 25% (1/4 phases, 3/3 plans)
@@ -81,6 +81,10 @@ v3.0 Progress: [###       ] 25% (1/4 phases, 3/3 plans)
 | WatchSnapshot.build() delegates to WidgetDataProvider.build() — not re-derived | Guarantees identical active goal selection on iPhone and Watch; single source of truth for tier priority + creationDate tiebreak |
 | activeGoalProgress coerced to 0.0 in WatchSnapshot (not nil) | Watch progress ring (VGRingView) requires concrete Double; nil from WidgetDataProvider means no duration set → 0.0 is correct (D-01) |
 | WatchSnapshot payload encoded as Data under key "snapshot" in applicationContext dict | Property-list safe; JSON-encoded Data survives WCSession serialization without type coercion issues |
+| WatchReceiver.swift compiled into both VitaminGWatch and VitaminG iOS targets | Required for @testable import VitaminG to expose WatchReceiver to WatchReceiverTests; WatchConnectivity+WidgetKit compile on iOS |
+| #if os(iOS) guards for sessionDidBecomeInactive/sessionDidDeactivate in WatchReceiver | iOS WCSessionDelegate requires these methods; watchOS omits them (Pitfall 6); cross-platform file requires guards |
+| processApplicationContext(_:into:) injectable wrapper in WatchReceiver | Enables unit test isolation without WCSession instantiation; tests pass ephemeral UUID-keyed UserDefaults suites |
+| TodayGlanceView uses @AppStorage backed by Watch App Group suite | Reactive on UserDefaults change; no custom ViewModel needed for WATCH-02 read path |
 
 ### Blockers
 
