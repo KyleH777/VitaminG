@@ -5,6 +5,8 @@ status: draft
 shadcn_initialized: false
 preset: none
 created: 2026-06-06
+revised: 2026-06-06
+revision_reason: Fix spacing violations (lg 18→16pt, 3xl 6→8pt, vertical padding 12→16pt); add lineSpacing(4) to suggestion body text; change "Add" button label to "Add Goal"
 ---
 
 # Phase 28 — UI Design Contract
@@ -38,15 +40,16 @@ Declared values (SwiftUI points — multiples of 4):
 | xs | 4pt | VStack row sub-label gap (e.g. label + subtitle at spacing: 2–4) |
 | sm | 8pt | Suggestion row internal leading/trailing breathing room |
 | md | 16pt | Card internal VStack spacing (matches GoalGifterCard `spacing: 16`) |
-| lg | 18pt | Card internal padding — `.padding(18)` (matches existing card shell) |
+| lg | 16pt | Card internal padding — `.padding(16)` (slight deviation from GoalGifterCard's 18pt to maintain grid compliance) |
 | xl | 24pt | Screen horizontal padding — `.padding(.horizontal, 24)` |
 | 2xl | 20pt | Top padding above quote section — `.padding(.top, 20)` |
-| 3xl | 6pt | Label-to-body gap within motivation card — `spacing: 6` |
+| 3xl | 8pt | Label-to-body gap within motivation card — `spacing: 8` |
 
 Exceptions:
 - Motivation card top padding: 20pt (`.padding(.top, 20)`) — matches existing `quoteSection` exactly; not a standard multiple of 4 but preserved from existing implementation.
 - GoalGifterCard corner radius: 20pt; motivation/suggestion cards: 14pt — both are established existing values; do not alter.
-- Suggestion row vertical padding: 12pt top + 12pt bottom (`.padding(.vertical, 12)`) — drives 44pt+ touch target compliance per iOS HIG.
+- Suggestion row vertical padding: 16pt top + 16pt bottom (`.padding(.vertical, 16)`) — 32pt padding + row text height exceeds 44pt iOS HIG minimum touch target requirement.
+- Note: GoalGifterCard uses `.padding(18)` internally. `GoalSuggestionsCard` uses `.padding(16)` to comply with the 4-point grid. The visual difference is 2pt and is acceptable.
 
 ---
 
@@ -57,7 +60,7 @@ All sizes in SwiftUI points (pt).
 | Role | Font Helper | Size | Weight | Line Spacing / Other |
 |------|-------------|------|--------|----------------------|
 | Card micro-label | `.system(size:weight:)` | 9pt | `.semibold` | `.kerning(1.4)`, `.textCase(.uppercase)` — matches existing "TODAY'S DOSE" label |
-| Suggestion body text | `.system(size:weight:)` | 16pt | `.regular` | `.fixedSize(horizontal: false, vertical: true)` |
+| Suggestion body text | `.system(size:weight:)` | 16pt | `.regular` | `.lineSpacing(4)`, `.fixedSize(horizontal: false, vertical: true)` |
 | Suggestion added-state caption | `.system(size:weight:)` | 14pt | `.regular` | foreground: `VGTheme.textMuted` |
 | Motivation copy body | `VGTheme.serifItalic(16)` | 16pt | italic regular (CormorantGaramond-Italic) | `.lineSpacing(4)`, `.fixedSize(horizontal: false, vertical: true)` — matches existing card shell |
 | Card header title (Explore card) | `VGTheme.serif(20)` | 20pt | `.regular` (CormorantGaramond-Regular) | matches GoalGifterCard "Shake out some growth" |
@@ -81,7 +84,7 @@ All colors reference VGTheme adaptive tokens. Light/dark mode handled automatica
 | Screen background (Explore) | `VGTheme.background` | sandLight `#FAF5EE` | inkDeep `#16110C` | ExploreView scroll background — unchanged |
 | Screen background (Home) | `VGTheme.heroBackground` | clay `#3D2F1E` | inkDeep `#16110C` | Always-dark; motivation card renders on this |
 | Secondary / card overlay (30%) | `VGTheme.accentTerra.opacity(0.12)–0.04` gradient | — | — | Explore AI suggestions card top-to-bottom tint (matches GoalGifterCard background gradient) |
-| Primary accent (10%) | `VGTheme.accentTerra` | terra `#C4673A` | terraGlow `#FF8A5C` | Left border stripe on motivation card; "Add" button fill; card overlay stroke |
+| Primary accent (10%) | `VGTheme.accentTerra` | terra `#C4673A` | terraGlow `#FF8A5C` | Left border stripe on motivation card; "Add Goal" button fill; card overlay stroke |
 | Added/success state | `VGTheme.accentSage` | sage `#7A9E7E` | sageGlow `#95D69C` | Checkmark icon on added suggestion (`checkmark.circle.fill`) |
 | Text primary | `VGTheme.textPrimary` | clay `#3D2F1E` | sand `#F2E8D9` | Suggestion text (unselected) |
 | Text secondary | `VGTheme.textSecondary` | clay 75% | sand 62% | Motivation copy body text |
@@ -91,7 +94,7 @@ All colors reference VGTheme adaptive tokens. Light/dark mode handled automatica
 
 Accent (`VGTheme.accentTerra`) is reserved for:
 1. The 2pt left-border stripe on the motivation card
-2. The fill of "Add" buttons in the suggestions card
+2. The fill of "Add Goal" buttons in the suggestions card
 3. The overlay border tint on the suggestions card (`accentTerra.opacity(0.2)`)
 
 `VGTheme.accentSage` is reserved for: the checkmark icon on a suggestion row after it has been added.
@@ -107,7 +110,7 @@ Accent (`VGTheme.accentTerra`) is reserved for:
 **Shell:** Identical to existing `quoteSection`. No layout changes.
 
 ```
-VStack(alignment: .leading, spacing: 6)
+VStack(alignment: .leading, spacing: 8)
   ├─ Text(label)                     // micro-label — "YOUR DOSE" or "TODAY'S DOSE"
   │   font: .system(size: 9, weight: .semibold)
   │   kerning: 1.4
@@ -129,6 +132,8 @@ Card modifiers (outer):
   .padding(.horizontal, 24)
   .padding(.top, 20)
 ```
+
+Note: The `.padding(.horizontal, 18)` on the card outer horizontal is preserved from the existing `quoteSection` shell to avoid visual regression in HomeView. The `lg` token (16pt) applies to new card construction in GoalSuggestionsCard.
 
 **Label states:**
 - Claude copy available: label = "YOUR DOSE"
@@ -177,7 +182,7 @@ VStack(alignment: .leading, spacing: 16)
       ForEach(suggestions) { suggestion in SuggestionRow }
 
 Card outer modifiers:
-  .padding(18)
+  .padding(16)
   .background(
     LinearGradient(
       colors: [VGTheme.accentTerra.opacity(0.12), VGTheme.accentTerra.opacity(0.04)],
@@ -196,12 +201,13 @@ HStack(alignment: .center, spacing: 12)
   ├─ Text(suggestion.title)
   │   font: .system(size: 16)        // unselected state
   │   foreground: VGTheme.textPrimary (unselected) / VGTheme.textMuted (added)
+  │   lineSpacing: 4
   │   fixedSize(horizontal: false, vertical: true)
   │   frame(maxWidth: .infinity, alignment: .leading)
   └─ AddButton (trailing)
 
 Row modifiers:
-  .padding(.vertical, 12)           // 44pt+ touch target
+  .padding(.vertical, 16)           // 44pt+ touch target
   .contentShape(Rectangle())        // full-row tap area
 
 Divider between rows: Divider().foregroundStyle(VGTheme.separator)
@@ -212,7 +218,7 @@ Divider between rows: Divider().foregroundStyle(VGTheme.separator)
 
 ```
 Button { addSuggestion(suggestion) } label: {
-    Text("Add")
+    Text("Add Goal")
         .font(.system(size: 14, weight: .semibold))
         .foregroundStyle(.white)
         .padding(.horizontal, 16)
@@ -249,7 +255,7 @@ Added suggestion row text: foreground shifts to `VGTheme.textMuted`. No striketh
 **Fallback state visual contract:** Indistinguishable from Claude-generated content. No badge, no error label, no UI differentiation. The card is always visible with exactly 3 rows.
 
 **Interaction — tap to add:**
-- Single tap on "Add" button adds goal as QuickWin tier via same model context path as GoalGifterCard
+- Single tap on "Add Goal" button adds goal as QuickWin tier via same model context path as GoalGifterCard
 - `UIImpactFeedbackGenerator(style: .medium).impactOccurred()` on successful add
 - No sheet, no confirmation — immediate add
 - Button transitions to checkmark state with `.animation(.easeInOut(duration: 0.2))`
@@ -274,7 +280,7 @@ Added suggestion row text: foreground shifts to `VGTheme.textMuted`. No striketh
 | Explore section label | "GOALS FOR YOU" | D-04 |
 | Suggestions card header title | "Goals suggested for you" | D-04 |
 | Suggestions card subtitle | "Based on your goals and interests" | This spec |
-| Add button CTA | "Add" | D-05 |
+| Add button CTA | "Add Goal" | D-05 (revised: verb + noun for copywriting compliance) |
 | Added state (no text label) | checkmark icon only | D-05 |
 | Gifter card "already gifted" analogue | n/a — suggestions card has no "come back tomorrow" gate | D-05 |
 | Static fallback suggestion 1 | "Read for 15 minutes daily" | D-07 |
@@ -304,14 +310,14 @@ Added suggestion row text: foreground shifts to `VGTheme.textMuted`. No striketh
 | ExploreView opens, date-cache miss | Fetch suggestions from Worker async; 3-row skeleton shown; on success rows populated with Claude suggestions |
 | ExploreView opens, date-cache hit | 3 cached suggestions rendered immediately — no network call |
 | Worker unreachable | 3 static fallback suggestions substituted immediately |
-| Single tap "Add" button | Add goal as QuickWin tier to modelContext; haptic feedback (medium impact); button state transitions to `checkmark.circle.fill` in `VGTheme.accentSage`; suggestion text foreground shifts to `VGTheme.textMuted`; animation: `.easeInOut(duration: 0.2)` |
+| Single tap "Add Goal" button | Add goal as QuickWin tier to modelContext; haptic feedback (medium impact); button state transitions to `checkmark.circle.fill` in `VGTheme.accentSage`; suggestion text foreground shifts to `VGTheme.textMuted`; animation: `.easeInOut(duration: 0.2)` |
 | Tap already-added row | No action — row is non-interactive once added |
 | isSearching == true | Card not shown (part of gated `existingScrollContent`) |
 
 ### State Transitions (Suggestions Row)
 
 ```
-.unselected → [tap Add] → .adding (haptic) → .added (checkmark shown, text muted)
+.unselected → [tap Add Goal] → .adding (haptic) → .added (checkmark shown, text muted)
 .added → no further transitions (terminal state for the day)
 ```
 
@@ -339,9 +345,9 @@ No third-party component registries. All UI is implemented with SwiftUI primitiv
 
 ## Implementation Notes for Executor
 
-1. `quoteSection` in `HomeView.swift` is replaced in-place. The card shell SwiftUI markup is reused verbatim. Only the copy source and label string change based on `AIProxyService` state.
+1. `quoteSection` in `HomeView.swift` is replaced in-place. The card shell SwiftUI markup is reused verbatim. Only the copy source and label string change based on `AIProxyService` state. The VStack spacing changes from 6 to 8 (`spacing: 8`) for grid compliance.
 
-2. `GoalSuggestionsCard.swift` follows `GoalGifterCard.swift` as a structural reference. The outer card shell (padding, background gradient, clipShape, overlay, horizontal padding) is copied from GoalGifterCard to maintain visual consistency in the Explore tab.
+2. `GoalSuggestionsCard.swift` follows `GoalGifterCard.swift` as a structural reference. The outer card shell (padding, background gradient, clipShape, overlay, horizontal padding) is modeled after GoalGifterCard but uses `.padding(16)` instead of GoalGifterCard's `.padding(18)` to maintain 4-point grid compliance.
 
 3. `ExploreView.existingScrollContent` receives two new lines between Section 1 and Section 2:
    ```swift
@@ -355,6 +361,8 @@ No third-party component registries. All UI is implemented with SwiftUI primitiv
 5. `WidgetDataProvider.build()` output is used to source goal titles and streak count for the Claude prompt payload — consistent with the established single source of truth.
 
 6. No SwiftData schema changes. All AI state lives in UserDefaults.
+
+7. Button label is "Add Goal" (not "Add") throughout all implementation. The visible label `Text("Add Goal")` and accessibility label `"Add goal: \(suggestion.title)"` are both required.
 
 ---
 
