@@ -410,5 +410,5 @@ Plans:
 | 24. Widget Enhancements | v2.0 | 3/3 | Complete    | 2026-05-28 |
 | 25. Smart Notifications Enhancement | v3.0 | 0/3 | Not started | - |
 | 26. Analytics Dashboard | v3.0 | 3/3 | Complete   | 2026-06-02 |
-| 27. Apple Watch App | v3.0 | 6/6 | Complete   | 2026-06-05 |
+| 27. Apple Watch App | v3.0 | 6/6 | Complete    | 2026-06-06 |
 | 28. AI (Claude) Integration | v3.0 | 0/? | Not started | - |

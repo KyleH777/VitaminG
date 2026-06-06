@@ -10,8 +10,8 @@
 
 ### Apple Watch (WATCH)
 
-- [ ] **WATCH-02**: User sees their active goal title and a progress ring in a watchOS `accessoryRectangular` complication on their watch face; data stays current via WatchConnectivity snapshot delivery
-- [ ] **WATCH-03**: User taps the complication to open the Watch app and sees a single large Check In button; tapping it relays the check-in to the iPhone via `WCSession.transferUserInfo(_:)` and triggers the same check-in logic as the iOS app (streak update, widget reload, streak-at-risk notification cancellation)
+- [x] **WATCH-02**: User sees their active goal title and a progress ring in a watchOS `accessoryRectangular` complication on their watch face; data stays current via WatchConnectivity snapshot delivery
+- [x] **WATCH-03**: User taps the complication to open the Watch app and sees a single large Check In button; tapping it relays the check-in to the iPhone via `WCSession.transferUserInfo(_:)` and triggers the same check-in logic as the iOS app (streak update, widget reload, streak-at-risk notification cancellation)
 
 ### Analytics (ANLT)
 
