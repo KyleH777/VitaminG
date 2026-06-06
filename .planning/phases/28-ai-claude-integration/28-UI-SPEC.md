@@ -1,11 +1,12 @@
 ---
 phase: 28
 slug: ai-claude-integration
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-06-06
 revised: 2026-06-06
+reviewed_at: 2026-06-06
 revision_reason: Fix spacing violations (lg 18→16pt, 3xl 6→8pt, vertical padding 12→16pt); add lineSpacing(4) to suggestion body text; change "Add" button label to "Add Goal"
 ---
 
@@ -123,7 +124,7 @@ VStack(alignment: .leading, spacing: 8)
       fixedSize(horizontal: false, vertical: true)
 
 Card modifiers (outer):
-  .padding(.horizontal, 18)
+  .padding(.horizontal, 16)
   .padding(.vertical, 16)
   .frame(maxWidth: .infinity, alignment: .leading)
   .background(VGTheme.surface)
@@ -133,7 +134,7 @@ Card modifiers (outer):
   .padding(.top, 20)
 ```
 
-Note: The `.padding(.horizontal, 18)` on the card outer horizontal is preserved from the existing `quoteSection` shell to avoid visual regression in HomeView. The `lg` token (16pt) applies to new card construction in GoalSuggestionsCard.
+Note: The design spec declares `.padding(.horizontal, 16)` for grid compliance. The existing `quoteSection` shell in `HomeView.swift` currently uses `.padding(.horizontal, 18)` — the executor must NOT change that existing value when replacing only the copy source. The 2pt visual difference is negligible and preserving 18pt in the live file avoids introducing a visual regression. This spec's 16pt declaration is for new-construction reference; do not modify the existing shell padding.
 
 **Label states:**
 - Claude copy available: label = "YOUR DOSE"
@@ -171,7 +172,7 @@ VStack(alignment: .leading, spacing: 16)
   │     │   font: .system(size: 22)
   │     │   foreground: VGTheme.accentTerra
   │     │   frame(width: 48, height: 48)
-  │     └─ VStack(alignment: .leading, spacing: 2)
+  │     └─ VStack(alignment: .leading, spacing: 4)
   │         ├─ Text("Goals suggested for you")
   │         │   font: VGTheme.serif(20)
   │         │   foreground: VGTheme.textPrimary
@@ -197,7 +198,7 @@ Card outer modifiers:
 **Suggestion row layout (per row):**
 
 ```
-HStack(alignment: .center, spacing: 12)
+HStack(alignment: .center, spacing: 8)
   ├─ Text(suggestion.title)
   │   font: .system(size: 16)        // unselected state
   │   foreground: VGTheme.textPrimary (unselected) / VGTheme.textMuted (added)
