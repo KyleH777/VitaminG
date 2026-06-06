@@ -1,0 +1,16 @@
+# Cloudflare Worker configuration for Vitamin G AI Proxy
+# Source: developers.cloudflare.com/workers/wrangler/configuration/
+#
+# Deploy:
+#   cd worker/
+#   npx wrangler login
+#   npx wrangler secret put ANTHROPIC_API_KEY
+#   npx wrangler deploy
+#
+# IMPORTANT: Do NOT add ANTHROPIC_API_KEY here. It must be added via:
+#   npx wrangler secret put ANTHROPIC_API_KEY
+# Secrets are encrypted at rest in Cloudflare's environment and never appear in files.
+
+name = "vg-ai-proxy"
+main = "src/index.js"
+compatibility_date = "2026-06-06"
