@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Personal Intelligence + Apple Watch
-status: verifying
-last_updated: "2026-06-06T17:34:56.008Z"
+status: checkpoint-paused
+last_updated: "2026-06-06T22:29:48Z"
 last_activity: 2026-06-06
 progress:
   total_phases: 13
   completed_phases: 12
-  total_plans: 52
+  total_plans: 56
   completed_plans: 52
-  percent: 92
+  percent: 93
 ---
 
 # Project State
@@ -25,9 +25,9 @@ See: .planning/PROJECT.md (updated 2026-05-28)
 ## Current Position
 
 Phase: 28
-Plan: Not started
+Plan: 01 (checkpoint-paused at Task 3)
 Plans: 4 (waves 0–3)
-Status: Ready to execute — Phase 28 planned: 4 plans in 4 waves (Wave 0: Cloudflare Worker + test stubs, Wave 1: AIProxyService + AIViewModel, Wave 2: Home tab motivation card, Wave 3: Explore tab suggestions card)
+Status: CHECKPOINT — Plan 28-01 Tasks 1 and 2 complete; paused at Task 3 (human deploy checkpoint: Cloudflare Worker deployment + SHARED_TOKEN UUID required before Plan 02 can proceed)
 Last activity: 2026-06-06
 
 ```
@@ -88,6 +88,10 @@ v3.0 Progress: [####      ] 30% (1/4 phases, 4/4 plans in progress)
 | #if os(iOS) guards for sessionDidBecomeInactive/sessionDidDeactivate in WatchReceiver | iOS WCSessionDelegate requires these methods; watchOS omits them (Pitfall 6); cross-platform file requires guards |
 | processApplicationContext(_:into:) injectable wrapper in WatchReceiver | Enables unit test isolation without WCSession instantiation; tests pass ephemeral UUID-keyed UserDefaults suites |
 | TodayGlanceView uses @AppStorage backed by Watch App Group suite | Reactive on UserDefaults change; no custom ViewModel needed for WATCH-02 read path |
+| SHARED_TOKEN uses REPLACE_WITH_UUID_AT_DEPLOY placeholder in worker/src/index.js | Operator generates UUID via uuidgen and replaces before wrangler deploy; same UUID pasted into AIProxyService.workerToken in Plan 02 (Pitfall 2 prevention, T-28-02) |
+| worker/ created at project root alongside VitaminG/ — not inside Xcode project | Cloudflare Worker is a JavaScript artifact; must not be in the Xcode project directory to avoid confusing Xcode build system |
+| Wave 0 RED test files on disk but not yet added to Xcode test target | Xcode .pbxproj requires manual addition; Plan 02 first task adds both files to VitaminGTests target before turning GREEN |
+| MockAIProxyService defined inline in AIProxyServiceTests.swift | Protocol seam (AIProxyServiceProtocol) enables mock injection without network; inline definition keeps Wave 0 file self-contained |
 
 ### Blockers
 
@@ -99,7 +103,7 @@ None.
 - CloudKit Console: promote new public DB record types (UserPresence, Applause, Follow, extended PublicProfile) to Production before Phase 21
 - CloudKit Console: add Queryable index on "username" field in PublicProfile record type (iCloud.com.kyleharrington.VitaminG) before 17-03 real-device testing — required for username availability check (isUsernameTaken/countRecordsWithUsername)
 - CloudKit Console: create TrendingGoal record type (title/String, category/String, participantCount/Int64, completedCount/Int64, createdAt/DateTime) + Queryable index on participantCount + deploy to Production + seed records before real-device Explore tab testing
-- Deploy Cloudflare Worker before any AI feature testing (Phase 28) — Worker URL must be stable before AI-01 and AI-02 can be validated
+- [BLOCKING - Plan 28-01 Task 3] Deploy Cloudflare Worker: (1) run `uuidgen`, (2) replace REPLACE_WITH_UUID_AT_DEPLOY in worker/src/index.js, (3) `cd worker && npx wrangler login && npx wrangler secret put ANTHROPIC_API_KEY && npx wrangler deploy`, (4) run worker/test-worker.sh smoke test, (5) record deployed URL and UUID for Plan 02
 
 ## Deferred Items (from v1.0)
 
