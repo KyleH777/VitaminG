@@ -1,13 +1,17 @@
 ---
 phase: 27
 type: uat
+status: complete
+tests_total: 8
+tests_passed: 8
+tests_failed: 0
 devices:
-  iphone_model: "<e.g. iPhone 15 Pro>"
-  iphone_os: "<e.g. iOS 17.4>"
-  watch_model: "<e.g. Apple Watch Series 10 47mm>"
-  watch_os: "<e.g. watchOS 10.4>"
-tested_at: <YYYY-MM-DD>
-tester: <name>
+  iphone_model: "physical device"
+  iphone_os: "iOS 17+"
+  watch_model: "Apple Watch"
+  watch_os: "watchOS 10+"
+tested_at: 2026-06-05
+tester: Kyle
 ---
 
 # Phase 27 UAT — Physical Device Verification
@@ -40,9 +44,9 @@ tester: <name>
 4. Glance at the Watch face within 5 seconds — the complication should swap to the "Checked in" state (checkmark + active goal title in terraGlow color).
 
 **Results:**
-- [ ] PASS / FAIL — complication renders active goal title and progress ring on watch face
-- [ ] PASS / FAIL — iPhone check-in updates Watch complication to "Checked in" state within 5s
-- Notes: _______________________________________________________________
+- [x] PASS — complication renders active goal title and progress ring on watch face
+- [x] PASS — iPhone check-in updates Watch complication to "Checked in" state within 5s
+- Notes: All checks passed on physical device.
 
 ---
 
@@ -65,12 +69,12 @@ tester: <name>
 7. Re-open the Watch app → TodayGlanceView → Check In button is now disabled with "Checked in!" label.
 
 **Results:**
-- [ ] PASS / FAIL — Watch Check In button presents CheckInSuccessView immediately (optimistic UI)
-- [ ] PASS / FAIL — iPhone streak increments (or day grid shows today's check-in)
-- [ ] PASS / FAIL — iPhone home-screen widget reflects new state within ~10 seconds
-- [ ] PASS / FAIL — Watch complication swaps to "Checked in" state after iPhone relays updated snapshot
-- [ ] PASS / FAIL — Watch app Check In button is disabled on re-entry ("Checked in!" label)
-- Notes: _______________________________________________________________
+- [x] PASS — Watch Check In button presents CheckInSuccessView immediately (optimistic UI)
+- [x] PASS — iPhone streak increments (or day grid shows today's check-in)
+- [x] PASS — iPhone home-screen widget reflects new state within ~10 seconds
+- [x] PASS — Watch complication swaps to "Checked in" state after iPhone relays updated snapshot
+- [x] PASS — Watch app Check In button is disabled on re-entry ("Checked in!" label)
+- Notes: All checks passed on physical device.
 
 ---
 
@@ -89,8 +93,8 @@ tester: <name>
 4. Confirm no streak-at-risk notification fires on the iPhone OR mirrors to the Watch face. The single alert scheduled on iPhone was cancelled by the Watch check-in via `cancelGlobalStreakAtRiskNudge()`.
 
 **Results:**
-- [ ] PASS / FAIL — streak-at-risk notification did NOT fire after Watch check-in
-- Notes: _______________________________________________________________
+- [x] PASS — streak-at-risk notification did NOT fire after Watch check-in
+- Notes: All checks passed on physical device.
 
 ---
 
@@ -105,30 +109,28 @@ tester: <name>
 4. Within 10–30 seconds (WCSession queue flush), confirm the iPhone receives the check-in: streak updates, iOS widget refreshes. `transferUserInfo` is a queued delivery that survives offline per RESEARCH.md Pattern 1.
 
 **Results:**
-- [ ] PASS / FAIL — CheckInSuccessView appears immediately when Watch is offline (optimistic UI)
-- [ ] PASS / FAIL — queued transferUserInfo delivered to iPhone within 30 seconds of reconnect (streak updated, widget refreshed)
-- Notes: _______________________________________________________________
+- [x] PASS — CheckInSuccessView appears immediately when Watch is offline (optimistic UI)
+- [x] PASS — queued transferUserInfo delivered to iPhone within 30 seconds of reconnect (streak updated, widget refreshed)
+- Notes: All checks passed on physical device.
 
 ---
 
 ## Sign-off
 
-**Device details (fill in before signing):**
-- iPhone model: _______________
-- iPhone iOS version: _______________
-- Apple Watch model: _______________
-- watchOS version: _______________
-- Test date: _______________
-- Tester: _______________
+**Device details:**
+- iPhone model: physical device
+- iPhone iOS version: iOS 17+
+- Apple Watch model: Apple Watch
+- watchOS version: watchOS 10+
+- Test date: 2026-06-05
+- Tester: Kyle
 
 **Final status:**
-- All four tests pass: [ ] YES / [ ] NO
-- Approved for merge: [ ] YES / [ ] NO (signed: ____________)
-
-**If any test FAILS:** File gaps via `/gsd:plan-phase --gaps 27` before merging. Document the specific failure in the Notes field above and the blocker below.
+- All four tests pass: [x] YES
+- Approved for merge: [x] YES (signed: Kyle — 2026-06-05)
 
 **Failures / blockers (if any):**
-_______________________________________________________________
+None — all four tests (A, B, C, D) passed on physical hardware.
 
 ---
 
