@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Personal Intelligence + Apple Watch
 status: executing
-last_updated: "2026-06-06T00:41:00Z"
-last_activity: 2026-06-06 -- Phase 27 Plan 05 fully complete (3/3 tasks) — Watch Check In button wired to transferUserInfo; WatchSessionManager.handleCheckIn + closure injection seams implemented; VitaminGApp activation + GoalViewModel pushSnapshot wired; WatchSessionManagerTests 5/5 GREEN
+last_updated: "2026-06-05T00:00:00Z"
+last_activity: 2026-06-05 -- Phase 27 Plan 06 fully complete (UAT) — all four physical device tests passed (WATCH-02 complication live data, WATCH-03 Watch check-in updates iPhone, WATCH-03 streak-at-risk cancellation, offline resilience); Phase 27 Apple Watch App fully executed
 progress:
   total_phases: 13
-  completed_phases: 11
+  completed_phases: 12
   total_plans: 52
-  completed_plans: 51
-  percent: 92
+  completed_plans: 52
+  percent: 98
 ---
 
 # Project State
@@ -24,11 +24,11 @@ See: .planning/PROJECT.md (updated 2026-05-28)
 
 ## Current Position
 
-Phase: 27 (apple-watch-app) — EXECUTING
-Plan: 6 of 6 — ready for Plan 06
+Phase: 27 (apple-watch-app) — COMPLETE
+Plan: 6 of 6 — all plans complete
 Plans: 6 (waves 0–5)
-Status: Plan 05 complete — Watch Check In button wired to transferUserInfo; WatchSessionManager.handleCheckIn implemented; VitaminGApp + GoalViewModel wired; WatchSessionManagerTests 5/5 GREEN
-Last activity: 2026-06-06 -- Phase 27 Plan 05 fully complete (3/3 tasks) — Watch Check In button wired to transferUserInfo; WatchSessionManager.handleCheckIn + closure injection seams implemented; VitaminGApp activation + GoalViewModel pushSnapshot wired; WatchSessionManagerTests 5/5 GREEN
+Status: Plan 06 complete — physical device UAT passed; all 4 tests (A, B, C, D) PASSED; WATCH-02 and WATCH-03 verified on hardware; Phase 27 fully executed
+Last activity: 2026-06-05 -- Phase 27 Plan 06 fully complete — all four physical device tests passed (WATCH-02 complication live data, WATCH-03 Watch check-in updates iPhone, WATCH-03 streak-at-risk cancellation, offline resilience); Phase 27 Apple Watch App fully executed
 
 ```
 v3.0 Progress: [####      ] 30% (1/4 phases, 4/4 plans in progress)
@@ -99,7 +99,6 @@ None.
 - CloudKit Console: promote new public DB record types (UserPresence, Applause, Follow, extended PublicProfile) to Production before Phase 21
 - CloudKit Console: add Queryable index on "username" field in PublicProfile record type (iCloud.com.kyleharrington.VitaminG) before 17-03 real-device testing — required for username availability check (isUsernameTaken/countRecordsWithUsername)
 - CloudKit Console: create TrendingGoal record type (title/String, category/String, participantCount/Int64, completedCount/Int64, createdAt/DateTime) + Queryable index on participantCount + deploy to Production + seed records before real-device Explore tab testing
-- Physical device testing required before merging any WatchConnectivity code (Phase 27) — WCSession transferUserInfo is a no-op in Simulator
 - Deploy Cloudflare Worker before any AI feature testing (Phase 28) — Worker URL must be stable before AI-01 and AI-02 can be validated
 
 ## Deferred Items (from v1.0)

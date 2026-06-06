@@ -47,7 +47,7 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
 
 - [x] **Phase 25: Smart Notifications Enhancement** - Tone-adaptive notifications, goal-title personalization, streak-at-risk evening alert, send-time suggestion banner
 - [x] **Phase 26: Analytics Dashboard** - Completion rate trends chart (Swift Charts), all-time goal heatmap, CSV export via ShareLink (completed 2026-06-02)
-- [ ] **Phase 27: Apple Watch App** - accessoryRectangular complication with goal + progress ring, check-in from wrist via WCSession.transferUserInfo
+- [x] **Phase 27: Apple Watch App** - accessoryRectangular complication with goal + progress ring, check-in from wrist via WCSession.transferUserInfo (completed 2026-06-05)
 - [ ] **Phase 28: AI (Claude) Integration** - Cloudflare Worker proxy, goal suggestions card on Explore tab, personalized daily motivation on Home tab
 
 ---
@@ -355,7 +355,14 @@ Plans:
   2. User taps the complication to open the Watch app, sees a prominent Check In button, taps it, and the check-in is relayed to the iPhone via WCSession.transferUserInfo; the iPhone's streak count updates, the home screen widget reloads, and any pending streak-at-risk evening notification is cancelled — identical to checking in from the iOS app
   3. User who has not checked in by evening does not receive a duplicate streak-at-risk alert on their Watch — the single alert scheduled on iPhone mirrors to the wrist automatically, and is cancelled by the Watch check-in through the same cancel path used by the iOS and widget check-in surfaces
 
-**Plans**: TBD
+**Plans**: 6 plans
+
+- [x] 27-01-PLAN.md — Watch target scaffold: watchOS 10 target, WatchKit App Group, VGRingView, TodayGlanceView stub, complication entry point (WATCH-02)
+- [x] 27-02-PLAN.md — WatchSnapshot model + WidgetDataProvider delegation + WatchSnapshotTests (WATCH-02)
+- [x] 27-03-PLAN.md — WatchReceiver: processApplicationContext + @AppStorage reactive read + TodayGlanceView live data + Phase27WatchReceiverTests (WATCH-02)
+- [x] 27-04-PLAN.md — iPhone pushSnapshot path: GoalViewModel.pushSnapshot + VitaminGApp foreground trigger + Phase27PushSnapshotTests (WATCH-02)
+- [x] 27-05-PLAN.md — Watch check-in: WatchSessionManager.handleCheckIn + transferUserInfo + onCheckIn closure + VitaminGApp wiring + WatchSessionManagerTests (WATCH-03)
+- [x] 27-06-PLAN.md — Physical device UAT: 27-UAT.md human verification (WATCH-02, WATCH-03)
 
 ### Phase 28: AI (Claude) Integration
 
@@ -403,5 +410,5 @@ Plans:
 | 24. Widget Enhancements | v2.0 | 3/3 | Complete    | 2026-05-28 |
 | 25. Smart Notifications Enhancement | v3.0 | 0/3 | Not started | - |
 | 26. Analytics Dashboard | v3.0 | 3/3 | Complete   | 2026-06-02 |
-| 27. Apple Watch App | v3.0 | 4/6 | In Progress|  |
+| 27. Apple Watch App | v3.0 | 6/6 | Complete   | 2026-06-05 |
 | 28. AI (Claude) Integration | v3.0 | 0/? | Not started | - |
