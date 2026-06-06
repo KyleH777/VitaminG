@@ -1,11 +1,15 @@
 import SwiftUI
+import WatchConnectivity
 
 // Screen 02 — Today Glance (main app open view)
 // WATCH-02: Live snapshot data via @AppStorage backed by Watch App Group UserDefaults.
 // The five watchSnapshot_ keys are written by WatchReceiver.processApplicationContext
 // when an applicationContext arrives from the paired iPhone.
+// WATCH-03: Check In button sends transferUserInfo to iPhone and navigates optimistically.
 struct TodayGlanceView: View {
-    @State private var checkedIn = false
+    // MARK: - Optimistic Navigation (WATCH-03)
+
+    @State private var showSuccessView: Bool = false
 
     // MARK: - Live Snapshot Properties (WATCH-02)
 
@@ -26,6 +30,10 @@ struct TodayGlanceView: View {
     /// Whether the user has already checked in today.
     @AppStorage("watchSnapshot_hasCheckedInToday", store: UserDefaults(suiteName: suite))
     private var hasCheckedInToday: Bool = false
+
+    /// Active goal ID (UUID string) from the latest WCSession snapshot. Empty string when no active goal.
+    @AppStorage("watchSnapshot_activeGoalId", store: UserDefaults(suiteName: suite))
+    private var activeGoalId: String = ""
 
     var body: some View {
         ZStack {
@@ -80,14 +88,29 @@ struct TodayGlanceView: View {
                     .padding(.top, 4)
                     .padding(.horizontal, 14)
 
-                // Check-in button — behavior wired in Wave 4 (Plan 27-05)
+                // Check-in button — WATCH-03: sends transferUserInfo to iPhone
+                // Disabled when hasCheckedInToday (same-day dedup) or activeGoalId is empty (no goal).
                 Button {
-                    checkedIn = true
+                    // Defensive guard: button should already be disabled, but guard defensively.
+                    guard !activeGoalId.isEmpty else { return }
+
+                    // Build the transferUserInfo payload (RESEARCH.md Pattern 8).
+                    let payload: [String: Any] = ["action": "checkIn", "goalId": activeGoalId]
+
+                    // RESEARCH.md Pattern 8: guard activation state before calling transferUserInfo.
+                    // If not yet activated, still proceed optimistically — transferUserInfo is queued
+                    // and will be delivered when the session activates (WCSession guarantee).
+                    // On Simulator, transferUserInfo is silently no-op (Pitfall 2 — Plan 06 verifies).
+                    if WCSession.isSupported() && WCSession.default.activationState == .activated {
+                        WCSession.default.transferUserInfo(payload)
+                    }
+                    // Optimistic navigation: transition to success view immediately (CONTEXT.md Claude's Discretion).
+                    showSuccessView = true
                 } label: {
                     HStack(spacing: 6) {
-                        Image(systemName: checkedIn ? "checkmark.circle.fill" : "checkmark")
+                        Image(systemName: hasCheckedInToday ? "checkmark.circle.fill" : "checkmark")
                             .font(.system(size: 13, weight: .semibold))
-                        Text(checkedIn ? "Checked in!" : "Check in")
+                        Text(hasCheckedInToday ? "Checked in!" : "Check in")
                             .font(.system(size: 13, weight: .semibold))
                     }
                     .foregroundColor(.white)
@@ -101,11 +124,17 @@ struct TodayGlanceView: View {
                     .shadow(color: VGWatch.terra.opacity(0.55), radius: 8, y: 4)
                 }
                 .buttonStyle(.plain)
+                .disabled(hasCheckedInToday || activeGoalId.isEmpty)
                 .padding(.horizontal, 14)
                 .padding(.top, 10)
 
                 Spacer()
             }
+        }
+        // Optimistic success navigation (WATCH-03): present CheckInSuccessView after tapping Check In.
+        // CheckInSuccessView dismisses itself after its glow animation completes.
+        .fullScreenCover(isPresented: $showSuccessView) {
+            CheckInSuccessView()
         }
     }
 }
