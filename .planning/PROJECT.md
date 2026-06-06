@@ -27,11 +27,12 @@ The app shipped v1.0 as a full-featured iOS app with a configurable Challenge Pl
 
 Every morning, the user is reminded of their goals — making progress feel inevitable, not accidental.
 
-## Current State (v2.0 — in progress)
+## Current State (v3.0 — in progress)
 
 v1.0 Shipped: 2026-05-15. Phase 24 complete: 2026-05-28.
 - v2.0: 24 phases complete (Phases 16–24 are v2.0 milestone work)
 - Phase 24 complete: Widget enhancements — WidgetDisplayData extended with activeGoalTitle/activeGoalProgress; GoalSummaryWidget redesigned with equal-split layout; StatsView freeze handler widget-reload gap closed
+- Phase 27 complete (2026-06-06): Apple Watch App — WatchSnapshot + WatchSessionManager, WatchReceiver, accessoryRectangular complication, Watch check-in relay to iPhone; WATCH-02 and WATCH-03 verified on physical hardware
 - SwiftData with 10+ schema versions (SchemaV1 → SchemaV10)
 - CloudKit private DB (sync) + CloudKit public DB (community features)
 - 5 tabs (v2.0): Home · Goals · Explore · Community · Profile
@@ -150,4 +151,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-28 — v3.0 milestone started*
+*Last updated: 2026-06-06 — Phase 27 complete (Apple Watch App)*
