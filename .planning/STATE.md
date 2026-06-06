@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Personal Intelligence + Apple Watch
 status: executing
-last_updated: "2026-06-05T23:59:00Z"
-last_activity: 2026-06-05 -- Phase 27 Plan 04 fully complete (2/2 tasks) — VitaminGWatchWidget accessoryRectangular WidgetKit complication implemented, BUILD SUCCEEDED, human verification PASSED on Apple Watch Series 11 Simulator
+last_updated: "2026-06-06T00:41:00Z"
+last_activity: 2026-06-06 -- Phase 27 Plan 05 fully complete (3/3 tasks) — Watch Check In button wired to transferUserInfo; WatchSessionManager.handleCheckIn + closure injection seams implemented; VitaminGApp activation + GoalViewModel pushSnapshot wired; WatchSessionManagerTests 5/5 GREEN
 progress:
   total_phases: 13
   completed_phases: 11
   total_plans: 52
-  completed_plans: 50
-  percent: 91
+  completed_plans: 51
+  percent: 92
 ---
 
 # Project State
@@ -25,13 +25,13 @@ See: .planning/PROJECT.md (updated 2026-05-28)
 ## Current Position
 
 Phase: 27 (apple-watch-app) — EXECUTING
-Plan: 5 of 6 — ready for Plan 05
+Plan: 6 of 6 — ready for Plan 06
 Plans: 6 (waves 0–5)
-Status: Plan 04 complete — VitaminGWatchWidget accessoryRectangular complication, BUILD SUCCEEDED, human verify PASSED
-Last activity: 2026-06-05 -- Phase 27 Plan 04 fully complete (2/2 tasks) — VitaminGWatchWidget accessoryRectangular WidgetKit complication implemented, BUILD SUCCEEDED, human verification PASSED on Apple Watch Series 11 Simulator
+Status: Plan 05 complete — Watch Check In button wired to transferUserInfo; WatchSessionManager.handleCheckIn implemented; VitaminGApp + GoalViewModel wired; WatchSessionManagerTests 5/5 GREEN
+Last activity: 2026-06-06 -- Phase 27 Plan 05 fully complete (3/3 tasks) — Watch Check In button wired to transferUserInfo; WatchSessionManager.handleCheckIn + closure injection seams implemented; VitaminGApp activation + GoalViewModel pushSnapshot wired; WatchSessionManagerTests 5/5 GREEN
 
 ```
-v3.0 Progress: [###       ] 25% (1/4 phases, 3/3 plans)
+v3.0 Progress: [####      ] 30% (1/4 phases, 4/4 plans in progress)
 ```
 
 ## Accumulated Context
@@ -79,6 +79,9 @@ v3.0 Progress: [###       ] 25% (1/4 phases, 3/3 plans)
 | watchOS 10.0 minimum for Watch target | Existing scaffold targets watchOS 7.0 — too low for WidgetKit complications; set to 10.0 immediately; Button(intent:) interactive complications require watchOS 11.0, guard with @available |
 | Watch-scoped App Group is group.com.kyleharrington.VitaminGWatch | Distinct from iOS group.com.kyleharrington.VitaminG; iOS and watchOS App Group containers are different filesystem locations (DTS-confirmed) |
 | WatchSnapshot.build() delegates to WidgetDataProvider.build() — not re-derived | Guarantees identical active goal selection on iPhone and Watch; single source of truth for tier priority + creationDate tiebreak |
+| FetchDescriptor<CompletionEvent>() for events fetch in GoalViewModel.addCheckIn pushSnapshot call | compactMap{$0.completionEvents}.flatMap{$0} triggers SwiftData KeyPath crash in test context; direct fetch is correct pattern (same as rescheduleNotification) |
+| onCheckIn closure assigned before WatchSessionManager.activate() in VitaminGApp.init() | RESEARCH.md Pitfall 1: queued userInfo delivered immediately on activation; closure must exist before activate() call |
+| Transient GoalViewModel() constructed in onCheckIn closure | No shared singleton; addCheckIn has no view-state dependency; local instance is correct and consistent with VitaminGApp.body usage pattern |
 | activeGoalProgress coerced to 0.0 in WatchSnapshot (not nil) | Watch progress ring (VGRingView) requires concrete Double; nil from WidgetDataProvider means no duration set → 0.0 is correct (D-01) |
 | WatchSnapshot payload encoded as Data under key "snapshot" in applicationContext dict | Property-list safe; JSON-encoded Data survives WCSession serialization without type coercion issues |
 | WatchReceiver.swift compiled into both VitaminGWatch and VitaminG iOS targets | Required for @testable import VitaminG to expose WatchReceiver to WatchReceiverTests; WatchConnectivity+WidgetKit compile on iOS |
