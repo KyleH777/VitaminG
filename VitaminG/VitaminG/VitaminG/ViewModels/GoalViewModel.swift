@@ -214,6 +214,11 @@ final class GoalViewModel {
         rescheduleNotification(context: context)
         reloadWidgetTimelines()
 
+        // WATCH-02: push updated snapshot to paired Watch after every check-in so complication and TodayGlanceView reflect hasCheckedInToday: true.
+        let allGoalsForWatch = (try? context.fetch(FetchDescriptor<Goal>())) ?? []
+        let allEventsForWatch = (try? context.fetch(FetchDescriptor<CompletionEvent>())) ?? []
+        WatchSessionManager.shared.pushSnapshot(goals: allGoalsForWatch, events: allEventsForWatch, context: context)
+
         // NOTIF-03 (D-09): record check-in hour for nudge suggestion analysis. Synchronous UserDefaults write — no Task wrapper.
         NotificationPreferences.appendCheckInHour(Calendar.current.component(.hour, from: Date()))
 

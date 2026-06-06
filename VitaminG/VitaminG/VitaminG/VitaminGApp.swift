@@ -58,6 +58,29 @@ struct VitaminGApp: App {
             fatalError("Could not create ModelContainer: \(error)")
         }
 
+        // Step 4b: Wire WatchSessionManager check-in relay (WATCH-03).
+        // Assign onCheckIn BEFORE activate() so any queued userInfo is routed on delivery.
+        // The closure captures `container` (not WatchSessionManager) to avoid circular dependency.
+        // Closure runs on @MainActor (handleCheckIn is @MainActor); no additional dispatch needed.
+        let watchContainer = container
+        WatchSessionManager.shared.onCheckIn = { goalId in
+            let context = watchContainer.mainContext
+            // Fetch the goal matching the UUID received from the Watch.
+            let allGoals = (try? context.fetch(FetchDescriptor<Goal>())) ?? []
+            guard let goal = allGoals.first(where: { $0.id == goalId }) else {
+                #if DEBUG
+                print("[VitaminGApp] WCSession check-in: goal \(goalId) not found")
+                #endif
+                return
+            }
+            // Call the same addCheckIn path used by iOS-side and widget check-ins (STATE.md locked decision).
+            // Empty username/colorHex — Watch check-in does not write GoalGlimpse (per addCheckIn line 227).
+            let goalVM = GoalViewModel()
+            goalVM.addCheckIn(for: goal, context: context)
+        }
+        // Activate WCSession after closure is wired so delivery of any pending userInfo is handled.
+        WatchSessionManager.shared.activate()
+
         // Step 5: Install a lifetime-scoped StoreKit Transaction.updates listener (D-08, MON-03).
         // Must be assigned to a stored `let` property — local vars are deallocated after init()
         // and stop processing the queue (T-19-02-04 / Anti-Pattern in 19-RESEARCH.md).
