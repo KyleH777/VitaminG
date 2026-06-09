@@ -48,7 +48,7 @@ See [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full 
 - [x] **Phase 25: Smart Notifications Enhancement** - Tone-adaptive notifications, goal-title personalization, streak-at-risk evening alert, send-time suggestion banner
 - [x] **Phase 26: Analytics Dashboard** - Completion rate trends chart (Swift Charts), all-time goal heatmap, CSV export via ShareLink (completed 2026-06-02)
 - [x] **Phase 27: Apple Watch App** - accessoryRectangular complication with goal + progress ring, check-in from wrist via WCSession.transferUserInfo (completed 2026-06-05)
-- [ ] **Phase 28: AI (Claude) Integration** - Cloudflare Worker proxy, goal suggestions card on Explore tab, personalized daily motivation on Home tab
+- [x] **Phase 28: AI (Claude) Integration** - Cloudflare Worker proxy, goal suggestions card on Explore tab, personalized daily motivation on Home tab (completed 2026-06-08)
 
 ---
 
@@ -392,7 +392,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2; sequential after 28-03 — both plans edit project.pbxproj)*
 
-- [x] 28-04-PLAN.md — Explore tab integration: GoalSuggestionsCard.swift + ExploreView.swift insertion between Today's Gift and Daily Mood + .task fetch trigger + human verify (AI-01)
+- [x] 28-04-PLAN.md — Explore tab integration: GoalSuggestionsCard.swift + ExploreView.swift insertion between Today's Gift and Daily Mood + .task fetch trigger + human verify APPROVED (AI-01)
 
 **UI hint**: yes
 
@@ -429,4 +429,4 @@ Plans:
 | 25. Smart Notifications Enhancement | v3.0 | 0/3 | Not started | - |
 | 26. Analytics Dashboard | v3.0 | 3/3 | Complete   | 2026-06-02 |
 | 27. Apple Watch App | v3.0 | 6/6 | Complete    | 2026-06-06 |
-| 28. AI (Claude) Integration | v3.0 | 4/4 | Human verify pending | - |
+| 28. AI (Claude) Integration | v3.0 | 4/4 | Complete | 2026-06-08 |
