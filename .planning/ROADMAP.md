@@ -388,7 +388,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 28-03-PLAN.md — Home tab integration: AIMotivationSection.swift + HomeView.swift quoteSection replacement + .task fetch trigger + human verify (AI-02)
+- [x] 28-03-PLAN.md — Home tab integration: AIMotivationSection.swift + HomeView.swift quoteSection replacement + .task fetch trigger + human verify (AI-02)
 
 **Wave 3** *(blocked on Wave 2; sequential after 28-03 — both plans edit project.pbxproj)*
 
@@ -429,4 +429,4 @@ Plans:
 | 25. Smart Notifications Enhancement | v3.0 | 0/3 | Not started | - |
 | 26. Analytics Dashboard | v3.0 | 3/3 | Complete   | 2026-06-02 |
 | 27. Apple Watch App | v3.0 | 6/6 | Complete    | 2026-06-06 |
-| 28. AI (Claude) Integration | v3.0 | 2/4 | In progress | - |
+| 28. AI (Claude) Integration | v3.0 | 3/4 | In progress | - |

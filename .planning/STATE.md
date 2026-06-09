@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Personal Intelligence + Apple Watch
 status: executing
-last_updated: "2026-06-08T22:58:00.000Z"
+last_updated: "2026-06-08T23:30:00.000Z"
 last_activity: 2026-06-08
 progress:
   total_phases: 13
   completed_phases: 12
   total_plans: 56
-  completed_plans: 55
-  percent: 93
+  completed_plans: 56
+  percent: 96
 ---
 
 # Project State
@@ -25,13 +25,13 @@ See: .planning/PROJECT.md (updated 2026-05-28)
 ## Current Position
 
 Phase: 28
-Plan: 03
+Plan: 04
 Plans: 4 (waves 0–3)
-Status: IN PROGRESS — Plan 28-03 Task 1 complete; AIMotivationSection.swift created, HomeView.swift wired (quoteSection replaced, .task trigger added); awaiting human checkpoint Task 2 verification before plan 03 closes
+Status: IN PROGRESS — Plan 28-03 COMPLETE (human checkpoint approved: all 4 checks passed); advancing to Plan 28-04 (Explore tab AI goal suggestions, AI-01)
 Last activity: 2026-06-08
 
 ```
-v3.0 Progress: [########  ] 50% (2/4 phases, 2/4 plans complete in phase 28 — plan 03 partial)
+v3.0 Progress: [######### ] 75% (3/4 plans complete in phase 28; 1 plan remaining — 28-04)
 ```
 
 ## Accumulated Context
@@ -97,6 +97,8 @@ v3.0 Progress: [########  ] 50% (2/4 phases, 2/4 plans complete in phase 28 — 
 | PBXFileSystemSynchronizedRootGroup auto-includes new Swift files (Plan 28-02) | Xcode 16 synchronized groups handle Services/ and ViewModels/ subdirectories automatically — no manual pbxproj edits required for AIProxyService.swift and AIViewModel.swift |
 | AIViewModel is NOT a singleton (Plan 28-02) | Separate @State instances per view (HomeView, ExploreView) are acceptable; AIProxyService UserDefaults cache deduplicates per day (Pitfall 3 / A3) |
 | AIProxyService.staticSuggestions = ["Read for 15 minutes daily", "Drink 8 glasses of water", "Meditate for 5 minutes"] | D-07 canonical 3-item fallback list; must match Worker's fallback array |
+| AIMotivationSection uses @Bindable aiViewModel (Plan 28-03) | @Bindable enables two-way binding to @Observable AIViewModel; view components read motivationLabel and motivationResult.text exclusively — no hardcoded label strings in the view |
+| .task modifier on HomeView outermost ZStack fires refreshMotivationIfNeeded (Plan 28-03) | Pitfall 6 compliant; fetch originates from view lifecycle, not VitaminGApp.init; once-per-day UserDefaults cache prevents redundant network calls |
 
 ### Blockers
 
