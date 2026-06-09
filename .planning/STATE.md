@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Personal Intelligence + Apple Watch
-status: in-progress
-last_updated: "2026-06-08T00:00:00Z"
+status: executing
+last_updated: "2026-06-09T02:48:31.239Z"
 last_activity: 2026-06-08
 progress:
   total_phases: 13
   completed_phases: 12
   total_plans: 56
-  completed_plans: 52
+  completed_plans: 55
   percent: 93
 ---
 
@@ -25,13 +25,13 @@ See: .planning/PROJECT.md (updated 2026-05-28)
 ## Current Position
 
 Phase: 28
-Plan: 02
+Plan: 03
 Plans: 4 (waves 0–3)
-Status: IN PROGRESS — Plan 28-01 complete; Worker deployed at https://vg-ai-proxy.kileharrington.workers.dev/ai; SHARED_TOKEN recorded; Wave 0 RED tests on disk; ready for Plan 28-02
+Status: IN PROGRESS — Plan 28-02 complete; AIProxyService.swift and AIViewModel.swift created; 12/12 Wave 0 tests GREEN; ready for Plan 28-03 (HomeView AI wiring)
 Last activity: 2026-06-08
 
 ```
-v3.0 Progress: [####      ] 30% (1/4 phases, 4/4 plans in progress)
+v3.0 Progress: [########  ] 50% (2/4 phases, 2/4 plans complete in phase 28)
 ```
 
 ## Accumulated Context
@@ -94,6 +94,9 @@ v3.0 Progress: [####      ] 30% (1/4 phases, 4/4 plans in progress)
 | MockAIProxyService defined inline in AIProxyServiceTests.swift | Protocol seam (AIProxyServiceProtocol) enables mock injection without network; inline definition keeps Wave 0 file self-contained |
 | Worker deployed at https://vg-ai-proxy.kileharrington.workers.dev/ai; SHARED_TOKEN = 020A3129-9FDB-4817-8C8F-EA1A27F59A38 | Smoke tests 4/4 PASSED; Plan 02 embeds these as AIProxyService.workerURL and .workerToken static lets |
 | macOS head -n-1 → sed '$d' in test-worker.sh | GNU head -n-1 is not available on macOS BSD head; sed '$d' achieves same result cross-platform |
+| PBXFileSystemSynchronizedRootGroup auto-includes new Swift files (Plan 28-02) | Xcode 16 synchronized groups handle Services/ and ViewModels/ subdirectories automatically — no manual pbxproj edits required for AIProxyService.swift and AIViewModel.swift |
+| AIViewModel is NOT a singleton (Plan 28-02) | Separate @State instances per view (HomeView, ExploreView) are acceptable; AIProxyService UserDefaults cache deduplicates per day (Pitfall 3 / A3) |
+| AIProxyService.staticSuggestions = ["Read for 15 minutes daily", "Drink 8 glasses of water", "Meditate for 5 minutes"] | D-07 canonical 3-item fallback list; must match Worker's fallback array |
 
 ### Blockers
 

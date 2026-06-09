@@ -384,7 +384,7 @@ Plans:
 
 **Wave 1** *(blocked on Wave 0 completion)*
 
-- [ ] 28-02-PLAN.md — AIProxyService (singleton, @Observable, AIProxyServiceProtocol, date-key UserDefaults cache, VGQuoteBank/static fallback) + AIViewModel (@MainActor @Observable, motivationLabel, refresh methods using WidgetDataProvider.build) — turns Wave 0 tests GREEN (AI-01, AI-02)
+- [x] 28-02-PLAN.md — AIProxyService (singleton, @Observable, AIProxyServiceProtocol, date-key UserDefaults cache, VGQuoteBank/static fallback) + AIViewModel (@MainActor @Observable, motivationLabel, refresh methods using WidgetDataProvider.build) — turns Wave 0 tests GREEN (AI-01, AI-02)
 
 **Wave 2** *(blocked on Wave 1)*
 
@@ -429,4 +429,4 @@ Plans:
 | 25. Smart Notifications Enhancement | v3.0 | 0/3 | Not started | - |
 | 26. Analytics Dashboard | v3.0 | 3/3 | Complete   | 2026-06-02 |
 | 27. Apple Watch App | v3.0 | 6/6 | Complete    | 2026-06-06 |
-| 28. AI (Claude) Integration | v3.0 | 1/4 | In progress | - |
+| 28. AI (Claude) Integration | v3.0 | 2/4 | In progress | - |
