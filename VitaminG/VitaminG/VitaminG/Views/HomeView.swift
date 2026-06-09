@@ -10,6 +10,7 @@ struct HomeView: View {
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("vg_onboardingName") private var storedName: String = ""
     @State private var goalVM = GoalViewModel()
+    @State private var aiViewModel = AIViewModel()
 
     // Goal entry sheet state
     @State private var showingGoalEntryChoice = false
@@ -31,17 +32,6 @@ struct HomeView: View {
     // HOME-01: app streak sourced from StreakEngine — not goal.completionEvents?.count
     private var appStreak: Int {
         StreakEngine.currentStreak(from: completionEvents)
-    }
-
-    // HOME-02: daily quote from VGQuoteBank.all rotated by day-of-year
-    private var todaysQuote: VGQuote {
-        let all = VGQuoteBank.all
-        guard !all.isEmpty else {
-            return VGQuote(text: "Small steps, taken daily, build the life you've been dreaming of.", attribution: "Vitamin G")
-        }
-        let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 1
-        let index = (dayOfYear - 1) % all.count
-        return all[index]
     }
 
     // HOME-03: active community challenge
@@ -71,7 +61,7 @@ struct HomeView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     headerSection
-                    quoteSection
+                    AIMotivationSection(aiViewModel: aiViewModel)
                     // HOME-03: community goal card — hidden when no active challenge
                     if let challenge = primaryChallenge {
                         communityGoalCard(challenge)
@@ -87,6 +77,9 @@ struct HomeView: View {
             }
         }
         .navigationBarHidden(true)
+        .task {
+            await aiViewModel.refreshMotivationIfNeeded(goals: goals, events: completionEvents)
+        }
         .sheet(isPresented: $showingGoalEntryChoice) {
             GoalEntryChoiceView(
                 onSelectWizard: { step in
@@ -166,33 +159,6 @@ struct HomeView: View {
                 .frame(width: 6, height: 6)
                 .offset(x: 1, y: -1)
         }
-    }
-
-    // MARK: - Quote (HOME-02: VGQuoteBank.all with day-of-year rotation)
-
-    private var quoteSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("TODAY'S DOSE")
-                .font(.system(size: 9, weight: .semibold))
-                .kerning(1.4)
-                .textCase(.uppercase)
-                .foregroundStyle(VGTheme.textMuted)
-            Text(todaysQuote.text)
-                .font(VGTheme.serifItalic(16))
-                .foregroundStyle(VGTheme.textSecondary)
-                .lineSpacing(4)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding(.horizontal, 18)
-        .padding(.vertical, 16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(VGTheme.surface)
-        .overlay(alignment: .leading) {
-            Rectangle().frame(width: 2).foregroundStyle(VGTheme.accentTerra)
-        }
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .padding(.horizontal, 24)
-        .padding(.top, 20)
     }
 
     // MARK: - Community Goal Card (HOME-03 / D-01)
