@@ -3,8 +3,10 @@ import SwiftData
 
 struct ExploreView: View {
     @State private var viewModel = ExploreViewModel()
+    @State private var aiViewModel = AIViewModel()
     @Environment(\.modelContext) private var modelContext
     @Query private var allGoals: [Goal]
+    @Query private var completionEvents: [CompletionEvent]
 
     // MARK: - Search (Phase 22, Plan 22-05 Task 2)
     // searchText is passed in from ContentView where .searchable lives on the NavigationStack
@@ -56,6 +58,10 @@ struct ExploreView: View {
                 sectionLabel("Today's Gift")
                 GoalGifterCard(viewModel: viewModel)
 
+                // Section 28-AI: Goals Suggested for You (AI-01) — inserted by Plan 28
+                sectionLabel("GOALS FOR YOU")
+                GoalSuggestionsCard(aiViewModel: aiViewModel)
+
                 // Section 2: Mood Prompt (EXPLORE-03) — inserted by Plan 20-02
                 sectionLabel("Daily Mood")
                 MoodPromptCard(viewModel: viewModel)
@@ -85,6 +91,9 @@ struct ExploreView: View {
             }
             .padding(.top, 8)
             .padding(.bottom, 24)
+        }
+        .task {
+            await aiViewModel.refreshSuggestionsIfNeeded(goals: allGoals, events: completionEvents)
         }
         .background(VGTheme.background.ignoresSafeArea())
         .navigationTitle("Explore")
