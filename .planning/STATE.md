@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Personal Intelligence + Apple Watch
-status: checkpoint-paused
-last_updated: "2026-06-06T22:29:48Z"
-last_activity: 2026-06-06
+status: in-progress
+last_updated: "2026-06-08T00:00:00Z"
+last_activity: 2026-06-08
 progress:
   total_phases: 13
   completed_phases: 12
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-05-28)
 ## Current Position
 
 Phase: 28
-Plan: 01 (checkpoint-paused at Task 3)
+Plan: 02
 Plans: 4 (waves 0–3)
-Status: CHECKPOINT — Plan 28-01 Tasks 1 and 2 complete; paused at Task 3 (human deploy checkpoint: Cloudflare Worker deployment + SHARED_TOKEN UUID required before Plan 02 can proceed)
-Last activity: 2026-06-06
+Status: IN PROGRESS — Plan 28-01 complete; Worker deployed at https://vg-ai-proxy.kileharrington.workers.dev/ai; SHARED_TOKEN recorded; Wave 0 RED tests on disk; ready for Plan 28-02
+Last activity: 2026-06-08
 
 ```
 v3.0 Progress: [####      ] 30% (1/4 phases, 4/4 plans in progress)
@@ -92,6 +92,8 @@ v3.0 Progress: [####      ] 30% (1/4 phases, 4/4 plans in progress)
 | worker/ created at project root alongside VitaminG/ — not inside Xcode project | Cloudflare Worker is a JavaScript artifact; must not be in the Xcode project directory to avoid confusing Xcode build system |
 | Wave 0 RED test files on disk but not yet added to Xcode test target | Xcode .pbxproj requires manual addition; Plan 02 first task adds both files to VitaminGTests target before turning GREEN |
 | MockAIProxyService defined inline in AIProxyServiceTests.swift | Protocol seam (AIProxyServiceProtocol) enables mock injection without network; inline definition keeps Wave 0 file self-contained |
+| Worker deployed at https://vg-ai-proxy.kileharrington.workers.dev/ai; SHARED_TOKEN = 020A3129-9FDB-4817-8C8F-EA1A27F59A38 | Smoke tests 4/4 PASSED; Plan 02 embeds these as AIProxyService.workerURL and .workerToken static lets |
+| macOS head -n-1 → sed '$d' in test-worker.sh | GNU head -n-1 is not available on macOS BSD head; sed '$d' achieves same result cross-platform |
 
 ### Blockers
 
@@ -103,7 +105,7 @@ None.
 - CloudKit Console: promote new public DB record types (UserPresence, Applause, Follow, extended PublicProfile) to Production before Phase 21
 - CloudKit Console: add Queryable index on "username" field in PublicProfile record type (iCloud.com.kyleharrington.VitaminG) before 17-03 real-device testing — required for username availability check (isUsernameTaken/countRecordsWithUsername)
 - CloudKit Console: create TrendingGoal record type (title/String, category/String, participantCount/Int64, completedCount/Int64, createdAt/DateTime) + Queryable index on participantCount + deploy to Production + seed records before real-device Explore tab testing
-- [BLOCKING - Plan 28-01 Task 3] Deploy Cloudflare Worker: (1) run `uuidgen`, (2) replace REPLACE_WITH_UUID_AT_DEPLOY in worker/src/index.js, (3) `cd worker && npx wrangler login && npx wrangler secret put ANTHROPIC_API_KEY && npx wrangler deploy`, (4) run worker/test-worker.sh smoke test, (5) record deployed URL and UUID for Plan 02
+- [DONE - Plan 28-01] Worker deployed at https://vg-ai-proxy.kileharrington.workers.dev/ai; SHARED_TOKEN = 020A3129-9FDB-4817-8C8F-EA1A27F59A38; Plan 02 must embed these as AIProxyService.workerURL and AIProxyService.workerToken
 
 ## Deferred Items (from v1.0)
 

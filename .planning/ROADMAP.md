@@ -380,7 +380,7 @@ Plans:
 Plans:
 **Wave 0**
 
-- [ ] 28-01-PLAN.md — Cloudflare Worker proxy (POST /ai, token gate, prompt builder, Anthropic call, thin envelope) + Wave 0 RED test stubs + human deployment checkpoint (AI-03)
+- [x] 28-01-PLAN.md — Cloudflare Worker proxy (POST /ai, token gate, prompt builder, Anthropic call, thin envelope) + Wave 0 RED test stubs + human deployment checkpoint (AI-03)
 
 **Wave 1** *(blocked on Wave 0 completion)*
 
@@ -429,4 +429,4 @@ Plans:
 | 25. Smart Notifications Enhancement | v3.0 | 0/3 | Not started | - |
 | 26. Analytics Dashboard | v3.0 | 3/3 | Complete   | 2026-06-02 |
 | 27. Apple Watch App | v3.0 | 6/6 | Complete    | 2026-06-06 |
-| 28. AI (Claude) Integration | v3.0 | 0/? | Not started | - |
+| 28. AI (Claude) Integration | v3.0 | 1/4 | In progress | - |
