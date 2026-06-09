@@ -392,7 +392,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2; sequential after 28-03 — both plans edit project.pbxproj)*
 
-- [ ] 28-04-PLAN.md — Explore tab integration: GoalSuggestionsCard.swift + ExploreView.swift insertion between Today's Gift and Daily Mood + .task fetch trigger + human verify (AI-01)
+- [x] 28-04-PLAN.md — Explore tab integration: GoalSuggestionsCard.swift + ExploreView.swift insertion between Today's Gift and Daily Mood + .task fetch trigger + human verify (AI-01)
 
 **UI hint**: yes
 
@@ -429,4 +429,4 @@ Plans:
 | 25. Smart Notifications Enhancement | v3.0 | 0/3 | Not started | - |
 | 26. Analytics Dashboard | v3.0 | 3/3 | Complete   | 2026-06-02 |
 | 27. Apple Watch App | v3.0 | 6/6 | Complete    | 2026-06-06 |
-| 28. AI (Claude) Integration | v3.0 | 3/4 | In progress | - |
+| 28. AI (Claude) Integration | v3.0 | 4/4 | Human verify pending | - |
