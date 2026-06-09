@@ -2,12 +2,12 @@
 phase: 28-ai-claude-integration
 plan: "03"
 subsystem: home-ai-view
-status: partial-checkpoint
 tags:
   - aimotivationsection
   - homeview
   - ai-wiring
-  - checkpoint-pending
+  - swiftui
+  - observable
 dependency_graph:
   requires:
     - "28-02 (AIProxyService.swift and AIViewModel.swift created; 12/12 Wave 0 tests GREEN)"
@@ -16,7 +16,7 @@ dependency_graph:
     - "HomeView.swift — quoteSection replaced with AIMotivationSection; .task trigger wired"
   affects:
     - "Home tab UX — motivation card now sources copy from Claude via AIViewModel"
-    - "Plans 28-04 (GoalSuggestionsCard in ExploreView — same AIViewModel pattern)"
+    - "28-04 (GoalSuggestionsCard in ExploreView — same AIViewModel pattern)"
 tech_stack:
   added:
     - "@Bindable var aiViewModel: AIViewModel pattern (AIMotivationSection)"
@@ -30,30 +30,55 @@ key_files:
     - VitaminG/VitaminG/VitaminG/Views/Home/AIMotivationSection.swift
   modified:
     - VitaminG/VitaminG/VitaminG/Views/HomeView.swift
-decisions:
+key_decisions:
   - "PBXFileSystemSynchronizedRootGroup auto-includes Views/Home/AIMotivationSection.swift — no manual pbxproj edits required (same as Plan 02)"
   - ".task modifier placed on outermost ZStack container so it fires once on HomeView appear"
   - "Comment-only references to YOUR DOSE / TODAY'S DOSE strings removed from AIMotivationSection.swift to pass literal-string acceptance assertions; label logic lives exclusively in AIViewModel.motivationLabel"
+requirements-completed:
+  - AI-02
 metrics:
-  duration: "~12 minutes"
-  completed_tasks: 1
+  duration: "~30 minutes (including human verification)"
+  completed_tasks: 2
   total_tasks: 2
   completed_date: "2026-06-08"
 ---
 
 # Phase 28 Plan 03: AIMotivationSection and HomeView AI Wiring
 
-**One-liner:** AIMotivationSection.swift created with @Bindable AIViewModel, YOUR DOSE/TODAY'S DOSE dynamic label (via motivationLabel computed property), redacted loading placeholder, and accessibility labels; HomeView.swift wired — quoteSection and todaysQuote dead code removed, .task trigger added, spacing changed 6→8 per UI-SPEC, .padding(.horizontal, 18) preserved.
+**AIMotivationSection.swift wired into HomeView replacing quoteSection — Claude motivation card shows YOUR DOSE label with cached AI copy and TODAY'S DOSE fallback from VGQuoteBank; human verification approved all four checks (Claude path, fallback path, layout, accessibility).**
 
-**Status:** PARTIAL — Task 1 complete and committed; awaiting Task 2 human checkpoint verification.
+## Performance
 
----
+- **Duration:** ~30 minutes (including human verification)
+- **Started:** 2026-06-08
+- **Completed:** 2026-06-08
+- **Tasks:** 2 (1 auto + 1 checkpoint)
+- **Files modified:** 2
+
+## Accomplishments
+
+- Created `AIMotivationSection.swift` with dynamic `YOUR DOSE`/`TODAY'S DOSE` label sourced from `AIViewModel.motivationLabel`, redacted loading skeleton, and full accessibility support
+- Replaced `quoteSection` in `HomeView.swift` with `AIMotivationSection`; removed `quoteSection` and `todaysQuote` dead code; added `.task` trigger for `refreshMotivationIfNeeded`
+- Human verification confirmed: Claude path (Check A), fallback path (Check B), layout regression-free (Check C), and VoiceOver accessibility (Check D)
+
+## Task Commits
+
+Each task was committed atomically:
+
+1. **Task 1: Create AIMotivationSection.swift and wire HomeView replacement + .task fetch trigger** - `2db6131` (feat)
+2. **Task 2: Human checkpoint — all four checks approved** - checkpoint only (no commit)
 
 ## Completed Tasks
 
 | Task | Name | Commit | Files |
 |------|------|--------|-------|
 | 1 | Create AIMotivationSection.swift and wire HomeView replacement + .task fetch trigger | `2db6131` | VitaminG/Views/Home/AIMotivationSection.swift, VitaminG/Views/HomeView.swift |
+| 2 | Human checkpoint — YOUR DOSE/TODAY'S DOSE label switching, fallback, layout, accessibility | checkpoint approved | N/A |
+
+## Files Created/Modified
+
+- `VitaminG/VitaminG/VitaminG/Views/Home/AIMotivationSection.swift` - SwiftUI view with `@Bindable AIViewModel`, dynamic label, redacted loading state, and accessibility labels
+- `VitaminG/VitaminG/VitaminG/Views/HomeView.swift` - `quoteSection` replaced with `AIMotivationSection`, `todaysQuote` removed, `.task` trigger added
 
 ---
 
@@ -119,21 +144,42 @@ All acceptance criteria assertions PASSED:
 
 **Action:** Used `platform=iOS Simulator,name=iPhone 17` for automated build and test verification. Human verification in Task 2 should use whichever simulator is available.
 
----
+## Human Verification Results
 
-## Pending: Task 2 Human Checkpoint
+**Task 2 checkpoint: APPROVED** — all four checks passed on simulator.
 
-The human checkpoint (Task 2) has not yet been verified. When the user confirms "approved", update this SUMMARY with:
-- Confirmation that HomeView.swift now uses AIMotivationSection (DONE — Task 1)
-- Confirmation that the four human verification checks (A, B, C, D) all passed
-- Confirmation that .padding(.horizontal, 18) was preserved and spacing changed from 6 to 8 (DONE — Task 1)
-- Note that AI-02 view-layer integration is complete; AI-01 view-layer remains for Plan 04
+| Check | Description | Result |
+|-------|-------------|--------|
+| A — Claude path | YOUR DOSE label, Claude-generated text, cache hit on re-entry | PASSED |
+| B — Fallback path | TODAY'S DOSE label, VGQuoteBank copy, never empty | PASSED |
+| C — Layout | Card matches legacy quoteSection visually | PASSED |
+| D — Accessibility | VoiceOver announces motivation text | PASSED |
+
+**AI-02 view-layer integration is complete.** AI-01 view-layer (Explore tab goal suggestions) remains for Plan 04.
+
+## Decisions Made
+
+- `PBXFileSystemSynchronizedRootGroup` auto-includes `Views/Home/AIMotivationSection.swift` — no manual pbxproj edits required (same as Plan 02)
+- `.task` modifier placed on outermost ZStack container so it fires once on HomeView appear
+- Label string logic lives exclusively in `AIViewModel.motivationLabel`; no hardcoded "YOUR DOSE" or "TODAY'S DOSE" literals in the view
 
 ---
 
 ## Known Stubs
 
 None. AIMotivationSection reads live state from AIViewModel, which calls AIProxyService with real network path, UserDefaults cache, and VGQuoteBank fallback. All paths are fully functional.
+
+## Issues Encountered
+
+None significant. Two minor deviations handled automatically:
+1. iPhone 16 simulator unavailable — used iPhone 17 (functionally identical for UI testing)
+2. No manual pbxproj edits needed — Xcode 16 synchronized groups auto-include new Swift files
+
+## Next Phase Readiness
+
+- AI-02 (Home tab motivation) is fully complete and human-verified
+- Plan 28-04 (Explore tab goal suggestions, AI-01) is unblocked and can begin immediately
+- `AIViewModel` and `AIProxyService` patterns established in this phase are directly reusable for `GoalSuggestionsCard`
 
 ---
 
@@ -143,3 +189,16 @@ None. AIMotivationSection reads live state from AIViewModel, which calls AIProxy
 |------|------|-------------|
 | T-28-10 mitigated | Views/Home/AIMotivationSection.swift | Claude text rendered via SwiftUI Text() — no HTML/JS execution surface |
 | T-28-12 mitigated | Views/Home/AIMotivationSection.swift | .redacted loading state shows while fetch in flight; on timeout, fallback fills — card never blocks |
+
+---
+
+## Self-Check: PASSED
+
+- `VitaminG/VitaminG/VitaminG/Views/Home/AIMotivationSection.swift` — created in Task 1 (commit `2db6131`)
+- `VitaminG/VitaminG/VitaminG/Views/HomeView.swift` — modified in Task 1 (commit `2db6131`)
+- Commit `2db6131` verified in git log
+- Human checkpoint Task 2 approved with all four checks passed
+
+---
+*Phase: 28-ai-claude-integration*
+*Completed: 2026-06-08*
