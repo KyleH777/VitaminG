@@ -13,7 +13,7 @@
 // SECURITY: env.ANTHROPIC_API_KEY is the ONLY place the Anthropic key appears — never
 // as a string literal. The API key must ONLY be set via `wrangler secret put` — never in files.
 
-const SHARED_TOKEN = "REPLACE_WITH_UUID_AT_DEPLOY"; // operator must replace before wrangler deploy
+const SHARED_TOKEN = "020A3129-9FDB-4817-8C8F-EA1A27F59A38";
 
 const STATIC_SUGGESTIONS = [
   "Read for 15 minutes daily",

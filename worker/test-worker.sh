@@ -54,7 +54,7 @@ MOTIVATION_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$WORKER_URL" \
   -H "Content-Type: application/json" \
   -d "{\"type\":\"motivation\",\"token\":\"$SHARED_TOKEN\",\"goals\":[{\"title\":\"Exercise daily\",\"category\":\"body\"}],\"streak\":7}")
 MOTIVATION_STATUS=$(echo "$MOTIVATION_RESPONSE" | tail -n1)
-MOTIVATION_BODY=$(echo "$MOTIVATION_RESPONSE" | head -n-1)
+MOTIVATION_BODY=$(echo "$MOTIVATION_RESPONSE" | sed '$d')
 
 assert_status "motivation endpoint" "200" "$MOTIVATION_STATUS" "$MOTIVATION_BODY"
 
@@ -74,7 +74,7 @@ SUGGESTIONS_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$WORKER_URL" \
   -H "Content-Type: application/json" \
   -d "{\"type\":\"suggestions\",\"token\":\"$SHARED_TOKEN\",\"goals\":[{\"title\":\"Read more\",\"category\":\"mind\"},{\"title\":\"Walk daily\",\"category\":\"body\"}],\"streak\":3}")
 SUGGESTIONS_STATUS=$(echo "$SUGGESTIONS_RESPONSE" | tail -n1)
-SUGGESTIONS_BODY=$(echo "$SUGGESTIONS_RESPONSE" | head -n-1)
+SUGGESTIONS_BODY=$(echo "$SUGGESTIONS_RESPONSE" | sed '$d')
 
 assert_status "suggestions endpoint" "200" "$SUGGESTIONS_STATUS" "$SUGGESTIONS_BODY"
 
@@ -97,7 +97,7 @@ BADTOKEN_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$WORKER_URL" \
   -H "Content-Type: application/json" \
   -d '{"type":"motivation","token":"wrong-token","goals":[],"streak":0}')
 BADTOKEN_STATUS=$(echo "$BADTOKEN_RESPONSE" | tail -n1)
-BADTOKEN_BODY=$(echo "$BADTOKEN_RESPONSE" | head -n-1)
+BADTOKEN_BODY=$(echo "$BADTOKEN_RESPONSE" | sed '$d')
 
 assert_status "bad token rejection" "401" "$BADTOKEN_STATUS" "$BADTOKEN_BODY"
 
