@@ -65,12 +65,14 @@ struct VitaminGApp: App {
         let watchContainer = container
         WatchSessionManager.shared.onCheckIn = { goalId in
             let context = watchContainer.mainContext
-            // Fetch the goal matching the UUID received from the Watch.
-            let allGoals = (try? context.fetch(FetchDescriptor<Goal>())) ?? []
-            guard let goal = allGoals.first(where: { $0.id == goalId }) else {
-                #if DEBUG
-                print("[VitaminGApp] WCSession check-in: goal \(goalId) not found")
-                #endif
+            // Predicate fetch — filters at the store level instead of loading all goals.
+            let id = goalId
+            var descriptor = FetchDescriptor<Goal>(
+                predicate: #Predicate { $0.id == id }
+            )
+            descriptor.fetchLimit = 1
+            guard let goal = ((try? context.fetch(descriptor)) ?? []).first else {
+                VGLog.watch.debug("WCSession check-in: goal \(goalId.uuidString, privacy: .public) not found")
                 return
             }
             // Call the same addCheckIn path used by iOS-side and widget check-ins (STATE.md locked decision).

@@ -543,9 +543,7 @@ extension CommunityService {
         do {
             _ = try await db.save(subscription)
         } catch {
-            #if DEBUG
-            print("[CommunityService] Subscription registration failed (non-fatal): \(error)")
-            #endif
+            VGLog.community.error("Subscription registration failed (non-fatal): \(error.localizedDescription, privacy: .public)")
         }
     }
 }

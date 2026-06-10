@@ -1,6 +1,7 @@
 import Foundation
 import WatchConnectivity
 import WidgetKit
+import os
 
 /// Watch-side WCSession singleton.
 ///
@@ -20,6 +21,7 @@ final class WatchReceiver: NSObject, WCSessionDelegate {
     // MARK: - Private
 
     private let suiteName = "group.com.kyleharrington.VitaminGWatch"
+    private let log = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.kyleharrington.VitaminGWatch", category: "watch")
 
     // MARK: - Activation
 
@@ -37,13 +39,11 @@ final class WatchReceiver: NSObject, WCSessionDelegate {
         activationDidCompleteWith activationState: WCSessionActivationState,
         error: Error?
     ) {
-        #if DEBUG
         if let error = error {
-            print("[WatchReceiver] activation error: \(error)")
+            log.error("activation error: \(error.localizedDescription, privacy: .public)")
         } else {
-            print("[WatchReceiver] activated with state: \(activationState.rawValue)")
+            log.debug("activated with state: \(activationState.rawValue, privacy: .public)")
         }
-        #endif
     }
 
     // iOS requires these two delegate methods; watchOS does NOT have them (Pitfall 6).
@@ -83,9 +83,7 @@ final class WatchReceiver: NSObject, WCSessionDelegate {
             let snapshot = try JSONDecoder().decode(WatchSnapshot.self, from: data)
             writeToUserDefaults(snapshot, into: defaults)
         } catch {
-            #if DEBUG
-            print("[WatchReceiver] decode error: \(error)")
-            #endif
+            log.error("decode error: \(error.localizedDescription, privacy: .public)")
         }
     }
 

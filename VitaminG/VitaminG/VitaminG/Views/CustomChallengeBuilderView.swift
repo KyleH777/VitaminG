@@ -346,9 +346,7 @@ struct CustomChallengeBuilderView: View {
         do {
             try modelContext.save()
         } catch {
-            #if DEBUG
-            print("[CustomChallengeBuilderView] modelContext.save() failed: \(error)")
-            #endif
+            VGLog.general.error("modelContext.save() failed: \(error.localizedDescription, privacy: .public)")
         }
         dismiss()
     }

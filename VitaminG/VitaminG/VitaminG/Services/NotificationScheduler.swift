@@ -129,9 +129,7 @@ final class NotificationScheduler {
             // D-07: After morning notification succeeds, schedule one-shot 7 PM streak-at-risk alert.
             await scheduleOneShotStreakAtRisk(activeGoals: activeGoals, streak: streak)
         } catch {
-            #if DEBUG
-            print("[NotificationScheduler] Failed to add daily reminder request: \(error)")
-            #endif
+            VGLog.notifications.error("Failed to add daily reminder request: \(error.localizedDescription, privacy: .public)")
         }
     }
 
@@ -163,9 +161,7 @@ final class NotificationScheduler {
         // scheduling a notification that would fire the next morning instead of this evening.
         let hour = currentHour ?? Calendar.current.component(.hour, from: Date())
         guard hour < 19 else {
-            #if DEBUG
-            print("[NotificationScheduler] Skipping one-shot streakAtRisk — current hour past 19:00 (\(hour))")
-            #endif
+            VGLog.notifications.debug("Skipping one-shot streakAtRisk — current hour past 19:00 (\(hour, privacy: .public))")
             return
         }
 
@@ -178,9 +174,7 @@ final class NotificationScheduler {
             count = await center.pendingNotificationRequests().count
         }
         guard count < 60 else {
-            #if DEBUG
-            print("[NotificationScheduler] Skipping one-shot streakAtRisk — approaching 64-cap (\(count) pending)")
-            #endif
+            VGLog.notifications.debug("Skipping one-shot streakAtRisk — approaching 64-cap (\(count, privacy: .public) pending)")
             return
         }
 
@@ -220,9 +214,7 @@ final class NotificationScheduler {
         do {
             try await center.add(request)
         } catch {
-            #if DEBUG
-            print("[NotificationScheduler] Failed to add one-shot streakAtRisk: \(error)")
-            #endif
+            VGLog.notifications.error("Failed to add one-shot streakAtRisk: \(error.localizedDescription, privacy: .public)")
         }
     }
 
@@ -295,9 +287,7 @@ final class NotificationScheduler {
         do {
             try await center.add(request)
         } catch {
-            #if DEBUG
-            print("[NotificationScheduler] Failed to add win reminder request: \(error)")
-            #endif
+            VGLog.notifications.error("Failed to add win reminder request: \(error.localizedDescription, privacy: .public)")
         }
     }
 
@@ -357,9 +347,7 @@ extension NotificationScheduler {
         do {
             try await center.add(request)
         } catch {
-            #if DEBUG
-            print("[NotificationScheduler] Failed to add challenge reminder: \(error)")
-            #endif
+            VGLog.notifications.error("Failed to add challenge reminder: \(error.localizedDescription, privacy: .public)")
         }
     }
 
@@ -402,9 +390,7 @@ extension NotificationScheduler {
         // iOS caps pending notifications at 64; guard with a 4-slot buffer before adding new ones.
         let pending = await center.pendingNotificationRequests()
         guard pending.count < 60 else {
-            #if DEBUG
-            print("[NotificationScheduler] Skipping streakAtRisk — approaching 64-cap (\(pending.count) pending)")
-            #endif
+            VGLog.notifications.debug("Skipping streakAtRisk — approaching 64-cap (\(pending.count, privacy: .public) pending)")
             return
         }
 
@@ -428,9 +414,7 @@ extension NotificationScheduler {
         do {
             try await center.add(request)
         } catch {
-            #if DEBUG
-            print("[NotificationScheduler] Failed to add streak-at-risk: \(error)")
-            #endif
+            VGLog.notifications.error("Failed to add streak-at-risk: \(error.localizedDescription, privacy: .public)")
         }
     }
 
@@ -471,9 +455,7 @@ extension NotificationScheduler {
         do {
             try await center.add(request)
         } catch {
-            #if DEBUG
-            print("[NotificationScheduler] Failed to add milestone: \(error)")
-            #endif
+            VGLog.notifications.error("Failed to add milestone: \(error.localizedDescription, privacy: .public)")
         }
     }
 
@@ -505,9 +487,7 @@ extension NotificationScheduler {
         do {
             try await center.add(request)
         } catch {
-            #if DEBUG
-            print("[NotificationScheduler] Failed to add buddy ping: \(error)")
-            #endif
+            VGLog.notifications.error("Failed to add buddy ping: \(error.localizedDescription, privacy: .public)")
         }
     }
 }
@@ -558,9 +538,7 @@ extension NotificationScheduler {
         do {
             try await center.add(request)
         } catch {
-            #if DEBUG
-            print("[NotificationScheduler] Failed to add per-goal reminder: \(error)")
-            #endif
+            VGLog.notifications.error("Failed to add per-goal reminder: \(error.localizedDescription, privacy: .public)")
         }
     }
 

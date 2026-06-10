@@ -110,17 +110,17 @@ extension ModelContainerFactory {
                 )
                 ckContainer.persistentStoreDescriptions = [desc]
                 ckContainer.loadPersistentStores { _, error in
-                    if let error { print("Schema init load error: \(error)") }
+                    if let error { VGLog.cloudKit.error("Schema init load error: \(error.localizedDescription, privacy: .public)") }
                 }
                 try ckContainer.initializeCloudKitSchema()
                 // Remove store to avoid double-open with SwiftData
                 if let store = ckContainer.persistentStoreCoordinator.persistentStores.first {
                     try ckContainer.persistentStoreCoordinator.remove(store)
                 }
-                print("[DEBUG] initializeCloudKitSchema completed successfully")
+                VGLog.cloudKit.debug("initializeCloudKitSchema completed successfully")
             }
         } catch {
-            print("[DEBUG] initializeCloudKitSchema error: \(error)")
+            VGLog.cloudKit.error("initializeCloudKitSchema error: \(error.localizedDescription, privacy: .public)")
             // Non-fatal in DEBUG — log and continue
         }
     }
