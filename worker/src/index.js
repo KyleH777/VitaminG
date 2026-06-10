@@ -12,6 +12,8 @@
 //
 // SECURITY: env.ANTHROPIC_API_KEY is the ONLY place the Anthropic key appears — never
 // as a string literal. The API key must ONLY be set via `wrangler secret put` — never in files.
+// SECURITY: rate limiting via native ratelimits bindings — per-IP 10/min (env.IP_LIMITER)
+// plus global 100/min circuit breaker (env.GLOBAL_LIMITER), fail-open on limiter error.
 
 const SHARED_TOKEN = "020A3129-9FDB-4817-8C8F-EA1A27F59A38";
 
@@ -42,6 +44,38 @@ export default {
         status: 405,
         headers: { "Access-Control-Allow-Origin": "*" },
       });
+    }
+
+    // (2b) Rate limiting — native Workers Rate Limiting binding.
+    // Per-IP first (10/min), then global circuit breaker (100/min per location).
+    // CF-Connecting-IP is set by Cloudflare and cannot be spoofed by the client.
+    // iOS client treats 429 like any error: silent fallback to VGQuoteBank.
+    const clientIP = request.headers.get("CF-Connecting-IP") ?? "unknown";
+    try {
+      const ipCheck = await env.IP_LIMITER.limit({ key: clientIP });
+      if (!ipCheck.success) {
+        return new Response("Too many requests", {
+          status: 429,
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Retry-After": "60",
+          },
+        });
+      }
+      const globalCheck = await env.GLOBAL_LIMITER.limit({ key: "global" });
+      if (!globalCheck.success) {
+        return new Response("Service busy", {
+          status: 429,
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Retry-After": "60",
+          },
+        });
+      }
+    } catch (_) {
+      // Fail OPEN: if the rate limiter itself errors, serve the request.
+      // Availability for real users beats strictness; the global cap still
+      // bounds worst-case cost on subsequent requests.
     }
 
     // Parse JSON body
