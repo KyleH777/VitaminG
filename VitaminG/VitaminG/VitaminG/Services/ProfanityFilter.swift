@@ -6,9 +6,7 @@ enum ProfanityFilter {
     static let blockedWords: Set<String> = {
         guard let url = Bundle.main.url(forResource: "profanity_list", withExtension: "txt"),
               let contents = try? String(contentsOf: url, encoding: .utf8) else {
-            #if DEBUG
-            print("[ProfanityFilter] profanity_list.txt missing from bundle — filter will fail-open")
-            #endif
+            VGLog.general.error("profanity_list.txt missing from bundle — filter will fail-open")
             return []
         }
         return Set(

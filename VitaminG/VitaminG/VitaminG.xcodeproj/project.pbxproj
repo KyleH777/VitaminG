@@ -7,14 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AA2704000000000001 /* VitaminGWatchWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2704000000000002 /* VitaminGWatchWidget.swift */; };
-		AA2704000000000003 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGRingView.swift in Sources (VitaminGWatchWidget) */ = {isa = PBXBuildFile; fileRef = E104D2642E124CAD573B3E59 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGRingView.swift */; };
-		AA2704000000000004 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift in Sources (VitaminGWatchWidget) */ = {isa = PBXBuildFile; fileRef = 5F14914B850E9BBD7B191228 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift */; };
-		AA2704000000000005 /* VitaminGWatchWidgetExtension.appex in Embed Watch Widget Extension */ = {isa = PBXBuildFile; fileRef = AA2704000000000006 /* VitaminGWatchWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		01C75244FFC14F149F900A8A /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F14914B850E9BBD7B191228 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift */; };
-		AA2703000000000001 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2703000000000002 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift */; };
-		AA2703000000000003 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminG/VitaminG/Models/WatchSnapshot.swift in Sources (VitaminGWatch) */ = {isa = PBXBuildFile; fileRef = AA2703000000000004 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminG/VitaminG/Models/WatchSnapshot.swift */; };
-		AA2703000000000005 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift in Sources (VitaminG) */ = {isa = PBXBuildFile; fileRef = AA2703000000000002 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift */; };
 		0215FC4236B8ED097AB98DAE /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CommunityGlanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2950BF6AA140B86F98641 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CommunityGlanceView.swift */; };
 		20E780CBADA4CD49AC80520B /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CheckInSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58C6E3734DD7FE511BCECAA1 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CheckInSuccessView.swift */; };
 		22E9180E646E4AF848C4269E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98B4B54F3AA3B9B1BDD0064C /* Foundation.framework */; };
@@ -28,7 +21,7 @@
 		AA01000000000007 /* ModelContainerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000008 /* ModelContainerFactory.swift */; };
 		AA01000000000009 /* StreakEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000000A /* StreakEngine.swift */; };
 		AA0100000000000B /* VitaminGWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AA0100000000000C /* VitaminGWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		AA0100000000001A /* Schema8pV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000001B /* Schema8pV2.swift */; };
+		AA0100000000001A /* SchemaV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000001B /* SchemaV2.swift */; };
 		AA0100000000001C /* SchemaV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000001D /* SchemaV3.swift */; };
 		AA0100000000001E /* VitaminGMigrationPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000001F /* VitaminGMigrationPlan.swift */; };
 		AA01000000000020 /* SchemaV4.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000021 /* SchemaV4.swift */; };
@@ -38,6 +31,13 @@
 		AA01000000000028 /* SchemaV8.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA01000000000029 /* SchemaV8.swift */; };
 		AA0100000000002A /* SchemaV9.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000002B /* SchemaV9.swift */; };
 		AA0100000000002C /* SchemaV10.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000002D /* SchemaV10.swift */; };
+		AA2703000000000001 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2703000000000002 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift */; };
+		AA2703000000000003 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminG/VitaminG/Models/WatchSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2703000000000004 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminG/VitaminG/Models/WatchSnapshot.swift */; };
+		AA2703000000000005 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2703000000000002 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift */; };
+		AA2704000000000001 /* VitaminGWatchWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2704000000000002 /* VitaminGWatchWidget.swift */; };
+		AA2704000000000003 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E104D2642E124CAD573B3E59 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGRingView.swift */; };
+		AA2704000000000004 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F14914B850E9BBD7B191228 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift */; };
+		AA2704000000000005 /* VitaminGWatchWidgetExtension.appex in Embed Watch Widget Extension */ = {isa = PBXBuildFile; fileRef = AA2704000000000006 /* VitaminGWatchWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		AB9F27FB36585F710CEEA962 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchGoalListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DACF533C0B03D58A400FC17C /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchGoalListView.swift */; };
 		D3ACF8349A85FE3FDA0C420F /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A628728AB6A382F84838BD /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchFaceView.swift */; };
 		DD04BB4BA3E52507CA04FDAF /* VitaminGWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = FE1F435DB8E0A94466A6CF07 /* VitaminGWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -66,7 +66,7 @@
 			remoteGlobalIDString = AA0100000000000E;
 			remoteInfo = VitaminGWidgetExtension;
 		};
-		AA2704000000000007 /* PBXContainerItemProxy (VitaminGWatchWidget) */ = {
+		AA2704000000000007 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 591E4ADF2F8097D500CE6C31 /* Project object */;
 			proxyType = 1;
@@ -85,6 +85,15 @@
 			);
 			name = "Embed Foundation Extensions";
 		};
+		AA2704000000000009 /* Embed Watch Widget Extension */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = PlugIns;
+			files = (
+				AA2704000000000005 /* VitaminGWatchWidgetExtension.appex in Embed Watch Widget Extension */,
+			);
+			name = "Embed Watch Widget Extension";
+		};
 		B23A039B6754C2FA4720F1BD /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
 			dstPath = "";
@@ -94,22 +103,10 @@
 			);
 			name = "Embed Watch Content";
 		};
-		AA2704000000000009 /* Embed Watch Widget Extension */ = {
-			isa = PBXCopyFilesBuildPhase;
-			dstPath = "";
-			dstSubfolder = PlugIns;
-			files = (
-				AA2704000000000005 /* VitaminGWatchWidgetExtension.appex in Embed Watch Widget Extension */,
-			);
-			name = "Embed Watch Widget Extension";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		1EDC2BC95349143CF9058C5C /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchNotificationView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchNotificationView.swift"; sourceTree = "<absolute>"; };
-		AA2703000000000002 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift"; sourceTree = "<absolute>"; };
-		AA2703000000000004 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminG/VitaminG/Models/WatchSnapshot.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminG/VitaminG/Models/WatchSnapshot.swift"; sourceTree = "<absolute>"; };
 		2CC2950BF6AA140B86F98641 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CommunityGlanceView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CommunityGlanceView.swift"; sourceTree = "<absolute>"; };
 		3235BA87AACE9E48C01626A6 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/TodayGlanceView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/TodayGlanceView.swift"; sourceTree = "<absolute>"; };
 		58C6E3734DD7FE511BCECAA1 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CheckInSuccessView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/CheckInSuccessView.swift"; sourceTree = "<absolute>"; };
@@ -126,7 +123,7 @@
 		AA01000000000008 /* ModelContainerFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ModelContainerFactory.swift; path = VitaminG/Persistence/ModelContainerFactory.swift; sourceTree = SOURCE_ROOT; };
 		AA0100000000000A /* StreakEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StreakEngine.swift; path = VitaminG/Services/StreakEngine.swift; sourceTree = SOURCE_ROOT; };
 		AA0100000000000C /* VitaminGWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = VitaminGWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		AA0100000000001B /* Schema8pV2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Schema8pV2.swift; path = VitaminG/Models/Schema8pV2.swift; sourceTree = SOURCE_ROOT; };
+		AA0100000000001B /* SchemaV2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV2.swift; path = VitaminG/Models/SchemaV2.swift; sourceTree = SOURCE_ROOT; };
 		AA0100000000001D /* SchemaV3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV3.swift; path = VitaminG/Models/SchemaV3.swift; sourceTree = SOURCE_ROOT; };
 		AA0100000000001F /* VitaminGMigrationPlan.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VitaminGMigrationPlan.swift; path = VitaminG/Models/VitaminGMigrationPlan.swift; sourceTree = SOURCE_ROOT; };
 		AA01000000000021 /* SchemaV4.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV4.swift; path = VitaminG/Models/SchemaV4.swift; sourceTree = SOURCE_ROOT; };
@@ -136,12 +133,14 @@
 		AA01000000000029 /* SchemaV8.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV8.swift; path = VitaminG/Models/SchemaV8.swift; sourceTree = SOURCE_ROOT; };
 		AA0100000000002B /* SchemaV9.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV9.swift; path = VitaminG/Models/SchemaV9.swift; sourceTree = SOURCE_ROOT; };
 		AA0100000000002D /* SchemaV10.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchemaV10.swift; path = VitaminG/Models/SchemaV10.swift; sourceTree = SOURCE_ROOT; };
+		AA2703000000000002 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift"; sourceTree = "<absolute>"; };
+		AA2703000000000004 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminG/VitaminG/Models/WatchSnapshot.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminG/VitaminG/Models/WatchSnapshot.swift"; sourceTree = "<absolute>"; };
+		AA2704000000000002 /* VitaminGWatchWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VitaminGWatchWidget.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatchWidget/VitaminGWatchWidget.swift"; sourceTree = "<absolute>"; };
+		AA2704000000000006 /* VitaminGWatchWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = VitaminGWatchWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		DACF533C0B03D58A400FC17C /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchGoalListView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchGoalListView.swift"; sourceTree = "<absolute>"; };
 		E104D2642E124CAD573B3E59 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGRingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGRingView.swift"; sourceTree = "<absolute>"; };
 		E2A628728AB6A382F84838BD /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchFaceView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Screens/WatchFaceView.swift"; sourceTree = "<absolute>"; };
 		FE1F435DB8E0A94466A6CF07 /* VitaminGWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VitaminGWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		AA2704000000000002 /* VitaminGWatchWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VitaminGWatchWidget.swift; path = "/Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatchWidget/VitaminGWatchWidget.swift"; sourceTree = "<absolute>"; };
-		AA2704000000000006 /* VitaminGWatchWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = VitaminGWatchWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		FONT000000000001 /* CormorantGaramond-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; name = "CormorantGaramond-Regular.ttf"; path = "VitaminG/Resources/Fonts/CormorantGaramond-Regular.ttf"; sourceTree = SOURCE_ROOT; };
 		FONT000000000002 /* CormorantGaramond-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; name = "CormorantGaramond-Italic.ttf"; path = "VitaminG/Resources/Fonts/CormorantGaramond-Italic.ttf"; sourceTree = SOURCE_ROOT; };
 		FONT000000000003 /* CormorantGaramond-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; name = "CormorantGaramond-Medium.ttf"; path = "VitaminG/Resources/Fonts/CormorantGaramond-Medium.ttf"; sourceTree = SOURCE_ROOT; };
@@ -224,7 +223,7 @@
 			files = (
 			);
 		};
-		AA270400000000000A /* Frameworks (VitaminGWatchWidget) */ = {
+		AA270400000000000A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
 			);
@@ -269,21 +268,12 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		AA270400000000000B /* VitaminGWatchWidget */ = {
-			isa = PBXGroup;
-			children = (
-				AA2704000000000002 /* VitaminGWatchWidget.swift */,
-			);
-			name = VitaminGWatchWidget;
-			path = "../VitaminGWatchWidget";
-			sourceTree = "<group>";
-		};
 		59816B322F8D5ED100EDA10F /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
 				AA01000000000002 /* WidgetDataProvider.swift */,
 				AA01000000000004 /* SchemaV1.swift */,
-				AA0100000000001B /* Schema8pV2.swift */,
+				AA0100000000001B /* SchemaV2.swift */,
 				AA0100000000001D /* SchemaV3.swift */,
 				AA0100000000001F /* VitaminGMigrationPlan.swift */,
 				AA01000000000021 /* SchemaV4.swift */,
@@ -324,6 +314,15 @@
 			path = ../VitaminGWatch;
 			sourceTree = "<group>";
 		};
+		AA270400000000000B /* VitaminGWatchWidget */ = {
+			isa = PBXGroup;
+			children = (
+				AA2704000000000002 /* VitaminGWatchWidget.swift */,
+			);
+			name = VitaminGWatchWidget;
+			path = ../VitaminGWatchWidget;
+			sourceTree = "<group>";
+		};
 		D3488BC5C9E6DAFCD1965536 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -347,27 +346,12 @@
 			buildRules = (
 			);
 			dependencies = (
-				AA270400000000000C /* PBXTargetDependency (VitaminGWatch -> VitaminGWatchWidget) */,
+				AA270400000000000C /* PBXTargetDependency */,
 			);
 			name = VitaminGWatch;
 			productName = VitaminGWatch;
 			productReference = FE1F435DB8E0A94466A6CF07 /* VitaminGWatch.app */;
 			productType = "com.apple.product-type.application";
-		};
-		AA2704000000000008 /* VitaminGWatchWidgetExtension */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = AA270400000000000D /* Build configuration list for PBXNativeTarget "VitaminGWatchWidgetExtension" */;
-			buildPhases = (
-				AA270400000000000E /* Sources (VitaminGWatchWidget) */,
-				AA270400000000000A /* Frameworks (VitaminGWatchWidget) */,
-				AA270400000000000F /* Resources (VitaminGWatchWidget) */,
-			);
-			buildRules = (
-			);
-			name = VitaminGWatchWidgetExtension;
-			productName = VitaminGWatchWidgetExtension;
-			productReference = AA2704000000000006 /* VitaminGWatchWidgetExtension.appex */;
-			productType = "com.apple.product-type.app-extension";
 		};
 		591E4AE62F8097D500CE6C31 /* VitaminG */ = {
 			isa = PBXNativeTarget;
@@ -452,6 +436,21 @@
 			productReference = AA0100000000000C /* VitaminGWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		AA2704000000000008 /* VitaminGWatchWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA270400000000000D /* Build configuration list for PBXNativeTarget "VitaminGWatchWidgetExtension" */;
+			buildPhases = (
+				AA270400000000000E /* Sources */,
+				AA270400000000000A /* Frameworks */,
+				AA270400000000000F /* Resources */,
+			);
+			buildRules = (
+			);
+			name = VitaminGWatchWidgetExtension;
+			productName = VitaminGWatchWidgetExtension;
+			productReference = AA2704000000000006 /* VitaminGWatchWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -526,12 +525,12 @@
 			files = (
 			);
 		};
-		F23CE073C28BD7963BDC2124 /* Resources */ = {
+		AA270400000000000F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
 			);
 		};
-		AA270400000000000F /* Resources (VitaminGWatchWidget) */ = {
+		F23CE073C28BD7963BDC2124 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
 			);
@@ -551,7 +550,7 @@
 				50B4C2F0FF5C2483A279F568 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGRingView.swift in Sources */,
 				01C75244FFC14F149F900A8A /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift in Sources */,
 				AA2703000000000001 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift in Sources */,
-				AA2703000000000003 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminG/VitaminG/Models/WatchSnapshot.swift in Sources (VitaminGWatch) */,
+				AA2703000000000003 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminG/VitaminG/Models/WatchSnapshot.swift in Sources */,
 				7534C0A7296FD8F19123BF4B /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchApp.swift in Sources */,
 				E43D5202EC5362DF0E7BBA5A /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/VGWatchContentView.swift in Sources */,
 			);
@@ -559,7 +558,7 @@
 		591E4AE32F8097D500CE6C31 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
-				AA2703000000000005 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift in Sources (VitaminG) */,
+				AA2703000000000005 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/WatchReceiver.swift in Sources */,
 			);
 		};
 		591E4AF42F8097D700CE6C31 /* Sources */ = {
@@ -577,7 +576,7 @@
 			files = (
 				AA01000000000001 /* WidgetDataProvider.swift in Sources */,
 				AA01000000000003 /* SchemaV1.swift in Sources */,
-				AA0100000000001A /* Schema8pV2.swift in Sources */,
+				AA0100000000001A /* SchemaV2.swift in Sources */,
 				AA0100000000001C /* SchemaV3.swift in Sources */,
 				AA0100000000001E /* VitaminGMigrationPlan.swift in Sources */,
 				AA01000000000020 /* SchemaV4.swift in Sources */,
@@ -592,12 +591,12 @@
 				AA01000000000009 /* StreakEngine.swift in Sources */,
 			);
 		};
-		AA270400000000000E /* Sources (VitaminGWatchWidget) */ = {
+		AA270400000000000E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
 				AA2704000000000001 /* VitaminGWatchWidget.swift in Sources */,
-				AA2704000000000003 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGRingView.swift in Sources (VitaminGWatchWidget) */,
-				AA2704000000000004 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift in Sources (VitaminGWatchWidget) */,
+				AA2704000000000003 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGRingView.swift in Sources */,
+				AA2704000000000004 /* /Users/kyleharrington/Desktop/AI/Vitamin G/VitaminG/VitaminGWatch/Shared/VGWatchTheme.swift in Sources */,
 			);
 		};
 /* End PBXSourcesBuildPhase section */
@@ -618,10 +617,10 @@
 			target = AA0100000000000E /* VitaminGWidgetExtension */;
 			targetProxy = AA0100000000000D /* PBXContainerItemProxy */;
 		};
-		AA270400000000000C /* PBXTargetDependency (VitaminGWatch -> VitaminGWatchWidget) */ = {
+		AA270400000000000C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = AA2704000000000008 /* VitaminGWatchWidgetExtension */;
-			targetProxy = AA2704000000000007 /* PBXContainerItemProxy (VitaminGWatchWidget) */;
+			targetProxy = AA2704000000000007 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -685,7 +684,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.3;
@@ -747,7 +746,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.3;
@@ -896,7 +895,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = L5K62B8KK5;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.3;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kyleharrington.VitaminGTests;
@@ -925,7 +924,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = L5K62B8KK5;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.3;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kyleharrington.VitaminGTests;
@@ -952,7 +951,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = L5K62B8KK5;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.3;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kyleharrington.VitaminGUITests;
@@ -978,7 +977,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = L5K62B8KK5;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.3;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kyleharrington.VitaminGUITests;
@@ -1059,7 +1058,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = L5K62B8KK5;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "../VitaminGWatchWidget/Info.plist";
+				INFOPLIST_FILE = ../VitaminGWatchWidget/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1084,7 +1083,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = L5K62B8KK5;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "../VitaminGWatchWidget/Info.plist";
+				INFOPLIST_FILE = ../VitaminGWatchWidget/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

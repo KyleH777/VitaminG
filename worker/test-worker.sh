@@ -101,6 +101,27 @@ BADTOKEN_BODY=$(echo "$BADTOKEN_RESPONSE" | sed '$d')
 
 assert_status "bad token rejection" "401" "$BADTOKEN_STATUS" "$BADTOKEN_BODY"
 
+# Test 4: Rate limit — fire 12 rapid POSTs, assert at least one 429
+echo ""
+echo "Test 4: rate limit (12 rapid requests — expect at least one 429)"
+GOT_429=0
+for i in $(seq 1 12); do
+  RL_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$WORKER_URL" \
+    -H "Content-Type: application/json" \
+    -d "{\"type\":\"motivation\",\"token\":\"$SHARED_TOKEN\",\"goals\":[{\"title\":\"Run\",\"category\":\"body\"}],\"streak\":1}")
+  if [[ "$RL_STATUS" == "429" ]]; then
+    GOT_429=$((GOT_429 + 1))
+  fi
+done
+
+if [[ "$GOT_429" -gt 0 ]]; then
+  echo "  PASS: rate limiter triggered ($GOT_429/12 requests returned 429)"
+  PASS=$((PASS + 1))
+else
+  echo "  FAIL: no 429 returned after 12 rapid requests — rate limiter may not be deployed"
+  FAIL=$((FAIL + 1))
+fi
+
 echo ""
 echo "-----------------------------------"
 echo "Results: $PASS passed, $FAIL failed"

@@ -173,9 +173,7 @@ struct TransformationPhotosModuleView: View {
         do {
             try modelContext.save()
         } catch {
-            #if DEBUG
-            print("[TransformationPhotosModuleView] modelContext.save() failed: \(error)")
-            #endif
+            VGLog.general.error("modelContext.save() failed: \(error.localizedDescription, privacy: .public)")
         }
 
         await MainActor.run { selectedItem = nil }

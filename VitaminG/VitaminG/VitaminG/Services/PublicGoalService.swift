@@ -196,9 +196,7 @@ enum PublicGoalService {
                 }
             } catch {
                 // Silently log per-goal failure — continue backfill (D-11)
-                #if DEBUG
-                print("[PublicGoalService] backfill failed for goal \(goal.id.uuidString): \(error)")
-                #endif
+                VGLog.cloudKit.error("backfill failed for goal \(goal.id.uuidString, privacy: .public): \(error.localizedDescription, privacy: .public)")
             }
         }
     }
@@ -230,9 +228,7 @@ enum PublicGoalService {
                 _ = try await db.save(record)
             } catch {
                 // Silently log per-goal failure — continue sync (D-12)
-                #if DEBUG
-                print("[PublicGoalService] sync failed for goal \(goal.id.uuidString): \(error)")
-                #endif
+                VGLog.cloudKit.error("sync failed for goal \(goal.id.uuidString, privacy: .public): \(error.localizedDescription, privacy: .public)")
             }
         }
     }

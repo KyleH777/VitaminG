@@ -179,8 +179,6 @@ struct CommunityFeedView: View {
         withAnimation(.easeOut(duration: 0.25)) {
             viewModel.posts.removeAll { $0.recordID == post.recordID }
         }
-        #if DEBUG
-        print("[CommunityFeedView] reportPost recordID=\(post.recordID.recordName) newCount=\(count)")
-        #endif
+        VGLog.community.debug("reportPost recordID=\(post.recordID.recordName, privacy: .public) newCount=\(count, privacy: .public)")
     }
 }

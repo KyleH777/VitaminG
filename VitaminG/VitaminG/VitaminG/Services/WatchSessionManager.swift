@@ -14,7 +14,7 @@ import WidgetKit
 /// - `session.delegate` must be set BEFORE `activate()` is called
 /// - iOS-only methods `sessionDidBecomeInactive` / `sessionDidDeactivate` wrapped in `#if os(iOS)`
 /// - `pushSnapshot` guards on `activationState == .activated` before calling updateApplicationContext
-/// - Error logging via `#if DEBUG print("[WatchSessionManager] ...")` pattern
+/// - Error logging via VGLog.watch
 /// - Wave 4 (Plan 27-05): `didReceiveUserInfo` delegates to `handleCheckIn` via DispatchQueue.main.async
 ///
 /// Threat mitigation:
@@ -58,9 +58,7 @@ final class WatchSessionManager: NSObject, WCSessionDelegate {
     /// Guards on `WCSession.isSupported()` so this is a no-op on unsupported devices.
     func activate() {
         guard WCSession.isSupported() else {
-            #if DEBUG
-            print("[WatchSessionManager] WCSession not supported on this device — skipping activation")
-            #endif
+            VGLog.watch.debug("WCSession not supported on this device — skipping activation")
             return
         }
         WCSession.default.delegate = self
@@ -82,9 +80,7 @@ final class WatchSessionManager: NSObject, WCSessionDelegate {
     func pushSnapshot(goals: [Goal], events: [CompletionEvent], context: ModelContext) {
         guard WCSession.isSupported(),
               WCSession.default.activationState == .activated else {
-            #if DEBUG
-            print("[WatchSessionManager] Skipping pushSnapshot — WCSession not activated")
-            #endif
+            VGLog.watch.debug("Skipping pushSnapshot — WCSession not activated")
             return
         }
 
@@ -95,18 +91,12 @@ final class WatchSessionManager: NSObject, WCSessionDelegate {
             // T-27-02-03: wrap updateApplicationContext in do/catch; never crash on WCSession error
             do {
                 try WCSession.default.updateApplicationContext(["snapshot": data])
-                #if DEBUG
-                print("[WatchSessionManager] Pushed snapshot: streak=\(snapshot.globalStreak), hasCheckedIn=\(snapshot.hasCheckedInToday)")
-                #endif
+                VGLog.watch.debug("Pushed snapshot: streak=\(snapshot.globalStreak, privacy: .public), hasCheckedIn=\(snapshot.hasCheckedInToday, privacy: .public)")
             } catch {
-                #if DEBUG
-                print("[WatchSessionManager] updateApplicationContext failed: \(error)")
-                #endif
+                VGLog.watch.error("updateApplicationContext failed: \(error.localizedDescription, privacy: .public)")
             }
         } catch {
-            #if DEBUG
-            print("[WatchSessionManager] JSONEncoder failed to encode WatchSnapshot: \(error)")
-            #endif
+            VGLog.watch.error("JSONEncoder failed to encode WatchSnapshot: \(error.localizedDescription, privacy: .public)")
         }
     }
 
@@ -118,13 +108,11 @@ final class WatchSessionManager: NSObject, WCSessionDelegate {
         activationDidCompleteWith activationState: WCSessionActivationState,
         error: Error?
     ) {
-        #if DEBUG
         if let error = error {
-            print("[WatchSessionManager] Activation failed: \(error)")
+            VGLog.watch.error("Activation failed: \(error.localizedDescription, privacy: .public)")
         } else {
-            print("[WatchSessionManager] Activation completed: \(activationState.rawValue)")
+            VGLog.watch.debug("Activation completed: \(activationState.rawValue, privacy: .public)")
         }
-        #endif
     }
 
     /// Receive check-in relay from Watch (WATCH-03).
@@ -155,18 +143,14 @@ final class WatchSessionManager: NSObject, WCSessionDelegate {
     @MainActor func handleCheckIn(userInfo: [String: Any]) {
         // Validate action field (T-27-05-02)
         guard let action = userInfo["action"] as? String, action == "checkIn" else {
-            #if DEBUG
-            print("[WatchSessionManager] handleCheckIn: ignoring — missing or wrong action: \(userInfo["action"] as? String ?? "(nil)")")
-            #endif
+            VGLog.watch.debug("handleCheckIn: ignoring — missing or wrong action: \((userInfo["action"] as? String) ?? "(nil)", privacy: .public)")
             return
         }
 
         // Validate goalId as parseable UUID (T-27-05-02)
         guard let idString = userInfo["goalId"] as? String,
               let goalId = UUID(uuidString: idString) else {
-            #if DEBUG
-            print("[WatchSessionManager] handleCheckIn: ignoring — missing or invalid goalId: \(userInfo["goalId"] as? String ?? "(nil)")")
-            #endif
+            VGLog.watch.debug("handleCheckIn: ignoring — missing or invalid goalId: \((userInfo["goalId"] as? String) ?? "(nil)", privacy: .public)")
             return
         }
 
