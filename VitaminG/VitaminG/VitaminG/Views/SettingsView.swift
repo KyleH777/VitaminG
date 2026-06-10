@@ -211,6 +211,8 @@ struct SettingsView: View {
                     AboutView()
                 }
             }
+
+            DeleteAccountSection()
         }
         .navigationTitle("Settings")
         .onAppear {
