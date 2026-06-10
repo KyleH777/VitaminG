@@ -29,5 +29,7 @@
 	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Vitamin G uses your camera to update your profile photo.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
