@@ -19,6 +19,7 @@ struct CommentSheetView: View {
     @AppStorage("vg_onboardingName") private var userName: String = ""
     @State private var comments: [LocalComment] = []
     @State private var draftText = ""
+    @State private var positivityRejected = false
     @FocusState private var fieldFocused: Bool
 
     private var storageKey: String { "vg_comments_\(postID)" }
@@ -28,8 +29,9 @@ struct CommentSheetView: View {
             VStack(spacing: 0) {
                 if comments.isEmpty {
                     Spacer()
-                    Text("No comments yet. Be first.")
+                    Text("No comments yet.\nBe the first to encourage.")
                         .font(.system(size: 14)).foregroundStyle(VGTheme.textMuted)
+                        .multilineTextAlignment(.center)
                     Spacer()
                 } else {
                     ScrollView {
@@ -53,27 +55,44 @@ struct CommentSheetView: View {
                 }
 
                 Divider()
-                HStack(spacing: 10) {
-                    TextField("Add a comment…", text: $draftText, axis: .vertical)
-                        .font(.system(size: 14))
-                        .lineLimit(1...4)
-                        .focused($fieldFocused)
-                    Button {
-                        let body = draftText.trimmingCharacters(in: .whitespaces)
-                        guard !body.isEmpty else { return }
-                        let c = LocalComment(authorName: userName, body: String(body.prefix(300)))
-                        comments.append(c)
-                        persist()
-                        draftText = ""
-                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                    } label: {
-                        Image(systemName: "arrow.up.circle.fill")
-                            .font(.system(size: 28))
-                            .foregroundStyle(draftText.isEmpty ? VGTheme.textMuted : VGTheme.accentTerra)
+                VStack(spacing: 4) {
+                    if positivityRejected {
+                        Text("Only encouraging comments are allowed here. 🌱")
+                            .font(.system(size: 12))
+                            .foregroundStyle(VGTheme.accentTerra)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 16)
+                            .transition(.opacity)
                     }
-                    .disabled(draftText.trimmingCharacters(in: .whitespaces).isEmpty)
+                    HStack(spacing: 10) {
+                        TextField("Say something encouraging…", text: $draftText, axis: .vertical)
+                            .font(.system(size: 14))
+                            .lineLimit(1...4)
+                            .focused($fieldFocused)
+                            .onChange(of: draftText) { _, _ in positivityRejected = false }
+                        Button {
+                            let body = draftText.trimmingCharacters(in: .whitespaces)
+                            guard !body.isEmpty else { return }
+                            guard PositivityFilter.isAllowed(body) else {
+                                positivityRejected = true
+                                UINotificationFeedbackGenerator().notificationOccurred(.error)
+                                return
+                            }
+                            let c = LocalComment(authorName: userName, body: String(body.prefix(300)))
+                            comments.append(c)
+                            persist()
+                            draftText = ""
+                            positivityRejected = false
+                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        } label: {
+                            Image(systemName: "arrow.up.circle.fill")
+                                .font(.system(size: 28))
+                                .foregroundStyle(draftText.isEmpty ? VGTheme.textMuted : VGTheme.accentTerra)
+                        }
+                        .disabled(draftText.trimmingCharacters(in: .whitespaces).isEmpty)
+                    }
+                    .padding(.horizontal, 16).padding(.vertical, 10)
                 }
-                .padding(.horizontal, 16).padding(.vertical, 10)
                 .background(VGTheme.background)
             }
             .background(VGTheme.background)
