@@ -31,21 +31,21 @@ struct GoalSearchResultCard: View {
             // Text block
             VStack(alignment: .leading, spacing: 2) {
                 Text(result.title)
-                    .font(.system(size: 16, design: .rounded))
+                    .font(.callout)
                     .foregroundStyle(VGTheme.textPrimary)
                     .lineLimit(1)
 
                 Text("@\(result.creatorUsername) · \(result.category) · \(result.participantCount) people")
-                    .font(.system(size: 13, design: .rounded))
+                    .font(.caption)
                     .foregroundStyle(VGTheme.textMuted)
             }
 
             Spacer()
 
-            // Join button (UI-SPEC §4: 13pt semibold, terra tint, sage when joined)
+            // Join button
             Button(isJoined ? "Joined" : "Join", action: onJoin)
                 .disabled(isJoined)
-                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                .font(.callout.weight(.semibold))
                 .foregroundStyle(isJoined ? VGTheme.accentSage : VGTheme.accentTerra)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)

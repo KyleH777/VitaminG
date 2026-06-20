@@ -27,7 +27,7 @@ struct FAQView: View {
                     ),
                     content: {
                         Text(faqs[index].answer)
-                            .font(.system(size: 14))
+                            .font(.body)
                             .fontDesign(.rounded)
                             .foregroundStyle(VGTheme.textMuted)
                             .lineSpacing(4)
@@ -35,7 +35,7 @@ struct FAQView: View {
                     },
                     label: {
                         Text(faqs[index].question)
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(.callout.weight(.semibold))
                             .fontDesign(.rounded)
                             .foregroundStyle(VGTheme.textPrimary)
                     }
@@ -46,5 +46,6 @@ struct FAQView: View {
         .tint(VGTheme.terra)
         .navigationTitle("FAQ")
         .navigationBarTitleDisplayMode(.inline)
+        .accessibilityLabel("Frequently Asked Questions")
     }
 }

@@ -52,23 +52,24 @@ struct CheckInCelebrationView: View {
                     .accessibilityLabel("Check-in complete!")
 
                 Text("You showed up.")
-                    .font(.system(size: 34, weight: .semibold, design: .rounded))
+                    .font(.title.weight(.semibold))
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
 
-                Text("🔥 \(streakCount) day streak")
-                    .font(.system(size: 20, weight: .semibold, design: .monospaced))
+                Text("\(streakCount) day streak")
+                    .font(.title3.weight(.semibold))
                     .foregroundStyle(VGTheme.accentTerra)
+                    .accessibilityLabel("\(streakCount) day streak")
 
                 Text("Keep showing up.")
-                    .font(.system(size: 16))
+                    .font(.body)
                     .foregroundStyle(.white.opacity(0.7))
 
                 Spacer()
 
                 Button("Back to Goals") { onDismiss() }
-                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    .font(.callout.weight(.semibold))
                     .frame(maxWidth: .infinity, minHeight: 44)
                     .background(VGTheme.accentTerra)
                     .foregroundStyle(.white)

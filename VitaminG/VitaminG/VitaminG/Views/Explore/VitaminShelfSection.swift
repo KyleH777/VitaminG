@@ -25,28 +25,30 @@ struct VitaminShelfSection: View {
     }
 
     private func categoryCard(_ category: GoalCategory) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        let count = goalCount(for: category)
+        return VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(category.emoji)
-                    .font(.system(size: 28))
+                    .font(.title)
+                    .accessibilityHidden(true)
                 Spacer()
-                let count = goalCount(for: category)
                 if count > 0 {
                     Text("\(count)")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.caption.weight(.semibold))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .background(VGTheme.accentTerra)
                         .clipShape(Capsule())
+                        .accessibilityHidden(true)
                 }
             }
             Text(category.rawValue)
-                .font(.system(size: 15, weight: .semibold))
+                .font(.callout.weight(.semibold))
                 .fontDesign(.rounded)
                 .foregroundStyle(VGTheme.textPrimary)
             Text(category.subtitle)
-                .font(.system(size: 12))
+                .font(.caption)
                 .foregroundStyle(VGTheme.textMuted)
                 .lineLimit(2)
         }
@@ -57,6 +59,10 @@ struct VitaminShelfSection: View {
             RoundedRectangle(cornerRadius: 16)
                 .strokeBorder(VGTheme.separator, lineWidth: 1)
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(count > 0
+            ? "\(category.rawValue). \(category.subtitle). \(count) active goals."
+            : "\(category.rawValue). \(category.subtitle).")
     }
 
     private func goalCount(for category: GoalCategory) -> Int {

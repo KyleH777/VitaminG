@@ -41,9 +41,11 @@ struct RecoveryScreen: View {
         HStack {
             Button(action: { path.removeLast() }) {
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.body.weight(.medium))
                     .foregroundStyle(VGTheme.clay)
             }
+            .frame(minWidth: 44, minHeight: 44)
+            .accessibilityLabel("Go back")
             Spacer()
         }
         .padding(.bottom, 20)
@@ -54,6 +56,7 @@ struct RecoveryScreen: View {
             Text("📱")
                 .font(.system(size: 60))
                 .frame(maxWidth: .infinity, alignment: .center)
+                .accessibilityHidden(true)
 
             Text("Let's get you\nback in.")
                 .font(VGTheme.serif(32))
@@ -61,9 +64,10 @@ struct RecoveryScreen: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
                 .lineSpacing(4)
+                .accessibilityAddTraits(.isHeader)
 
             Text("Your goals and streaks are safe.\nWe just need to verify it's you.")
-                .font(.system(size: 14))
+                .font(.callout)
                 .foregroundStyle(VGTheme.muted)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
@@ -75,10 +79,11 @@ struct RecoveryScreen: View {
     private var optionsSection: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("RECOVERY OPTIONS")
-                .font(.system(size: 11, weight: .semibold))
+                .font(.caption.weight(.semibold))
                 .foregroundStyle(VGTheme.muted)
                 .kerning(1.5)
                 .padding(.bottom, 10)
+                .accessibilityAddTraits(.isHeader)
 
             recoveryOptionCard(icon: "🔄", title: "Restore from iCloud",
                 subtitle: "Sync your goals and streak from iCloud backup",
@@ -96,9 +101,9 @@ struct RecoveryScreen: View {
 
     private var reassuranceBanner: some View {
         HStack(alignment: .top, spacing: 10) {
-            Text("🛡️").font(.system(size: 18))
+            Text("🛡️").font(.body).accessibilityHidden(true)
             Text("Your streak is protected. Your data lives in iCloud.")
-                .font(.system(size: 12))
+                .font(.caption)
                 .foregroundStyle(VGTheme.clay)
                 .lineSpacing(4)
         }
@@ -111,8 +116,8 @@ struct RecoveryScreen: View {
     private var primaryButton: some View {
         Button(action: onSkip) {
             Text("Restore from iCloud")
-                .font(.system(size: 17, weight: .semibold))
-                .frame(maxWidth: .infinity)
+                .font(.body.weight(.semibold))
+                .frame(maxWidth: .infinity, minHeight: 44)
                 .padding(.vertical, 18)
                 .background(VGTheme.terra)
                 .foregroundStyle(VGTheme.warmWhite)
@@ -130,14 +135,15 @@ struct RecoveryScreen: View {
                 RoundedRectangle(cornerRadius: 11)
                     .fill(isHighlighted ? VGTheme.terraLight : VGTheme.sandLight)
                     .frame(width: 42, height: 42)
-                    .overlay(Text(icon).font(.system(size: 22)))
+                    .overlay(Text(icon).font(.body).accessibilityHidden(true))
+                    .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.callout.weight(.semibold))
                         .foregroundStyle(VGTheme.clay)
                     Text(subtitle)
-                        .font(.system(size: 11))
+                        .font(.caption)
                         .foregroundStyle(VGTheme.muted)
                 }
 
@@ -149,9 +155,10 @@ struct RecoveryScreen: View {
                         .frame(width: 18, height: 18)
                         .overlay(
                             Image(systemName: "checkmark")
-                                .font(.system(size: 9, weight: .bold))
+                                .font(.caption2.weight(.bold))
                                 .foregroundStyle(VGTheme.warmWhite)
                         )
+                        .accessibilityHidden(true)
                 }
             }
             .padding(.horizontal, 16)
@@ -161,7 +168,9 @@ struct RecoveryScreen: View {
             .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(isHighlighted ? VGTheme.terra : Color.clear, lineWidth: 2))
             .shadow(color: VGTheme.clay.opacity(0.05), radius: 6, y: 1)
         }
+        .frame(minHeight: 44)
         .padding(.bottom, 8)
+        .accessibilityLabel(isHighlighted ? "\(title) (recommended). \(subtitle)" : "\(title). \(subtitle)")
     }
 
     private func openSupport() {

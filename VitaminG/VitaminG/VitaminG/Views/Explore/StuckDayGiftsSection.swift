@@ -17,7 +17,7 @@ struct StuckDayGiftsSection: View {
 
             if visibleGifts.isEmpty {
                 Text("You've added all today's gifts. Nice work!")
-                    .font(.system(size: 14))
+                    .font(.callout)
                     .foregroundStyle(VGTheme.textMuted)
                     .padding(.horizontal, 16)
             } else {
@@ -34,17 +34,18 @@ struct StuckDayGiftsSection: View {
     private func giftRow(_ gift: StuckDayGift) -> some View {
         HStack(spacing: 12) {
             Text(gift.emoji)
-                .font(.system(size: 24))
+                .font(.title2)
                 .frame(width: 36)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(gift.title)
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.callout.weight(.medium))
                     .fontDesign(.rounded)
                     .foregroundStyle(VGTheme.textPrimary)
                     .lineLimit(2)
                 Text(gift.subtitle)
-                    .font(.system(size: 12))
+                    .font(.caption)
                     .foregroundStyle(VGTheme.textMuted)
             }
 
@@ -53,8 +54,8 @@ struct StuckDayGiftsSection: View {
             Button {
                 addStuckDayGift(gift)
             } label: {
-                Text("+ ADD")
-                    .font(.system(size: 12, weight: .semibold))
+                Text("Add")
+                    .font(.caption.weight(.semibold))
                     .foregroundStyle(VGTheme.accentTerra)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 7)
@@ -62,6 +63,7 @@ struct StuckDayGiftsSection: View {
                     .clipShape(Capsule())
             }
             .buttonStyle(.plain)
+            .frame(minHeight: 44)
             .accessibilityLabel("Add \(gift.title) to my goals")
         }
         .padding(.horizontal, 14)

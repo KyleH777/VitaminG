@@ -74,11 +74,11 @@ struct GlimpsesCarouselSection: View {
     private var emptyState: some View {
         VStack(spacing: 8) {
             Text("No glimpses yet today")
-                .font(.system(size: 17))
+                .font(.body)
                 .fontDesign(.rounded)
                 .foregroundStyle(VGTheme.textPrimary)
             Text("Check in on a goal to appear here.")
-                .font(.system(size: 14))
+                .font(.callout)
                 .fontDesign(.rounded)
                 .foregroundStyle(VGTheme.textMuted)
         }
@@ -128,17 +128,17 @@ private struct GlimpseCard: View {
                 // Center column: username, goal title, progress
                 VStack(alignment: .leading, spacing: 4) {
                     Text(glimpse.username)
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.callout.weight(.semibold))
                         .fontDesign(.rounded)
                         .foregroundStyle(VGTheme.textPrimary)
                         .lineLimit(1)
                     Text(glimpse.goalTitle)
-                        .font(.system(size: 14))
+                        .font(.callout)
                         .fontDesign(.rounded)
                         .foregroundStyle(VGTheme.textSecondary)
                         .lineLimit(2)
                     Text("\(glimpse.progressPercent)%")
-                        .font(.system(size: 14))
+                        .font(.callout)
                         .fontDesign(.rounded)
                         .foregroundStyle(VGTheme.textMuted)
                 }

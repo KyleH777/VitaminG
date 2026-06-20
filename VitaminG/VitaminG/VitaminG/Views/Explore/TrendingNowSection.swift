@@ -12,13 +12,13 @@ struct TrendingNowSection: View {
                     ProgressView()
                         .tint(VGTheme.accentTerra)
                     Text("Loading…")
-                        .font(.system(size: 14))
+                        .font(.callout)
                         .foregroundStyle(VGTheme.textMuted)
                 }
                 .padding(.horizontal, 16)
             } else if viewModel.trendingGoals.isEmpty {
                 Text("Check back soon — community goals are on their way.")
-                    .font(.system(size: 14))
+                    .font(.callout)
                     .foregroundStyle(VGTheme.textMuted)
                     .padding(.horizontal, 16)
             } else {
@@ -55,7 +55,7 @@ struct TrendingNowSection: View {
 
             VStack(alignment: .leading, spacing: 6) {
                 Text(item.title)
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.caption.weight(.semibold))
                     .fontDesign(.rounded)
                     .foregroundStyle(.white)
                     .lineLimit(2)
@@ -70,21 +70,24 @@ struct TrendingNowSection: View {
                         strokeWidth: 3,
                         glow: false
                     )
+                    .accessibilityHidden(true)
                     Text("\(Int(item.communityProgress * 100))% community")
-                        .font(.system(size: 11))
+                        .font(.caption)
                         .foregroundStyle(.white.opacity(0.9))
                     Spacer()
                 }
 
                 if item.participantCount > 0 {
                     Text("\(item.participantCount.formatted()) joined")
-                        .font(.system(size: 11))
+                        .font(.caption)
                         .foregroundStyle(.white.opacity(0.75))
                 }
             }
             .padding(12)
         }
         .clipShape(RoundedRectangle(cornerRadius: 16))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(item.title). \(Int(item.communityProgress * 100)) percent community progress. \(item.participantCount) joined.")
     }
 
     /// Map GoalCategory to a distinct card accent color using VGTheme.

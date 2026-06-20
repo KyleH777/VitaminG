@@ -35,10 +35,10 @@ struct CategoryGoalListView: View {
     }
 
     private func goalRow(_ goal: Goal) -> some View {
-        HStack(spacing: 12) {
-            let events = goal.completionEvents ?? []
-            let total = max(goal.durationDays ?? 30, 1)
-            let progress = Double(events.count) / Double(total)
+        let events = goal.completionEvents ?? []
+        let total = max(goal.durationDays ?? 30, 1)
+        let progress = Double(events.count) / Double(total)
+        return HStack(spacing: 12) {
             ProgressRingView(
                 progress: min(progress, 1.0),
                 tier: goal.tier,
@@ -47,29 +47,33 @@ struct CategoryGoalListView: View {
                 strokeWidth: 3,
                 glow: false
             )
+            .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text(goal.title ?? "Untitled goal")
-                    .font(.system(size: 15, weight: .medium))
+                    .font(.callout.weight(.medium))
                     .foregroundStyle(VGTheme.textPrimary)
                     .lineLimit(2)
                 Text(goal.frequency ?? "")
-                    .font(.system(size: 12))
+                    .font(.caption)
                     .foregroundStyle(VGTheme.textMuted)
             }
             Spacer()
         }
         .padding(.vertical, 8)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(goal.title ?? "Untitled goal"). \(goal.frequency ?? ""). \(Int(min(progress, 1.0) * 100)) percent complete.")
     }
 
     private var emptyState: some View {
         VStack(spacing: 16) {
             Text(category.emoji)
                 .font(.system(size: 48))
+                .accessibilityHidden(true)
             Text("No \(category.rawValue) goals yet")
                 .font(VGTheme.serif(20))
                 .foregroundStyle(VGTheme.textPrimary)
             Text("Add your first \(category.rawValue.lowercased()) goal to see it here.")
-                .font(.system(size: 15))
+                .font(.callout)
                 .foregroundStyle(VGTheme.textMuted)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)

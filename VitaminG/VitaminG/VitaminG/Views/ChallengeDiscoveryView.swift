@@ -64,7 +64,7 @@ struct ChallengeDiscoveryView: View {
             ForEach(filtered) { goal in
                 HStack {
                     Text(goal.title)
-                        .font(.system(size: 14))
+                        .font(.callout)
                         .fontDesign(.rounded)
                         .foregroundStyle(VGTheme.textPrimary)
                     Spacer()
@@ -102,6 +102,7 @@ struct ChallengeDiscoveryView: View {
             Image(systemName: "flame.fill")
                 .font(.system(size: 48))
                 .foregroundStyle(VGTheme.textMuted)
+                .accessibilityHidden(true)
             Text("No Challenges Yet")
                 .font(.title2)
                 .fontWeight(.semibold)
@@ -143,9 +144,10 @@ private struct ChallengeCardView: View {
     var body: some View {
         HStack(spacing: 16) {
             Image(systemName: template.iconName ?? "flame.fill")
-                .font(.system(size: 32))
+                .font(.largeTitle)
                 .foregroundStyle(accentColor)
                 .frame(width: 40)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(template.title ?? "Challenge")
@@ -220,7 +222,7 @@ private struct MoodScannerView: View {
                     let isActive = selectedMood == mood
                     Button { selectedMood = mood } label: {
                         Text(mood)
-                            .font(.system(size: 14, weight: isActive ? .semibold : .regular))
+                            .font(.callout.weight(isActive ? .semibold : .regular))
                             .fontDesign(.rounded)
                             .foregroundStyle(isActive ? Color.white : VGTheme.textPrimary)
                             .padding(.horizontal, 16)
@@ -230,6 +232,9 @@ private struct MoodScannerView: View {
                             .overlay(Capsule().strokeBorder(isActive ? Color.clear : VGTheme.separator, lineWidth: 1))
                     }
                     .buttonStyle(.plain)
+                    .frame(minHeight: 44)
+                    .accessibilityLabel(mood)
+                    .accessibilityAddTraits(isActive ? [.isSelected] : [])
                 }
             }
             .padding(.horizontal, 16)
@@ -247,44 +252,51 @@ private struct TrendingChallengesRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Trending")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.caption.weight(.semibold))
                 .kerning(0.4)
                 .foregroundStyle(VGTheme.textMuted)
                 .padding(.horizontal, 16)
+                .accessibilityAddTraits(.isHeader)
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     ForEach(templates, id: \.id) { template in
                         let accentColor = Color(hex: template.accentColorHex ?? "#C4673A")
-                        ZStack(alignment: .bottomLeading) {
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(LinearGradient(
-                                    colors: [accentColor, accentColor.opacity(0.7)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ))
-                                .frame(width: 180, height: 120)
-                            VStack(alignment: .leading, spacing: 6) {
-                                Image(systemName: template.iconName ?? "flame.fill")
-                                    .font(.system(size: 24))
-                                    .foregroundStyle(.white)
-                                Text(template.title ?? "")
-                                    .font(.system(size: 14, weight: .semibold))
-                                    .fontDesign(.rounded)
-                                    .foregroundStyle(.white)
-                                    .lineLimit(2)
-                                if template.communitySize > 0 {
-                                    Text("\(template.communitySize.formatted()) joined")
-                                        .font(.system(size: 11))
-                                        .foregroundStyle(.white.opacity(0.8))
+                        let isJoined = userChallenges.first(where: { $0.template?.id == template.id }) != nil
+                        Button {
+                            if !isJoined { onJoin(template) }
+                        } label: {
+                            ZStack(alignment: .bottomLeading) {
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(LinearGradient(
+                                        colors: [accentColor, accentColor.opacity(0.7)],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ))
+                                    .frame(width: 180, height: 120)
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Image(systemName: template.iconName ?? "flame.fill")
+                                        .font(.title2)
+                                        .foregroundStyle(.white)
+                                        .accessibilityHidden(true)
+                                    Text(template.title ?? "")
+                                        .font(.callout.weight(.semibold))
+                                        .fontDesign(.rounded)
+                                        .foregroundStyle(.white)
+                                        .lineLimit(2)
+                                    if template.communitySize > 0 {
+                                        Text("\(template.communitySize.formatted()) joined")
+                                            .font(.caption2)
+                                            .foregroundStyle(.white.opacity(0.8))
+                                    }
                                 }
-                            }
-                            .padding(12)
-                        }
-                        .onTapGesture {
-                            if userChallenges.first(where: { $0.template?.id == template.id }) == nil {
-                                onJoin(template)
+                                .padding(12)
                             }
                         }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel(isJoined
+                            ? "\(template.title ?? "Challenge"), already joined"
+                            : "Join \(template.title ?? "Challenge"). \(template.communitySize) members joined.")
+                        .accessibilityAddTraits(.isButton)
                     }
                 }
                 .padding(.horizontal, 16)
@@ -305,10 +317,11 @@ private struct VitaminShelfGrid: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Vitamin Shelf")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.caption.weight(.semibold))
                 .kerning(0.4)
                 .foregroundStyle(VGTheme.textMuted)
                 .padding(.horizontal, 16)
+                .accessibilityAddTraits(.isHeader)
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                 ForEach(catalogue) { section in
                     VStack(alignment: .leading, spacing: 0) {
@@ -318,21 +331,24 @@ private struct VitaminShelfGrid: View {
                             }
                         } label: {
                             HStack {
-                                Text(section.icon).font(.system(size: 20))
+                                Text(section.icon)
+                                    .font(.title3)
+                                    .accessibilityHidden(true)
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(section.name)
-                                        .font(.system(size: 13, weight: .semibold))
+                                        .font(.caption.weight(.semibold))
                                         .fontDesign(.rounded)
                                         .foregroundStyle(VGTheme.textPrimary)
                                         .lineLimit(1)
                                     Text("\(section.goals.count) goals")
-                                        .font(.system(size: 11))
+                                        .font(.caption2)
                                         .foregroundStyle(VGTheme.textMuted)
                                 }
                                 Spacer()
                                 Image(systemName: expandedCategory == section.name ? "chevron.up" : "chevron.down")
-                                    .font(.system(size: 11))
+                                    .font(.caption2)
                                     .foregroundStyle(VGTheme.textMuted)
+                                    .accessibilityHidden(true)
                             }
                             .padding(14)
                             .background(VGTheme.surface)
@@ -340,6 +356,8 @@ private struct VitaminShelfGrid: View {
                             .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(VGTheme.separator, lineWidth: 1))
                         }
                         .buttonStyle(.plain)
+                        .accessibilityLabel("\(section.name), \(section.goals.count) goals, \(expandedCategory == section.name ? "expanded" : "collapsed")")
+                        .accessibilityHint(expandedCategory == section.name ? "Tap to collapse" : "Tap to expand")
                     }
                     .gridCellColumns(expandedCategory == section.name ? 2 : 1)
 
@@ -347,12 +365,12 @@ private struct VitaminShelfGrid: View {
                         ForEach(section.goals.prefix(3)) { goal in
                             HStack {
                                 Text(goal.title)
-                                    .font(.system(size: 13))
+                                    .font(.callout)
                                     .fontDesign(.rounded)
                                     .foregroundStyle(VGTheme.textPrimary)
                                     .lineLimit(2)
                                 Spacer()
-                                Button("+ ADD") {
+                                Button("Add") {
                                     let input = GoalInput(
                                         title: goal.title,
                                         tier: .shortTerm,
@@ -367,12 +385,14 @@ private struct VitaminShelfGrid: View {
                                     }
                                     UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                 }
-                                .font(.system(size: 12, weight: .semibold))
+                                .font(.caption.weight(.semibold))
                                 .foregroundStyle(VGTheme.accentTerra)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 7)
                                 .background(VGTheme.accentTerra.opacity(0.12))
                                 .clipShape(Capsule())
+                                .frame(minHeight: 44)
+                                .accessibilityLabel("Add \(goal.title) to my goals")
                             }
                             .padding(.horizontal, 14)
                             .padding(.vertical, 10)
@@ -434,37 +454,39 @@ private struct VitaminDispenserView: View {
                     VGCapsule(size: 48, color1: VGTheme.terraSoft, color2: VGTheme.terra)
                         .rotationEffect(.degrees(isShaking ? 15 : 0))
                     Text("Vitamin Dispenser")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.callout.weight(.semibold))
                         .fontDesign(.rounded)
                         .foregroundStyle(VGTheme.textPrimary)
                     Text("Shake for a goal")
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundStyle(VGTheme.textMuted)
                 }
             }
             .gesture(
                 DragGesture(minimumDistance: 10).onEnded { _ in dispense() }
             )
+            .accessibilityLabel("Vitamin Dispenser. Swipe to get a random goal suggestion.")
 
             Button("Give it a shake") { dispense() }
-                .font(.system(size: 14, weight: .semibold))
+                .font(.callout.weight(.semibold))
                 .fontDesign(.rounded)
                 .foregroundStyle(VGTheme.accentTerra)
 
             if let goal = dispensedGoal {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(goal.title)
-                        .font(.system(size: 15, weight: .medium))
+                        .font(.callout.weight(.medium))
                         .fontDesign(.rounded)
                         .foregroundStyle(VGTheme.textPrimary)
                     HStack(spacing: 10) {
                         Button("Shake again") { dispense() }
-                            .font(.system(size: 13))
+                            .font(.callout)
                             .foregroundStyle(VGTheme.textMuted)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 8)
                             .background(VGTheme.surface)
                             .clipShape(Capsule())
+                            .frame(minHeight: 44)
                         Spacer()
                         Button("Add to my goals") {
                             let input = GoalInput(
@@ -482,12 +504,14 @@ private struct VitaminDispenserView: View {
                             }
                             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                         }
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.callout.weight(.semibold))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 8)
                         .background(VGTheme.accentTerra)
                         .clipShape(Capsule())
+                        .frame(minHeight: 44)
+                        .accessibilityLabel("Add \(goal.title) to my goals")
                     }
                 }
                 .padding(16)

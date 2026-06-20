@@ -34,5 +34,6 @@ struct VGCapsule: View {
                 .foregroundStyle(Color.white.opacity(0.30))
         }
         .frame(width: size, height: size)
+        .accessibilityHidden(true)
     }
 }

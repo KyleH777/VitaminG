@@ -57,9 +57,11 @@ struct MilestoneCelebrationView: View {
             Color.black.opacity(0.92).ignoresSafeArea()
 
             // Confetti canvas behind the badge card (decorative — accessibilityHidden)
-            confettiView
-                .ignoresSafeArea()
-                .accessibilityHidden(true)
+            if !reduceMotion {
+                confettiView
+                    .ignoresSafeArea()
+                    .accessibilityHidden(true)
+            }
 
             // Badge + message card
             VStack(spacing: 24) {
@@ -71,6 +73,7 @@ struct MilestoneCelebrationView: View {
                     .scaleEffect(badgeScale)
                     .opacity(badgeOpacity)
                     .accessibilityLabel("Milestone reached: \(milestoneMessage)")
+                    .accessibilityAddTraits(.isImage)
 
                 Text(milestoneMessage)
                     .font(.title2)

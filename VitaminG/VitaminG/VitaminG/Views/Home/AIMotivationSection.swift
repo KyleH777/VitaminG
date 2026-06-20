@@ -13,10 +13,11 @@ struct AIMotivationSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(aiViewModel.motivationLabel)
-                .font(.system(size: 9, weight: .semibold))
+                .font(.caption2.weight(.semibold))
                 .kerning(1.4)
                 .textCase(.uppercase)
                 .foregroundStyle(VGTheme.textMuted)
+                .accessibilityHidden(true)
 
             if aiViewModel.isLoadingMotivation {
                 Text("                                ")

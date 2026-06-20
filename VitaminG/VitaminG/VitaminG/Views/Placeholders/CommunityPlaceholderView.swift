@@ -12,7 +12,7 @@ struct CommunityPlaceholderView: View {
                 .font(VGTheme.serif(28))
                 .foregroundStyle(VGTheme.textMuted)
             Text("Your community is on its way.")
-                .font(.system(size: 16))
+                .font(.body)
                 .foregroundStyle(VGTheme.textMuted)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

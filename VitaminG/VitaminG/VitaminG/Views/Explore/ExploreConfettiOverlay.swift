@@ -15,13 +15,14 @@ struct ExploreConfettiOverlay: View {
                 Spacer()
                 Button(action: onDismiss) {
                     Text("Done")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.callout.weight(.semibold))
                         .foregroundStyle(VGTheme.textPrimary)
                         .padding(.horizontal, 32)
                         .padding(.vertical, 12)
                         .background(VGTheme.surface)
                         .clipShape(Capsule())
                 }
+                .frame(minHeight: 44)
                 .padding(.bottom, 60)
             }
         }

@@ -55,11 +55,12 @@ struct DiscoverOverlayView: View {
                         // Error state
                         VStack(spacing: 8) {
                             Text(err)
-                                .font(.system(size: 16, design: .rounded))
+                                .font(.body)
                                 .foregroundStyle(VGTheme.textSecondary)
                                 .multilineTextAlignment(.center)
                                 .padding(24)
                         }
+                        .accessibilityLiveRegion(.polite)
                     } else if viewModel.selectedSegment == .goals {
                         if viewModel.goalResults.isEmpty {
                             // Goals empty state (UI-SPEC §Empty States)
@@ -149,10 +150,10 @@ struct DiscoverOverlayView: View {
     private func emptyStateView(heading: String, body: String) -> some View {
         VStack(spacing: 8) {
             Text(heading)
-                .font(.system(size: 16, weight: .semibold, design: .rounded))
+                .font(.body.weight(.semibold))
                 .foregroundStyle(VGTheme.textPrimary)
             Text(body)
-                .font(.system(size: 16, design: .rounded))
+                .font(.body)
                 .foregroundStyle(VGTheme.textSecondary)
         }
         .padding(24)

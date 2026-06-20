@@ -29,7 +29,7 @@ struct IdeaBoardView: View {
             // FAB
             Button { vm.showingProposeSheet = true } label: {
                 Image(systemName: "plus")
-                    .font(.system(size: 20, weight: .semibold))
+                    .font(.body.weight(.semibold))
                     .frame(width: 54, height: 54)
                     .background(VGTheme.accentTerra)
                     .foregroundStyle(VGTheme.background)
@@ -37,16 +37,18 @@ struct IdeaBoardView: View {
                     .shadow(color: VGTheme.accentTerra.opacity(0.4), radius: 10)
             }
             .padding(.trailing, 20).padding(.bottom, 30)
+            .accessibilityLabel("Propose a new goal idea")
 
             // Toast
             if let msg = vm.toastMessage {
                 Text(msg)
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.callout.weight(.medium))
                     .padding(.horizontal, 16).padding(.vertical, 10)
                     .background(VGTheme.accentSage)
                     .clipShape(Capsule())
                     .padding(.bottom, 100)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .accessibilityLiveRegion(.polite)
             }
         }
         .sheet(isPresented: $vm.showingProposeSheet) {
@@ -61,8 +63,9 @@ struct IdeaBoardView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     if !idea.category.isEmpty {
                         Text(idea.category.uppercased())
-                            .font(.system(size: 9, weight: .semibold)).kerning(1.2)
+                            .font(.caption2.weight(.semibold)).kerning(1.2)
                             .foregroundStyle(VGTheme.textMuted)
+                            .accessibilityHidden(true)
                     }
                     Text(idea.title)
                         .font(VGTheme.serif(17))
@@ -73,47 +76,52 @@ struct IdeaBoardView: View {
                 Button { vm.toggleUpvote(idea, context: context) } label: {
                     VStack(spacing: 2) {
                         Text("△")
-                            .font(.system(size: 16))
+                            .font(.callout)
                             .foregroundStyle(vm.isUpvoted(idea) ? VGTheme.accentTerra : VGTheme.textMuted)
+                            .accessibilityHidden(true)
                         Text("\(idea.upvoteCount)")
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(.caption.weight(.semibold))
                             .foregroundStyle(vm.isUpvoted(idea) ? VGTheme.accentTerra : VGTheme.textMuted)
                     }
-                    .frame(width: 40, height: 44)
+                    .frame(minWidth: 44, minHeight: 44)
                     .background(VGTheme.surface)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .overlay(RoundedRectangle(cornerRadius: 10)
                         .strokeBorder(vm.isUpvoted(idea) ? VGTheme.accentTerra.opacity(0.4) : VGTheme.separator, lineWidth: 1))
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(vm.isUpvoted(idea) ? "Remove upvote. \(idea.upvoteCount) votes" : "Upvote. \(idea.upvoteCount) votes")
+                .accessibilityAddTraits(vm.isUpvoted(idea) ? [.isSelected] : [])
             }
 
             if !idea.ideaDescription.isEmpty {
                 Text(idea.ideaDescription)
-                    .font(.system(size: 13))
+                    .font(.callout)
                     .foregroundStyle(VGTheme.textSecondary)
                     .lineLimit(3)
             }
 
             if idea.isPromoted {
                 Label("Now a Challenge — view in Explore", systemImage: "checkmark.circle.fill")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.caption.weight(.semibold))
                     .foregroundStyle(VGTheme.accentSage)
             } else if idea.upvoteCount >= 15 {
-                Text("🔥 Almost a challenge — \(idea.upvoteCount) votes")
-                    .font(.system(size: 11, weight: .semibold))
+                Text("Almost a challenge — \(idea.upvoteCount) votes")
+                    .font(.caption.weight(.semibold))
                     .foregroundStyle(VGTheme.accentTerra)
             }
 
             HStack {
                 Text("\(idea.copyCount) added this")
-                    .font(.system(size: 11)).foregroundStyle(VGTheme.textMuted)
+                    .font(.caption).foregroundStyle(VGTheme.textMuted)
                 Spacer()
-                Button("Add to my goals →") {
+                Button("Add to my goals") {
                     vm.addToMyGoals(idea, goalVM: goalVM, context: context)
                 }
-                .font(.system(size: 12, weight: .semibold))
+                .font(.caption.weight(.semibold))
                 .foregroundStyle(VGTheme.accentTerra)
+                .frame(minHeight: 44)
+                .accessibilityLabel("Add \(idea.title) to my goals")
             }
         }
         .padding(16)
@@ -124,10 +132,10 @@ struct IdeaBoardView: View {
 
     private var emptyState: some View {
         VStack(spacing: 12) {
-            Text("◈").font(.system(size: 40)).foregroundStyle(VGTheme.textMuted)
+            Text("◈").font(.largeTitle).foregroundStyle(VGTheme.textMuted).accessibilityHidden(true)
             Text("No ideas yet").font(VGTheme.serif(20)).foregroundStyle(VGTheme.textPrimary)
             Text("Be the first to propose a goal the community can work toward together.")
-                .font(.system(size: 13)).foregroundStyle(VGTheme.textMuted)
+                .font(.callout).foregroundStyle(VGTheme.textMuted)
                 .multilineTextAlignment(.center)
         }
         .padding(40)

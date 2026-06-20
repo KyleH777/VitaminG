@@ -12,7 +12,7 @@ struct ExplorePlaceholderView: View {
                 .font(VGTheme.serif(28))
                 .foregroundStyle(VGTheme.textMuted)
             Text("Something exciting is brewing.")
-                .font(.system(size: 16))
+                .font(.body)
                 .foregroundStyle(VGTheme.textMuted)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

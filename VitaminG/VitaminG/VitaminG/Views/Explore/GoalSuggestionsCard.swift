@@ -11,15 +11,17 @@ struct GoalSuggestionsCard: View {
             // Header row: sparkles icon + title + subtitle
             HStack(alignment: .center, spacing: 12) {
                 Image(systemName: "sparkles")
-                    .font(.system(size: 22))
+                    .font(.title2)
                     .foregroundStyle(VGTheme.accentTerra)
                     .frame(width: 48, height: 48)
+                    .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Goals suggested for you")
                         .font(VGTheme.serif(20))
                         .foregroundStyle(VGTheme.textPrimary)
+                        .accessibilityAddTraits(.isHeader)
                     Text("Based on your goals and interests")
-                        .font(.system(size: 14))
+                        .font(.callout)
                         .foregroundStyle(VGTheme.textMuted)
                 }
             }
@@ -31,7 +33,7 @@ struct GoalSuggestionsCard: View {
 
                     HStack(alignment: .center, spacing: 8) {
                         Text(suggestion)
-                            .font(.system(size: 16))
+                            .font(.body)
                             .foregroundStyle(isAdded ? VGTheme.textMuted : VGTheme.textPrimary)
                             .lineSpacing(4)
                             .fixedSize(horizontal: false, vertical: true)
@@ -40,16 +42,16 @@ struct GoalSuggestionsCard: View {
 
                         if isAdded {
                             Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 24))
+                                .font(.title2)
                                 .foregroundStyle(VGTheme.accentSage)
-                                .frame(width: 60, height: 32)
+                                .frame(minWidth: 44, minHeight: 44)
                                 .accessibilityLabel("Added")
                         } else {
                             Button {
                                 addSuggestion(title: suggestion, at: index)
                             } label: {
                                 Text("Add Goal")
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .font(.callout.weight(.semibold))
                                     .foregroundStyle(.white)
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 8)
@@ -57,6 +59,7 @@ struct GoalSuggestionsCard: View {
                                     .clipShape(Capsule())
                             }
                             .buttonStyle(.plain)
+                            .frame(minHeight: 44)
                             .disabled(aiViewModel.isLoadingSuggestions)
                             .accessibilityLabel("Add goal: \(suggestion)")
                         }

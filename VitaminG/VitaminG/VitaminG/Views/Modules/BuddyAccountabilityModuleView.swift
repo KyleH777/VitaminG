@@ -75,6 +75,7 @@ struct BuddyAccountabilityModuleView: View {
             Image(systemName: "person.2.fill")
                 .font(.system(size: 48))
                 .foregroundStyle(VGTheme.muted)
+                .accessibilityHidden(true)
 
             Text("Add an Accountability Buddy")
                 .font(.title2.weight(.semibold))
