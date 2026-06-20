@@ -18,12 +18,14 @@ struct GoalGifterCard: View {
                         reduceMotion ? nil : .interpolatingSpring(stiffness: 300, damping: 10),
                         value: viewModel.isDispensing
                     )
+                    .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Shake out some growth")
                         .font(VGTheme.serif(20))
                         .foregroundStyle(VGTheme.textPrimary)
+                        .accessibilityAddTraits(.isHeader)
                     Text("One daily goal, just for you")
-                        .font(.system(size: 14))
+                        .font(.callout)
                         .foregroundStyle(VGTheme.textMuted)
                 }
             }
@@ -33,27 +35,29 @@ struct GoalGifterCard: View {
                 HStack(spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(VGTheme.accentSage)
-                        .font(.system(size: 20))
+                        .font(.body)
+                        .accessibilityHidden(true)
                     Text("Come back tomorrow")
-                        .font(.system(size: 15))
+                        .font(.callout)
                         .foregroundStyle(VGTheme.textMuted)
                 }
+                .accessibilityLabel("Today's goal already gifted. Come back tomorrow.")
             }
             // State: goal dispensed, waiting for user to add
             else if let goal = viewModel.dispensedGoal {
                 VStack(alignment: .leading, spacing: 10) {
                     Text(goal.title)
-                        .font(.system(size: 16, weight: .medium))
+                        .font(.callout.weight(.medium))
                         .foregroundStyle(VGTheme.textPrimary)
                         .fixedSize(horizontal: false, vertical: true)
                     Button {
                         addGiftedGoal(goal)
                     } label: {
                         Text("Add this goal")
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(.callout.weight(.semibold))
                             .foregroundStyle(.white)
                             .padding(.horizontal, 24)
-                            .padding(.vertical, 10)
+                            .frame(minHeight: 44)
                             .background(VGTheme.accentTerra)
                             .clipShape(Capsule())
                     }
@@ -66,10 +70,10 @@ struct GoalGifterCard: View {
                     activateGifter()
                 } label: {
                     Text("Surprise me")
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.callout.weight(.semibold))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 24)
-                        .padding(.vertical, 10)
+                        .frame(minHeight: 44)
                         .background(VGTheme.accentTerra)
                         .clipShape(Capsule())
                 }
@@ -116,7 +120,7 @@ struct GoalGifterCard: View {
             inserted.associatedInspiration = "vg_gifter"
             viewModel.markGiftedToday()
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            withAnimation { showingConfetti = true }
+            if !reduceMotion { withAnimation { showingConfetti = true } }
         }
     }
 }

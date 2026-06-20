@@ -63,7 +63,7 @@ struct GlobalFeedSection: View {
                     .padding(.top, 32)
             } else if let errorMsg = loadError, feedPosts.isEmpty {
                 Text(errorMsg)
-                    .font(.system(size: 14))
+                    .font(.body)
                     .fontDesign(.rounded)
                     .foregroundStyle(VGTheme.textMuted)
                     .multilineTextAlignment(.center)
@@ -148,11 +148,11 @@ struct GlobalFeedSection: View {
     private var emptyState: some View {
         VStack(spacing: 8) {
             Text("Community is quiet right now")
-                .font(.system(size: 17, weight: .semibold))
+                .font(.body.weight(.semibold))
                 .fontDesign(.rounded)
                 .foregroundStyle(VGTheme.textPrimary)
             Text("Be the first to share today.")
-                .font(.system(size: 14))
+                .font(.body)
                 .fontDesign(.rounded)
                 .foregroundStyle(VGTheme.textMuted)
         }

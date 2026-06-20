@@ -68,6 +68,7 @@ struct PostComposeSheet: View {
                         Text("\(characterCount)/\(Self.maxChars)")
                             .font(.caption).fontDesign(.rounded)
                             .foregroundStyle(VGTheme.muted)
+                            .accessibilityLabel("\(characterCount) of \(Self.maxChars) characters")
                     }
 
                     // 2. Profanity rejection inline error
@@ -75,6 +76,7 @@ struct PostComposeSheet: View {
                         Text(Self.profanityMessage)
                             .font(.caption).fontDesign(.rounded)
                             .foregroundStyle(.red)
+                            .accessibilityLiveRegion(.polite)
                     }
 
                     // 3. Photo picker row + preview
@@ -111,12 +113,15 @@ struct PostComposeSheet: View {
                                     .frame(width: 80, height: 80)
                                     .clipShape(RoundedRectangle(cornerRadius: 8))
                                     .transition(.opacity)
+                                    .accessibilityLabel("Selected photo")
                                 Button("Remove") {
                                     selectedImageData = nil
                                     selectedItem = nil
                                 }
                                 .font(.body).fontDesign(.rounded)
                                 .foregroundStyle(VGTheme.muted)
+                                .frame(minHeight: 44)
+                                .accessibilityLabel("Remove selected photo")
                                 Spacer()
                             }
                         }

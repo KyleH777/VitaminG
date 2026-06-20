@@ -27,15 +27,18 @@ struct LoginScreen: View {
                                 .foregroundStyle(VGTheme.clay)
                         )
                         .shadow(color: VGTheme.clay.opacity(0.18), radius: 14, y: 3)
+                        .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text("WELCOME BACK")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.caption2.weight(.semibold))
                             .foregroundStyle(VGTheme.muted)
                             .kerning(1.5)
+                            .accessibilityHidden(true)
                         Text("Vitamin G")
                             .font(VGTheme.serif(24))
                             .foregroundStyle(VGTheme.clay)
+                            .accessibilityAddTraits(.isHeader)
                     }
                 }
                 .padding(.bottom, 20)
@@ -47,7 +50,7 @@ struct LoginScreen: View {
                     .padding(.bottom, 10)
 
                 Text("Your goals and streaks are right where you left them.")
-                    .font(.system(size: 14))
+                    .font(.callout)
                     .foregroundStyle(VGTheme.muted)
                     .lineSpacing(4)
                     .padding(.bottom, 24)
@@ -75,7 +78,9 @@ struct LoginScreen: View {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 18, weight: .medium))
                     .foregroundStyle(VGTheme.clay)
+                    .frame(minWidth: 44, minHeight: 44)
             }
+            .accessibilityLabel("Go back")
             Spacer()
         }
         .padding(.bottom, 30)
@@ -98,27 +103,30 @@ struct LoginScreen: View {
                             .font(VGTheme.serif(18))
                             .foregroundStyle(VGTheme.warmWhite)
                     )
+                    .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Continue as \(savedName)")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.callout.weight(.semibold))
                         .foregroundStyle(VGTheme.clay)
                     Text("Tap to jump back in")
-                        .font(.system(size: 11))
+                        .font(.caption2)
                         .foregroundStyle(VGTheme.muted)
                 }
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.callout.weight(.medium))
                     .foregroundStyle(VGTheme.terra)
+                    .accessibilityHidden(true)
             }
             .padding(14)
             .background(VGTheme.warmWhite)
             .clipShape(RoundedRectangle(cornerRadius: 14))
             .shadow(color: VGTheme.clay.opacity(0.06), radius: 8, y: 1)
         }
+        .accessibilityLabel("Continue as \(savedName)")
     }
 
     private var bottomButtons: some View {
@@ -143,16 +151,17 @@ struct LoginScreen: View {
 
             if reAuthFailed {
                 Text("Sign in failed. Please try again.")
-                    .font(.system(size: 13, weight: .light))
+                    .font(.callout.weight(.light))
                     .foregroundStyle(VGTheme.terra)
                     .padding(.horizontal, 28)
+                    .accessibilityLiveRegion(.polite)
             }
 
             Button(action: { path.append(.recovery) }) {
                 Text("Having trouble?")
-                    .font(.system(size: 13))
+                    .font(.callout)
                     .foregroundStyle(VGTheme.muted)
-                    .padding(.vertical, 10)
+                    .frame(minHeight: 44)
             }
 
             Button(action: {
@@ -160,10 +169,9 @@ struct LoginScreen: View {
                 path = [.name]
             }) {
                 Text("This isn't me")
-                    .font(.system(size: 15))
+                    .font(.body)
                     .foregroundStyle(VGTheme.sand.opacity(0.55))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
+                    .frame(maxWidth: .infinity, minHeight: 44)
             }
         }
         .padding(.horizontal, 28)

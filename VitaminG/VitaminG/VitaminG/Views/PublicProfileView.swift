@@ -207,10 +207,10 @@ struct PublicProfileView: View {
                     // Empty state (UI-SPEC §Empty States)
                     VStack(spacing: 8) {
                         Text("No public goals yet")
-                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .font(.callout.weight(.semibold).fontDesign(.rounded))
                             .foregroundStyle(VGTheme.textPrimary)
                         Text("This user hasn't shared any goals.")
-                            .font(.system(size: 16, design: .rounded))
+                            .font(.callout.fontDesign(.rounded))
                             .foregroundStyle(VGTheme.textSecondary)
                     }
                     .frame(maxWidth: .infinity)
@@ -235,14 +235,16 @@ struct PublicProfileView: View {
                 VStack(spacing: 8) {
                     Button(action: { showBlockConfirm = true }) {
                         Text("Report or Block")
-                            .font(.system(size: 13, design: .rounded))
+                            .font(.caption.fontDesign(.rounded))
                             .foregroundStyle(VGTheme.accentTerra)
+                            .frame(minHeight: 44)
                     }
                     .buttonStyle(.plain)
 
                     Text("Shared via Vitamin G")
-                        .font(.system(size: 13, design: .rounded))
+                        .font(.caption.fontDesign(.rounded))
                         .foregroundStyle(VGTheme.textFaint)
+                        .accessibilityHidden(true)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 16)
@@ -264,10 +266,11 @@ struct PublicProfileView: View {
 
     private func sectionLabel(_ text: String) -> some View {
         Text(text.uppercased())
-            .font(.system(size: 13, weight: .semibold))
+            .font(.caption.weight(.semibold))
             .kerning(0.4)
             .foregroundStyle(VGTheme.textMuted)
             .padding(.horizontal, 16)
+            .accessibilityAddTraits(.isHeader)
     }
 
     // MARK: - Stat Cell Helper
@@ -277,12 +280,13 @@ struct PublicProfileView: View {
             Text(value)
                 .font(VGTheme.serif(20))
                 .foregroundStyle(VGTheme.textPrimary)
-                .accessibilityAddTraits(.isStaticText)
             Text(label)
-                .font(.system(size: 13, design: .rounded))
+                .font(.caption.fontDesign(.rounded))
                 .foregroundStyle(VGTheme.textMuted)
         }
         .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(value) \(label)")
     }
 
     // MARK: - Actions

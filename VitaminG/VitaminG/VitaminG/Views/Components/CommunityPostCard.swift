@@ -51,7 +51,7 @@ struct CommunityPostCard: View {
                     Image(systemName: "flag.fill")
                         .font(.system(size: 14))
                         .foregroundStyle(VGTheme.muted)
-                        .frame(width: 32, height: 32, alignment: .trailing)
+                        .frame(minWidth: 44, minHeight: 44, alignment: .trailing)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Report this post")
@@ -103,12 +103,16 @@ struct CommunityPostCard: View {
                 if let onComment {
                     Button { onComment() } label: {
                         HStack(spacing: 5) {
-                            Image(systemName: "bubble.left").font(.system(size: 12))
-                            Text("Reply").font(.system(size: 12))
+                            Image(systemName: "bubble.left")
+                                .font(.caption)
+                                .accessibilityHidden(true)
+                            Text("Reply").font(.caption)
                         }
                         .foregroundStyle(VGTheme.textMuted)
+                        .frame(minHeight: 44)
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("Reply to this post")
                 }
                 Spacer()
             }

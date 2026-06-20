@@ -337,9 +337,10 @@ struct GoalDetailView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("YOUR MONTH")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.caption2.weight(.bold))
                     .kerning(1.2)
                     .foregroundStyle(VGTheme.muted)
+                    .accessibilityAddTraits(.isHeader)
                 Spacer()
             }
             .padding(.horizontal, 16)
@@ -377,10 +378,11 @@ struct GoalDetailView: View {
             if goalStreak > 0 {
                 HStack(spacing: 6) {
                     Text("🔥 \(goalStreak) day streak")
-                        .font(.system(size: 14, weight: .semibold, design: .monospaced))
+                        .font(.footnote.weight(.semibold).monospacedDigit())
                         .foregroundStyle(VGTheme.accentTerra)
                 }
                 .padding(.horizontal, 16)
+                .accessibilityLabel("\(goalStreak) day streak")
             }
         }
         .padding(.vertical, 8)
@@ -428,6 +430,7 @@ struct GoalDetailView: View {
             Text("Progress History")
                 .font(.footnote.weight(.semibold)).fontDesign(.rounded)
                 .foregroundStyle(.secondary)
+                .accessibilityAddTraits(.isHeader)
 
             // Summary rows
             HStack {

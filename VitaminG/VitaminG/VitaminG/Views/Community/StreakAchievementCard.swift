@@ -37,11 +37,11 @@ struct StreakAchievementCard: View {
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(authorDisplayName)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.callout.weight(.semibold))
                     .fontDesign(.rounded)
                     .foregroundStyle(VGTheme.clay)
                 Text(text)
-                    .font(.system(size: 14))
+                    .font(.callout)
                     .fontDesign(.rounded)
                     .foregroundStyle(.secondary)
                     .lineLimit(2)

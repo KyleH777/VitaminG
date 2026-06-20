@@ -65,6 +65,7 @@ struct AnalyticsView: View {
             Text("Completion Rate")
                 .font(.title3.weight(.semibold))
                 .padding(.horizontal, 4)
+                .accessibilityAddTraits(.isHeader)
 
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
@@ -108,6 +109,7 @@ struct AnalyticsView: View {
             Text("Goals")
                 .font(.title3.weight(.semibold))
                 .padding(.horizontal, 4)
+                .accessibilityAddTraits(.isHeader)
 
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
@@ -128,11 +130,13 @@ struct AnalyticsView: View {
                                 Image(systemName: "chevron.right")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
+                                    .accessibilityHidden(true)
                             }
                             .padding(.vertical, 12)
                             .padding(.horizontal, 16)
                         }
                         .buttonStyle(.plain)
+                        .accessibilityLabel("View heatmap for \(goal.title ?? "goal")")
 
                         if index < viewModel.allGoals.count - 1 {
                             Divider()

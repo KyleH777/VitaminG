@@ -30,7 +30,9 @@ struct UsernameScreen: View {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .medium))
                             .foregroundStyle(VGTheme.clay)
+                            .frame(minWidth: 44, minHeight: 44)
                     }
+                    .accessibilityLabel("Go back")
                     Spacer()
                 }
                 .padding(.bottom, 20)
@@ -41,10 +43,11 @@ struct UsernameScreen: View {
 
                 // Field label
                 Text("USERNAME")
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.caption2.weight(.semibold))
                     .foregroundStyle(VGTheme.muted)
                     .kerning(1.5)
                     .padding(.bottom, 8)
+                    .accessibilityHidden(true)
 
                 // Headline
                 Text("Claim your\nusername")
@@ -52,10 +55,11 @@ struct UsernameScreen: View {
                     .foregroundStyle(VGTheme.clay)
                     .lineSpacing(4)
                     .padding(.bottom, 8)
+                    .accessibilityAddTraits(.isHeader)
 
                 // Subtitle
                 Text("Choose a unique handle. This is how others find you.")
-                    .font(.system(size: 14, weight: .light))
+                    .font(.callout.weight(.light))
                     .foregroundStyle(VGTheme.muted)
                     .lineSpacing(4)
                     .padding(.bottom, 24)
@@ -66,6 +70,8 @@ struct UsernameScreen: View {
                     .foregroundStyle(VGTheme.clay)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
+                    .accessibilityLabel("Username")
+                    .accessibilityHint("Choose a unique handle used by others to find you")
 
                 // Terra underline
                 Rectangle()
@@ -108,10 +114,11 @@ struct UsernameScreen: View {
                 // Race condition error (D-17)
                 if let err = raceConditionError {
                     Text(err)
-                        .font(.system(size: 13, weight: .light))
+                        .font(.callout.weight(.light))
                         .foregroundStyle(VGTheme.terra)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.top, 4)
+                        .accessibilityLiveRegion(.polite)
                 }
 
                 Spacer()

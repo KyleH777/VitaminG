@@ -30,7 +30,7 @@ struct CommentSheetView: View {
                 if comments.isEmpty {
                     Spacer()
                     Text("No comments yet.\nBe the first to encourage.")
-                        .font(.system(size: 14)).foregroundStyle(VGTheme.textMuted)
+                        .font(.body).foregroundStyle(VGTheme.textMuted)
                         .multilineTextAlignment(.center)
                     Spacer()
                 } else {
@@ -39,9 +39,9 @@ struct CommentSheetView: View {
                             ForEach(comments) { c in
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(c.authorName.isEmpty ? "You" : c.authorName)
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .font(.caption.weight(.semibold))
                                         .foregroundStyle(VGTheme.textPrimary)
-                                    Text(c.body).font(.system(size: 14))
+                                    Text(c.body).font(.body)
                                         .foregroundStyle(VGTheme.textSecondary)
                                 }
                                 .padding(12)
@@ -57,18 +57,20 @@ struct CommentSheetView: View {
                 Divider()
                 VStack(spacing: 4) {
                     if positivityRejected {
-                        Text("Only encouraging comments are allowed here. 🌱")
-                            .font(.system(size: 12))
+                        Text("Only encouraging comments are allowed here.")
+                            .font(.caption)
                             .foregroundStyle(VGTheme.accentTerra)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, 16)
                             .transition(.opacity)
+                            .accessibilityLiveRegion(.polite)
                     }
                     HStack(spacing: 10) {
                         TextField("Say something encouraging…", text: $draftText, axis: .vertical)
-                            .font(.system(size: 14))
+                            .font(.body)
                             .lineLimit(1...4)
                             .focused($fieldFocused)
+                            .accessibilityLabel("Comment")
                             .onChange(of: draftText) { _, _ in positivityRejected = false }
                         Button {
                             let body = draftText.trimmingCharacters(in: .whitespaces)
@@ -88,8 +90,10 @@ struct CommentSheetView: View {
                             Image(systemName: "arrow.up.circle.fill")
                                 .font(.system(size: 28))
                                 .foregroundStyle(draftText.isEmpty ? VGTheme.textMuted : VGTheme.accentTerra)
+                                .frame(minWidth: 44, minHeight: 44)
                         }
                         .disabled(draftText.trimmingCharacters(in: .whitespaces).isEmpty)
+                        .accessibilityLabel("Send comment")
                     }
                     .padding(.horizontal, 16).padding(.vertical, 10)
                 }
