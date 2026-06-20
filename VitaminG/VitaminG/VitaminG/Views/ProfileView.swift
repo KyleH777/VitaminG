@@ -7,6 +7,7 @@ struct ProfileView: View {
     @State private var viewModel = ProfileViewModel()
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var activeTab: ProfileViewModel.ProfileTab = .goals
     @State private var overrideMoodDisplay: Bool = false
     @State private var showingPhotoPicker = false
@@ -195,11 +196,11 @@ struct ProfileView: View {
                 .padding(.horizontal, 20)
 
                 HStack(spacing: 0) {
-                    let stats: [(String, String)] = [
-                        (String(currentStreak), "Streak"),
-                        (String(goals.count),   "Goals"),
-                        (String(completionEvents.count), "Check-ins"),
-                        (String(viewModel.reactionCount), "Reactions"),
+                    let stats: [(String, String, String)] = [
+                        (String(currentStreak), "Streak",    "\(currentStreak) day streak"),
+                        (String(goals.count),   "Goals",     "\(goals.count) goals"),
+                        (String(completionEvents.count), "Check-ins", "\(completionEvents.count) check-ins"),
+                        (String(viewModel.reactionCount), "Reactions", "\(viewModel.reactionCount) reactions"),
                     ]
                     ForEach(Array(stats.enumerated()), id: \.offset) { i, stat in
                         VStack(spacing: 2) {
@@ -207,15 +208,18 @@ struct ProfileView: View {
                                 .font(VGTheme.serif(20))
                                 .foregroundStyle(VGTheme.sand)
                             Text(stat.1.uppercased())
-                                .font(.system(size: 9))
+                                .font(.caption2)
                                 .foregroundStyle(VGTheme.muted)
                                 .kerning(0.5)
                         }
                         .frame(maxWidth: .infinity)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(stat.2)
                         if i < 3 {
                             Divider()
                                 .background(Color.white.opacity(0.1))
                                 .frame(height: 32)
+                                .accessibilityHidden(true)
                         }
                     }
                 }
@@ -225,9 +229,10 @@ struct ProfileView: View {
                 if todayMood == nil || overrideMoodDisplay {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("HOW ARE YOU FEELING TODAY?")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.caption2.weight(.semibold))
                             .foregroundStyle(VGTheme.muted)
                             .kerning(0.8)
+                            .accessibilityAddTraits(.isHeader)
 
                         let moods = [("◎", "Amazing"), ("○", "Good"), ("◐", "Okay"), ("◑", "Low"), ("◉", "Push")]
                         HStack(spacing: 8) {
@@ -235,14 +240,16 @@ struct ProfileView: View {
                                 let isActive = todayMood == index
                                 Button { logMood(index) } label: {
                                     VStack(spacing: 4) {
-                                        Text(mood.0).font(.system(size: 18))
+                                        Text(mood.0).font(.body)
                                             .foregroundStyle(isActive ? VGTheme.accentTerra : VGTheme.textSecondary)
                                             .shadow(color: isActive && colorScheme == .dark ? VGTheme.accentTerra.opacity(0.6) : .clear, radius: 6)
-                                        Text(mood.1).font(.system(size: 9, weight: isActive ? .semibold : .regular))
+                                            .accessibilityHidden(true)
+                                        Text(mood.1).font(.caption2.weight(isActive ? .semibold : .regular))
                                             .kerning(0.4)
                                             .foregroundStyle(isActive ? VGTheme.accentTerra : VGTheme.muted)
                                     }
                                     .frame(maxWidth: .infinity)
+                                    .frame(minHeight: 44)
                                     .padding(.vertical, 8)
                                     .background(isActive ? VGTheme.accentTerra.opacity(0.14) : Color.white.opacity(0.05))
                                     .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -251,7 +258,8 @@ struct ProfileView: View {
                                     .shadow(color: isActive && colorScheme == .dark ? VGTheme.accentTerra.opacity(0.2) : .clear, radius: 8)
                                 }
                                 .buttonStyle(.plain)
-                                .accessibilityLabel(mood.1)
+                                .accessibilityLabel("Feeling \(mood.1)")
+                                .accessibilityAddTraits(isActive ? [.isButton, .isSelected] : .isButton)
                             }
                         }
                     }
@@ -261,17 +269,19 @@ struct ProfileView: View {
                     HStack(spacing: 6) {
                         let moods = [("◎", "Amazing"), ("○", "Good"), ("◐", "Okay"), ("◑", "Low"), ("◉", "Push")]
                         Text("Feeling:")
-                            .font(.system(size: 12))
+                            .font(.caption)
                             .foregroundStyle(VGTheme.muted)
                         if let idx = todayMood, idx >= 0, idx < moods.count {
                             Text(moods[idx].1)
-                                .font(.system(size: 12, weight: .semibold))
+                                .font(.caption.weight(.semibold))
                                 .foregroundStyle(VGTheme.accentTerra)
                         }
                         Spacer()
                         Button("change") { overrideMoodDisplay = true }
-                            .font(.system(size: 12))
+                            .font(.caption)
                             .foregroundStyle(VGTheme.muted)
+                            .accessibilityLabel("Change today's mood")
+                            .frame(minHeight: 44)
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 16)
@@ -299,11 +309,15 @@ struct ProfileView: View {
         return HStack(spacing: 0) {
             ForEach(tabs, id: \.0) { label, tab in
                 Button {
-                    withAnimation(.easeInOut(duration: 0.2)) { activeTab = tab }
+                    if reduceMotion {
+                        activeTab = tab
+                    } else {
+                        withAnimation(.easeInOut(duration: 0.2)) { activeTab = tab }
+                    }
                 } label: {
                     VStack(spacing: 0) {
                         Text(label)
-                            .font(.system(size: 13, weight: activeTab == tab ? .semibold : .regular))
+                            .font(.callout.weight(activeTab == tab ? .semibold : .regular))
                             .foregroundStyle(activeTab == tab ? VGTheme.terra : VGTheme.muted)
                             .padding(.vertical, 10)
                         Rectangle()
@@ -312,8 +326,10 @@ struct ProfileView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
+                .frame(minHeight: 44)
                 .buttonStyle(.plain)
                 .accessibilityLabel(label)
+                .accessibilityAddTraits(activeTab == tab ? [.isButton, .isSelected] : .isButton)
             }
         }
         .background(VGTheme.background)
@@ -378,8 +394,9 @@ struct ProfileView: View {
                         ZStack(alignment: .topTrailing) {
                             VStack(spacing: 8) {
                                 Text(badge.emoji).font(.system(size: 28))
+                                    .accessibilityHidden(true)
                                 Text(badge.label)
-                                    .font(.system(size: 11, weight: .semibold))
+                                    .font(.caption.weight(.semibold))
                                     .foregroundStyle(earned ? VGTheme.clay : VGTheme.muted)
                                     .multilineTextAlignment(.center)
                                     .lineLimit(2)
@@ -394,8 +411,11 @@ struct ProfileView: View {
                             if earned {
                                 Circle().fill(VGTheme.sage).frame(width: 8, height: 8)
                                     .padding(8)
+                                    .accessibilityHidden(true)
                             }
                         }
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(earned ? "\(badge.label) badge, earned" : "\(badge.label) badge, not yet earned")
                     }
                 }
 

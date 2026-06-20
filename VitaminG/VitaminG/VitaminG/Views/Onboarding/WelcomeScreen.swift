@@ -108,6 +108,7 @@ struct WelcomeScreen: View {
                 .padding(.bottom, 130)
                 .padding(.leading, 0)
                 .frame(maxWidth: .infinity, alignment: .bottomLeading)
+                .accessibilityHidden(true)
 
                 // Center content
                 VStack(spacing: 0) {
@@ -116,8 +117,9 @@ struct WelcomeScreen: View {
                     // "Your daily dose" badge
                     HStack(spacing: 7) {
                         VGCapsule(size: 16, color1: VGTheme.terraSoft, color2: VGTheme.terra)
+                            .accessibilityHidden(true)
                         Text("YOUR DAILY DOSE")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.caption2.weight(.semibold))
                             .foregroundStyle(VGTheme.sand.opacity(0.7))
                             .kerning(1.5)
                     }
@@ -129,13 +131,15 @@ struct WelcomeScreen: View {
                     )
                     .clipShape(Capsule())
                     .padding(.bottom, 20)
+                    .accessibilityHidden(true)
 
                     // Tagline — moved above app icon per D-02
-                    Text("GOALS. GROWTH. COMMUNITY.")
-                        .font(.system(size: 13, weight: .light))
+                    Text("Goals. Growth. Community.")
+                        .font(.callout.weight(.light))
                         .foregroundStyle(VGTheme.muted)
                         .kerning(2)
                         .padding(.bottom, 16)
+                        .accessibilityHidden(true)
 
                     // App icon
                     RoundedRectangle(cornerRadius: 30)
@@ -152,11 +156,13 @@ struct WelcomeScreen: View {
                                 .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
                         )
                         .padding(.bottom, 22)
+                        .accessibilityHidden(true)
 
                     // App name
                     Text("Vitamin G")
                         .font(Font.custom("Georgia", size: 48))
                         .foregroundStyle(VGTheme.sand)
+                        .accessibilityAddTraits(.isHeader)
 
                     Spacer()
                 }

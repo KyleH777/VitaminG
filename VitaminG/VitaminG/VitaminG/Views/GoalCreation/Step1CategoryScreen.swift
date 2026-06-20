@@ -40,6 +40,8 @@ struct Step1CategoryScreen: View {
                     .frame(width: i == 0 ? 22 : 8, height: 8)
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Step 1 of 3")
     }
 
     private var categoryGrid: some View {
@@ -79,6 +81,7 @@ private struct CategoryCard: View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 6) {
                 Text(category.emoji).font(.system(size: 28))
+                    .accessibilityHidden(true)
                 Text(category.rawValue)
                     .font(.custom("CormorantGaramond-Medium", size: 18))
                     .foregroundStyle(isSelected ? VGTheme.terra : VGTheme.clay)
@@ -88,6 +91,7 @@ private struct CategoryCard: View {
                     .lineLimit(1)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(minHeight: 44)
             .padding(14)
             .background(isSelected ? Color.white : Color.clear)
             .clipShape(RoundedRectangle(cornerRadius: 18))
@@ -96,5 +100,7 @@ private struct CategoryCard: View {
             .shadow(color: isSelected ? VGTheme.terra.opacity(0.2) : .clear, radius: 8, y: 4)
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("\(category.rawValue): \(category.subtitle)")
+        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
     }
 }

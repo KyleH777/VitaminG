@@ -72,6 +72,7 @@ struct StatsView: View {
                     Image(systemName: "flame.fill")
                         .font(.title2)
                         .foregroundStyle(.white.opacity(0.9))
+                        .accessibilityHidden(true)
                     Text("Global Streak")
                         .font(.headline)
                         .foregroundStyle(.white.opacity(0.9))
@@ -80,10 +81,12 @@ struct StatsView: View {
                 Text("\(viewModel.globalStreak)")
                     .font(.system(size: 48, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
+                    .accessibilityLabel("\(viewModel.globalStreak) \(viewModel.globalStreak == 1 ? "day" : "days") global streak")
 
                 Text(viewModel.globalStreak == 1 ? "Day" : "Days")
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.white.opacity(0.8))
+                    .accessibilityHidden(true)
 
                 if freezeService.canFreeze {
                     Button {
@@ -98,6 +101,8 @@ struct StatsView: View {
                             .foregroundStyle(.white)
                     }
                     .padding(.top, 4)
+                    .frame(minHeight: 44)
+                    .accessibilityHint("Uses your monthly streak freeze to protect today's streak")
                 } else {
                     Label("Streak protected this month", systemImage: "checkmark.shield.fill")
                         .font(.caption)
@@ -130,6 +135,7 @@ struct StatsView: View {
             Text("By Tier")
                 .font(.title3.weight(.semibold))
                 .padding(.horizontal, 4)
+                .accessibilityAddTraits(.isHeader)
 
             LazyVGrid(
                 columns: [
@@ -157,6 +163,7 @@ struct StatsView: View {
             Text("Activity")
                 .font(.title3.weight(.semibold))
                 .padding(.horizontal, 4)
+                .accessibilityAddTraits(.isHeader)
 
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
@@ -188,6 +195,7 @@ struct StatsView: View {
                         .font(.body.weight(.semibold))
                         .foregroundStyle(VGTheme.accentTerra)
                         .frame(width: 28, height: 28)
+                        .accessibilityHidden(true)
 
                     Text("Analytics")
                         .font(.body)
@@ -199,11 +207,14 @@ struct StatsView: View {
                     Image(systemName: "chevron.right")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                        .accessibilityHidden(true)
                 }
                 .padding(16)
             }
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("View detailed analytics")
+        .accessibilityHint("Opens per-goal breakdown and charts")
     }
 }
 
@@ -232,12 +243,14 @@ private struct TierStatCard: View {
                     .frame(width: 4)
                     .padding(.vertical, 12)
                     .padding(.leading, 8)
+                    .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(spacing: 6) {
                         Image(systemName: tier.icon)
                             .font(.caption)
                             .foregroundStyle(tier.color)
+                            .accessibilityHidden(true)
                         Text(tier.displayName)
                             .font(.caption.weight(.semibold))
                             .foregroundStyle(.secondary)
@@ -266,5 +279,7 @@ private struct TierStatCard: View {
                 .padding(.vertical, 14)
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(tier.displayName): \(streak) day streak, \(goalCount) goal\(goalCount == 1 ? "" : "s"), \(formattedRate) completion rate")
     }
 }

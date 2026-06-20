@@ -3,6 +3,7 @@ import SwiftUI
 struct VGTabBar: View {
     @Binding var selection: AppTab
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     // AppTab icon mapping — 1:1 with AppTab.allCases order (home/goals/explore/community/profile).
     // D-07: Community and Explore positions swapped; "Me" renamed to "Profile".
@@ -36,7 +37,11 @@ struct VGTabBar: View {
     private func tabItem(tab: AppTab, label: String, icon: String) -> some View {
         let isActive = selection == tab
         return Button {
-            withAnimation(.easeInOut(duration: 0.15)) { selection = tab }
+            if reduceMotion {
+                selection = tab
+            } else {
+                withAnimation(.easeInOut(duration: 0.15)) { selection = tab }
+            }
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         } label: {
             VStack(spacing: 4) {
@@ -52,14 +57,17 @@ struct VGTabBar: View {
                             ? VGTheme.accentTerra.opacity(0.55) : .clear, radius: 6)
 
                 Text(label)
-                    .font(.system(size: 10, weight: isActive ? .semibold : .regular))
+                    .font(.caption2.weight(isActive ? .semibold : .regular))
                     .kerning(0.4)
                     .foregroundStyle(isActive ? VGTheme.accentTerra : VGTheme.textMuted)
             }
             .frame(maxWidth: .infinity)
+            .frame(minHeight: 44)
             .padding(.top, 6)
             .padding(.bottom, 8)
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(label)
+        .accessibilityAddTraits(isActive ? [.isButton, .isSelected] : .isButton)
     }
 }

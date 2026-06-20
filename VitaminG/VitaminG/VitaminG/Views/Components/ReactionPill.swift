@@ -28,7 +28,7 @@ struct ReactionPill: View {
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
-            .frame(minHeight: 32)
+            .frame(minHeight: 44)
             .background(Color(.secondarySystemGroupedBackground))
             .clipShape(Capsule())
             .overlay(

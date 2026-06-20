@@ -33,6 +33,8 @@ struct NameScreen: View {
                             .font(.system(size: 18, weight: .medium))
                             .foregroundStyle(VGTheme.clay)
                     }
+                    .frame(minWidth: 44, minHeight: 44)
+                    .accessibilityLabel("Go back")
                     Spacer()
                 }
                 .padding(.bottom, 20)
@@ -47,9 +49,10 @@ struct NameScreen: View {
                         .font(Font.custom("Georgia", size: 42))
                         .foregroundStyle(VGTheme.clay)
                         .lineSpacing(4)
+                        .accessibilityAddTraits(.isHeader)
 
                     Text("Your name shows on your profile and community posts.")
-                        .font(.system(size: 14, weight: .light))
+                        .font(.callout.weight(.light))
                         .foregroundStyle(VGTheme.muted)
                         .lineSpacing(4)
                 }
@@ -58,25 +61,29 @@ struct NameScreen: View {
                 // Name field
                 VStack(alignment: .leading, spacing: 0) {
                     Text("DISPLAY NAME")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.caption2.weight(.semibold))
                         .foregroundStyle(VGTheme.muted)
                         .kerning(1.5)
                         .padding(.bottom, 8)
+                        .accessibilityHidden(true)
 
                     HStack(alignment: .bottom, spacing: 0) {
-                        TextField("", text: $name)
+                        TextField("Your name", text: $name)
                             .font(Font.custom("Georgia", size: 34))
                             .foregroundStyle(VGTheme.clay)
                             .focused($fieldFocused)
                             .autocorrectionDisabled()
                             .textInputAutocapitalization(.words)
                             .onSubmit { advanceIfValid() }
+                            .accessibilityLabel("Display name")
+                            .accessibilityHint("Your name as it appears on your profile and community posts")
 
                         if name.isEmpty {
                             Capsule()
                                 .fill(VGTheme.terra)
                                 .frame(width: 2, height: 30)
                                 .opacity(fieldFocused ? 1 : 0)
+                                .accessibilityHidden(true)
                         }
                     }
                     .padding(.bottom, 12)
@@ -84,6 +91,7 @@ struct NameScreen: View {
                     Rectangle()
                         .fill(VGTheme.terra)
                         .frame(height: 2)
+                        .accessibilityHidden(true)
                 }
 
                 Spacer()
@@ -141,5 +149,7 @@ struct StepBarView: View {
                     .frame(height: 3)
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Step \(current + 1) of \(total)")
     }
 }

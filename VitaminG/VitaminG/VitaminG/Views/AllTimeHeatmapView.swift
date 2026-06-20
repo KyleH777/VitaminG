@@ -48,6 +48,22 @@ struct AllTimeHeatmapView: View {
 
     // MARK: - Body
 
+    private var accessibilitySummary: String {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let allDays = (cachedWeeks ?? buildWeeks()).flatMap { $0 }.filter { $0 <= today }
+        let activeDays = allDays.filter { day in
+            let count = data[calendar.startOfDay(for: day)] ?? 0
+            return count > 0 && count != -1
+        }.count
+        let freezeDays = allDays.filter { data[calendar.startOfDay(for: $0)] == -1 }.count
+        var summary = "\(activeDays) active days since start"
+        if freezeDays > 0 {
+            summary += ", \(freezeDays) streak freeze\(freezeDays == 1 ? "" : "s") used"
+        }
+        return summary
+    }
+
     var body: some View {
         let weeks = cachedWeeks ?? buildWeeks()
         ScrollViewReader { proxy in
@@ -60,6 +76,7 @@ struct AllTimeHeatmapView: View {
                             }
                         }
                         .id(index)
+                        .accessibilityHidden(true)
                     }
                 }
                 .padding(.horizontal, 8)
@@ -73,6 +90,8 @@ struct AllTimeHeatmapView: View {
                 proxy.scrollTo(weeks.count - 1, anchor: .trailing)
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilitySummary)
     }
 
     // MARK: - Day Cell

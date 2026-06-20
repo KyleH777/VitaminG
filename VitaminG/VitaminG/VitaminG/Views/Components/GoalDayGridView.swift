@@ -134,7 +134,7 @@ struct GoalDayGridView: View {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(VGTheme.accentTerra)
-                        .frame(minWidth: 28, minHeight: 28)
+                        .frame(minWidth: 44, minHeight: 44)
                 }
                 .disabled(!canNavigateBack)
                 .accessibilityLabel("Previous month")
@@ -144,6 +144,7 @@ struct GoalDayGridView: View {
                 Text(monthTitle)
                     .font(VGTheme.serif(20, weight: .semibold))
                     .foregroundStyle(VGTheme.textPrimary)
+                    .accessibilityAddTraits(.isHeader)
 
                 Spacer()
 
@@ -153,7 +154,7 @@ struct GoalDayGridView: View {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(VGTheme.accentTerra)
-                        .frame(minWidth: 28, minHeight: 28)
+                        .frame(minWidth: 44, minHeight: 44)
                 }
                 .disabled(!canNavigateForward)
                 .accessibilityLabel("Next month")
@@ -163,11 +164,12 @@ struct GoalDayGridView: View {
             LazyVGrid(columns: columns, spacing: 8) {
                 ForEach(dayHeaders, id: \.self) { header in
                     Text(header)
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.callout.weight(.semibold))
                         .textCase(.uppercase)
                         .foregroundStyle(VGTheme.textMuted)
                         .frame(width: 36, height: 20)
                         .multilineTextAlignment(.center)
+                        .accessibilityHidden(true)
                 }
             }
 
