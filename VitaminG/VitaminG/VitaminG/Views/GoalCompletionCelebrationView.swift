@@ -57,19 +57,19 @@ struct GoalCompletionCelebrationView: View {
                     .accessibilityLabel("Goal completed!")
 
                 Text("You did it.")
-                    .font(.system(size: 34, weight: .semibold, design: .rounded))
+                    .font(.title.weight(.semibold))
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
 
                 Text(goalTitle)
-                    .font(.system(size: 20))
+                    .font(.title3)
                     .foregroundStyle(.white.opacity(0.7))
                     .multilineTextAlignment(.center)
                     .lineLimit(3)
                     .padding(.horizontal, 32)
 
                 Text("Your streak: \(streakCount) days")
-                    .font(.system(size: 16))
+                    .font(.body)
                     .foregroundStyle(.white.opacity(0.7))
 
                 Spacer()

@@ -25,7 +25,8 @@ struct FollowButton: View {
                         .scaleEffect(0.75)
                 }
                 Text(labelText)
-                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    .font(.callout.weight(.semibold))
+                    .fontDesign(.rounded)
                     .foregroundStyle(.white)
             }
             .padding(.horizontal, 20)

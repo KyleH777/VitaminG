@@ -83,6 +83,8 @@ struct Step3DetailsScreen: View {
                     .frame(width: i == 2 ? 22 : 8, height: 8)
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Step 3 of 3")
     }
 
     // MARK: - Duration section
@@ -198,14 +200,18 @@ struct Step3DetailsScreen: View {
             sectionLabel("Daily nudge")
             HStack(spacing: 12) {
                 Text("🔔").font(.title2)
+                    .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 2) {
-                    DatePicker("", selection: $wizardVM.draftReminderTime, displayedComponents: .hourAndMinute)
+                    DatePicker("Reminder time", selection: $wizardVM.draftReminderTime, displayedComponents: .hourAndMinute)
                         .labelsHidden()
+                        .accessibilityLabel("Daily reminder time")
                     Text("A gentle reminder, not a guilt trip")
                         .font(.caption).foregroundStyle(VGTheme.muted)
                 }
                 Spacer()
-                Toggle("", isOn: $wizardVM.reminderEnabled).labelsHidden()
+                Toggle("Enable daily reminder", isOn: $wizardVM.reminderEnabled)
+                    .labelsHidden()
+                    .accessibilityLabel("Enable daily reminder")
             }
             .padding(14)
             .background(Color.white)
@@ -219,6 +225,7 @@ struct Step3DetailsScreen: View {
             sectionLabel("Privacy")
             HStack(spacing: 12) {
                 Text(wizardVM.isPrivate ? "🔒" : "🌍").font(.title3)
+                    .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(wizardVM.isPrivate ? "Keep this private" : "Share with community")
                         .font(.subheadline).fontWeight(.semibold).foregroundStyle(VGTheme.clay)
@@ -226,7 +233,13 @@ struct Step3DetailsScreen: View {
                         .font(.caption).foregroundStyle(VGTheme.muted)
                 }
                 Spacer()
-                Toggle("", isOn: $wizardVM.isPrivate).labelsHidden()
+                Toggle("Share with community", isOn: Binding(
+                    get: { !wizardVM.isPrivate },
+                    set: { wizardVM.isPrivate = !$0 }
+                ))
+                .labelsHidden()
+                .accessibilityLabel("Share with community")
+                .accessibilityValue(wizardVM.isPrivate ? "Off, goal is private" : "On, goal is shared")
             }
             .padding(14)
             .background(Color.white)
@@ -241,14 +254,16 @@ struct Step3DetailsScreen: View {
             VStack(spacing: 0) {
                 HStack(spacing: 12) {
                     Text("📅").font(.title3)
+                        .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("I've been working on this")
                             .font(.subheadline).fontWeight(.semibold).foregroundStyle(VGTheme.clay)
                         Text("Set the real start date").font(.caption).foregroundStyle(VGTheme.muted)
                     }
                     Spacer()
-                    Toggle("", isOn: $wizardVM.isLegacy).labelsHidden()
-                }
+                    Toggle("I've been working on this", isOn: $wizardVM.isLegacy)
+                        .labelsHidden()
+                        .accessibilityLabel("I've already started working on this goal")
                 .padding(14)
                 if wizardVM.isLegacy {
                     Divider().padding(.horizontal, 14)
@@ -272,6 +287,7 @@ struct Step3DetailsScreen: View {
     private var encouragementCard: some View {
         HStack(spacing: 12) {
             Text("🎉").font(.largeTitle)
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 4) {
                 Text("You're about to set a goal.")
                     .font(.custom("CormorantGaramond-SemiBold", size: 16)).foregroundStyle(VGTheme.clay)
@@ -283,6 +299,7 @@ struct Step3DetailsScreen: View {
         .background(VGTheme.terraLight)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(VGTheme.terraSoft, lineWidth: 1))
+        .accessibilityElement(children: .combine)
     }
 
     private var saveButton: some View {
@@ -321,6 +338,7 @@ private struct TierOptionCard: View {
                     .font(.caption2).foregroundStyle(VGTheme.muted).lineLimit(1)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(minHeight: 44)
             .padding(12)
             .background(isSelected ? Color.white : Color.clear)
             .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -329,6 +347,8 @@ private struct TierOptionCard: View {
             .shadow(color: isSelected ? tier.color.opacity(0.2) : .clear, radius: 6, y: 2)
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("\(tier.displayName): \(tier.description)")
+        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
     }
 }
 
@@ -346,6 +366,7 @@ private struct FrequencyCard: View {
                 Text(frequency.subtitle).font(.caption2).foregroundStyle(VGTheme.muted)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(minHeight: 44)
             .padding(12)
             .background(isSelected ? Color.white : Color.clear)
             .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -354,5 +375,7 @@ private struct FrequencyCard: View {
             .shadow(color: isSelected ? VGTheme.terra.opacity(0.18) : .clear, radius: 6, y: 2)
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("\(frequency.rawValue): \(frequency.subtitle)")
+        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
     }
 }

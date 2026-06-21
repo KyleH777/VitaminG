@@ -98,7 +98,7 @@ struct GoalEntryChoiceView: View {
                     .multilineTextAlignment(.leading)
 
                 Text(subtitle)
-                    .font(.system(size: 12))
+                    .font(.caption)
                     .foregroundStyle(VGTheme.textMuted)
                     .multilineTextAlignment(.leading)
             }
@@ -106,7 +106,7 @@ struct GoalEntryChoiceView: View {
             Spacer()
 
             Image(systemName: "chevron.right")
-                .font(.system(size: 12))
+                .font(.caption)
                 .foregroundStyle(VGTheme.textMuted)
                 .accessibilityHidden(true)
         }

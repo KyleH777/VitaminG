@@ -5,6 +5,7 @@ import SwiftUI
 /// 2x2 card grid for tier selection. Replaces the .navigationLink Picker per D-11.
 struct TierPickerView: View {
     @Binding var selectedTier: GoalTier
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
@@ -13,11 +14,15 @@ struct TierPickerView: View {
             ForEach(GoalTier.ordered) { tier in
                 TierCardView(tier: tier, isSelected: selectedTier == tier)
                     .onTapGesture {
-                        withAnimation(.easeOut(duration: 0.15)) {
+                        if reduceMotion {
                             selectedTier = tier
+                        } else {
+                            withAnimation(.easeOut(duration: 0.15)) {
+                                selectedTier = tier
+                            }
                         }
                     }
-                    .accessibilityLabel("\(tier.displayName), \(tier.description)")
+                    .accessibilityLabel("\(tier.displayName): \(tier.description)")
                     .accessibilityAddTraits(selectedTier == tier ? [.isButton, .isSelected] : .isButton)
             }
         }

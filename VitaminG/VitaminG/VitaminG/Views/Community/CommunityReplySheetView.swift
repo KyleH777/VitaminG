@@ -67,9 +67,10 @@ struct CommunityReplySheetView: View {
                         // Character counter — shown when approaching limit (D-10 pattern)
                         if text.count > 250 {
                             Text("\(text.count)/\(Self.maxChars)")
-                                .font(.system(size: 14)).fontDesign(.rounded)
+                                .font(.callout).fontDesign(.rounded)
                                 .foregroundStyle(VGTheme.textMuted)
                                 .frame(maxWidth: .infinity, alignment: .trailing)
+                                .accessibilityLabel("\(text.count) of \(Self.maxChars) characters")
                         }
                     }
 
@@ -78,6 +79,7 @@ struct CommunityReplySheetView: View {
                         Text("Profanity detected. Please revise.")
                             .font(.caption).fontDesign(.rounded)
                             .foregroundStyle(.red)
+                            .accessibilityLiveRegion(.polite)
                     }
                 }
                 .padding(.horizontal, 16)

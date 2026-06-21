@@ -28,14 +28,15 @@ struct PeopleSearchResultCard: View {
                 photoData: nil,   // D-06: no photoData on public profiles
                 size: 40
             )
+            .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("@\(result.username)")
-                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    .font(.callout.weight(.semibold))
                     .foregroundStyle(VGTheme.textPrimary)
 
                 Text("\(result.goalCount) goals · \(result.cheersGivenCount) cheers given")
-                    .font(.system(size: 13, design: .rounded))
+                    .font(.caption)
                     .foregroundStyle(VGTheme.textMuted)
             }
 
@@ -54,6 +55,7 @@ struct PeopleSearchResultCard: View {
         .onTapGesture(perform: onTap)
         // UI-SPEC §Accessibility
         .accessibilityElement(children: .contain)
+        .accessibilityLabel("@\(result.username). \(result.goalCount) goals, \(result.cheersGivenCount) cheers given. Tap to view profile.")
     }
 }
 

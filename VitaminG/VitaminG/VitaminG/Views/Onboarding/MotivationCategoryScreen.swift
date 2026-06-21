@@ -35,9 +35,11 @@ struct MotivationCategoryScreen: View {
                 HStack {
                     Button(action: { path.removeLast() }) {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: 18, weight: .medium))
+                            .font(.body.weight(.medium))
                             .foregroundStyle(VGTheme.clay)
                     }
+                    .frame(minWidth: 44, minHeight: 44)
+                    .accessibilityLabel("Go back")
                     Spacer()
                 }
                 .padding(.bottom, 20)
@@ -50,9 +52,10 @@ struct MotivationCategoryScreen: View {
                     .foregroundStyle(VGTheme.clay)
                     .lineSpacing(4)
                     .padding(.bottom, 10)
+                    .accessibilityAddTraits(.isHeader)
 
                 Text("Pick what matters most to you right now.")
-                    .font(.system(size: 14, weight: .light))
+                    .font(.callout.weight(.light))
                     .foregroundStyle(VGTheme.muted)
                     .padding(.bottom, 24)
 
@@ -64,11 +67,12 @@ struct MotivationCategoryScreen: View {
                         } label: {
                             HStack(spacing: 10) {
                                 Text(categories[i].icon)
-                                    .font(.system(size: 18))
+                                    .font(.body)
                                     .foregroundStyle(on ? VGTheme.terra : VGTheme.muted)
+                                    .accessibilityHidden(true)
 
                                 Text(categories[i].label)
-                                    .font(.system(size: 13, weight: on ? .semibold : .regular))
+                                    .font(.callout.weight(on ? .semibold : .regular))
                                     .foregroundStyle(on ? VGTheme.clay : VGTheme.muted)
                                     .lineLimit(2)
                                     .minimumScaleFactor(0.85)
@@ -88,6 +92,8 @@ struct MotivationCategoryScreen: View {
                         }
                         .buttonStyle(.plain)
                         .animation(.easeInOut(duration: 0.15), value: on)
+                        .accessibilityAddTraits(on ? [.isSelected] : [])
+                        .accessibilityLabel(categories[i].label)
                     }
                 }
 
@@ -99,8 +105,8 @@ struct MotivationCategoryScreen: View {
             VStack(spacing: 0) {
                 Button(action: advance) {
                     Text("Continue")
-                        .font(.system(size: 17, weight: .semibold))
-                        .frame(maxWidth: .infinity)
+                        .font(.body.weight(.semibold))
+                        .frame(maxWidth: .infinity, minHeight: 44)
                         .padding(.vertical, 18)
                         .background(selected.isEmpty ? VGTheme.sandMid : VGTheme.terra)
                         .foregroundStyle(selected.isEmpty ? VGTheme.sandDeep : VGTheme.warmWhite)

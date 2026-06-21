@@ -17,6 +17,7 @@ struct AboutUsView: View {
                         Text("About Vitamin G")
                             .font(VGTheme.serif(28, weight: .semibold))
                             .foregroundStyle(VGTheme.sand)
+                            .accessibilityAddTraits(.isHeader)
                     }
                 }
 
@@ -25,12 +26,13 @@ struct AboutUsView: View {
                     // OUR STORY section
                     VStack(alignment: .leading, spacing: 12) {
                         Text("OUR STORY")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.caption2.weight(.semibold))
                             .kerning(1.2)
                             .foregroundStyle(VGTheme.muted)
+                            .accessibilityAddTraits(.isHeader)
 
                         Text("Vitamin G was created for anyone who's ever had a great goal but lost sight of it. We're a small team building tools that make your goals feel less lonely. Every morning, this app puts your goals in front of you — because what you see shapes what you do.")
-                            .font(.system(size: 15))
+                            .font(.body)
                             .fontDesign(.rounded)
                             .foregroundStyle(VGTheme.textPrimary)
                             .lineSpacing(5)
@@ -39,12 +41,13 @@ struct AboutUsView: View {
                     // THE TEAM section
                     VStack(alignment: .leading, spacing: 12) {
                         Text("THE TEAM")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.caption2.weight(.semibold))
                             .kerning(1.2)
                             .foregroundStyle(VGTheme.muted)
+                            .accessibilityAddTraits(.isHeader)
 
                         Text("Built by a solo founder who got tired of forgetting what actually matters. If you have feedback, we'd love to hear it at hello@vitamingapp.com.")
-                            .font(.system(size: 15))
+                            .font(.body)
                             .fontDesign(.rounded)
                             .foregroundStyle(VGTheme.textPrimary)
                             .lineSpacing(5)

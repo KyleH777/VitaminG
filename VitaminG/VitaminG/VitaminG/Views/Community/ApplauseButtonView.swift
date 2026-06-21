@@ -40,9 +40,10 @@ struct ApplauseButtonView: View {
             VStack(spacing: 4) {
                 Button(action: triggerApplause) {
                     Text("👏")
-                        .font(.system(size: 28))
+                        .font(.title)
                         .opacity(canApplaud ? 1.0 : 0.4)
                         .frame(minWidth: 44, minHeight: 44)
+                        .accessibilityHidden(true)
                 }
                 .disabled(!canApplaud)
                 .accessibilityLabel(
@@ -54,7 +55,7 @@ struct ApplauseButtonView: View {
 
                 if !canApplaud {
                     Text("Come back tomorrow to applaud again.")
-                        .font(.system(size: 14))
+                        .font(.callout)
                         .foregroundStyle(VGTheme.textMuted)
                         .multilineTextAlignment(.center)
                 }
@@ -64,9 +65,11 @@ struct ApplauseButtonView: View {
             if showFloat {
                 VStack(spacing: 2) {
                     Text("👏")
-                        .font(.system(size: 22))
+                        .font(.title2)
+                        .accessibilityHidden(true)
                     Text(giverUsername)
-                        .font(.system(size: 14, design: .rounded))
+                        .font(.callout)
+                        .fontDesign(.rounded)
                 }
                 .foregroundStyle(VGTheme.accentGold)
                 .offset(y: floatOffset)

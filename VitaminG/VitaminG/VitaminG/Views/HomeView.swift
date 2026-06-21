@@ -106,12 +106,15 @@ struct HomeView: View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 2) {
                 Text("\(greeting) ☀️")
-                    .font(.system(size: 13, weight: .regular))
+                    .font(.footnote)
                     .foregroundStyle(VGTheme.textMuted)
                     .kerning(0.5)
+                    .accessibilityHidden(true)
                 Text(displayName)
                     .font(VGTheme.serif(26))
                     .foregroundStyle(VGTheme.sand)
+                    .accessibilityLabel("\(greeting), \(displayName)")
+                    .accessibilityAddTraits(.isHeader)
             }
             Spacer()
             HStack(spacing: 10) {
@@ -150,7 +153,7 @@ struct HomeView: View {
             Image(systemName: "bell.fill")
                 .font(.system(size: 16))
                 .foregroundStyle(VGTheme.textSecondary)
-                .frame(width: 36, height: 36)
+                .frame(width: 44, height: 44)
                 .background(VGTheme.surface)
                 .clipShape(Circle())
                 .overlay(Circle().strokeBorder(VGTheme.separator, lineWidth: 1))
@@ -158,7 +161,10 @@ struct HomeView: View {
                 .fill(VGTheme.accentTerra)
                 .frame(width: 6, height: 6)
                 .offset(x: 1, y: -1)
+                .accessibilityHidden(true)
         }
+        .accessibilityLabel("Notifications")
+        .accessibilityAddTraits(.isButton)
     }
 
     // MARK: - Community Goal Card (HOME-03 / D-01)
@@ -173,10 +179,11 @@ struct HomeView: View {
 
         return VStack(alignment: .leading, spacing: 12) {
             Text("COMMUNITY GOAL")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.caption.weight(.semibold))
                 .kerning(1.2)
                 .textCase(.uppercase)
                 .foregroundStyle(VGTheme.muted)
+                .accessibilityHidden(true)
 
             Text(challenge.template?.title ?? "Community Challenge")
                 .font(VGTheme.serif(20, weight: .semibold))
@@ -186,7 +193,7 @@ struct HomeView: View {
 
             if participantCount > 0 {
                 Text("\(participantCount) people participating")
-                    .font(.system(size: 13))
+                    .font(.callout)
                     .foregroundStyle(VGTheme.textMuted)
             }
 
@@ -206,7 +213,7 @@ struct HomeView: View {
             HStack {
                 Spacer()
                 Text("\(percent)% complete")
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.callout.weight(.semibold))
                     .foregroundStyle(VGTheme.accentTerra)
             }
         }
@@ -238,10 +245,10 @@ struct HomeView: View {
                 }
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Your Stats")
-                        .font(.system(size: 16, weight: .regular))
+                        .font(.callout)
                         .foregroundStyle(VGTheme.textPrimary)
                     Text("Active goals, streaks, badges")
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundStyle(VGTheme.textMuted)
                 }
                 Spacer()
@@ -270,8 +277,9 @@ struct HomeView: View {
                 Text("Stay close")
                     .font(VGTheme.serif(20, weight: .semibold))
                     .foregroundStyle(VGTheme.sand)
+                    .accessibilityAddTraits(.isHeader)
                 Text("We're a small team and we'd love to hear from you.")
-                    .font(.system(size: 12))
+                    .font(.caption)
                     .foregroundStyle(VGTheme.muted)
             }
             .padding(.horizontal, 24)
@@ -326,16 +334,18 @@ struct HomeView: View {
                 Image(systemName: icon)
                     .font(.system(size: 20))
                     .foregroundStyle(VGTheme.accentTerra)
+                    .accessibilityHidden(true)
             }
             Text(title)
                 .font(VGTheme.serif(18))
                 .foregroundStyle(VGTheme.textPrimary)
             Text(subtitle)
-                .font(.system(size: 12))
+                .font(.caption)
                 .foregroundStyle(VGTheme.textMuted)
             Text("Open →")
-                .font(.system(size: 12))
+                .font(.caption)
                 .foregroundStyle(VGTheme.accentTerra)
+                .accessibilityHidden(true)
         }
         .padding(16)
         .frame(width: 148)
@@ -345,6 +355,7 @@ struct HomeView: View {
             RoundedRectangle(cornerRadius: 18)
                 .strokeBorder(VGTheme.separator, lineWidth: 1)
         )
+        .accessibilityLabel("\(title): \(subtitle)")
     }
 
     // MARK: - Secondary Goals (HOME-04 / D-11: +add button + flame icons)
@@ -353,15 +364,16 @@ struct HomeView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("MY GOALS")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.caption2.weight(.bold))
                     .kerning(1.2)
                     .foregroundStyle(VGTheme.muted)
+                    .accessibilityAddTraits(.isHeader)
                 Spacer()
                 Button {
                     showingGoalEntryChoice = true
                 } label: {
                     Text("+ Add")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.callout.weight(.semibold))
                         .foregroundStyle(VGTheme.accentTerra)
                 }
                 .frame(minHeight: 44)
@@ -413,7 +425,10 @@ struct HomeView: View {
     }
 
     private func goalRow(_ goal: Goal) -> some View {
-        HStack(spacing: 14) {
+        let streak = goalStreak(goal)
+        let title = goal.title ?? "Untitled"
+        let streakSuffix = streak >= 3 ? ", \(streak) day streak" : ""
+        return HStack(spacing: 14) {
             ProgressRingView(
                 progress: goalProgress(goal),
                 tier: goal.tier,
@@ -422,37 +437,42 @@ struct HomeView: View {
                 strokeWidth: 4,
                 glow: true
             )
+            .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 3) {
-                Text(goal.title ?? "Untitled")
-                    .font(.system(size: 13.5, weight: .medium))
+                Text(title)
+                    .font(.callout.weight(.medium))
                     .foregroundStyle(VGTheme.textPrimary)
                     .lineLimit(2)
                 HStack(spacing: 4) {
                     Text(goal.tier.displayName)
-                        .font(.system(size: 11))
+                        .font(.caption)
                         .foregroundStyle(VGTheme.textMuted)
                     Text("· Today")
-                        .font(.system(size: 11))
+                        .font(.caption)
                         .foregroundStyle(VGTheme.accentTerra)
                 }
             }
             Spacer()
             // D-11: flame icon on goals with 3+ consecutive day streak
-            if goalStreak(goal) >= 3 {
+            if streak >= 3 {
                 Image(systemName: "flame.fill")
                     .font(.system(size: 14))
                     .foregroundStyle(VGTheme.accentGold)
-                    .accessibilityLabel("\(goalStreak(goal)) day streak — on fire!")
+                    .accessibilityHidden(true)
             }
             Image(systemName: "chevron.right")
-                .font(.system(size: 12, weight: .medium))
+                .font(.caption.weight(.medium))
                 .foregroundStyle(VGTheme.textMuted)
+                .accessibilityHidden(true)
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 14)
         .background(VGTheme.surface)
         .clipShape(RoundedRectangle(cornerRadius: 14))
         .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(VGTheme.separator, lineWidth: 1))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(title), \(goal.tier.displayName)\(streakSuffix)")
+        .accessibilityHint("Double tap to view goal details")
     }
 
     private func goalProgress(_ goal: Goal) -> Double {

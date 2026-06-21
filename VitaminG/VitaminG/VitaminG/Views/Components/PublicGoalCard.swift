@@ -44,12 +44,14 @@ struct PublicGoalCard: View {
             // Text block
             VStack(alignment: .leading, spacing: 4) {
                 Text(goal.title)
-                    .font(.system(size: 16, design: .rounded))
+                    .font(.callout)
+                    .fontDesign(.rounded)
                     .foregroundStyle(VGTheme.textPrimary)
                     .lineLimit(2)
 
                 Text("\(goal.category) · \(goal.durationDays) days left")
-                    .font(.system(size: 13, design: .rounded))
+                    .font(.footnote)
+                    .fontDesign(.rounded)
                     .foregroundStyle(VGTheme.textMuted)
             }
 

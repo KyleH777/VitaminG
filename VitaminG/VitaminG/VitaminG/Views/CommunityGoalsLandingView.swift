@@ -31,14 +31,15 @@ struct CommunityGoalsLandingView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     // Header
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("☀️ \(template?.title ?? "Challenge")")
+                        Text("\(template?.title ?? "Challenge")")
                             .font(VGTheme.serif(22))
                             .foregroundStyle(VGTheme.textPrimary)
+                            .accessibilityAddTraits(.isHeader)
                         Text("We're \(Int(collectiveProgress * 100))% of the way there.")
                             .font(VGTheme.serif(18))
                             .foregroundStyle(VGTheme.textPrimary)
                         Text("\(template?.communitySize ?? 0) members")
-                            .font(.system(size: 13))
+                            .font(.callout)
                             .foregroundStyle(VGTheme.textMuted)
                     }
                     .padding(.horizontal, 20)
@@ -65,7 +66,7 @@ struct CommunityGoalsLandingView: View {
                                         .font(VGTheme.serif(22))
                                         .foregroundStyle(VGTheme.terra)
                                     Text(label)
-                                        .font(.system(size: 10))
+                                        .font(.caption2)
                                         .foregroundStyle(VGTheme.muted)
                                 }
                                 .frame(maxWidth: .infinity)
@@ -81,22 +82,25 @@ struct CommunityGoalsLandingView: View {
                     // Photo wall
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Today's check-ins")
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(.callout.weight(.semibold))
                             .fontDesign(.rounded)
                             .foregroundStyle(VGTheme.textPrimary)
+                            .accessibilityAddTraits(.isHeader)
                         RoundedRectangle(cornerRadius: 16)
                             .fill(LinearGradient(
                                 colors: [VGTheme.accentTerra.opacity(0.2), VGTheme.accentTerra.opacity(0.05)],
                                 startPoint: .top, endPoint: .bottom
                             ))
                             .frame(maxWidth: .infinity, minHeight: 180)
-                            .overlay(Text("📸").font(.system(size: 48)).opacity(0.4))
+                            .overlay(Text("📸").font(.largeTitle).opacity(0.4).accessibilityHidden(true))
+                            .accessibilityHidden(true)
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 8) {
                                 ForEach(0..<4) { _ in
                                     RoundedRectangle(cornerRadius: 10)
                                         .fill(VGTheme.sandMid)
                                         .frame(width: 90, height: 90)
+                                        .accessibilityHidden(true)
                                 }
                                 Button { showingPhotoPicker = true } label: {
                                     ZStack {
@@ -105,11 +109,12 @@ struct CommunityGoalsLandingView: View {
                                             .frame(width: 90, height: 90)
                                             .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(VGTheme.separator, lineWidth: 1))
                                         Image(systemName: "plus")
-                                            .font(.system(size: 24))
+                                            .font(.title2)
                                             .foregroundStyle(VGTheme.accentTerra)
                                     }
                                 }
                                 .buttonStyle(.plain)
+                                .accessibilityLabel("Share a check-in photo")
                             }
                         }
                     }
@@ -119,12 +124,13 @@ struct CommunityGoalsLandingView: View {
                     // Live ticker
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Live activity")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.caption.weight(.semibold))
                             .foregroundStyle(VGTheme.textMuted)
                             .padding(.horizontal, 16)
+                            .accessibilityAddTraits(.isHeader)
                         ForEach(["Alex just checked in 🔥", "Sam hit day 7! 🎉", "Jordan logged a workout 💪"], id: \.self) { msg in
                             Text(msg)
-                                .font(.system(size: 13)).fontDesign(.rounded)
+                                .font(.callout).fontDesign(.rounded)
                                 .foregroundStyle(VGTheme.textPrimary)
                                 .padding(.horizontal, 14).padding(.vertical, 10)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -138,20 +144,22 @@ struct CommunityGoalsLandingView: View {
                     // Leaderboard
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Leading the pack")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.caption.weight(.semibold))
                             .foregroundStyle(VGTheme.textMuted)
                             .padding(.horizontal, 16)
+                            .accessibilityAddTraits(.isHeader)
                         ForEach(Array(["You", "Member B", "Member C"].enumerated()), id: \.offset) { i, name in
                             HStack(spacing: 12) {
-                                Text("\(i + 1)").font(VGTheme.serif(16)).foregroundStyle(VGTheme.muted).frame(width: 20)
-                                Text(name).font(.system(size: 14)).fontDesign(.rounded).foregroundStyle(VGTheme.textPrimary)
+                                Text("\(i + 1)").font(VGTheme.serif(16)).foregroundStyle(VGTheme.muted).frame(width: 20).accessibilityHidden(true)
+                                Text(name).font(.callout).fontDesign(.rounded).foregroundStyle(VGTheme.textPrimary)
                                 Spacer()
                                 Text("\(max(0, (userChallenge.totalCheckIns ?? 0) - (i * 2))) check-ins")
-                                    .font(.system(size: 12)).foregroundStyle(VGTheme.textMuted)
+                                    .font(.caption).foregroundStyle(VGTheme.textMuted)
                             }
                             .padding(.horizontal, 16).padding(.vertical, 10)
                             .background(VGTheme.surface).clipShape(RoundedRectangle(cornerRadius: 12))
                             .padding(.horizontal, 16)
+                            .accessibilityElement(children: .combine)
                         }
                     }
                     .padding(.top, 16)
@@ -166,15 +174,16 @@ struct CommunityGoalsLandingView: View {
                 Button { showingPhotoPicker = true } label: {
                     HStack(spacing: 8) {
                         if isPostingPhoto { ProgressView().tint(.white) }
-                        else { Image(systemName: "camera.fill").foregroundStyle(.white) }
+                        else { Image(systemName: "camera.fill").foregroundStyle(.white).accessibilityHidden(true) }
                         Text("Share today's check-in")
-                            .font(.system(size: 17, weight: .semibold)).foregroundStyle(.white)
+                            .font(.body.weight(.semibold)).foregroundStyle(.white)
                     }
-                    .frame(maxWidth: .infinity).padding(.vertical, 16)
+                    .frame(maxWidth: .infinity, minHeight: 44).padding(.vertical, 16)
                     .background(VGTheme.accentTerra)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
                     .padding(.horizontal, 20).padding(.vertical, 12)
                 }
+                .accessibilityLabel("Share today's check-in")
                 .background(VGTheme.background)
             }
         }

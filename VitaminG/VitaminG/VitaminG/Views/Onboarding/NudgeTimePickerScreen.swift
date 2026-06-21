@@ -37,12 +37,13 @@ struct NudgeTimePickerScreen: View {
                         .font(VGTheme.serif(34))
                         .foregroundStyle(VGTheme.textPrimary)
                         .padding(.horizontal, 24)
+                        .accessibilityAddTraits(.isHeader)
 
                     Spacer().frame(height: 17)
 
                     // Subheading
                     Text("When should we check in with you each day?")
-                        .font(.system(size: 17))
+                        .font(.callout)
                         .foregroundStyle(VGTheme.textMuted)
                         .padding(.horizontal, 24)
 
@@ -58,15 +59,15 @@ struct NudgeTimePickerScreen: View {
                                     showCustomPicker = false
                                 } label: {
                                     Text("\(hour) AM")
-                                        .font(.system(size: 15, weight: .medium))
+                                        .font(.callout.weight(.medium))
                                         .foregroundStyle(isSelected ? VGTheme.warmWhite : VGTheme.textPrimary)
                                         .padding(.horizontal, 16)
-                                        .padding(.vertical, 8)
+                                        .frame(minHeight: 44)
                                         .background(isSelected ? VGTheme.accentTerra : VGTheme.surface)
                                         .clipShape(Capsule())
                                 }
                                 .accessibilityLabel("\(hour) AM")
-                                .accessibilityAddTraits(isSelected ? .isSelected : [])
+                                .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
                             }
                         }
                         .padding(.horizontal, 24)
@@ -76,7 +77,7 @@ struct NudgeTimePickerScreen: View {
 
                     // Custom time toggle
                     Toggle("Custom time", isOn: $showCustomPicker)
-                        .font(.system(size: 15))
+                        .font(.body)
                         .foregroundStyle(VGTheme.textPrimary)
                         .padding(.horizontal, 24)
 
@@ -94,7 +95,7 @@ struct NudgeTimePickerScreen: View {
                 VStack(spacing: 10) {
                     Button(action: save) {
                         Text("Set my nudge time")
-                            .font(.system(size: 17, weight: .semibold))
+                            .font(.body.weight(.semibold))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 18)
                             .background(VGTheme.accentTerra)
@@ -104,10 +105,9 @@ struct NudgeTimePickerScreen: View {
 
                     Button(action: skip) {
                         Text("Skip for now")
-                            .font(.system(size: 15, weight: .regular))
+                            .font(.callout)
                             .foregroundStyle(VGTheme.textMuted)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
+                            .frame(maxWidth: .infinity, minHeight: 44)
                     }
                 }
                 .padding(.horizontal, 24)

@@ -110,6 +110,7 @@ struct ChallengeDetailView: View {
                 .fontWeight(.semibold)
                 .fontDesign(.rounded)
                 .foregroundStyle(VGTheme.textPrimary)
+                .accessibilityAddTraits(.isHeader)
             if let category = userChallenge.template?.category,
                let days = userChallenge.template?.durationDays {
                 Text("\(category.capitalized) · \(days) days")
@@ -188,6 +189,7 @@ struct ChallengeDetailView: View {
                 .fontWeight(.semibold)
                 .fontDesign(.rounded)
                 .foregroundStyle(VGTheme.textPrimary)
+                .accessibilityAddTraits(.isHeader)
             HStack {
                 Text(reminderLabel)
                     .font(.body)
@@ -213,6 +215,7 @@ struct ChallengeDetailView: View {
                 .fontWeight(.semibold)
                 .fontDesign(.rounded)
                 .foregroundStyle(VGTheme.textPrimary)
+                .accessibilityAddTraits(.isHeader)
             Text(userChallenge.template?.challengeDescription ?? "")
                 .font(.body)
                 .fontDesign(.rounded)
@@ -285,6 +288,7 @@ struct ChallengeDetailView: View {
                 .font(.title2.weight(.semibold))
                 .fontDesign(.rounded)
                 .foregroundStyle(VGTheme.textPrimary)
+                .accessibilityAddTraits(.isHeader)
 
             // Fixed display order per UI-SPEC.md lines 285-289
             let order: [ChallengeTemplate.ModuleIdentifier] = [
@@ -326,14 +330,16 @@ struct ChallengeDetailView: View {
         HStack(spacing: 12) {
             Image(systemName: systemImage)
                 .foregroundStyle(VGTheme.textPrimary)
+                .accessibilityHidden(true)
             Text(label)
                 .font(.body).fontDesign(.rounded)
                 .foregroundStyle(VGTheme.textPrimary)
             Spacer()
             if hasChevron {
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 12))
+                    .font(.caption)
                     .foregroundStyle(VGTheme.textMuted)
+                    .accessibilityHidden(true)
             }
         }
         .frame(minHeight: 44)
@@ -357,6 +363,7 @@ struct ChallengeDetailView: View {
                 .font(.title2.weight(.semibold))
                 .fontDesign(.rounded)
                 .foregroundStyle(VGTheme.textPrimary)
+                .accessibilityAddTraits(.isHeader)
             NavigationLink(value: AppRoute.communityFeed(userChallenge)) {
                 moduleRowLabel(label: "View Community Feed",
                                systemImage: "person.3.fill",

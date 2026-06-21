@@ -84,6 +84,7 @@ struct CommunityTabView: View {
             .padding(.top, 20)
             .padding(.horizontal, 24)
             .padding(.bottom, 12)
+            .accessibilityAddTraits(.isHeader)
     }
 
     // MARK: - COMM-01 Goal Card
@@ -124,21 +125,23 @@ struct CommunityTabView: View {
                     strokeWidth: 4,
                     glow: false
                 )
+                .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 4) {
                     Text(challenge.template?.title ?? "Community Goal")
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.callout.weight(.semibold))
                         .fontDesign(.rounded)
                         .foregroundStyle(VGTheme.textPrimary)
                         .lineLimit(1)
                     Text("\(participants) members · \(daysLeft) days left")
-                        .font(.system(size: 13))
+                        .font(.callout)
                         .fontDesign(.rounded)
                         .foregroundStyle(VGTheme.textMuted)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 13))
+                    .font(.callout)
                     .foregroundStyle(VGTheme.textMuted)
+                    .accessibilityHidden(true)
             }
             .padding(16)
             .background(VGTheme.surface)
@@ -152,18 +155,18 @@ struct CommunityTabView: View {
     private var fallbackGoalCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Join a community goal")
-                .font(.system(size: 17, weight: .semibold))
+                .font(.body.weight(.semibold))
                 .fontDesign(.rounded)
                 .foregroundStyle(VGTheme.textPrimary)
             Text("Check in with thousands of others working toward something meaningful.")
-                .font(.system(size: 14))
+                .font(.callout)
                 .fontDesign(.rounded)
                 .foregroundStyle(VGTheme.textMuted)
             Button {
                 selectedTab = .explore
             } label: {
                 Text("Explore Goals")
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.callout.weight(.semibold))
                     .fontDesign(.rounded)
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity, minHeight: 44)
@@ -184,12 +187,13 @@ struct CommunityTabView: View {
         @Bindable var router = router
         return VStack(alignment: .leading, spacing: 0) {
             Text("TODAY'S GLIMPSES")
-                .font(.system(size: 20, weight: .semibold))
+                .font(.title3.weight(.semibold))
                 .fontDesign(.rounded)
                 .foregroundStyle(VGTheme.textPrimary)
                 .padding(.horizontal, 16)
                 .padding(.top, 24)
                 .padding(.bottom, 8)
+                .accessibilityAddTraits(.isHeader)
 
             GlimpsesCarouselSection(
                 glimpses: viewModel.glimpses,
@@ -216,12 +220,13 @@ struct CommunityTabView: View {
         @Bindable var router = router
         return VStack(alignment: .leading, spacing: 0) {
             Text("ACTIVE TODAY")
-                .font(.system(size: 20, weight: .semibold))
+                .font(.title3.weight(.semibold))
                 .fontDesign(.rounded)
                 .foregroundStyle(VGTheme.textPrimary)
                 .padding(.horizontal, 16)
                 .padding(.top, 24)
                 .padding(.bottom, 8)
+                .accessibilityAddTraits(.isHeader)
 
             ActiveTodaySection(
                 activeUsers: viewModel.activeUsers,
@@ -261,12 +266,13 @@ struct CommunityTabView: View {
         @Bindable var viewModel = viewModel
         return VStack(alignment: .leading, spacing: 0) {
             Text("COMMUNITY FEED")
-                .font(.system(size: 20, weight: .semibold))
+                .font(.title3.weight(.semibold))
                 .fontDesign(.rounded)
                 .foregroundStyle(VGTheme.textPrimary)
                 .padding(.horizontal, 16)
                 .padding(.top, 24)
                 .padding(.bottom, 8)
+                .accessibilityAddTraits(.isHeader)
 
             GlobalFeedSection(
                 feedPosts: viewModel.feedPosts,

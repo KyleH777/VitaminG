@@ -21,6 +21,7 @@ struct GoalListView: View {
 
     // MILE-04: Per-goal streak milestone (separate from challenge pendingMilestone)
     @State private var pendingGoalMilestone: (goalID: UUID, threshold: Int)? = nil
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var hasAnyGoals: Bool { !goals.isEmpty }
     private var sortedGoals: [Goal] { GoalSorter.sort(goals, by: sortOption) }
@@ -140,18 +141,20 @@ struct GoalListView: View {
                     Text("My Goals")
                         .font(VGTheme.serif(28))
                         .foregroundStyle(VGTheme.clay)
+                        .accessibilityAddTraits(.isHeader)
                     Spacer()
                     Button {
                         showingGoalEntryChoice = true
                     } label: {
                         Text("+ New goal")
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(.caption.weight(.semibold))
                             .foregroundStyle(VGTheme.background)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 8)
                             .background(VGTheme.accentTerra)
                             .clipShape(Capsule())
                     }
+                    .frame(minHeight: 44)
                     .shadow(color: VGTheme.accentTerra.opacity(0.4), radius: 8)
                     .accessibilityLabel("Add new goal")
                 }
@@ -194,18 +197,19 @@ struct GoalListView: View {
                 Spacer(minLength: 32)
             }
         }
-        .animation(.easeOut(duration: 0.25), value: sortOption)
-        .animation(.easeOut(duration: 0.15), value: goals.count)
+        .animation(reduceMotion ? nil : .easeOut(duration: 0.25), value: sortOption)
+        .animation(reduceMotion ? nil : .easeOut(duration: 0.15), value: goals.count)
     }
 
     @ViewBuilder
     private func sectionHeader(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 10, weight: .bold))
+            .font(.caption2.weight(.bold))
             .foregroundStyle(VGTheme.muted)
             .kerning(1.0)
             .padding(.horizontal, 24)
             .padding(.top, 8)
+            .accessibilityAddTraits(.isHeader)
     }
 
     @ViewBuilder
@@ -263,10 +267,11 @@ private struct ChallengeHeroCard: View {
 
             VStack(alignment: .leading, spacing: 0) {
                 Text(category.uppercased())
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.caption2.weight(.bold))
                     .foregroundStyle(VGTheme.muted)
                     .kerning(1.2)
                     .padding(.bottom, 12)
+                    .accessibilityHidden(true)
 
                 HStack(alignment: .center, spacing: 18) {
                     ProgressRingView(
@@ -275,6 +280,7 @@ private struct ChallengeHeroCard: View {
                         isCompleted: false
                     )
                     .frame(width: 80, height: 80)
+                    .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(challengeName)
@@ -282,12 +288,13 @@ private struct ChallengeHeroCard: View {
                             .foregroundStyle(VGTheme.sand)
                             .lineLimit(2)
                         Text("\(daysRemaining) days remaining")
-                            .font(.system(size: 12))
+                            .font(.caption)
                             .foregroundStyle(VGTheme.muted)
                         HStack(spacing: 5) {
                             Circle().fill(VGTheme.sage).frame(width: 8, height: 8)
+                                .accessibilityHidden(true)
                             Text("On track")
-                                .font(.system(size: 12, weight: .medium))
+                                .font(.caption.weight(.medium))
                                 .foregroundStyle(VGTheme.sage)
                         }
                         .padding(.top, 4)
@@ -302,12 +309,13 @@ private struct ChallengeHeroCard: View {
                                 .fill(i < 5 ? VGTheme.terraSoft.opacity(0.7) : VGTheme.separator)
                                 .frame(height: 28)
                             Text(day)
-                                .font(.system(size: 10))
+                                .font(.caption2)
                                 .foregroundStyle(VGTheme.muted)
                         }
                         .frame(maxWidth: .infinity)
                     }
                 }
+                .accessibilityHidden(true)
             }
             .padding(20)
         }
@@ -320,6 +328,8 @@ private struct ChallengeHeroCard: View {
         )
         .clipShape(RoundedRectangle(cornerRadius: 18))
         .shadow(color: VGTheme.clay.opacity(0.3), radius: 12, y: 4)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(challengeName) community challenge, day \(dayNumber), \(daysRemaining) days remaining, on track")
     }
 }
 
@@ -349,6 +359,13 @@ private struct GoalCardView: View {
     @State private var badgeTask: Task<Void, Never>?
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    private var cardAccessibilityLabel: String {
+        let title = goal.title ?? "Untitled"
+        let status = goal.isCompleted ? "Completed" : "Active"
+        let tier = goal.tier.displayName
+        return "\(title), \(tier), \(status)"
+    }
+
     var body: some View {
         HStack(spacing: 14) {
             ProgressRingView(
@@ -357,16 +374,17 @@ private struct GoalCardView: View {
                 isCompleted: goal.isCompleted
             )
             .frame(width: 48, height: 48)
+            .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(goal.title ?? "")
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.callout.weight(.medium))
                     .foregroundStyle(goal.isCompleted ? VGTheme.textMuted : VGTheme.textPrimary)
                     .strikethrough(goal.isCompleted, color: VGTheme.textMuted.opacity(0.6))
                     .lineLimit(2)
                 if let desc = goal.goalDescription, !desc.isEmpty {
                     Text(desc)
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundStyle(VGTheme.muted)
                         .lineLimit(1)
                 }
@@ -375,14 +393,18 @@ private struct GoalCardView: View {
             Spacer()
 
             Image(systemName: "chevron.right")
-                .font(.system(size: 12))
+                .font(.caption)
                 .foregroundStyle(VGTheme.muted)
+                .accessibilityHidden(true)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
         .background(VGTheme.surface)
         .clipShape(RoundedRectangle(cornerRadius: 14))
         .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(VGTheme.separator, lineWidth: 1))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(cardAccessibilityLabel)
+        .accessibilityHint("Double tap to view details")
         .scaleEffect(bounceScale)
         .overlay(alignment: .center) {
             if showMilestoneBadge, let threshold = milestoneThreshold {

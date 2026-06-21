@@ -35,10 +35,11 @@ struct TipJarView: View {
                 } else if store.products.isEmpty && !store.isLoading {
                     // T-19-03-06: surface error rather than silent empty state
                     Text("Couldn't load tips. Check your connection and try again.")
-                        .font(.system(size: 15))
+                        .font(.callout)
                         .foregroundStyle(VGTheme.textMuted)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity, minHeight: 120)
+                        .accessibilityLiveRegion(.polite)
 
                 } else {
                     ForEach(store.products, id: \.id) { product in
@@ -95,14 +96,15 @@ private struct TipTierCard: View {
     var body: some View {
         HStack(spacing: 16) {
             Text(emoji)
-                .font(.system(size: 32))
+                .font(.title)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(product.displayName)
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(.body.weight(.semibold))
                     .foregroundStyle(VGTheme.textPrimary)
                 Text(product.displayPrice)
-                    .font(.system(size: 15))
+                    .font(.callout)
                     .foregroundStyle(VGTheme.accentTerra)
             }
 
@@ -111,12 +113,13 @@ private struct TipTierCard: View {
             Button("Buy") {
                 onTap()
             }
-            .font(.system(size: 15, weight: .semibold))
+            .font(.callout.weight(.semibold))
             .padding(.horizontal, 18)
             .padding(.vertical, 10)
             .background(VGTheme.accentTerra)
             .foregroundStyle(VGTheme.warmWhite)
             .clipShape(Capsule())
+            .frame(minHeight: 44)
             // T-19-03-05: disable all Buy buttons while any purchase is in-flight
             .disabled(isPurchasing)
             .accessibilityLabel("Buy \(product.displayName) tip for \(product.displayPrice)")

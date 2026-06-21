@@ -24,7 +24,7 @@ struct MoodPromptCard: View {
                     dismiss()
                 } label: {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 22))
+                        .font(.title2)
                         .foregroundStyle(VGTheme.accentSage)
                 }
                 .frame(minWidth: 44, minHeight: 44)
@@ -40,9 +40,10 @@ struct MoodPromptCard: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Text(mood.emoji)
-                                    .font(.system(size: 16))
+                                    .font(.callout)
+                                    .accessibilityHidden(true)
                                 Text(mood.rawValue)
-                                    .font(.system(size: 14, weight: .medium))
+                                    .font(.callout.weight(.medium))
                                     .fontDesign(.rounded)
                             }
                             .foregroundStyle(VGTheme.textPrimary)
@@ -53,7 +54,8 @@ struct MoodPromptCard: View {
                             .overlay(Capsule().strokeBorder(VGTheme.separator, lineWidth: 1))
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel("\(mood.emoji) \(mood.rawValue)")
+                        .frame(minHeight: 44)
+                        .accessibilityLabel(mood.rawValue)
                     }
                 }
                 .padding(.horizontal, 2)

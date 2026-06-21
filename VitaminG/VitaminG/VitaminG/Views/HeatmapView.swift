@@ -23,6 +23,21 @@ struct HeatmapView: View {
         }.reversed()
     }
 
+    private var accessibilitySummary: String {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let daysWithActivity = days.filter { day in
+            let count = data[day] ?? 0
+            return count > 0 && count != -1
+        }.count
+        let freezeDays = days.filter { data[$0] == -1 }.count
+        var summary = "\(daysWithActivity) active days in the last \(windowDays) days"
+        if freezeDays > 0 {
+            summary += ", \(freezeDays) streak freeze\(freezeDays == 1 ? "" : "s") used"
+        }
+        return summary
+    }
+
     var body: some View {
         LazyVGrid(
             columns: Array(repeating: GridItem(.fixed(12), spacing: 3), count: 7),
@@ -37,11 +52,13 @@ struct HeatmapView: View {
                         Image(systemName: "snowflake")
                             .font(.system(size: 7))
                             .foregroundStyle(Color.blue)
-                            .accessibilityLabel("Streak freeze")
                     }
                 }
+                .accessibilityHidden(true)
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilitySummary)
     }
 
     // MARK: - Color Intensity

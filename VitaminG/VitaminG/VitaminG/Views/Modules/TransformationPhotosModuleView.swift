@@ -109,6 +109,7 @@ struct TransformationPhotosModuleView: View {
             Image(systemName: "photo.stack.fill")
                 .font(.system(size: 48))
                 .foregroundStyle(VGTheme.muted)
+                .accessibilityHidden(true)
             Text("No Photos Yet")
                 .font(.title2.weight(.semibold))
                 .fontDesign(.rounded)

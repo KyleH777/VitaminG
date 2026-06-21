@@ -124,7 +124,7 @@ struct CravingToolsModuleView: View {
                 }
 
                 Text("\(countdown)")
-                    .font(.system(size: 48, weight: .semibold))
+                    .font(.largeTitle.weight(.semibold))
                     .foregroundStyle(VGTheme.clay)
                     .accessibilityHidden(true)
             }

@@ -24,9 +24,11 @@ struct TipThankYouView: View {
             Color.black.opacity(0.92).ignoresSafeArea()
 
             // Confetti canvas (decorative — accessibilityHidden)
-            confettiView
-                .ignoresSafeArea()
-                .accessibilityHidden(true)
+            if !reduceMotion {
+                confettiView
+                    .ignoresSafeArea()
+                    .accessibilityHidden(true)
+            }
 
             // Content
             VStack(spacing: 24) {
@@ -36,6 +38,7 @@ struct TipThankYouView: View {
                     .font(.system(size: 64))
                     .scaleEffect(scale)
                     .opacity(opacity)
+                    .accessibilityHidden(true)
 
                 Text("Thank you!\nYou're the best.")
                     .font(.title2.weight(.semibold))

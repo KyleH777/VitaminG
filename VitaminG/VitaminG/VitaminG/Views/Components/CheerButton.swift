@@ -34,11 +34,13 @@ struct CheerButton: View {
             Button(action: triggerCheer) {
                 VStack(spacing: 4) {
                     Image(systemName: "hands.clap.fill")
-                        .font(.system(size: 28))
+                        .font(.title)
                         .foregroundStyle(VGTheme.accentGold)
+                        .accessibilityHidden(true)
 
                     Text(isAvailable ? "Cheer them on today" : "Cheered today")
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .font(.callout.weight(.semibold))
+                        .fontDesign(.rounded)
                         .foregroundStyle(isAvailable ? VGTheme.accentGold : VGTheme.textMuted)
                 }
                 .frame(minWidth: 44, minHeight: 44)
@@ -58,9 +60,10 @@ struct CheerButton: View {
             if showFloat {
                 VStack(spacing: 2) {
                     Image(systemName: "hands.clap.fill")
-                        .font(.system(size: 22))
+                        .font(.title2)
                     Text(recipientUsername)
-                        .font(.system(size: 14, design: .rounded))
+                        .font(.callout)
+                        .fontDesign(.rounded)
                 }
                 .foregroundStyle(VGTheme.accentGold)
                 .offset(y: floatOffset)

@@ -61,6 +61,7 @@ struct GoalAllTimeHeatmapView: View {
             Text("Activity")
                 .font(.title3.weight(.semibold))
                 .padding(.horizontal, 4)
+                .accessibilityAddTraits(.isHeader)
 
             ZStack {
                 RoundedRectangle(cornerRadius: 16)

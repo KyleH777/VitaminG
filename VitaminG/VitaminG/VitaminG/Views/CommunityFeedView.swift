@@ -126,6 +126,7 @@ struct CommunityFeedView: View {
             Image(systemName: "person.3.fill")
                 .font(.system(size: 48))
                 .foregroundStyle(VGTheme.textMuted)
+                .accessibilityHidden(true)
             Text("Be the First to Share")
                 .font(.title2.weight(.semibold))
                 .fontDesign(.rounded)

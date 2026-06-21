@@ -4,6 +4,8 @@ struct ConsistencyScoreCard: View {
     let score: Int
     let recentDays: [Bool]   // 7 elements: index 0 = today; padded/truncated to 7 below
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     // Defensive: always exactly 7 elements regardless of caller
     private var chartDays: [Bool] {
         Array((recentDays + Array(repeating: false, count: 7)).prefix(7))
@@ -28,7 +30,8 @@ struct ConsistencyScoreCard: View {
                         RoundedRectangle(cornerRadius: 2)
                             .fill(active ? VGTheme.accentSage : VGTheme.separator)
                             .frame(width: 5, height: active ? 28 : 12)
-                            .animation(.easeInOut(duration: 0.25), value: active)
+                            .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: active)
+                            .accessibilityHidden(true)
                     }
                 }
             }
@@ -52,7 +55,7 @@ struct ConsistencyScoreCard: View {
                     RoundedRectangle(cornerRadius: 4)
                         .fill(VGTheme.accentSage)
                         .frame(width: geo.size.width * CGFloat(score) / 100, height: 6)
-                        .animation(.easeOut(duration: 0.6), value: score)
+                        .animation(reduceMotion ? nil : .easeOut(duration: 0.6), value: score)
                 }
             }
             .frame(height: 6)

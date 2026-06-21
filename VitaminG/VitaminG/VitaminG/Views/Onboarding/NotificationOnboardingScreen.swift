@@ -30,7 +30,7 @@ struct NotificationOnboardingScreen: View {
             VStack(spacing: 0) {
                 Spacer()
 
-                // Mock notification card
+                // Mock notification card (decorative preview)
                 VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: 10) {
                         RoundedRectangle(cornerRadius: 9)
@@ -43,23 +43,23 @@ struct NotificationOnboardingScreen: View {
                             )
                         VStack(alignment: .leading, spacing: 1) {
                             Text("Vitamin G")
-                                .font(.system(size: 13, weight: .semibold))
+                                .font(.callout.weight(.semibold))
                                 .foregroundStyle(VGTheme.sand)
                             Text("now")
-                                .font(.system(size: 11))
+                                .font(.caption2)
                                 .foregroundStyle(VGTheme.muted)
                         }
                         Spacer()
                     }
                     .padding(.bottom, 12)
 
-                    Text("Good morning, \(firstName) ☀️")
+                    Text("Good morning, \(firstName)")
                         .font(Font.custom("Georgia", size: 19))
                         .foregroundStyle(VGTheme.sand)
                         .padding(.bottom, 6)
 
                     Text("Day 12 of your Summer Body Challenge. You're 72% there.")
-                        .font(.system(size: 13, weight: .light))
+                        .font(.callout.weight(.light))
                         .foregroundStyle(VGTheme.sand.opacity(0.7))
                         .lineSpacing(4)
                         .lineLimit(2)
@@ -74,15 +74,19 @@ struct NotificationOnboardingScreen: View {
                 )
                 .padding(.horizontal, 28)
                 .padding(.bottom, 32)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Example notification preview")
+                .accessibilityHidden(true)
 
                 // Headline
                 VStack(alignment: .leading, spacing: 14) {
-                    Text("Stay on track,\n\(Text("every day.").font(Font.custom("Georgia-Italic", size: 42)).foregroundStyle(VGTheme.terraSoft))")
+                    Text("Stay on track, every day.")
                         .font(Font.custom("Georgia", size: 42))
                         .foregroundStyle(VGTheme.sand)
+                        .accessibilityAddTraits(.isHeader)
 
                     Text("One daily nudge at the time you choose. No noise — just your reminder to keep going.")
-                        .font(.system(size: 14, weight: .light))
+                        .font(.callout.weight(.light))
                         .foregroundStyle(VGTheme.muted)
                         .lineSpacing(4)
                         .fixedSize(horizontal: false, vertical: true)
@@ -96,21 +100,23 @@ struct NotificationOnboardingScreen: View {
             VStack(spacing: 10) {
                 Button(action: allow) {
                     Text("Allow Notifications")
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.body.weight(.semibold))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 18)
                         .background(VGTheme.sand)
                         .foregroundStyle(VGTheme.clay)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
+                .accessibilityHint("Requests permission to send daily goal reminders")
 
                 Button(action: skip) {
                     Text("Maybe later")
-                        .font(.system(size: 15, weight: .regular))
+                        .font(.callout)
                         .foregroundStyle(VGTheme.sand.opacity(0.55))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
                 }
+                .frame(minHeight: 44)
             }
             .padding(.horizontal, 28)
             .padding(.bottom, 12)

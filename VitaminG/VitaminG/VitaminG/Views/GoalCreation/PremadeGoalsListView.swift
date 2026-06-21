@@ -63,9 +63,10 @@ struct PremadeGoalsListView: View {
 
     private func sectionHeader(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 13, weight: .semibold))
+            .font(.caption.weight(.semibold))
             .foregroundStyle(VGTheme.textMuted)
             .kerning(1.0)
+            .accessibilityAddTraits(.isHeader)
     }
 
     // MARK: - Goal row
@@ -82,20 +83,20 @@ struct PremadeGoalsListView: View {
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(goal.title)
-                        .font(.system(size: 13.5, weight: .medium))
+                        .font(.callout.weight(.medium))
                         .foregroundStyle(VGTheme.textPrimary)
                         .multilineTextAlignment(.leading)
                         .lineLimit(2)
 
                     Text(goal.category.subtitle)
-                        .font(.system(size: 11))
+                        .font(.caption)
                         .foregroundStyle(VGTheme.textMuted)
                 }
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 12))
+                    .font(.caption)
                     .foregroundStyle(VGTheme.textMuted)
                     .accessibilityHidden(true)
             }

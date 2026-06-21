@@ -21,7 +21,9 @@ struct CommunityGoalOnboardingScreen: View {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 18, weight: .medium))
                                 .foregroundStyle(VGTheme.clay)
+                                .frame(minWidth: 44, minHeight: 44)
                         }
+                        .accessibilityLabel("Go back")
                         Spacer()
                     }
                     .padding(.bottom, 20)
@@ -37,7 +39,7 @@ struct CommunityGoalOnboardingScreen: View {
                         .padding(.bottom, 12)
 
                     Text("Join thousands already working toward it. You're never doing this alone.")
-                        .font(.system(size: 14, weight: .light))
+                        .font(.callout.weight(.light))
                         .foregroundStyle(VGTheme.muted)
                         .lineSpacing(4)
                         .padding(.bottom, 22)
@@ -127,6 +129,8 @@ struct CommunityGoalOnboardingScreen: View {
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                     .shadow(color: VGTheme.clay.opacity(0.12), radius: 24, y: 4)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("90-Day Summer Body Challenge. 4,821 participants joined. 90 days.")
 
                     Spacer(minLength: 120)
                 }
@@ -138,7 +142,7 @@ struct CommunityGoalOnboardingScreen: View {
             VStack(spacing: 8) {
                 Button(action: advance) {
                     Text("Join the challenge")
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.body.weight(.semibold))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 18)
                         .background(VGTheme.terra)
@@ -148,10 +152,9 @@ struct CommunityGoalOnboardingScreen: View {
 
                 Button(action: advance) {
                     Text("Set my own goal first")
-                        .font(.system(size: 15, weight: .regular))
+                        .font(.callout)
                         .foregroundStyle(VGTheme.muted)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
+                        .frame(maxWidth: .infinity, minHeight: 44)
                 }
             }
             .padding(.horizontal, 28)

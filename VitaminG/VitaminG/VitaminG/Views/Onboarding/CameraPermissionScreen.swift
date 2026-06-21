@@ -74,15 +74,18 @@ struct CameraPermissionScreen: View {
                 )
                 .padding(.horizontal, 28)
                 .padding(.bottom, 32)
+                .accessibilityHidden(true)
 
                 // Headline block (mirrors NotificationOnboardingScreen exactly)
                 VStack(alignment: .leading, spacing: 14) {
                     Text("Share your\n\(Text("journey.").font(Font.custom("Georgia-Italic", size: 42)).foregroundStyle(VGTheme.terraSoft))")
                         .font(Font.custom("Georgia", size: 42))
                         .foregroundStyle(VGTheme.sand)
+                        .accessibilityLabel("Share your journey.")
+                        .accessibilityAddTraits(.isHeader)
 
                     Text("Your profile picture and goal photos help your community connect with your progress.")
-                        .font(.system(size: 14, weight: .light))
+                        .font(.callout.weight(.light))
                         .foregroundStyle(VGTheme.muted)
                         .lineSpacing(4)
                         .fixedSize(horizontal: false, vertical: true)
@@ -96,20 +99,20 @@ struct CameraPermissionScreen: View {
             VStack(spacing: 10) {
                 Button(action: allow) {
                     Text("Allow Camera")
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.body.weight(.semibold))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 18)
                         .background(VGTheme.sand)
                         .foregroundStyle(VGTheme.clay)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
+                .accessibilityHint("Requests permission to access your camera for profile photos")
 
                 Button(action: skip) {
                     Text("Skip for now")
-                        .font(.system(size: 15, weight: .regular))
+                        .font(.callout)
                         .foregroundStyle(VGTheme.sand.opacity(0.55))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
+                        .frame(maxWidth: .infinity, minHeight: 44)
                 }
             }
             .padding(.horizontal, 28)

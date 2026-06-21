@@ -40,13 +40,14 @@ struct GlowingSpotlightSection: View {
             onTapUser(user)
         } label: {
             VStack(spacing: 12) {
-                // Allcaps section label — gold, 14pt muted, tracking 0.5
+                // Allcaps section label
                 Text("GLOWING THIS WEEK")
-                    .font(.system(size: 14))
+                    .font(.caption.weight(.semibold))
                     .fontDesign(.rounded)
                     .foregroundStyle(VGTheme.accentGold)
                     .kerning(0.5)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityAddTraits(.isHeader)
 
                 // Avatar
                 AvatarView(
@@ -55,16 +56,17 @@ struct GlowingSpotlightSection: View {
                     photoData: nil,
                     size: 64
                 )
+                .accessibilityHidden(true)
 
-                // Username — 20pt Cormorant Garamond serif
+                // Username
                 Text(user.username)
                     .font(VGTheme.serif(20))
                     .foregroundStyle(VGTheme.textPrimary)
                     .multilineTextAlignment(.center)
 
-                // Goal title — 17pt body
+                // Goal title
                 Text(user.goalTitle)
-                    .font(.system(size: 17))
+                    .font(.body)
                     .fontDesign(.rounded)
                     .foregroundStyle(VGTheme.textSecondary)
                     .multilineTextAlignment(.center)
@@ -96,7 +98,7 @@ struct GlowingSpotlightSection: View {
 
     private var emptyState: some View {
         Text("Check back later — someone will be glowing this week.")
-            .font(.system(size: 14))
+            .font(.callout)
             .fontDesign(.rounded)
             .foregroundStyle(VGTheme.textMuted)
             .multilineTextAlignment(.center)

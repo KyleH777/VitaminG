@@ -82,11 +82,12 @@ struct ExploreView: View {
                 Divider()
                     .padding(.horizontal, 16)
                 Text("DISCOVER CHALLENGES")
-                    .font(.system(size: 20, weight: .semibold))
+                    .font(.title3.weight(.semibold))
                     .fontDesign(.rounded)
                     .foregroundStyle(VGTheme.textPrimary)
                     .padding(.horizontal, 16)
                     .padding(.top, 24)
+                    .accessibilityAddTraits(.isHeader)
                 ChallengeDiscoveryView()
             }
             .padding(.top, 8)
@@ -128,9 +129,10 @@ struct ExploreView: View {
 
     private func sectionLabel(_ text: String) -> some View {
         Text(text.uppercased())
-            .font(.system(size: 13, weight: .semibold))
+            .font(.caption.weight(.semibold))
             .kerning(0.4)
             .foregroundStyle(VGTheme.textMuted)
             .padding(.horizontal, 16)
+            .accessibilityAddTraits(.isHeader)
     }
 }

@@ -69,19 +69,19 @@ struct GoalStreakMilestoneView: View {
                     .padding(.horizontal, 32)
 
                 Text(milestoneLabel)
-                    .font(.system(size: 26, weight: .semibold, design: .rounded))
+                    .font(.title2.weight(.semibold))
                     .foregroundStyle(badgeColor)
                     .multilineTextAlignment(.center)
 
                 Text(goalTitle)
-                    .font(.system(size: 16, weight: .medium, design: .rounded))
+                    .font(.callout.weight(.medium))
                     .foregroundStyle(.white.opacity(0.8))
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
                     .padding(.horizontal, 32)
 
                 Text("Current streak: \(streakCount) days")
-                    .font(.system(size: 16, design: .monospaced))
+                    .font(.callout)
                     .foregroundStyle(.white.opacity(0.7))
 
                 Spacer()

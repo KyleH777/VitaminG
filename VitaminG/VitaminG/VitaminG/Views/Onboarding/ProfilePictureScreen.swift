@@ -33,7 +33,9 @@ struct ProfilePictureScreen: View {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .medium))
                             .foregroundStyle(VGTheme.clay)
+                            .frame(minWidth: 44, minHeight: 44)
                     }
+                    .accessibilityLabel("Go back")
                     Spacer()
                 }
                 .padding(.bottom, 20)
@@ -74,43 +76,46 @@ struct ProfilePictureScreen: View {
                             )
                     }
                 }
+                .accessibilityLabel(previewImage != nil ? "Profile photo selected" : "Default avatar")
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.bottom, 24)
 
                 // Picker buttons (side by side)
                 HStack(spacing: 8) {
-                    Text("Choose from Library")
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(VGTheme.clay)
-                        .padding(.vertical, 12)
-                        .padding(.horizontal, 16)
-                        .frame(maxWidth: .infinity)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .strokeBorder(VGTheme.sandMid, lineWidth: 1)
-                        )
-                        .onTapGesture { showLibraryPicker = true }
+                    Button(action: { showLibraryPicker = true }) {
+                        Text("Choose from Library")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(VGTheme.clay)
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .strokeBorder(VGTheme.sandMid, lineWidth: 1)
+                            )
+                    }
+                    .buttonStyle(.plain)
 
-                    Text("Take Photo")
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(VGTheme.clay)
-                        .padding(.vertical, 12)
-                        .padding(.horizontal, 16)
-                        .frame(maxWidth: .infinity)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .strokeBorder(VGTheme.sandMid, lineWidth: 1)
-                        )
-                        .onTapGesture { requestCameraAccess() }
+                    Button(action: { requestCameraAccess() }) {
+                        Text("Take Photo")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(VGTheme.clay)
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .strokeBorder(VGTheme.sandMid, lineWidth: 1)
+                            )
+                    }
+                    .buttonStyle(.plain)
                 }
 
                 // Skip for now link
-                Text("Skip for now")
-                    .font(.system(size: 14, weight: .light))
-                    .foregroundStyle(VGTheme.muted)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.top, 16)
-                    .onTapGesture { path.append(.notifications) }
+                Button(action: { path.append(.notifications) }) {
+                    Text("Skip for now")
+                        .font(.callout.weight(.light))
+                        .foregroundStyle(VGTheme.muted)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 16)
 
                 Spacer()
             }

@@ -34,6 +34,7 @@ struct TiersScreen: View {
                         Text("The Four Tiers")
                             .font(.title2.weight(.semibold))
                             .fontDesign(.rounded)
+                            .accessibilityAddTraits(.isHeader)
 
                         Text("Every goal finds its place.")
                             .font(.body)
@@ -98,6 +99,7 @@ private struct TierCard: View {
                 .font(.title2)
                 .foregroundStyle(tier.color)
                 .frame(width: 32)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(tier.displayName)
@@ -116,5 +118,6 @@ private struct TierCard: View {
         .padding(16)
         .background(Color(.secondarySystemGroupedBackground))
         .clipShape(RoundedRectangle(cornerRadius: 12))
+        .accessibilityElement(children: .combine)
     }
 }

@@ -15,16 +15,17 @@ struct AboutView: View {
                     .foregroundStyle(VGTheme.textPrimary)
 
                 Text(AboutContent.appVersionString)
-                    .font(.system(size: 15))
+                    .font(.callout)
                     .foregroundStyle(VGTheme.muted)
                     .accessibilityLabel("App version \(AboutContent.appVersionString)")
 
                 VGTheme.separator
                     .frame(height: 1)
+                    .accessibilityHidden(true)
 
                 // D-03: founderBio displayed verbatim — no edits, no lineLimit.
                 Text(AboutContent.founderBio)
-                    .font(.system(size: 17))
+                    .font(.body)
                     .foregroundStyle(VGTheme.textPrimary)
                     .lineSpacing(5)
             }
@@ -39,15 +40,15 @@ struct AboutView: View {
             VStack(spacing: 0) {
                 NavigationLink(destination: TipJarView()) {
                     Text("Tip the Developer ☕")
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.body.weight(.semibold))
                         .foregroundStyle(VGTheme.warmWhite)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 18)
+                        .frame(maxWidth: .infinity, minHeight: 44)
                         .background(VGTheme.accentTerra)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                         .padding(.horizontal, 24)
                         .padding(.bottom, 12)
                 }
+                .accessibilityLabel("Tip the Developer")
             }
             .background(VGTheme.sandLight)
         }

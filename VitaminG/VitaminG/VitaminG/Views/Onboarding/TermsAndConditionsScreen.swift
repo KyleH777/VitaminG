@@ -25,7 +25,9 @@ struct TermsAndConditionsScreen: View {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .medium))
                             .foregroundStyle(VGTheme.clay)
+                            .frame(minWidth: 44, minHeight: 44)
                     }
+                    .accessibilityLabel("Go back")
                     Spacer()
                 }
                 .padding(.bottom, 20)
@@ -40,10 +42,11 @@ struct TermsAndConditionsScreen: View {
                     .foregroundStyle(VGTheme.clay)
                     .lineSpacing(4)
                     .padding(.bottom, 12)
+                    .accessibilityAddTraits(.isHeader)
 
                 // Subtitle
                 Text("Please read and agree to our Terms & Conditions to continue using Vitamin G.")
-                    .font(.system(size: 14, weight: .light))
+                    .font(.callout.weight(.light))
                     .foregroundStyle(VGTheme.muted)
                     .lineSpacing(4)
                     .fixedSize(horizontal: false, vertical: true)
@@ -52,9 +55,9 @@ struct TermsAndConditionsScreen: View {
                 // "Read Terms" outlined capsule button
                 Button(action: { showTerms = true }) {
                     Text("Read Terms")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.caption.weight(.semibold))
                         .foregroundStyle(VGTheme.clay)
-                        .padding(.vertical, 12)
+                        .frame(minHeight: 44)
                         .padding(.horizontal, 20)
                         .overlay(
                             Capsule()

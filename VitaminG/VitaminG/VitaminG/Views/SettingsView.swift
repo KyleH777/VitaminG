@@ -333,6 +333,8 @@ struct SettingsView: View {
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
+                .frame(minWidth: 44, minHeight: 44)
+                .accessibilityLabel("Dismiss reminder suggestion")
             }
         }
         .padding(.vertical, 4)

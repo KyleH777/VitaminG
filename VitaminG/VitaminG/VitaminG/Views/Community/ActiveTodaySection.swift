@@ -33,8 +33,9 @@ struct ActiveTodaySection: View {
                                     photoData: nil,
                                     size: 44
                                 )
+                                .accessibilityHidden(true)
                                 Text(user.username)
-                                    .font(.system(size: 14))
+                                    .font(.caption)
                                     .fontDesign(.rounded)
                                     .foregroundStyle(VGTheme.textMuted)
                                     .lineLimit(1)
@@ -55,7 +56,7 @@ struct ActiveTodaySection: View {
 
     private var emptyState: some View {
         Text("Nobody active in the last 2 hours. Be the first — open the app!")
-            .font(.system(size: 14))
+            .font(.callout)
             .fontDesign(.rounded)
             .foregroundStyle(VGTheme.textMuted)
             .multilineTextAlignment(.center)

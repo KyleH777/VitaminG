@@ -42,6 +42,8 @@ struct Step2NameScreen: View {
                     .frame(width: i == 1 ? 22 : 8, height: 8)
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Step 2 of 3")
     }
 
     private var goalInputCard: some View {
@@ -54,6 +56,8 @@ struct Step2NameScreen: View {
                 .onChange(of: wizardVM.draftTitle) { _, new in
                     if new.count > 100 { wizardVM.draftTitle = String(new.prefix(100)) }
                 }
+                .accessibilityLabel("Goal title")
+                .accessibilityHint("Enter a specific, personal goal name")
                 .padding(.bottom, 10)
             Divider()
             HStack {
@@ -65,8 +69,10 @@ struct Step2NameScreen: View {
                         wizardVM.draftTitle.count >= 85 ? .orange :
                         Color.secondary.opacity(0.5)
                     )
+                    .accessibilityLabel("\(wizardVM.draftTitle.count) of 100 characters used")
                 Spacer()
-                Text("✨ Make it personal").font(.caption2).foregroundStyle(VGTheme.terra)
+                Text("Make it personal").font(.caption2).foregroundStyle(VGTheme.terra)
+                    .accessibilityHidden(true)
             }
             .padding(.top, 8)
         }
@@ -92,8 +98,8 @@ struct Step2NameScreen: View {
                             suggestionIndex += 1
                         }
                     } label: {
-                        Text("Pick one for me ✦")
-                            .font(.system(size: 13, weight: .medium))
+                        Text("Pick one for me")
+                            .font(.callout.weight(.medium))
                             .foregroundStyle(VGTheme.accentTerra)
                             .padding(.horizontal, 14).padding(.vertical, 8)
                             .background(VGTheme.surface)
@@ -101,22 +107,27 @@ struct Step2NameScreen: View {
                             .overlay(Capsule().strokeBorder(VGTheme.separator, lineWidth: 1))
                     }
                     .buttonStyle(.plain)
+                    .frame(minHeight: 44)
+                    .accessibilityLabel("Pick a random goal suggestion")
                 }
             }
             FlowLayout(spacing: 6) {
                 ForEach(wizardVM.selectedCategory.suggestions, id: \.self) { suggestion in
+                    let isSelected = wizardVM.draftTitle == suggestion
                     Button { wizardVM.draftTitle = suggestion } label: {
                         Text(suggestion)
                             .font(.subheadline)
                             .padding(.horizontal, 12).padding(.vertical, 8)
-                            .background(wizardVM.draftTitle == suggestion ? VGTheme.terraLight : Color.white)
-                            .foregroundStyle(wizardVM.draftTitle == suggestion ? VGTheme.terra : VGTheme.clay)
+                            .background(isSelected ? VGTheme.terraLight : Color.white)
+                            .foregroundStyle(isSelected ? VGTheme.terra : VGTheme.clay)
                             .clipShape(Capsule())
                             .overlay(Capsule().strokeBorder(
-                                wizardVM.draftTitle == suggestion ? VGTheme.terra : VGTheme.sandMid,
+                                isSelected ? VGTheme.terra : VGTheme.sandMid,
                                 lineWidth: 1.5))
                     }
                     .buttonStyle(.plain)
+                    .frame(minHeight: 44)
+                    .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
                 }
             }
         }
@@ -125,6 +136,7 @@ struct Step2NameScreen: View {
     private var smartTip: some View {
         HStack(alignment: .top, spacing: 10) {
             Text("💡")
+                .accessibilityHidden(true)
             Text("**Pro tip:** Specific goals win. \"Walk 10k steps\" beats \"exercise more.\"")
                 .font(.footnote).foregroundStyle(VGTheme.clay)
         }
