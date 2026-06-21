@@ -79,7 +79,7 @@ struct StatsView: View {
                 }
 
                 Text("\(viewModel.globalStreak)")
-                    .font(.system(size: 48, weight: .bold, design: .rounded))
+                    .font(.system(.largeTitle, design: .rounded).weight(.bold))
                     .foregroundStyle(.white)
                     .accessibilityLabel("\(viewModel.globalStreak) \(viewModel.globalStreak == 1 ? "day" : "days") global streak")
 
@@ -259,7 +259,7 @@ private struct TierStatCard: View {
 
                     // D-09 exception: display-proportional numeral in fixed-size card (analogous to AvatarView initials)
                     Text("\(streak)")
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .font(.system(.title, design: .rounded).weight(.bold))
                         .foregroundStyle(.primary)
 
                     Text("day streak")

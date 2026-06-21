@@ -86,7 +86,7 @@ struct StuckDayGiftsSection: View {
             isPrivate: true,
             startDate: Date()
         )
-        try? goalVM.addGoal(input: input, context: modelContext)
+        _ = try? goalVM.addGoal(input: input, context: modelContext)
         viewModel.markStuckGiftHidden(gift)
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
     }

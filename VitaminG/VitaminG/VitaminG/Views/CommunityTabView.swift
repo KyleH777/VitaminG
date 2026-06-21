@@ -104,7 +104,7 @@ struct CommunityTabView: View {
     /// Card shown when the user is enrolled in an active community challenge.
     private func enrolledGoalCard(challenge: UserChallenge) -> some View {
         let progress: Double = {
-            let checkIns = Double(challenge.totalCheckIns ?? 0)
+            let checkIns = Double(challenge.totalCheckIns)
             let duration = Double(max(1, challenge.template?.durationDays ?? 90))
             return min(1.0, checkIns / duration)
         }()

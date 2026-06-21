@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import CloudKit
+import os
 
 struct CommunityFeedView: View {
     let userChallenge: UserChallenge
@@ -61,8 +62,10 @@ struct CommunityFeedView: View {
                 .buttonStyle(.plain)
                 .padding(.horizontal, 16)
 
-                // 3. Posts or empty state
-                if viewModel.isLoading && viewModel.posts.isEmpty {
+                // 3. Posts or empty/offline state
+                if viewModel.isOffline && viewModel.posts.isEmpty {
+                    offlineState
+                } else if viewModel.isLoading && viewModel.posts.isEmpty {
                     ProgressView().padding(.top, 32)
                         .frame(maxWidth: .infinity)
                 } else if viewModel.posts.isEmpty {
@@ -121,6 +124,29 @@ struct CommunityFeedView: View {
     }
 
     // MARK: - Empty state (CHAL-25)
+    private var offlineState: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "wifi.slash")
+                .font(.system(size: 48))
+                .foregroundStyle(VGTheme.textMuted)
+                .accessibilityHidden(true)
+            Text("No Internet Connection")
+                .font(.title2.weight(.semibold))
+                .fontDesign(.rounded)
+                .foregroundStyle(VGTheme.textPrimary)
+            Text("Community posts aren't available offline. Check your connection and try again.")
+                .font(.body)
+                .fontDesign(.rounded)
+                .foregroundStyle(VGTheme.textMuted)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 32)
+        .padding(.vertical, 32)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("No internet connection. Community posts aren't available offline.")
+    }
+
     private var emptyState: some View {
         VStack(spacing: 16) {
             Image(systemName: "person.3.fill")

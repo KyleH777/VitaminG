@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 import UserNotifications
 import StoreKit
+import os
 
 @main
 struct VitaminGApp: App {
@@ -175,7 +176,7 @@ struct VitaminGApp: App {
 
                     // T-22-04-06: pass motto: nil so the launch refresh does NOT overwrite
                     // an existing motto — motto is updated only on ProfileEditSheet save.
-                    try? await ProfileSharingService.publishProfile(
+                    _ = try? await ProfileSharingService.publishProfile(
                         displayName: nil,
                         avatarColorHex: nil,
                         username: username,

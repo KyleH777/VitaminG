@@ -193,7 +193,7 @@ struct WelcomeScreen: View {
                         }
                     })
                     .signInWithAppleButtonStyle(.black)
-                    .frame(maxWidth: .infinity, minHeight: 54)
+                    .frame(maxWidth: .infinity, minHeight: 54, maxHeight: 54)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
                 .padding(.horizontal, 28)

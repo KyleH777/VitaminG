@@ -45,7 +45,7 @@ final class IdeaBoardViewModel {
         let input = GoalInput(title: idea.title, tier: tier, category: category,
                               frequency: frequency, reminderTime: nil,
                               isPrivate: false, startDate: nil)
-        try? goalVM.addGoal(input: input, context: context)
+        _ = try? goalVM.addGoal(input: input, context: context)
         idea.copyCount += 1
         try? context.save()
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()

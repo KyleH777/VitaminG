@@ -31,7 +31,7 @@ struct ProfilePictureScreen: View {
                 HStack {
                     Button(action: { path.removeLast() }) {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: 18, weight: .medium))
+                            .font(.title3.weight(.medium))
                             .foregroundStyle(VGTheme.clay)
                             .frame(minWidth: 44, minHeight: 44)
                     }
@@ -51,7 +51,7 @@ struct ProfilePictureScreen: View {
                         .foregroundStyle(VGTheme.clay)
 
                     Text("Help your community recognize you. You can always change this later.")
-                        .font(.system(size: 14, weight: .light))
+                        .font(.subheadline.weight(.light))
                         .foregroundStyle(VGTheme.muted)
                         .lineSpacing(4)
                 }
@@ -126,7 +126,7 @@ struct ProfilePictureScreen: View {
             VStack(spacing: 8) {
                 Button(action: { path.append(.notifications) }) {
                     Text("Continue")
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.body.weight(.semibold))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 18)
                         .background(VGTheme.terra)

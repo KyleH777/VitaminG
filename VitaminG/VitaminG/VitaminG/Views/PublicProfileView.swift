@@ -125,12 +125,12 @@ struct PublicProfileView: View {
                         .multilineTextAlignment(.center)
 
                     Text("@\(profile.username ?? "user")")
-                        .font(.system(size: 13, design: .rounded))
+                        .font(.system(.footnote, design: .rounded))
                         .foregroundStyle(VGTheme.textMuted)
 
                     if let motto = profile.motto, !motto.isEmpty {
                         Text(motto)
-                            .font(.system(size: 16, design: .rounded))
+                            .font(.system(.callout, design: .rounded))
                             .foregroundStyle(VGTheme.textSecondary)
                             .multilineTextAlignment(.center)
                             .lineLimit(3)
@@ -188,7 +188,7 @@ struct PublicProfileView: View {
                 // Follow error banner (UI-SPEC §2 — auto-clears after 3s in VM)
                 if let followError = viewModel.followError {
                     Text(followError)
-                        .font(.system(size: 13))
+                        .font(.footnote)
                         .foregroundStyle(VGTheme.accentTerra)
                         .padding(.horizontal, 24)
                         .padding(.bottom, 8)

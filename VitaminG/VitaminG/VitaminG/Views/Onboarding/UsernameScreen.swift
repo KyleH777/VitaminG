@@ -28,7 +28,7 @@ struct UsernameScreen: View {
                 HStack {
                     Button(action: { path.removeLast() }) {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: 18, weight: .medium))
+                            .font(.title3.weight(.medium))
                             .foregroundStyle(VGTheme.clay)
                             .frame(minWidth: 44, minHeight: 44)
                     }
@@ -89,23 +89,23 @@ struct UsernameScreen: View {
                             ProgressView()
                                 .scaleEffect(0.7)
                             Text("Checking...")
-                                .font(.system(size: 13, weight: .light))
+                                .font(.footnote.weight(.light))
                                 .foregroundStyle(VGTheme.muted)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     case .available:
                         Label("✓ Available", systemImage: "checkmark.circle.fill")
-                            .font(.system(size: 13, weight: .light))
+                            .font(.footnote.weight(.light))
                             .foregroundStyle(VGTheme.sage)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     case .taken:
                         Label("✗ Already taken", systemImage: "xmark.circle.fill")
-                            .font(.system(size: 13, weight: .light))
+                            .font(.footnote.weight(.light))
                             .foregroundStyle(VGTheme.terra)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     case .invalid(let msg):
                         Text(msg)
-                            .font(.system(size: 13, weight: .light))
+                            .font(.footnote.weight(.light))
                             .foregroundStyle(VGTheme.terra)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -138,7 +138,7 @@ struct UsernameScreen: View {
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                     } else {
                         Text("Continue")
-                            .font(.system(size: 17, weight: .semibold))
+                            .font(.body.weight(.semibold))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 18)
                             .background(canContinue ? VGTheme.terra : VGTheme.sandMid)

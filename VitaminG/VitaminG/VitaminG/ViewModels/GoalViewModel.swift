@@ -224,7 +224,7 @@ final class GoalViewModel {
 
         // MILE-02: Cancel the global 7 PM streak-at-risk nudge after a successful check-in.
         // Fire-and-forget — cancellation is best-effort (T-23-04-04 mitigation).
-        Task { await NotificationScheduler.shared.cancelGlobalStreakAtRiskNudge() }
+        Task { NotificationScheduler.shared.cancelGlobalStreakAtRiskNudge() }
 
         // Fire-and-forget GoalGlimpse upsert (D-01 / COMM-01).
         // Progress percent = completionEvents count / durationDays (clamped 0–100).
@@ -270,7 +270,7 @@ final class GoalViewModel {
             let goalCount = allGoals.filter { $0.isPublic == true }.count
 
             // motto: nil — check-in republish updates streak/count only; motto updated at save.
-            try? await ProfileSharingService.publishProfile(
+            _ = try? await ProfileSharingService.publishProfile(
                 displayName: nil,
                 avatarColorHex: nil,
                 username: profileUsername,
@@ -358,7 +358,7 @@ final class GoalViewModel {
     /// Reloads widget timelines so the public goals count reflects on home screen widgets.
     func updateGoalPublicStatus(goal: Goal, isPublic: Bool, context: ModelContext) {
         goal.isPublic = isPublic
-        try? context.save()
+        _ = try? context.save()
         WidgetCenter.shared.reloadAllTimelines()
     }
 

@@ -132,7 +132,7 @@ struct GoalDayGridView: View {
                     navigateMonth(by: -1)
                 } label: {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.callout.weight(.semibold))
                         .foregroundStyle(VGTheme.accentTerra)
                         .frame(minWidth: 44, minHeight: 44)
                 }
@@ -152,7 +152,7 @@ struct GoalDayGridView: View {
                     navigateMonth(by: 1)
                 } label: {
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.callout.weight(.semibold))
                         .foregroundStyle(VGTheme.accentTerra)
                         .frame(minWidth: 44, minHeight: 44)
                 }
@@ -202,7 +202,7 @@ struct GoalDayGridView: View {
                         .fill(VGTheme.accentSage)
                         .frame(width: 32, height: 32)
                     Image(systemName: "checkmark")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.caption2.weight(.semibold))
                         .foregroundStyle(.white)
                 } else if isToday && !isCompleted {
                     Circle()
@@ -213,7 +213,7 @@ struct GoalDayGridView: View {
                         )
                         .frame(width: 32, height: 32)
                     Text("\(cal.component(.day, from: date))")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.footnote.weight(.semibold))
                         .foregroundStyle(VGTheme.accentTerra)
                 } else {
                     Circle()
@@ -224,7 +224,7 @@ struct GoalDayGridView: View {
                         )
                         .frame(width: 32, height: 32)
                     Text("\(cal.component(.day, from: date))")
-                        .font(.system(size: 13))
+                        .font(.footnote)
                         .foregroundStyle(VGTheme.textMuted)
                 }
             }

@@ -1,6 +1,7 @@
 import Foundation
 import Observation
 import CloudKit
+import Network
 
 @MainActor
 @Observable
@@ -8,8 +9,24 @@ final class CommunityFeedViewModel {
     // MARK: - Public state
     var posts: [CKRecord] = []
     var isLoading: Bool = false
+    var isOffline: Bool = false
     var submitError: String? = nil
     var reactionError: String? = nil
+
+    // MARK: - Network monitor
+    private let pathMonitor = NWPathMonitor()
+    private let monitorQueue = DispatchQueue(label: "com.kyleharrington.VitaminG.netmonitor")
+
+    init() {
+        pathMonitor.pathUpdateHandler = { [weak self] path in
+            Task { @MainActor [weak self] in
+                self?.isOffline = (path.status != .satisfied)
+            }
+        }
+        pathMonitor.start(queue: monitorQueue)
+    }
+
+    deinit { pathMonitor.cancel() }
 
     // MARK: - Test overrides (nil in production)
     var fetchOverride: ((String, Int) async throws -> [CKRecord])? = nil

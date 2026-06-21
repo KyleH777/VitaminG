@@ -32,7 +32,7 @@ enum VGTheme {
     static let purple     = Color(red: 0.608, green: 0.490, blue: 0.714)  // #9B7DB6
 
     // MARK: - Utility
-    static let muted      = Color(red: 0.604, green: 0.541, blue: 0.471)  // #9A8A78
+    static let muted      = Color(red: 0.447, green: 0.384, blue: 0.310)  // #72624F — 4.9:1 on sandLight, passes WCAG AA
     static let warmWhite  = Color(red: 0.992, green: 0.980, blue: 0.965)  // #FDFAF6
 
     // MARK: - Dark mode raw values (luminous accent variants)
@@ -108,12 +108,12 @@ enum VGTheme {
     static let textMuted = Color(uiColor: UIColor { t in
         t.userInterfaceStyle == .dark
             ? UIColor(red: 0.949, green: 0.910, blue: 0.851, alpha: 0.42)   // muted sand
-            : UIColor(red: 0.604, green: 0.541, blue: 0.471, alpha: 1)      // muted #9A8A78
+            : UIColor(red: 0.447, green: 0.384, blue: 0.310, alpha: 1)      // #72624F — 4.9:1 on sandLight
     })
     static let textFaint = Color(uiColor: UIColor { t in
         t.userInterfaceStyle == .dark
             ? UIColor(red: 0.949, green: 0.910, blue: 0.851, alpha: 0.26)
-            : UIColor(red: 0.604, green: 0.541, blue: 0.471, alpha: 0.55)
+            : UIColor(red: 0.447, green: 0.384, blue: 0.310, alpha: 0.55)
     })
 
     // Accents — full luminosity in dark, standard in light

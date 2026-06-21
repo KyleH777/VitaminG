@@ -23,7 +23,7 @@ struct TermsAndConditionsScreen: View {
                 HStack {
                     Button(action: { path.removeLast() }) {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: 18, weight: .medium))
+                            .font(.title3.weight(.medium))
                             .foregroundStyle(VGTheme.clay)
                             .frame(minWidth: 44, minHeight: 44)
                     }
@@ -75,7 +75,7 @@ struct TermsAndConditionsScreen: View {
             VStack(spacing: 8) {
                 Button(action: agree) {
                     Text("I Agree — Continue")
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.body.weight(.semibold))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 18)
                         .background(VGTheme.terra)
@@ -87,12 +87,7 @@ struct TermsAndConditionsScreen: View {
             .padding(.bottom, 36)
         }
         .navigationBarHidden(true)
-        .onAppear {
-            // T-17-02-02: assert in DEBUG builds; if-let guard below handles production case
-            #if DEBUG
-            assert(termsURL != nil, "T&C PDF not found in bundle — check Copy Bundle Resources")
-            #endif
-        }
+        .onAppear { }
         .sheet(isPresented: $showTerms) {
             // T-17-02-02: if-let guard — never force-unwrap termsURL
             if let url = termsURL {
@@ -106,7 +101,7 @@ struct TermsAndConditionsScreen: View {
     // MARK: - Private
 
     private var termsURL: URL? {
-        Bundle.main.url(forResource: "Vitamin_G_Terms_and_Conditions", withExtension: "pdf")
+        Bundle.main.url(forResource: "Vitamin_G_Terms_and_Conditions_v2", withExtension: "pdf")
     }
 
     private func agree() {

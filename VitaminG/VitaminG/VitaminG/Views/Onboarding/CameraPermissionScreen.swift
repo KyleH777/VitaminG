@@ -42,10 +42,10 @@ struct CameraPermissionScreen: View {
                             )
                         VStack(alignment: .leading, spacing: 1) {
                             Text("Vitamin G")
-                                .font(.system(size: 13, weight: .semibold))
+                                .font(.footnote.weight(.semibold))
                                 .foregroundStyle(VGTheme.sand)
                             Text("Camera")
-                                .font(.system(size: 11))
+                                .font(.caption2)
                                 .foregroundStyle(VGTheme.muted)
                         }
                         Spacer()

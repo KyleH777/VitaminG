@@ -65,26 +65,24 @@ final class ExploreViewModel {
 
     // MARK: - Mood Prompt State
 
-    /// Whether the user has selected a mood today (card is collapsed).
-    var hasMoodSelectedToday: Bool {
+    /// Observable flag — SwiftUI observes this directly so the card animates out on tap.
+    var hasMoodSelectedToday: Bool = {
         guard let stored = UserDefaults.standard.object(forKey: Keys.moodDate) as? Date else {
             return false
         }
         return Calendar.current.isDateInToday(stored)
-    }
+    }()
 
     /// Call when user taps any mood chip. Collapses the card for today.
     func selectMood(_ mood: MoodOption) {
         UserDefaults.standard.set(Date(), forKey: Keys.moodDate)
-        // hasMoodSelectedToday is computed; no stored property to update.
+        hasMoodSelectedToday = true
     }
 
     /// Call when user dismisses the mood prompt without selecting a mood.
-    /// Writes the date gate so the card collapses for today without recording
-    /// a mood enum value — distinguishable from a real .okay selection by
-    /// the absence of a stored mood value.
     func dismissMoodPrompt() {
         UserDefaults.standard.set(Date(), forKey: Keys.moodDate)
+        hasMoodSelectedToday = true
     }
 
     // MARK: - Trending Now State (EXPLORE-05)

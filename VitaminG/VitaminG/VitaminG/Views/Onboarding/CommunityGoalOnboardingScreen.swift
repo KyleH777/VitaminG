@@ -19,7 +19,7 @@ struct CommunityGoalOnboardingScreen: View {
                     HStack {
                         Button(action: { path.removeLast() }) {
                             Image(systemName: "chevron.left")
-                                .font(.system(size: 18, weight: .medium))
+                                .font(.title3.weight(.medium))
                                 .foregroundStyle(VGTheme.clay)
                                 .frame(minWidth: 44, minHeight: 44)
                         }
@@ -62,7 +62,7 @@ struct CommunityGoalOnboardingScreen: View {
 
                             VStack(alignment: .leading, spacing: 6) {
                                 Text("☀️ COMMUNITY CHALLENGE")
-                                    .font(.system(size: 10, weight: .bold))
+                                    .font(.caption2.weight(.bold))
                                     .foregroundStyle(VGTheme.warmWhite.opacity(0.7))
                                     .kerning(1.5)
 
@@ -72,7 +72,7 @@ struct CommunityGoalOnboardingScreen: View {
                                     .lineSpacing(2)
 
                                 Text("Daily workouts · Nutrition plans · Accountability check-ins")
-                                    .font(.system(size: 12, weight: .light))
+                                    .font(.caption.weight(.light))
                                     .foregroundStyle(VGTheme.warmWhite.opacity(0.75))
                                     .lineSpacing(3)
                             }
@@ -89,7 +89,7 @@ struct CommunityGoalOnboardingScreen: View {
                                             .font(Font.custom("Georgia", size: 22))
                                             .foregroundStyle(VGTheme.clay)
                                         Text(label.uppercased())
-                                            .font(.system(size: 10, weight: .semibold))
+                                            .font(.caption2.weight(.semibold))
                                             .foregroundStyle(VGTheme.muted)
                                             .kerning(1)
                                     }
@@ -120,7 +120,7 @@ struct CommunityGoalOnboardingScreen: View {
                                     }
                                 }
                                 Text("+4,817 others joined")
-                                    .font(.system(size: 12))
+                                    .font(.caption)
                                     .foregroundStyle(VGTheme.muted)
                             }
                         }

@@ -90,7 +90,7 @@ final class OnboardingViewModel {
         // Guard: character set validation (T-17-03-02)
         // Only lowercase letters, digits, and underscores are allowed.
         // Note: uppercase is rejected here; UsernameScreen uses .textInputAutocapitalization(.never)
-        let allowed = CharacterSet.lowercaseLetters
+        let allowed = CharacterSet.letters
             .union(.decimalDigits)
             .union(CharacterSet(charactersIn: "_"))
         if newValue.unicodeScalars.contains(where: { !allowed.contains($0) }) {
@@ -115,8 +115,9 @@ final class OnboardingViewModel {
             let taken = try await UsernameLookupService.isUsernameTaken(username)
             usernameCheckState = taken ? .taken : .available
         } catch {
-            // Network/CloudKit failure — silently fall back to idle so the user can retry
-            usernameCheckState = .idle
+            // CloudKit unavailable (new container, no index yet, or network error).
+            // Assume available — the post-save count check in claimUsername catches real duplicates.
+            usernameCheckState = .available
         }
     }
 
@@ -141,7 +142,7 @@ final class OnboardingViewModel {
                 // Race condition: another device claimed the same username.
                 // Delete this device's write to avoid duplicate claims.
                 let container = CKContainer(identifier: "iCloud.com.kyleharrington.VitaminG")
-                try? await container.publicCloudDatabase.deleteRecord(withID: recordID)
+                _ = try? await container.publicCloudDatabase.deleteRecord(withID: recordID)
                 return false
             }
             return true

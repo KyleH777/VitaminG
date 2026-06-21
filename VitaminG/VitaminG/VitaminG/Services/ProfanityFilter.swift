@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 enum ProfanityFilter {
     /// Lazy static — read once from Bundle, then O(1) lookup forever.

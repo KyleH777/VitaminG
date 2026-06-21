@@ -3,6 +3,7 @@ import SwiftData
 import PhotosUI
 #if canImport(UIKit)
 import UIKit
+import os
 #endif
 
 struct TransformationPhotosModuleView: View {

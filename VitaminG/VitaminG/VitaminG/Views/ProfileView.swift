@@ -109,7 +109,7 @@ struct ProfileView: View {
             VStack(alignment: .leading, spacing: 0) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("TODAY'S DOSE")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.caption2.weight(.semibold))
                         .foregroundStyle(VGTheme.muted)
                         .kerning(1.0)
                     Text("\u{201C}\(viewModel.todayQuote)\u{201D}")
@@ -146,7 +146,7 @@ struct ProfileView: View {
                                 .frame(width: 22, height: 22)
                                 .overlay(
                                     Image(systemName: "camera.fill")
-                                        .font(.system(size: 9))
+                                        .font(.caption2)
                                         .foregroundStyle(.white)
                                 )
                                 .overlay(Circle().stroke(VGTheme.clay, lineWidth: 2))
@@ -163,12 +163,12 @@ struct ProfileView: View {
                         }
                         if let username = viewModel.profile?.username, !username.isEmpty {
                             Text("@\(username)")
-                                .font(.system(size: 13))
+                                .font(.footnote)
                                 .fontDesign(.rounded)
                                 .foregroundStyle(VGTheme.muted)
                         }
                         Text("Vitamin G Member")
-                            .font(.system(size: 12))
+                            .font(.caption)
                             .foregroundStyle(VGTheme.muted)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -179,7 +179,7 @@ struct ProfileView: View {
                         viewModel.showingEditSheet = true
                     } label: {
                         Text("Edit")
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(.caption.weight(.semibold))
                             .foregroundStyle(VGTheme.sand)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 8)
@@ -356,13 +356,13 @@ struct ProfileView: View {
                             .frame(width: 48, height: 48)
                         VStack(alignment: .leading, spacing: 3) {
                             Text(goal.title ?? "")
-                                .font(.system(size: 14, weight: .medium))
+                                .font(.subheadline.weight(.medium))
                                 .foregroundStyle(goal.isCompleted ? VGTheme.muted : VGTheme.clay)
                                 .strikethrough(goal.isCompleted, color: VGTheme.muted.opacity(0.6))
                         }
                         Spacer()
                         Image(systemName: "chevron.right")
-                            .font(.system(size: 12)).foregroundStyle(VGTheme.muted)
+                            .font(.caption).foregroundStyle(VGTheme.muted)
                     }
                     .padding(.horizontal, 16).padding(.vertical, 14)
                     .background(VGTheme.warmWhite)
@@ -383,7 +383,7 @@ struct ProfileView: View {
 
             if allBadges.isEmpty {
                 Text("Complete challenges to earn badges.")
-                    .font(.system(size: 14))
+                    .font(.subheadline)
                     .foregroundStyle(VGTheme.muted)
                     .frame(maxWidth: .infinity)
                     .padding(.top, 40)
@@ -422,13 +422,13 @@ struct ProfileView: View {
                 if let next = nextUnearned(earned: earnedBadges, all: allBadges) {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("NEXT BADGE")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.caption2.weight(.semibold))
                             .foregroundStyle(VGTheme.muted).kerning(0.8)
                         HStack(spacing: 12) {
                             Text(next.emoji).font(.system(size: 28)).opacity(0.4)
                             VStack(alignment: .leading, spacing: 6) {
                                 Text(next.label)
-                                    .font(.system(size: 14, weight: .medium))
+                                    .font(.subheadline.weight(.medium))
                                     .foregroundStyle(VGTheme.clay)
                                 GeometryReader { geo in
                                     ZStack(alignment: .leading) {
@@ -471,7 +471,7 @@ struct ProfileView: View {
             ForEach(Array(stats.enumerated()), id: \.offset) { i, stat in
                 VStack(spacing: 4) {
                     Text(stat.0).font(VGTheme.serif(22)).foregroundStyle(VGTheme.terra)
-                    Text(stat.1).font(.system(size: 10)).foregroundStyle(VGTheme.muted)
+                    Text(stat.1).font(.caption2).foregroundStyle(VGTheme.muted)
                         .multilineTextAlignment(.center)
                 }
                 .frame(maxWidth: .infinity)
@@ -581,15 +581,15 @@ private struct HeatmapCard: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("Check-in activity")
-                    .font(.system(size: 13, weight: .semibold)).foregroundStyle(VGTheme.clay)
+                    .font(.footnote.weight(.semibold)).foregroundStyle(VGTheme.clay)
                 Spacer()
                 Text("Last \(weeks) weeks")
-                    .font(.system(size: 12)).foregroundStyle(VGTheme.muted)
+                    .font(.caption).foregroundStyle(VGTheme.muted)
             }
 
             HStack(spacing: 3) {
                 ForEach(Array(days.enumerated()), id: \.offset) { _, d in
-                    Text(d).font(.system(size: 9)).foregroundStyle(VGTheme.muted)
+                    Text(d).font(.caption2).foregroundStyle(VGTheme.muted)
                         .frame(maxWidth: .infinity)
                 }
             }

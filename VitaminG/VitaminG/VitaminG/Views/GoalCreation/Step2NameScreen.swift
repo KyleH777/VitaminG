@@ -26,7 +26,7 @@ struct Step2NameScreen: View {
         VStack(alignment: .leading, spacing: 6) {
             stepDots
             Text("Say it\nout loud.")
-                .font(.custom("CormorantGaramond-Regular", size: 34))
+                .font(.custom("CormorantGaramond-Regular", size: 34, relativeTo: .largeTitle))
                 .foregroundStyle(VGTheme.clay)
             Text("Name your goal. The clearer, the more it sticks.")
                 .font(.subheadline)
@@ -49,7 +49,7 @@ struct Step2NameScreen: View {
     private var goalInputCard: some View {
         VStack(alignment: .leading, spacing: 0) {
             TextField("Walk 10,000 steps", text: $wizardVM.draftTitle, axis: .vertical)
-                .font(.custom("CormorantGaramond-Regular", size: 22))
+                .font(.custom("CormorantGaramond-Regular", size: 22, relativeTo: .title2))
                 .foregroundStyle(VGTheme.clay)
                 .lineLimit(1...4)
                 .focused($isFocused)

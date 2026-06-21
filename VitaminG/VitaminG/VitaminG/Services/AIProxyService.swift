@@ -62,7 +62,7 @@ final class AIProxyService: AIProxyServiceProtocol {
 
     // MARK: - Singleton
 
-    static let shared = AIProxyService()
+    nonisolated static let shared = AIProxyService()
     private init() {}
 
     // MARK: - Configuration

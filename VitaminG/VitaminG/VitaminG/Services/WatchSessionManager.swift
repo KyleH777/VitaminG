@@ -2,6 +2,7 @@ import Foundation
 import WatchConnectivity
 import SwiftData
 import WidgetKit
+import os
 
 // MARK: - WatchSessionManager
 
@@ -40,7 +41,7 @@ final class WatchSessionManager: NSObject, WCSessionDelegate {
     /// Idempotent — addCheckIn also calls this internally.
     /// Tests replace this with a recording stub to avoid scheduling real notifications.
     var cancelStreakAtRiskNudge: (() -> Void)? = {
-        Task { await NotificationScheduler.shared.cancelGlobalStreakAtRiskNudge() }
+        Task { NotificationScheduler.shared.cancelGlobalStreakAtRiskNudge() }
     }
 
     /// Side-effect seam: reloads all WidgetKit timelines after a check-in.

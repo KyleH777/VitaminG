@@ -70,7 +70,7 @@ struct Step3DetailsScreen: View {
         VStack(alignment: .leading, spacing: 6) {
             stepDots
             Text("When &\nhow often?")
-                .font(.custom("CormorantGaramond-Regular", size: 34))
+                .font(.custom("CormorantGaramond-Regular", size: 34, relativeTo: .largeTitle))
                 .foregroundStyle(VGTheme.clay)
         }
     }
@@ -115,13 +115,13 @@ struct Step3DetailsScreen: View {
                     HStack(spacing: 8) {
                         TextField("e.g. 45", text: $customDurationText)
                             .keyboardType(.numberPad)
-                            .font(.system(size: 16))
+                            .font(.callout)
                             .foregroundStyle(VGTheme.textPrimary)
                             .onChange(of: customDurationText) { _, text in
                                 validateAndApplyCustomDuration(text)
                             }
                         Text("days")
-                            .font(.system(size: 14))
+                            .font(.subheadline)
                             .foregroundStyle(VGTheme.textMuted)
                     }
                     .padding(14)
@@ -131,7 +131,7 @@ struct Step3DetailsScreen: View {
 
                     if let error = customDurationError {
                         Text(error)
-                            .font(.system(size: 12))
+                            .font(.caption)
                             .foregroundStyle(Color.red)
                             .padding(.leading, 4)
                     }
@@ -290,7 +290,7 @@ struct Step3DetailsScreen: View {
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 4) {
                 Text("You're about to set a goal.")
-                    .font(.custom("CormorantGaramond-SemiBold", size: 16)).foregroundStyle(VGTheme.clay)
+                    .font(.custom("CormorantGaramond-SemiBold", size: 16, relativeTo: .callout)).foregroundStyle(VGTheme.clay)
                 Text("That's already further than most people get. We're rooting for you.")
                     .font(.caption).foregroundStyle(VGTheme.muted)
             }
@@ -332,7 +332,7 @@ private struct TierOptionCard: View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 4) {
                 Label(tier.displayName, systemImage: tier.icon)
-                    .font(.custom("CormorantGaramond-SemiBold", size: 15))
+                    .font(.custom("CormorantGaramond-SemiBold", size: 15, relativeTo: .subheadline))
                     .foregroundStyle(isSelected ? tier.color : VGTheme.clay)
                 Text(tier.description)
                     .font(.caption2).foregroundStyle(VGTheme.muted).lineLimit(1)
@@ -361,7 +361,7 @@ private struct FrequencyCard: View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(frequency.rawValue)
-                    .font(.custom("CormorantGaramond-SemiBold", size: 16))
+                    .font(.custom("CormorantGaramond-SemiBold", size: 16, relativeTo: .callout))
                     .foregroundStyle(isSelected ? VGTheme.terra : VGTheme.clay)
                 Text(frequency.subtitle).font(.caption2).foregroundStyle(VGTheme.muted)
             }

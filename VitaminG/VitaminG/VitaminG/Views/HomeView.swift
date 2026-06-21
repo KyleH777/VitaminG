@@ -130,14 +130,14 @@ struct HomeView: View {
     private var streakBadge: some View {
         HStack(spacing: 5) {
             Text("◉")
-                .font(.system(size: 13))
+                .font(.footnote)
                 .foregroundStyle(VGTheme.accentTerra)
                 .shadow(color: colorScheme == .dark ? VGTheme.accentTerra.opacity(0.6) : .clear, radius: 4)
             Text("\(appStreak)")
-                .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                .font(.system(.footnote, design: .monospaced).weight(.semibold))
                 .foregroundStyle(VGTheme.accentTerra)
             Text("day streak")
-                .font(.system(size: 11))
+                .font(.caption2)
                 .foregroundStyle(VGTheme.textMuted)
         }
         .padding(.horizontal, 12)
@@ -151,7 +151,7 @@ struct HomeView: View {
     private var bellButton: some View {
         ZStack(alignment: .topTrailing) {
             Image(systemName: "bell.fill")
-                .font(.system(size: 16))
+                .font(.callout)
                 .foregroundStyle(VGTheme.textSecondary)
                 .frame(width: 44, height: 44)
                 .background(VGTheme.surface)
@@ -240,7 +240,7 @@ struct HomeView: View {
                         .fill(VGTheme.accentTerra.opacity(0.15))
                         .frame(width: 40, height: 40)
                     Image(systemName: "chart.bar.fill")
-                        .font(.system(size: 18))
+                        .font(.title3)
                         .foregroundStyle(VGTheme.accentTerra)
                 }
                 VStack(alignment: .leading, spacing: 2) {
@@ -253,7 +253,7 @@ struct HomeView: View {
                 }
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.caption.weight(.semibold))
                     .foregroundStyle(VGTheme.textMuted)
             }
             .padding(.horizontal, 18)
@@ -332,7 +332,7 @@ struct HomeView: View {
                     .fill(VGTheme.accentTerra.opacity(0.15))
                     .frame(width: 44, height: 44)
                 Image(systemName: icon)
-                    .font(.system(size: 20))
+                    .font(.title3)
                     .foregroundStyle(VGTheme.accentTerra)
                     .accessibilityHidden(true)
             }
@@ -388,14 +388,14 @@ struct HomeView: View {
                         .font(VGTheme.serif(20, weight: .semibold))
                         .foregroundStyle(VGTheme.sand)
                     Text("Tap + Add to set your first goal — small steps, taken daily.")
-                        .font(.system(size: 14))
+                        .font(.subheadline)
                         .foregroundStyle(VGTheme.textMuted)
                         .multilineTextAlignment(.center)
                     Button {
                         showingGoalEntryChoice = true
                     } label: {
                         Text("Add a goal")
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(.callout.weight(.semibold))
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
@@ -456,7 +456,7 @@ struct HomeView: View {
             // D-11: flame icon on goals with 3+ consecutive day streak
             if streak >= 3 {
                 Image(systemName: "flame.fill")
-                    .font(.system(size: 14))
+                    .font(.subheadline)
                     .foregroundStyle(VGTheme.accentGold)
                     .accessibilityHidden(true)
             }

@@ -30,7 +30,7 @@ struct NameScreen: View {
                 HStack {
                     Button(action: { path.removeLast() }) {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: 18, weight: .medium))
+                            .font(.title3.weight(.medium))
                             .foregroundStyle(VGTheme.clay)
                     }
                     .frame(minWidth: 44, minHeight: 44)
@@ -103,7 +103,7 @@ struct NameScreen: View {
             VStack(spacing: 8) {
                 Button(action: advanceIfValid) {
                     Text("Continue")
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.body.weight(.semibold))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 18)
                         .background(name.trimmingCharacters(in: .whitespaces).isEmpty ? VGTheme.sandMid : VGTheme.terra)

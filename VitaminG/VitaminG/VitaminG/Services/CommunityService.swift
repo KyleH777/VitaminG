@@ -1,5 +1,6 @@
 import CloudKit
 import Foundation
+import os
 #if canImport(UIKit)
 import UIKit
 #endif

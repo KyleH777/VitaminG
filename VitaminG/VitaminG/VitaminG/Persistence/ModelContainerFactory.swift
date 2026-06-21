@@ -22,14 +22,11 @@ enum ModelContainerFactory {
 
         let config: ModelConfiguration
         if appGroupAvailable {
-            // CloudKit disabled until paid Developer Program team is active in Xcode signing.
-            // Switch cloudKitDatabase back to .automatic once the paid team appears in the
-            // Team dropdown under Signing & Capabilities.
             config = ModelConfiguration(
                 schema: schema,
                 isStoredInMemoryOnly: false,
                 groupContainer: .identifier("group.com.kyleharrington.VitaminG"),
-                cloudKitDatabase: .none
+                cloudKitDatabase: .automatic
             )
         } else {
             config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: inMemory)
@@ -78,6 +75,8 @@ enum ModelContainerFactory {
 
 #if DEBUG
 import CoreData
+import os
+private let _ckInitLog = Logger(subsystem: "com.kyleharrington.VitaminG", category: "cloudkit")
 
 extension ModelContainerFactory {
     /// Forces CloudKit to register every attribute and relationship in the schema so sync works
@@ -110,17 +109,17 @@ extension ModelContainerFactory {
                 )
                 ckContainer.persistentStoreDescriptions = [desc]
                 ckContainer.loadPersistentStores { _, error in
-                    if let error { VGLog.cloudKit.error("Schema init load error: \(error.localizedDescription, privacy: .public)") }
+                    if let error { _ckInitLog.error("Schema init load error: \(error.localizedDescription, privacy: .public)") }
                 }
                 try ckContainer.initializeCloudKitSchema()
                 // Remove store to avoid double-open with SwiftData
                 if let store = ckContainer.persistentStoreCoordinator.persistentStores.first {
                     try ckContainer.persistentStoreCoordinator.remove(store)
                 }
-                VGLog.cloudKit.debug("initializeCloudKitSchema completed successfully")
+                _ckInitLog.debug("initializeCloudKitSchema completed successfully")
             }
         } catch {
-            VGLog.cloudKit.error("initializeCloudKitSchema error: \(error.localizedDescription, privacy: .public)")
+            _ckInitLog.error("initializeCloudKitSchema error: \(error.localizedDescription, privacy: .public)")
             // Non-fatal in DEBUG — log and continue
         }
     }

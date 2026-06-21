@@ -14,7 +14,6 @@ struct ChallengeDiscoveryView: View {
     @Query private var templates: [ChallengeTemplate]
     @Query private var userChallenges: [UserChallenge]
     @State private var showBuildYourOwn = false
-    @State private var selectedMood: String = "All"
     @State private var localNavigationPath: NavigationPath = NavigationPath()
     @Binding var navigationPath: NavigationPath
 
@@ -27,8 +26,7 @@ struct ChallengeDiscoveryView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                VitaminDispenserView(selectedMood: $selectedMood, navigationPath: $localNavigationPath, goalVM: goalVM)
-                MoodScannerView(selectedMood: $selectedMood)
+                VitaminDispenserView(navigationPath: $localNavigationPath, goalVM: goalVM)
                 buildYourOwnButton
                 if !templates.filter({ $0.isFeatured }).isEmpty {
                     TrendingChallengesRow(
@@ -38,9 +36,6 @@ struct ChallengeDiscoveryView: View {
                     )
                 }
                 VitaminShelfGrid(navigationPath: $localNavigationPath, goalVM: goalVM)
-                if selectedMood != "All" {
-                    moodFilteredList
-                }
             }
             .padding(.top, 8)
         }
@@ -51,30 +46,6 @@ struct ChallengeDiscoveryView: View {
         }
         .sheet(isPresented: $showBuildYourOwn) {
             CustomChallengeBuilderView()
-        }
-    }
-
-    // MARK: - Mood-Filtered List
-
-    private var moodFilteredList: some View {
-        LazyVStack(spacing: 8) {
-            let filtered = ChallengeLibrary.categories.flatMap { $0.goals }.filter {
-                $0.title.localizedCaseInsensitiveContains(selectedMood)
-            }
-            ForEach(filtered) { goal in
-                HStack {
-                    Text(goal.title)
-                        .font(.callout)
-                        .fontDesign(.rounded)
-                        .foregroundStyle(VGTheme.textPrimary)
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
-                .background(VGTheme.surface)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .padding(.horizontal, 16)
-            }
         }
     }
 
@@ -411,23 +382,19 @@ private struct VitaminShelfGrid: View {
 // MARK: - VitaminDispenserView
 
 private struct VitaminDispenserView: View {
-    @Binding var selectedMood: String
     @Binding var navigationPath: NavigationPath
     let goalVM: GoalViewModel
     @Environment(\.modelContext) private var modelContext
     @State private var dispensedGoal: GoalTemplate? = nil
     @State private var isShaking: Bool = false
 
-    private var moodFiltered: [GoalTemplate] {
-        let all = ChallengeLibrary.categories.flatMap { $0.goals }
-        return selectedMood == "All" ? all : all.filter {
-            $0.title.localizedCaseInsensitiveContains(selectedMood)
-        }
+    private var allGoals: [GoalTemplate] {
+        ChallengeLibrary.categories.flatMap { $0.goals }
     }
 
     private func dispense() {
-        guard !moodFiltered.isEmpty else { return }
-        dispensedGoal = moodFiltered.randomElement()
+        guard !allGoals.isEmpty else { return }
+        dispensedGoal = allGoals.randomElement()
         withAnimation(.interpolatingSpring(stiffness: 300, damping: 10)) {
             isShaking = true
         }

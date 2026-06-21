@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import os
 
 // MARK: - CustomChallengeBuilderView (CHAL-23)
 

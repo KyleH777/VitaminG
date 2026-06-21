@@ -51,7 +51,7 @@ struct TrendingNowSection: View {
                         endPoint: .bottomTrailing
                     )
                 )
-                .frame(width: 180, height: 120)
+                .frame(width: 190, height: 140)
 
             VStack(alignment: .leading, spacing: 6) {
                 Text(item.title)
@@ -60,6 +60,7 @@ struct TrendingNowSection: View {
                     .foregroundStyle(.white)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: 166, alignment: .leading)
 
                 HStack(spacing: 6) {
                     ProgressRingView(

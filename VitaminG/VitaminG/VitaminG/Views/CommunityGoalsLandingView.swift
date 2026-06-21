@@ -14,7 +14,7 @@ struct CommunityGoalsLandingView: View {
     private var template: ChallengeTemplate? { userChallenge.template }
     private var accentColor: Color { Color(hex: template?.accentColorHex ?? "#C4673A") }
     private var collectiveProgress: Double {
-        min(1.0, Double(userChallenge.totalCheckIns ?? 0) / Double(max(1, template?.durationDays ?? 90)))
+        min(1.0, Double(userChallenge.totalCheckIns) / Double(max(1, template?.durationDays ?? 90)))
     }
     private var currentDay: Int {
         let start = userChallenge.startDate ?? Date()
@@ -153,7 +153,7 @@ struct CommunityGoalsLandingView: View {
                                 Text("\(i + 1)").font(VGTheme.serif(16)).foregroundStyle(VGTheme.muted).frame(width: 20).accessibilityHidden(true)
                                 Text(name).font(.callout).fontDesign(.rounded).foregroundStyle(VGTheme.textPrimary)
                                 Spacer()
-                                Text("\(max(0, (userChallenge.totalCheckIns ?? 0) - (i * 2))) check-ins")
+                                Text("\(max(0, userChallenge.totalCheckIns - (i * 2))) check-ins")
                                     .font(.caption).foregroundStyle(VGTheme.textMuted)
                             }
                             .padding(.horizontal, 16).padding(.vertical, 10)

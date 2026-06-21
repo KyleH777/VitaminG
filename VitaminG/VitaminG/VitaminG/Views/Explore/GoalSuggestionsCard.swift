@@ -104,7 +104,7 @@ struct GoalSuggestionsCard: View {
         )
         if (try? goalVM.addGoal(input: input, context: modelContext)) != nil {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            withAnimation(.easeInOut(duration: 0.2)) {
+            _ = withAnimation(.easeInOut(duration: 0.2)) {
                 aiViewModel.addedSuggestionIndices.insert(index)
             }
         }

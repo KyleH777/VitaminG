@@ -1,6 +1,7 @@
 import CloudKit
 import Foundation
 import SwiftData
+import os
 
 /// Manages CloudKit public database operations for the PublicGoal record type.
 /// Owns all CRUD, Discover search, participant count increment, backfill, and sync.
@@ -181,6 +182,7 @@ enum PublicGoalService {
         creatorUsername: String,
         writeOverride: ((Goal, String) async throws -> String)? = nil
     ) async {
+        guard (try? await CKContainer.default().accountStatus()) == .available else { return }
         for goal in goals {
             guard goal.isPublic == true, goal.cloudKitPublicGoalRecordID == nil else { continue }
             do {
@@ -211,6 +213,10 @@ enum PublicGoalService {
             await override(goals)
             return
         }
+        // CKContainer(identifier:) traps if the container isn't in the signed provisioning
+        // profile (requires paid Apple Developer Program + CloudKit capability registered).
+        // Pre-check account status via the default container — always safe to call.
+        guard (try? await CKContainer.default().accountStatus()) == .available else { return }
         let db = CKContainer(identifier: containerID).publicCloudDatabase
         for goal in goals {
             guard goal.isPublic == true,
