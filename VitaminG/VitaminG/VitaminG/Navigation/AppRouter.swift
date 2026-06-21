@@ -12,15 +12,6 @@ final class AppRouter {
     var pendingPublicProfileRecordID: String? = nil
     var pendingChallengeCheckInID: String? = nil
 
-    func navigate(to route: AppRoute) {
-        path.append(route)
-    }
-
-    func pop() {
-        guard !path.isEmpty else { return }
-        path.removeLast()
-    }
-
     func popToRoot() {
         path.removeAll()
     }

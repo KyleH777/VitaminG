@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — Vitamin G</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+      color: #3a2e24;
+      background: #faf7f4;
+      line-height: 1.7;
+    }
+    h1 { font-size: 2rem; color: #c4704a; margin-bottom: 4px; }
+    h2 { font-size: 1.15rem; color: #7a5c46; margin-top: 2rem; }
+    p, li { font-size: 1rem; color: #4a3c30; }
+    ul { padding-left: 1.4rem; }
+    a { color: #c4704a; }
+    .meta { font-size: 0.875rem; color: #9a8a78; margin-bottom: 2rem; }
+    hr { border: none; border-top: 1px solid #e8ddd4; margin: 2rem 0; }
+  </style>
+</head>
+<body>
+
+<h1>Privacy Policy</h1>
+<p class="meta">Vitamin G &mdash; Last updated: June 21, 2026</p>
+
+<p>Vitamin G (&ldquo;the app,&rdquo; &ldquo;we,&rdquo; &ldquo;our&rdquo;) is a goal-tracking and gratitude app for iOS developed by Kyle Harrington. Your privacy matters to us. This policy explains what data we collect, how we use it, and the choices you have.</p>
+
+<hr>
+
+<h2>1. Data We Collect</h2>
+
+<h2>1a. Data You Provide</h2>
+<ul>
+  <li><strong>Display name and username</strong> — chosen during onboarding, stored on your device and in your private iCloud account via CloudKit.</li>
+  <li><strong>Goals and completion records</strong> — all goal titles, descriptions, tiers, frequencies, and check-in history. Stored locally via SwiftData and synced to your private iCloud account.</li>
+  <li><strong>Gratitude entries and daily wins</strong> — stored locally and synced to your private iCloud account.</li>
+  <li><strong>Profile photo</strong> — optionally uploaded. Stored in your private iCloud account. Only shared publicly if you explicitly enable your public profile.</li>
+  <li><strong>Community posts</strong> — if you post to the community feed, your post text, selected category, display name, and avatar color are stored in the CloudKit public database and visible to other users.</li>
+</ul>
+
+<h2>1b. Data Collected Automatically</h2>
+<ul>
+  <li><strong>Apple Sign-In identifier</strong> — a stable, app-scoped user ID provided by Apple. We do not receive your email address unless you choose to share it.</li>
+  <li><strong>App analytics</strong> — anonymous usage metrics (goal counts, check-in activity, streak length) are computed on-device and may be exported by you via the Analytics export feature. We do not send analytics to any external server.</li>
+  <li><strong>Network connectivity status</strong> — monitored on-device only to show an offline banner. Not stored or transmitted.</li>
+</ul>
+
+<h2>1c. Data We Do Not Collect</h2>
+<ul>
+  <li>We do not collect device identifiers (IDFA/IDFV) for advertising.</li>
+  <li>We do not sell your data to third parties.</li>
+  <li>We do not use third-party analytics SDKs (e.g. Firebase, Mixpanel).</li>
+  <li>We do not run behavioral ad targeting.</li>
+</ul>
+
+<hr>
+
+<h2>2. How We Use Your Data</h2>
+<ul>
+  <li><strong>Goal tracking and reminders</strong> — your goals and check-in history power the streak engine, progress rings, and daily local push notifications. All computation happens on-device.</li>
+  <li><strong>iCloud sync</strong> — your private data syncs across your own Apple devices via CloudKit. We cannot access your private CloudKit data.</li>
+  <li><strong>AI-powered suggestions</strong> — if you use the AI motivation or goal suggestion features, the app sends a small anonymized payload (goal count, category, recent activity summary) to a Cloudflare Worker proxy operated by Kyle Harrington. The proxy forwards the request to Anthropic&rsquo;s Claude API and returns the response. No personally identifying information is included in these requests. Anthropic&rsquo;s privacy policy governs their handling of API data.</li>
+  <li><strong>Community features</strong> — community posts are stored in CloudKit&rsquo;s public database and visible to all users. Posts you delete are removed from the database.</li>
+  <li><strong>Widgets and Apple Watch</strong> — your goal data is shared between the app, widget, and Watch app via a shared App Group container on your device and via WatchConnectivity. This data does not leave your device ecosystem.</li>
+</ul>
+
+<hr>
+
+<h2>3. Third-Party Services</h2>
+
+<table style="border-collapse:collapse;width:100%;font-size:0.9rem;">
+  <thead>
+    <tr style="border-bottom:1px solid #e8ddd4;">
+      <th style="text-align:left;padding:8px 4px;color:#7a5c46;">Service</th>
+      <th style="text-align:left;padding:8px 4px;color:#7a5c46;">Purpose</th>
+      <th style="text-align:left;padding:8px 4px;color:#7a5c46;">Data shared</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="border-bottom:1px solid #f0e8e0;">
+      <td style="padding:8px 4px;">Apple iCloud / CloudKit</td>
+      <td style="padding:8px 4px;">Private data sync; community feed storage</td>
+      <td style="padding:8px 4px;">Goals, profile, community posts</td>
+    </tr>
+    <tr style="border-bottom:1px solid #f0e8e0;">
+      <td style="padding:8px 4px;">Apple Sign In</td>
+      <td style="padding:8px 4px;">Authentication</td>
+      <td style="padding:8px 4px;">App-scoped user ID (opaque)</td>
+    </tr>
+    <tr style="border-bottom:1px solid #f0e8e0;">
+      <td style="padding:8px 4px;">Apple StoreKit</td>
+      <td style="padding:8px 4px;">In-app tip purchases</td>
+      <td style="padding:8px 4px;">Handled entirely by Apple</td>
+    </tr>
+    <tr style="border-bottom:1px solid #f0e8e0;">
+      <td style="padding:8px 4px;">Cloudflare Workers (proxy)</td>
+      <td style="padding:8px 4px;">AI feature relay</td>
+      <td style="padding:8px 4px;">Anonymized goal context (no PII)</td>
+    </tr>
+    <tr>
+      <td style="padding:8px 4px;">Anthropic Claude API</td>
+      <td style="padding:8px 4px;">AI motivation and goal suggestions</td>
+      <td style="padding:8px 4px;">Anonymized goal context (no PII)</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2>4. Data Retention and Deletion</h2>
+<ul>
+  <li><strong>Local data</strong> — stored on your device and deleted when you delete the app.</li>
+  <li><strong>iCloud data</strong> — stored in your personal iCloud account. You can delete it at any time via Settings &rsaquo; [your name] &rsaquo; iCloud &rsaquo; Manage Account Storage, or by using the &ldquo;Delete Account&rdquo; option inside the app.</li>
+  <li><strong>Community posts</strong> — you can delete any post you have made from within the app. Deletion removes it from the CloudKit public database.</li>
+  <li><strong>Account deletion</strong> — the &ldquo;Delete Account&rdquo; option in Settings permanently removes your profile and associated public data from our CloudKit records. Private iCloud data is controlled by your Apple ID.</li>
+</ul>
+
+<hr>
+
+<h2>5. Permissions</h2>
+<ul>
+  <li><strong>Notifications</strong> — used for daily goal reminders and streak-at-risk alerts. Always optional; you can revoke permission in iOS Settings at any time.</li>
+  <li><strong>Camera / Photo Library</strong> — used only if you upload a profile photo or transformation photo. Images are stored in your private iCloud account. You can revoke permission in iOS Settings.</li>
+  <li><strong>Face ID / Touch ID</strong> — used for the optional biometric app lock. Biometric data never leaves your device; we only receive a pass/fail result from iOS.</li>
+</ul>
+
+<hr>
+
+<h2>6. Children&rsquo;s Privacy</h2>
+<p>Vitamin G is not directed at children under 13. We do not knowingly collect personal information from children. If you believe a child has provided personal information through the app, please contact us and we will delete it.</p>
+
+<hr>
+
+<h2>7. Your Rights</h2>
+<p>Depending on your jurisdiction, you may have the right to access, correct, or delete your personal data. Because most of your data lives in your own iCloud account, you can exercise these rights directly through Apple&rsquo;s iCloud settings. For community-posted data or any other requests, contact us at the address below.</p>
+
+<hr>
+
+<h2>8. Changes to This Policy</h2>
+<p>We may update this policy from time to time. The &ldquo;Last updated&rdquo; date at the top of this page reflects the most recent revision. Continued use of the app after changes constitutes acceptance of the updated policy.</p>
+
+<hr>
+
+<h2>9. Contact</h2>
+<p>Questions or requests regarding this privacy policy:<br>
+<strong>Kyle Harrington</strong><br>
+<a href="mailto:kileharrington@gmail.com">kileharrington@gmail.com</a></p>
+
+</body>
+</html>

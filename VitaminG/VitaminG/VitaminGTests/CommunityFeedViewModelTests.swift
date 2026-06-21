@@ -91,6 +91,23 @@ final class CommunityFeedViewModelTests: XCTestCase {
         XCTAssertEqual(capturedImageData, fakeImageData, "imageData must match what was supplied")
     }
 
+    // OFFLINE-01 — isOffline defaults to false on init (network not yet sampled)
+    func test_isOffline_defaultsFalse() {
+        XCTAssertFalse(sut.isOffline, "isOffline must start false — NWPathMonitor fires asynchronously, not at init")
+    }
+
+    // OFFLINE-02 — loadPosts does not throw when isOffline is true; posts array remains unchanged
+    func test_loadPosts_whenOffline_doesNotClearExistingPosts() async throws {
+        let existing = CKRecord(recordType: CommunityService.postRecordType)
+        existing["text"] = "cached post" as CKRecordValue
+        sut.posts = [existing]
+        sut.isOffline = true
+        sut.fetchOverride = { _, _ in throw URLError(.notConnectedToInternet) }
+        await sut.loadPosts(category: "fitness")
+        XCTAssertEqual(sut.posts.count, 1, "Existing posts must be preserved when loadPosts fails offline")
+        XCTAssertFalse(sut.isLoading, "isLoading must be false after load completes")
+    }
+
     // CHAL-15
     func test_reportPost_deduplicatesReporters() async throws {
         let recordID = CKRecord.ID(recordName: "test-post-2")
