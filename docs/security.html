@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security — Vitamin G</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --sand: #F2E8D9;
+      --sand-light: #FAF5EE;
+      --sand-mid: #E8D9C4;
+      --clay: #3D2F1E;
+      --clay-mid: #5A4232;
+      --clay-deep: #2A1F12;
+      --terra: #C4673A;
+      --terra-soft: #E8956D;
+      --terra-light: #F5DDD0;
+      --muted: #9A8A78;
+      --white: #FDFAF6;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      background: var(--sand-light);
+      color: var(--clay);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    nav.top {
+      background: rgba(250,245,238,0.92);
+      backdrop-filter: saturate(160%) blur(12px);
+      border-bottom: 1px solid rgba(61,47,30,0.06);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-icon {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(135deg,#FFB07A 0%,#C4673A 60%,#8B4422 100%);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 12px rgba(196,103,58,0.35);
+    }
+    .logo-icon span { font-family: var(--serif); font-style: italic; font-weight: 600; color: #fff; font-size: 20px; line-height: 1; }
+    .logo-name { font-family: var(--serif); font-size: 22px; font-weight: 500; color: var(--clay); letter-spacing: -0.005em; }
+    .nav-back { font-size: 13px; font-weight: 500; color: var(--terra); display: flex; align-items: center; gap: 5px; transition: opacity 0.15s; }
+    .nav-back:hover { opacity: 0.75; }
+
+    main {
+      flex: 1;
+      max-width: 760px;
+      margin: 72px auto;
+      padding: 0 32px;
+      width: 100%;
+    }
+
+    .eyebrow {
+      font-size: 12px; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--terra);
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-size: clamp(40px, 6vw, 64px);
+      font-weight: 400;
+      line-height: 1.02;
+      letter-spacing: -0.01em;
+      color: var(--clay);
+      margin-bottom: 20px;
+    }
+
+    .intro {
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--clay-mid);
+      font-weight: 300;
+      max-width: 620px;
+      margin-bottom: 56px;
+      border-bottom: 1px solid var(--sand-mid);
+      padding-bottom: 40px;
+    }
+
+    h2 {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--clay);
+      margin-bottom: 16px;
+      margin-top: 48px;
+    }
+
+    p { font-size: 15px; line-height: 1.75; color: var(--clay-mid); margin-bottom: 16px; }
+
+    .report-card {
+      background: var(--white);
+      border: 1px solid var(--sand-mid);
+      border-radius: 20px;
+      padding: 36px;
+      box-shadow: 0 8px 32px rgba(61,47,30,0.06);
+      margin-bottom: 48px;
+    }
+
+    .email-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .email-icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: var(--terra-light);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 22px;
+    }
+    .email-label { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+    .email-link { font-family: var(--serif); font-size: 22px; font-weight: 500; color: var(--terra); transition: opacity 0.15s; }
+    .email-link:hover { opacity: 0.75; }
+
+    .steps { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+    .steps li {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 14px; color: var(--clay-mid); line-height: 1.6;
+    }
+    .step-num {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--terra-light); color: var(--terra);
+      font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+
+    .scope-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 8px;
+    }
+    @media (max-width: 600px) { .scope-grid { grid-template-columns: 1fr; } }
+
+    .scope-card {
+      background: var(--white);
+      border: 1px solid var(--sand-mid);
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .scope-card h3 {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .scope-card.in h3 { color: #3d8b5a; }
+    .scope-card.out h3 { color: var(--muted); }
+    .scope-card ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .scope-card ul li { font-size: 13.5px; color: var(--clay-mid); display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+    .scope-card ul li::before { flex-shrink: 0; margin-top: 3px; }
+    .scope-card.in ul li::before { content: "✓"; color: #3d8b5a; font-weight: 700; font-size: 12px; }
+    .scope-card.out ul li::before { content: "–"; color: var(--muted); font-weight: 700; }
+
+    .timeline-row {
+      display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px;
+    }
+    .timeline-chip {
+      background: var(--terra-light);
+      border: 1px solid rgba(196,103,58,0.2);
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 13px;
+    }
+    .timeline-chip strong { display: block; font-size: 18px; font-family: var(--serif); color: var(--terra); }
+
+    footer.bottom {
+      background: var(--clay-deep);
+      color: var(--sand);
+      padding: 32px;
+      text-align: center;
+      font-size: 12px;
+      color: rgba(242,232,217,0.4);
+    }
+    footer.bottom a { color: rgba(242,232,217,0.6); margin: 0 10px; transition: color 0.15s; }
+    footer.bottom a:hover { color: var(--terra-soft); }
+  </style>
+</head>
+<body>
+
+<nav class="top">
+  <a href="index.html" class="logo">
+    <div class="logo-icon"><span>G</span></div>
+    <span class="logo-name">Vitamin G</span>
+  </a>
+  <a href="index.html" class="nav-back">← Back to home</a>
+</nav>
+
+<main>
+  <div class="eyebrow">Security</div>
+  <h1>Responsible disclosure</h1>
+  <p class="intro">We take security seriously. If you discover a vulnerability in Vitamin G or our supporting infrastructure, please let us know privately so we can fix it before it affects users.</p>
+
+  <h2>Report a vulnerability</h2>
+  <div class="report-card">
+    <div class="email-row">
+      <div class="email-icon">🔒</div>
+      <div>
+        <div class="email-label">Security email</div>
+        <a href="mailto:kileharrington@gmail.com?subject=[SECURITY]%20Vitamin%20G%20%E2%80%94%20" class="email-link">kileharrington@gmail.com</a>
+      </div>
+    </div>
+    <p style="margin-bottom:20px;">Use the subject line <code style="background:var(--sand);padding:2px 6px;border-radius:4px;font-size:13px;">[SECURITY] Vitamin G — &lt;brief description&gt;</code></p>
+    <p style="font-size:13px;color:var(--muted);margin:0;">Please do not open a public GitHub issue for security vulnerabilities.</p>
+  </div>
+
+  <h2>What to include</h2>
+  <ul class="steps">
+    <li><div class="step-num">1</div><span>A clear description of the vulnerability and how it could be exploited</span></li>
+    <li><div class="step-num">2</div><span>Steps to reproduce — device model, iOS version, and app version</span></li>
+    <li><div class="step-num">3</div><span>Potential impact on user data or privacy</span></li>
+    <li><div class="step-num">4</div><span>Any proof-of-concept screenshots or code (optional but helpful)</span></li>
+  </ul>
+
+  <h2>Response timeline</h2>
+  <div class="timeline-row">
+    <div class="timeline-chip"><strong>48 hrs</strong>Acknowledgement</div>
+    <div class="timeline-chip"><strong>7 days</strong>Status update</div>
+    <div class="timeline-chip"><strong>14 days</strong>Critical fix target</div>
+    <div class="timeline-chip"><strong>90 days</strong>Non-critical fix target</div>
+  </div>
+  <p style="margin-top:20px;">You will be credited in the release notes unless you prefer to remain anonymous. We follow coordinated disclosure — please allow time to patch before any public write-up.</p>
+
+  <h2>Scope</h2>
+  <div class="scope-grid">
+    <div class="scope-card in">
+      <h3>In scope</h3>
+      <ul>
+        <li>Vitamin G iOS app (SwiftData, CloudKit sync, auth)</li>
+        <li>AI proxy worker (vg-ai-proxy.kileharrington.workers.dev)</li>
+        <li>Community feed (CloudKit public DB)</li>
+        <li>Account deletion and data export flows</li>
+      </ul>
+    </div>
+    <div class="scope-card out">
+      <h3>Out of scope</h3>
+      <ul>
+        <li>Apple iCloud / CloudKit infrastructure</li>
+        <li>Apple Sign In infrastructure</li>
+        <li>Anthropic Claude API</li>
+        <li>Issues requiring an unlocked physical device</li>
+      </ul>
+    </div>
+  </div>
+</main>
+
+<footer class="bottom">
+  <p>© 2026 Vitamin G · Made with gratitude by Kyle Harrington</p>
+  <p style="margin-top:10px;">
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+    <a href="support.html">Support</a>
+    <a href="security.html">Security</a>
+  </p>
+</footer>
+
+</body>
+</html>
