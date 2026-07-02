@@ -59,3 +59,7 @@ playground.xcworkspace
 
 # Environment / secrets
 *.env
+
+# Secrets — never commit. Use VGSecrets.swift.template as the starting point.
+VGSecrets.swift
+!VGSecrets.swift.template

@@ -92,7 +92,7 @@ v3.0 Progress: [##########] 100% (Phase 28 complete; v3.0 milestone fully comple
 | worker/ created at project root alongside VitaminG/ — not inside Xcode project | Cloudflare Worker is a JavaScript artifact; must not be in the Xcode project directory to avoid confusing Xcode build system |
 | Wave 0 RED test files on disk but not yet added to Xcode test target | Xcode .pbxproj requires manual addition; Plan 02 first task adds both files to VitaminGTests target before turning GREEN |
 | MockAIProxyService defined inline in AIProxyServiceTests.swift | Protocol seam (AIProxyServiceProtocol) enables mock injection without network; inline definition keeps Wave 0 file self-contained |
-| Worker deployed at https://vg-ai-proxy.kileharrington.workers.dev/ai; SHARED_TOKEN = 020A3129-9FDB-4817-8C8F-EA1A27F59A38 | Smoke tests 4/4 PASSED; Plan 02 embeds these as AIProxyService.workerURL and .workerToken static lets |
+| Worker deployed at https://vg-ai-proxy.kileharrington.workers.dev/ai; SHARED_TOKEN = [ROTATED — see VGSecrets.swift.template] | Smoke tests 4/4 PASSED; Plan 02 embeds these as AIProxyService.workerURL and .workerToken static lets |
 | macOS head -n-1 → sed '$d' in test-worker.sh | GNU head -n-1 is not available on macOS BSD head; sed '$d' achieves same result cross-platform |
 | PBXFileSystemSynchronizedRootGroup auto-includes new Swift files (Plan 28-02) | Xcode 16 synchronized groups handle Services/ and ViewModels/ subdirectories automatically — no manual pbxproj edits required for AIProxyService.swift and AIViewModel.swift |
 | AIViewModel is NOT a singleton (Plan 28-02) | Separate @State instances per view (HomeView, ExploreView) are acceptable; AIProxyService UserDefaults cache deduplicates per day (Pitfall 3 / A3) |
@@ -113,7 +113,7 @@ None.
 - CloudKit Console: promote new public DB record types (UserPresence, Applause, Follow, extended PublicProfile) to Production before Phase 21
 - CloudKit Console: add Queryable index on "username" field in PublicProfile record type (iCloud.com.kyleharrington.VitaminG) before 17-03 real-device testing — required for username availability check (isUsernameTaken/countRecordsWithUsername)
 - CloudKit Console: create TrendingGoal record type (title/String, category/String, participantCount/Int64, completedCount/Int64, createdAt/DateTime) + Queryable index on participantCount + deploy to Production + seed records before real-device Explore tab testing
-- [DONE - Plan 28-01] Worker deployed at https://vg-ai-proxy.kileharrington.workers.dev/ai; SHARED_TOKEN = 020A3129-9FDB-4817-8C8F-EA1A27F59A38; Plan 02 must embed these as AIProxyService.workerURL and AIProxyService.workerToken
+- [DONE - Plan 28-01] Worker deployed at https://vg-ai-proxy.kileharrington.workers.dev/ai; SHARED_TOKEN = [ROTATED — see VGSecrets.swift.template]; Plan 02 must embed these as AIProxyService.workerURL and AIProxyService.workerToken
 
 ## Deferred Items (from v1.0)
 

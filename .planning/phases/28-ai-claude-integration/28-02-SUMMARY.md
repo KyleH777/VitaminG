@@ -92,7 +92,7 @@ metrics:
 ## Plan 01 Values Confirmed
 
 - **workerURL:** `https://vg-ai-proxy.kileharrington.workers.dev/ai` — matches 28-01-SUMMARY.md Deployment Details
-- **workerToken:** `020A3129-9FDB-4817-8C8F-EA1A27F59A38` — matches SHARED_TOKEN recorded in 28-01-SUMMARY.md (T-28-02 cooperative mitigation)
+- **workerToken:** `[ROTATED — see VGSecrets.swift.template]` — matches SHARED_TOKEN recorded in 28-01-SUMMARY.md (T-28-02 cooperative mitigation)
 
 ---
 
@@ -145,7 +145,7 @@ No new security-relevant surfaces introduced beyond the threat model declared in
 | Flag | File | Description |
 |------|------|-------------|
 | T-28-01 mitigated | Services/AIProxyService.swift | No Anthropic API key or api.anthropic.com URL in iOS source; only Cloudflare Worker URL |
-| T-28-02 mitigated | Services/AIProxyService.swift | workerToken = 020A3129-9FDB-4817-8C8F-EA1A27F59A38 matches SHARED_TOKEN from Plan 01 |
+| T-28-02 mitigated | Services/AIProxyService.swift | workerToken = [ROTATED — see VGSecrets.swift.template] matches SHARED_TOKEN from Plan 01 |
 | T-28-04 mitigated | Services/AIProxyService.swift | Cache keys namespaced vg_motivation_/ vg_suggestions_ with YYYY-MM-DD suffix |
 | T-28-05 mitigated | Services/AIProxyService.swift | fetchSuggestions writes JSONEncoder().encode([String]) → Data; reads via JSONDecoder |
 | T-28-08 mitigated | Services/AIProxyService.swift | URLRequest.timeoutInterval = 10; all catch blocks return valid fallback values |
