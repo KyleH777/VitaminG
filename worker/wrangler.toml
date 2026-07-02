@@ -33,3 +33,7 @@ namespace_id = "1002"
 [ratelimits.simple]
 limit = 100
 period = 60
+
+# SHARED_TOKEN is also a secret now (rotated after the original leaked in git):
+#   npx wrangler secret put SHARED_TOKEN
+# Never commit the token value to this repo.

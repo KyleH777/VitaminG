@@ -38,7 +38,7 @@ key_files:
     - VitaminG/VitaminG/VitaminGTests/AIViewModelTests.swift
   modified: []
 decisions:
-  - "SHARED_TOKEN UUID 020A3129-9FDB-4817-8C8F-EA1A27F59A38 generated via uuidgen; same value in worker/src/index.js and recorded for Plan 02's AIProxyService.workerToken (Pitfall 2 prevention)"
+  - "SHARED_TOKEN UUID [ROTATED — see VGSecrets.swift.template] generated via uuidgen; same value in worker/src/index.js and recorded for Plan 02's AIProxyService.workerToken (Pitfall 2 prevention)"
   - "worker/ created at project root alongside VitaminG/ — not inside Xcode project"
   - "Suggestions cached as JSON Data (JSONEncoder) not [String] directly (Pitfall 1 mitigation, T-28-05)"
   - "test-worker.sh accepts SHARED_TOKEN as $2 — secret not committed to git"
@@ -74,7 +74,7 @@ metrics:
 
 **Deployed Worker URL:** https://vg-ai-proxy.kileharrington.workers.dev/ai
 
-**SHARED_TOKEN:** `020A3129-9FDB-4817-8C8F-EA1A27F59A38`
+**SHARED_TOKEN:** `[ROTATED — see VGSecrets.swift.template]`
 (Plan 02 must embed this as `AIProxyService.workerToken` static let)
 
 **ANTHROPIC_API_KEY:** Set as Cloudflare Worker secret via `wrangler secret put` — never stored in any file in this repo. `grep -r "sk-ant-" worker/` returns 0 results (T-28-01 verified).
@@ -127,7 +127,7 @@ Three curl smoke tests:
 - Test 2: POST with valid token + `type=suggestions` → expect HTTP 200 + `.suggestions | length == 3`
 - Test 3: POST with `token: "wrong-token"` → expect HTTP 401
 
-Usage: `./test-worker.sh "https://vg-ai-proxy.kileharrington.workers.dev/ai" "020A3129-9FDB-4817-8C8F-EA1A27F59A38"`
+Usage: `./test-worker.sh "https://vg-ai-proxy.kileharrington.workers.dev/ai" "[ROTATED — see VGSecrets.swift.template]"`
 
 ---
 

@@ -55,7 +55,11 @@ protocol AIProxyServiceProtocol {
 /// date-key UserDefaults entries (D-03/D-06), and silently falls back to VGQuoteBank
 /// or staticSuggestions on any network error (T-28-08).
 ///
-/// Security: workerToken matches SHARED_TOKEN set in Plan 01 (T-28-02).
+/// Security: the worker token is read from the gitignored VGSecrets.swift
+/// (created from VGSecrets.swift.template). It must NEVER appear
+/// as a string literal in source (T-28-02, revised). If the token is missing
+/// (misconfigured build), requests are skipped and the app silently uses fallbacks —
+/// the same behavior as any network failure.
 /// No Anthropic API key appears in this file; only the Cloudflare Worker URL is referenced (T-28-01).
 @Observable
 final class AIProxyService: AIProxyServiceProtocol {
@@ -67,7 +71,12 @@ final class AIProxyService: AIProxyServiceProtocol {
 
     // MARK: - Configuration
 
-    private static let workerToken = "020A3129-9FDB-4817-8C8F-EA1A27F59A38"
+    /// Read from VGSecrets.swift, a gitignored file created from
+    /// VGSecrets.swift.template (repo root). The Services folder is an Xcode
+    /// synchronized group, so the file joins the target automatically.
+    /// The token must NEVER appear as a literal in any committed file.
+    private static let workerToken = VGSecrets.workerToken
+
     private static let workerURL = "https://vg-ai-proxy.kileharrington.workers.dev/ai"
 
     // MARK: - Static Fallback Suggestions (D-07)
@@ -81,20 +90,44 @@ final class AIProxyService: AIProxyServiceProtocol {
 
     // MARK: - Cache Key Generators (D-03, D-06)
 
-    /// Returns the UserDefaults key for today's motivation copy.
-    /// Format: "vg_motivation_YYYY-MM-DD" using ISO8601 full-date encoding.
-    private static func motivationKey(for date: Date) -> String {
+    /// Shared date formatter for cache keys.
+    /// IMPORTANT: timeZone must be .current — ISO8601DateFormatter defaults to UTC,
+    /// but the date passed in is Calendar.current.startOfDay (local midnight).
+    /// Without this, users in UTC-positive timezones (e.g. Europe, Asia, Australia)
+    /// get yesterday's date string until their local time passes UTC midnight,
+    /// shifting the "new day" refresh boundary away from local midnight.
+    private static let keyDateFormatter: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withFullDate]
-        return "vg_motivation_\(formatter.string(from: date))"
+        formatter.timeZone = .current
+        return formatter
+    }()
+
+    private static let motivationKeyPrefix = "vg_motivation_"
+    private static let suggestionsKeyPrefix = "vg_suggestions_"
+
+    /// Returns the UserDefaults key for today's motivation copy.
+    /// Format: "vg_motivation_YYYY-MM-DD" in the user's local timezone.
+    private static func motivationKey(for date: Date) -> String {
+        motivationKeyPrefix + keyDateFormatter.string(from: date)
     }
 
     /// Returns the UserDefaults key for today's suggestions array.
-    /// Format: "vg_suggestions_YYYY-MM-DD" using ISO8601 full-date encoding.
+    /// Format: "vg_suggestions_YYYY-MM-DD" in the user's local timezone.
     private static func suggestionsKey(for date: Date) -> String {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withFullDate]
-        return "vg_suggestions_\(formatter.string(from: date))"
+        suggestionsKeyPrefix + keyDateFormatter.string(from: date)
+    }
+
+    /// Removes stale date-keyed cache entries so UserDefaults doesn't grow by
+    /// two keys per day forever. Keeps only the key for `today`.
+    private static func pruneStaleCacheKeys(keeping todayMotivation: String, _ todaySuggestions: String) {
+        let defaults = UserDefaults.standard
+        for key in defaults.dictionaryRepresentation().keys {
+            let isDateKey = key.hasPrefix(motivationKeyPrefix) || key.hasPrefix(suggestionsKeyPrefix)
+            if isDateKey && key != todayMotivation && key != todaySuggestions {
+                defaults.removeObject(forKey: key)
+            }
+        }
     }
 
     // MARK: - fetchMotivation (AI-02)
@@ -103,7 +136,9 @@ final class AIProxyService: AIProxyServiceProtocol {
     /// On cache miss, POSTs to the Worker. On any error, falls back to VGQuoteBank.
     /// Only successful Claude responses are written to the cache (not fallback text).
     func fetchMotivation(goals: [GoalPayload], streak: Int) async -> MotivationResult {
-        let key = Self.motivationKey(for: Calendar.current.startOfDay(for: Date()))
+        let today = Calendar.current.startOfDay(for: Date())
+        let key = Self.motivationKey(for: today)
+        Self.pruneStaleCacheKeys(keeping: key, Self.suggestionsKey(for: today))
 
         // Cache hit: return stored copy as .claude without network call (Test 1)
         if let cached = UserDefaults.standard.string(forKey: key) {
@@ -133,7 +168,9 @@ final class AIProxyService: AIProxyServiceProtocol {
     /// On cache miss, POSTs to the Worker. On any error, returns staticSuggestions.
     /// Suggestions are stored as JSON-encoded Data (not [String]) per Pitfall 1 / T-28-05.
     func fetchSuggestions(goals: [GoalPayload]) async -> [String] {
-        let key = Self.suggestionsKey(for: Calendar.current.startOfDay(for: Date()))
+        let today = Calendar.current.startOfDay(for: Date())
+        let key = Self.suggestionsKey(for: today)
+        Self.pruneStaleCacheKeys(keeping: Self.motivationKey(for: today), key)
 
         // Cache hit: decode [String] from JSON Data (Pitfall 1: not UserDefaults set([String]) — only Data)
         if let cachedData = UserDefaults.standard.data(forKey: key),
@@ -162,9 +199,14 @@ final class AIProxyService: AIProxyServiceProtocol {
     // MARK: - Private Network Layer
 
     /// Posts an AIRequest payload to the Worker and returns the raw response Data.
-    /// Throws URLError on bad URL, non-2xx HTTP status, or network failure.
+    /// Throws URLError on missing token, bad URL, non-2xx HTTP status, or network failure.
     /// timeoutInterval = 10 caps wait time (T-28-08 DoS mitigation).
     private func post(_ payload: AIRequest) async throws -> Data {
+        // Missing token = misconfigured build. Skip the network round-trip entirely;
+        // callers fall back exactly as they would on any network error.
+        guard !Self.workerToken.isEmpty else {
+            throw URLError(.userAuthenticationRequired)
+        }
         guard let url = URL(string: Self.workerURL) else {
             throw URLError(.badURL)
         }
