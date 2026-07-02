@@ -1,27 +1,57 @@
 // Cloudflare Worker — Vitamin G AI Proxy
 // Holds the Anthropic API key server-side as a Cloudflare secret (T-28-01).
 // iOS sends structured payloads; Worker builds Claude prompts server-side (D-10).
-// Worker returns thin JSON envelopes (D-09). Shared token deters casual abuse (D-11).
+// Worker returns thin JSON envelopes (D-09).
 //
 // DEPLOYMENT:
-//   1. Replace REPLACE_WITH_UUID_AT_DEPLOY below with the output of `uuidgen`.
-//   2. Paste the same UUID into AIProxyService.workerToken in the iOS app.
-//   3. From worker/ directory:
-//        npx wrangler secret put ANTHROPIC_API_KEY   (paste your Anthropic API key when prompted)
-//        npx wrangler deploy
+//   From worker/ directory:
+//     npx wrangler secret put ANTHROPIC_API_KEY   (paste Anthropic API key)
+//     npx wrangler secret put SHARED_TOKEN        (paste a fresh `uuidgen` value)
+//     npx wrangler deploy
+//   Then put the SAME new UUID into the iOS app via the gitignored config
+//   (see Secrets.xcconfig instructions) — never as a committed string literal.
 //
-// SECURITY: env.ANTHROPIC_API_KEY is the ONLY place the Anthropic key appears — never
-// as a string literal. The API key must ONLY be set via `wrangler secret put` — never in files.
-// SECURITY: rate limiting via native ratelimits bindings — per-IP 10/min (env.IP_LIMITER)
-// plus global 100/min circuit breaker (env.GLOBAL_LIMITER), fail-open on limiter error.
-
-const SHARED_TOKEN = "020A3129-9FDB-4817-8C8F-EA1A27F59A38";
+// SECURITY: env.ANTHROPIC_API_KEY and env.SHARED_TOKEN are the ONLY places
+// secrets appear. Neither may ever be a string literal in this file.
+// SECURITY: rate limiting via native ratelimits bindings — per-IP 10/min
+// plus global 100/min circuit breaker, fail-open on limiter error.
+// SECURITY: all client-supplied fields are type-coerced and length-clamped
+// before prompt construction (see sanitizeGoals) so a client holding the
+// token still cannot inflate input-token spend or crash the worker.
 
 const STATIC_SUGGESTIONS = [
   "Read for 15 minutes daily",
   "Drink 8 glasses of water",
   "Meditate for 5 minutes"
 ];
+
+// Server-side input clamps. Mirrors the iOS app's own limits but is enforced
+// here because local client validation is not a trust boundary.
+const MAX_GOALS = 8;
+const MAX_TITLE_LENGTH = 80;
+const MAX_CATEGORY_LENGTH = 40;
+const MAX_STREAK = 36500; // ~100 years; anything above is a forged payload
+
+/// Coerces the raw goals value into a bounded array of { title, category }
+/// plain strings. Non-objects, nulls, and non-string fields are dropped or
+/// stringified; every string is trimmed and hard-clamped. Never throws.
+function sanitizeGoals(raw) {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter(g => g !== null && typeof g === "object")
+    .slice(0, MAX_GOALS)
+    .map(g => ({
+      title: String(typeof g.title === "string" ? g.title : "")
+        .replace(/[\r\n]+/g, " ")
+        .trim()
+        .slice(0, MAX_TITLE_LENGTH),
+      category: String(typeof g.category === "string" ? g.category : "")
+        .replace(/[\r\n]+/g, " ")
+        .trim()
+        .slice(0, MAX_CATEGORY_LENGTH),
+    }))
+    .filter(g => g.title.length > 0);
+}
 
 export default {
   async fetch(request, env, ctx) {
@@ -89,8 +119,17 @@ export default {
       });
     }
 
-    // (3) Validate shared secret token — first action after JSON parse (T-28-02)
-    if (body.token !== SHARED_TOKEN) {
+    // (3) Validate shared secret token — first action after JSON parse (T-28-02).
+    // Token now lives in a Cloudflare secret, never in source. If the secret
+    // is unset (misconfigured deploy), fail CLOSED with 500 rather than
+    // comparing against undefined.
+    if (typeof env.SHARED_TOKEN !== "string" || env.SHARED_TOKEN.length === 0) {
+      return new Response("Server misconfigured", {
+        status: 500,
+        headers: { "Access-Control-Allow-Origin": "*" },
+      });
+    }
+    if (body.token !== env.SHARED_TOKEN) {
       return new Response("Unauthorized", {
         status: 401,
         headers: { "Access-Control-Allow-Origin": "*" },
@@ -106,9 +145,14 @@ export default {
       });
     }
 
-    // Safely extract and validate goals and streak (T-28-06)
-    const goals = Array.isArray(body.goals) ? body.goals : [];
-    const streak = typeof body.streak === "number" ? body.streak : 0;
+    // Safely extract, validate, and CLAMP goals and streak (T-28-06).
+    // sanitizeGoals never throws — malformed entries (null, numbers, giant
+    // strings) are dropped or truncated instead of reaching the prompt.
+    const goals = sanitizeGoals(body.goals);
+    const rawStreak = typeof body.streak === "number" && Number.isFinite(body.streak)
+      ? Math.trunc(body.streak)
+      : 0;
+    const streak = Math.min(Math.max(rawStreak, 0), MAX_STREAK);
 
     // (5) Build prompt server-side — prompt construction is server-side per D-10
     let prompt;
@@ -172,7 +216,8 @@ export default {
         const cleaned = text.replace(/```json?/g, "").replace(/```/g, "").trim();
         const parsed = JSON.parse(cleaned);
         if (Array.isArray(parsed) && parsed.length >= 3) {
-          suggestions = parsed.slice(0, 3);
+          // Coerce to strings and clamp — Claude output is untrusted too.
+          suggestions = parsed.slice(0, 3).map(s => String(s).slice(0, 120));
         }
       } catch (_) {
         // Fallback to static suggestions if Claude returns malformed JSON (D-07)
