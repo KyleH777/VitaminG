@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git commit *)",
+      "Bash(git add *)",
+      "Bash(git merge *)",
+      "Bash(git worktree *)",
+      "Bash(git reset *)",
+      "Bash(git checkout *)",
+      "Bash(git switch *)",
+      "Bash(git push *)",
+      "Bash(git fetch *)",
+      "Bash(git symbolic-ref *)",
+      "Bash(git rev-parse *)",
+      "Bash(git merge-base *)",
+      "Bash(xcodebuild *)",
+      "Bash(node ~/.claude/get-shit-done/bin/gsd-tools.cjs *)",
+      "Bash(node /Users/kyleharrington/.claude/get-shit-done/bin/gsd-tools.cjs *)",
+      "Bash(xcrun simctl *)",
+      "Bash(grep -c *)",
+      "Bash(grep -rn *)",
+      "Bash(wc -l *)",
+      "Bash(head *)",
+      "Bash(sed -n *)"
+    ]
+  }
+}

@@ -63,3 +63,17 @@ playground.xcworkspace
 # Secrets — never commit. Use VGSecrets.swift.template as the starting point.
 VGSecrets.swift
 !VGSecrets.swift.template
+
+# Local design scraps and reference material — not part of the app
+App additions/
+Misc./
+UI/
+
+# Local tooling state
+.clone/
+.superpowers/
+.claude/settings.local.json
+
+# Misplaced duplicates (canonical copies live elsewhere)
+/VitaminGWatch/
+VitaminG/VitaminG/.planning/
