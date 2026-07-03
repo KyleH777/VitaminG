@@ -76,7 +76,9 @@ struct PostComposeSheet: View {
                         Text(Self.profanityMessage)
                             .font(.caption).fontDesign(.rounded)
                             .foregroundStyle(.red)
-                            .accessibilityLiveRegion(.polite)
+                            .onAppear {
+                                AccessibilityNotification.Announcement(Self.profanityMessage).post()
+                            }
                     }
 
                     // 3. Photo picker row + preview

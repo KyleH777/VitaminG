@@ -39,7 +39,9 @@ struct TipJarView: View {
                         .foregroundStyle(VGTheme.textMuted)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity, minHeight: 120)
-                        .accessibilityLiveRegion(.polite)
+                        .onAppear {
+                            AccessibilityNotification.Announcement("Couldn't load tips. Check your connection and try again.").post()
+                        }
 
                 } else {
                     ForEach(store.products, id: \.id) { product in

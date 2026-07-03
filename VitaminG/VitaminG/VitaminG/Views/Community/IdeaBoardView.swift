@@ -48,7 +48,9 @@ struct IdeaBoardView: View {
                     .clipShape(Capsule())
                     .padding(.bottom, 100)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
-                    .accessibilityLiveRegion(.polite)
+                    .onAppear {
+                        AccessibilityNotification.Announcement(msg).post()
+                    }
             }
         }
         .sheet(isPresented: $vm.showingProposeSheet) {

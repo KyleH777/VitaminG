@@ -154,7 +154,9 @@ struct LoginScreen: View {
                     .font(.callout.weight(.light))
                     .foregroundStyle(VGTheme.terra)
                     .padding(.horizontal, 28)
-                    .accessibilityLiveRegion(.polite)
+                    .onAppear {
+                        AccessibilityNotification.Announcement("Sign in failed. Please try again.").post()
+                    }
             }
 
             Button(action: { path.append(.recovery) }) {

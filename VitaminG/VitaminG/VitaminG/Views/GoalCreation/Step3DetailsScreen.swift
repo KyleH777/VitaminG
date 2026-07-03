@@ -264,6 +264,7 @@ struct Step3DetailsScreen: View {
                     Toggle("I've been working on this", isOn: $wizardVM.isLegacy)
                         .labelsHidden()
                         .accessibilityLabel("I've already started working on this goal")
+                }
                 .padding(14)
                 if wizardVM.isLegacy {
                     Divider().padding(.horizontal, 14)

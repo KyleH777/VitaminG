@@ -79,7 +79,9 @@ struct CommunityReplySheetView: View {
                         Text("Profanity detected. Please revise.")
                             .font(.caption).fontDesign(.rounded)
                             .foregroundStyle(.red)
-                            .accessibilityLiveRegion(.polite)
+                            .onAppear {
+                                AccessibilityNotification.Announcement("Profanity detected. Please revise.").post()
+                            }
                     }
                 }
                 .padding(.horizontal, 16)

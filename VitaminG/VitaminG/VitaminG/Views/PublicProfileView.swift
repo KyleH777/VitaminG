@@ -207,10 +207,10 @@ struct PublicProfileView: View {
                     // Empty state (UI-SPEC §Empty States)
                     VStack(spacing: 8) {
                         Text("No public goals yet")
-                            .font(.callout.weight(.semibold).fontDesign(.rounded))
+                            .font(.callout.weight(.semibold)).fontDesign(.rounded)
                             .foregroundStyle(VGTheme.textPrimary)
                         Text("This user hasn't shared any goals.")
-                            .font(.callout.fontDesign(.rounded))
+                            .font(.callout).fontDesign(.rounded)
                             .foregroundStyle(VGTheme.textSecondary)
                     }
                     .frame(maxWidth: .infinity)
@@ -235,14 +235,14 @@ struct PublicProfileView: View {
                 VStack(spacing: 8) {
                     Button(action: { showBlockConfirm = true }) {
                         Text("Report or Block")
-                            .font(.caption.fontDesign(.rounded))
+                            .font(.caption).fontDesign(.rounded)
                             .foregroundStyle(VGTheme.accentTerra)
                             .frame(minHeight: 44)
                     }
                     .buttonStyle(.plain)
 
                     Text("Shared via Vitamin G")
-                        .font(.caption.fontDesign(.rounded))
+                        .font(.caption).fontDesign(.rounded)
                         .foregroundStyle(VGTheme.textFaint)
                         .accessibilityHidden(true)
                 }
@@ -281,7 +281,7 @@ struct PublicProfileView: View {
                 .font(VGTheme.serif(20))
                 .foregroundStyle(VGTheme.textPrimary)
             Text(label)
-                .font(.caption.fontDesign(.rounded))
+                .font(.caption).fontDesign(.rounded)
                 .foregroundStyle(VGTheme.textMuted)
         }
         .frame(maxWidth: .infinity)

@@ -60,7 +60,9 @@ struct DiscoverOverlayView: View {
                                 .multilineTextAlignment(.center)
                                 .padding(24)
                         }
-                        .accessibilityLiveRegion(.polite)
+                        .onAppear {
+                            AccessibilityNotification.Announcement(err).post()
+                        }
                     } else if viewModel.selectedSegment == .goals {
                         if viewModel.goalResults.isEmpty {
                             // Goals empty state (UI-SPEC §Empty States)

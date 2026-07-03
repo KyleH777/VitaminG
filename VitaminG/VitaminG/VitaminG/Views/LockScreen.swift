@@ -23,7 +23,9 @@ struct LockScreen: View {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
-                    .accessibilityLiveRegion(.polite)
+                    .onAppear {
+                        AccessibilityNotification.Announcement(error).post()
+                    }
             }
 
             Button("Unlock with Face ID or Touch ID") {

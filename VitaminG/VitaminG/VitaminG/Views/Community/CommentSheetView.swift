@@ -63,7 +63,9 @@ struct CommentSheetView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, 16)
                             .transition(.opacity)
-                            .accessibilityLiveRegion(.polite)
+                            .onAppear {
+                                AccessibilityNotification.Announcement("Only encouraging comments are allowed here.").post()
+                            }
                     }
                     HStack(spacing: 10) {
                         TextField("Say something encouraging…", text: $draftText, axis: .vertical)

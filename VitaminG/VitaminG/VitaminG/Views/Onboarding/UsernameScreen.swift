@@ -118,7 +118,9 @@ struct UsernameScreen: View {
                         .foregroundStyle(VGTheme.terra)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.top, 4)
-                        .accessibilityLiveRegion(.polite)
+                        .onAppear {
+                            AccessibilityNotification.Announcement(err).post()
+                        }
                 }
 
                 Spacer()
