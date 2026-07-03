@@ -104,7 +104,9 @@ struct VitaminGApp: App {
     }
 
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
-    @AppStorage("vg_colorScheme") private var colorSchemePref: ColorSchemePreference = .system
+    // Defaults to .light until the dark theme pass is finished — the views still
+    // hardcode light surfaces, so System would show a broken mix in dark mode.
+    @AppStorage("vg_colorScheme") private var colorSchemePref: ColorSchemePreference = .light
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {

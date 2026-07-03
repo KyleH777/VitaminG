@@ -62,7 +62,8 @@ struct SettingsView: View {
     // MARK: - App Storage and Environment
 
     /// SET-04: appearance preference bound to segmented picker; applied app-wide by VitaminGApp.
-    @AppStorage("vg_colorScheme") private var colorSchemePref: ColorSchemePreference = .system
+    /// Default must match VitaminGApp's declaration (.light until dark theme pass ships).
+    @AppStorage("vg_colorScheme") private var colorSchemePref: ColorSchemePreference = .light
 
     /// SwiftUI environment URL opener — avoids importing UIKit for openSettingsURLString.
     @Environment(\.openURL) private var openURL
