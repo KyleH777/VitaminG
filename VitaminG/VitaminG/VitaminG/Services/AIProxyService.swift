@@ -130,6 +130,21 @@ final class AIProxyService: AIProxyServiceProtocol {
         }
     }
 
+    /// Claude occasionally returns markdown (heading markers, bold) despite prompt
+    /// instructions, and the dose card renders plain text — a leading "# " would
+    /// show literally. Strips per-line heading markers and bold/italic asterisks.
+    private static func stripMarkdown(_ raw: String) -> String {
+        raw.split(separator: "\n", omittingEmptySubsequences: false)
+            .map { line -> String in
+                var s = String(line)
+                while s.hasPrefix("#") { s.removeFirst() }
+                return s.replacingOccurrences(of: "**", with: "")
+                    .trimmingCharacters(in: .whitespaces)
+            }
+            .joined(separator: "\n")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     // MARK: - fetchMotivation (AI-02)
 
     /// Returns today's Claude motivation copy, reading from UserDefaults cache first.
@@ -141,8 +156,9 @@ final class AIProxyService: AIProxyServiceProtocol {
         Self.pruneStaleCacheKeys(keeping: key, Self.suggestionsKey(for: today))
 
         // Cache hit: return stored copy as .claude without network call (Test 1)
+        // Sanitized on read so copies cached before markdown stripping existed are cleaned too.
         if let cached = UserDefaults.standard.string(forKey: key) {
-            return .claude(cached)
+            return .claude(Self.stripMarkdown(cached))
         }
 
         // Network path
@@ -150,7 +166,7 @@ final class AIProxyService: AIProxyServiceProtocol {
         do {
             let data = try await post(payload)
             let response = try JSONDecoder().decode(MotivationResponse.self, from: data)
-            let text = response.text.trimmingCharacters(in: .whitespacesAndNewlines)
+            let text = Self.stripMarkdown(response.text)
             guard !text.isEmpty else {
                 return fallbackMotivation()
             }

@@ -160,7 +160,7 @@ export default {
 
     if (type === "motivation") {
       const goalTitles = goals.map(g => g.title).join(", ");
-      prompt = `You are a warm, personal wellness coach. The user has a ${streak}-day streak and is working on: ${goalTitles || "personal goals"}. Write a motivational message in 2-3 sentences, under 40 words. Be warm, personal, and specific to their goals. Do not use generic platitudes.`;
+      prompt = `You are a warm, personal wellness coach. The user has a ${streak}-day streak and is working on: ${goalTitles || "personal goals"}. Write a motivational message in 2-3 sentences, under 40 words. Be warm, personal, and specific to their goals. Do not use generic platitudes. Plain text only — no markdown, no headings, no title line; the app renders your reply verbatim.`;
       maxTokens = 150;
     } else {
       // type === "suggestions"
